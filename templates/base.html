@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    </head>
+    <body>
+        <!-- TOPBAR -->
+        <div class="top-bar">
+        </div>
+
+        <!-- FLASH A TEMP MESSAGE -->
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for msg in messages %}
+        <div class="flash-box">
+            <p class="flash-text">{{msg}}</p>
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <!-- CUSTOM PAGE CONTENT -->
+        {% block content %} {% endblock %}
+
+        <!-- REMOVE 'CONFIRM FORM RESUBMISSION' MESSAGE -->
+        <script>
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href)
+            }
+        </script>
+    </body>
+</html>
