@@ -37,7 +37,7 @@ def sign_up():
     if request.method == "POST":
         if "user" in session:
             session.pop("user", None)
-            
+
         flash("You have created an account!", "info")
         return redirect(url_for("views.log_in"))
 
