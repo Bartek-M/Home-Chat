@@ -1,0 +1,166 @@
+/* GENERAL STUFF */
+body {
+    background-color: var(--BG_COLOR);
+    color: var(--FT_COLOR);
+    font-family: "Lucida Console", "Courier New", monospace;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+a {
+    color: var(--FT_RV_COLOR);
+    text-decoration: none;
+}
+
+
+/* TOP BAR */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--SEC_BG_COLOR);
+    color: var(--FT_RV_COLOR);
+    padding: 0;
+}
+
+.top-bar-text {
+    margin: 0.5rem 1rem;
+}
+
+.top-dropdown-btn {
+    background-color: transparent;
+    color: var(--FT_RV_COLOR);
+    font-size: 30px;
+    height: 48px;
+    width: 48px;
+    border: 0;
+}
+
+.top-dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+    background-color: var(--SEC_BG_COLOR);
+    border-bottom-left-radius: 10px;
+    border-color: transparent;
+}
+
+.top-dropdown-content a {
+    padding: 0.5rem 1rem;
+    display: block;
+}
+
+.top-bar-menu:hover .top-dropdown-btn {
+    transform: rotate(-90deg);
+}
+
+.top-bar-menu:hover .top-dropdown-content {
+    display: block;
+}
+
+
+/* FLASH MESSAGE */
+.flash-box {
+    width: max-content;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    margin: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(0, 192, 61, 0.94);
+    opacity: 0;
+    border-color: transparent;
+    border-radius: 10px;
+    animation: fade 4s;
+}
+
+.flash-text {
+    color: var(--FT_RV_COLOR);
+    margin: 0;
+}
+
+@keyframes fade {
+    0%, 100% { opacity: 0 }
+    50% { opacity: 1 }
+}
+
+
+/* HOME PAGE */
+
+
+/* SETTINGS PAGE */
+
+
+/* LOGIN & SIGNUP PAGE */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80%;
+}
+
+.login-window {
+    background-color: var(--SEC_BG_COLOR);
+    color: var(--FT_RV_COLOR);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem;
+    width: max-content;
+}
+
+.login-center {
+    display: flex;
+    justify-content: center;
+}
+
+.login-data {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.login-input {
+    border-color: transparent;
+    border-radius: 10px;
+    background-color: var(--THR_BG_COLOR);
+    color: var(--FT_RV_COLOR);
+    font-size: 16px;
+    padding-left: 0.5rem;
+}
+
+.login-text {
+    margin: 0;
+}
+
+#login-submit {
+    background-color: rgb(0, 192, 61);
+    border-radius: 10px;
+    border-color: transparent;
+    color: var(--FT_RV_COLOR);
+    font-size: 16px;
+}
+
+#login-submit:hover {
+    background-color: rgb(0, 138, 44);
+}
+
+
+/* SIGNUP PAGE */
+
+
+/* NOT FOUND - 404 */
+.not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+    padding: 2rem;
+}

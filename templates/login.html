@@ -1,0 +1,26 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<div class="login-page">
+    <div class="login-window">
+        <div class="login-center">
+            <h1 class="login-text">LOG IN</h1>
+        </div>
+
+        <form action="" method="POST">
+            <div class="login-data">
+                <h2 class="login-text">Username:</h1>
+                <input class="login-input" placeholder="Your username" name="usrname" size="30" required />
+            </div>
+            <div class="login-data">
+                <h2 class="login-text">Password:</h1>
+                <input class="login-input" type="password" placeholder="Your password" name="passw" size="30" required />
+            </div>
+
+            <div class="login-center">
+                <input id="login-submit" type="submit" value="SUBMIT" />
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+/* VARIABLES FOR DARK THEME */
+:root {
+    --BG_COLOR: #000000;
+    --SEC_BG_COLOR: #121320;
+    --THR_BG_COLOR: #242535;
+
+    --FT_COLOR: #FFFFFF;
+    --FT_RV_COLOR: #FFFFFF;
+    --DIM_FT_COLOR: #dbdbdb;
+}

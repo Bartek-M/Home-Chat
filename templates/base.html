@@ -1,31 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>{% block title %}{% endblock %}</title>
+        <title>Home Chat</title>
 
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/dark_vars.css') if kwargs['theme'] else url_for('static', filename='css/light_vars.css')}}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+        <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icon.ico') }}" />
     </head>
     <body>
         <!-- TOPBAR -->
         <div class="top-bar">
+            <h1 class="top-bar-text"><a href="/">Home Chat</a></h1>
+            <div class="top-bar-menu">
+                <button class="top-dropdown-btn">=</button>
+                <div class="top-dropdown-content">
+                    <a href="/">Home</a>
+                    <a href="settings">Settings</a>
+                    <hr>
+                    <a href="signup">Sign Up</a>
+                    <a href="login">Log In</a>
+                    <a href="logout">Log Out</a>
+                </div>
+            </div>
         </div>
 
         <!-- FLASH A TEMP MESSAGE -->
-        {% with messages = get_flashed_messages() %} {% if messages %} {% for msg in messages %}
-        <div class="flash-box">
-            <p class="flash-text">{{msg}}</p>
-        </div>
-        {% endfor %} {% endif %} {% endwith %}
+        {% with messages = get_flashed_messages() %} 
+            {% if messages %} 
+                {% for msg in messages %}
+                    <div class="flash-box">
+                        <p class="flash-text">{{msg}}</p>
+                    </div>
+                {% endfor %} 
+            {% endif %} 
+        {% endwith %}
 
         <!-- CUSTOM PAGE CONTENT -->
         {% block content %} {% endblock %}
+        
+        <!-- JAVASCRIPT -->
+        <script src="{{ url_for('static', filename='index.js') }}"></script>
 
         <!-- REMOVE 'CONFIRM FORM RESUBMISSION' MESSAGE -->
         <script>
+            document.addEventListener('touchstart', function() {});
+
             if (window.history.replaceState) {
                 window.history.replaceState(null, null, window.location.href)
             }

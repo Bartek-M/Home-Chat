@@ -1,0 +1,10 @@
+/* VARIABLES FOR LIGHT THEME */
+:root {
+    --BG_COLOR: #FFFFFF;
+    --SEC_BG_COLOR: #20212b;
+    --THR_BG_COLOR: #323349;
+
+    --FT_COLOR: #000000;
+    --FT_RV_COLOR: #FFFFFF;
+    --DIM_FT_COLOR: #131313;
+}
