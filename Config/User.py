@@ -2,7 +2,7 @@ from random import randint
 import time
 import hashlib
 
-
+ 
 class User:
     """
     Representation of a user
