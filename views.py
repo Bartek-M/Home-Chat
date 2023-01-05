@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session, flash
 
 view = Blueprint(__name__, "view") # Define views
-kwargs = {"theme": False}
+kwargs = {"theme": True}
 
 
 # PAGES
