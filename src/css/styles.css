@@ -8,14 +8,11 @@ body {
     margin: 0;
 }
 
-button:hover {
-    cursor: pointer;
-}
+button:hover { cursor: pointer; }
+a { color: var(--FT_RV_COLOR); text-decoration: none; }
 
-a {
-    color: var(--FT_RV_COLOR);
-    text-decoration: none;
-}
+.link { color: var(--BLUE); }
+.link:hover { text-decoration: underline; }
 
 
 /* TOP BAR */
@@ -73,11 +70,18 @@ a {
     transform: translate(-50%, 0);
     margin: 0.5rem;
     padding: 0.5rem;
-    background-color: rgba(0, 192, 61, 0.94);
     opacity: 0;
     border-color: transparent;
-    border-radius: 10px;
+    border-radius: 5px;
     animation: fade 4s;
+}
+
+#flash-info {
+    background-color: rgba(0, 192, 61, 0.94);
+}
+
+#flash-error {
+    background-color: rgba(192, 0, 61, 0.94);
 }
 
 .flash-text {
@@ -87,7 +91,7 @@ a {
 
 @keyframes fade {
     0%, 100% { opacity: 0 }
-    50% { opacity: 1 }
+    25% { opacity: 1 }
 }
 
 
@@ -109,10 +113,10 @@ a {
 .login-window {
     background-color: var(--SEC_BG_COLOR);
     color: var(--FT_RV_COLOR);
-    border-radius: 10px;
-    padding: 1rem;
+    border-radius: 5px;
+    padding: 1.5rem;
     margin: 1rem;
-    width: max-content;
+    width: 480px;
 }
 
 .login-center {
@@ -124,32 +128,48 @@ a {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    margin: 1rem 0;
+    margin-top: 1rem;
 }
 
 .login-input {
     border-color: transparent;
-    border-radius: 10px;
+    border-radius: 5px;
+    outline: 0;
     background-color: var(--THR_BG_COLOR);
     color: var(--FT_RV_COLOR);
     font-size: 16px;
     padding-left: 0.5rem;
+    height: 24px;
 }
 
 .login-text {
     margin: 0;
 }
 
+#forgot-passw {
+    margin: 0.5rem 0 0 0;
+    font-size: 13px;
+}
+
 #login-submit {
     background-color: rgb(0, 192, 61);
-    border-radius: 10px;
-    border-color: transparent;
     color: var(--FT_RV_COLOR);
+    border-radius: 5px;
+    border-color: transparent;
+    width: 100%;
+    margin-top: 2rem;
+    padding: 0.5rem;
     font-size: 16px;
 }
 
 #login-submit:hover {
+    cursor: pointer;
     background-color: rgb(0, 138, 44);
+}
+
+#login-redirect {
+    margin: 0.5rem 0 0 0;
+    font-size: 13px;
 }
 
 

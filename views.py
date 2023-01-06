@@ -1,4 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session, flash
+from config.database import Database, Functions
+from config.database import USER_TABLE
+from config.config_objects import User
+import time
+
 
 view = Blueprint(__name__, "view") # Define views
 kwargs = {"theme": True}
@@ -9,11 +14,11 @@ kwargs = {"theme": True}
 @view.route("/home", methods=["POST", "GET"])
 def home():
     if "user" not in session:
-        flash("You are not logged in!", "info")
+        flash("You are not logged in!", "error")
         return redirect(url_for("views.log_in"))
 
-    usr = session["user"]    
-    return render_template("index.html", text=f"Hello {usr}!", kwargs=kwargs) # Render home page
+    usr = session["user"]["name"]  
+    return render_template("index.html", text=f"Hello {usr}!", kwargs=kwargs)
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -23,8 +28,18 @@ def log_in():
         return redirect(url_for("views.home"))
 
     if request.method == "POST":
-        user = request.form["usrname"]
-        session["user"] = user
+        db = Database()
+
+        user = db.get_user(request.form["email"])
+        hashed_passw = Functions.hash_passwd(request.form["passwd"])
+
+        if not user or hashed_passw != user.password:
+            db.close()
+            flash("Invalid email or password!", "error")
+            return render_template("login.html", kwargs=kwargs)
+
+        session["user"] = user.__dict__
+        db.close()
 
         flash("You have been logged in!", "info")
         return redirect(url_for("views.home"))
@@ -32,16 +47,25 @@ def log_in():
     return render_template("login.html", kwargs=kwargs)
 
 
-@view.route("/signup", methods=["POST", "GET"])
-def sign_up():
+@view.route("/register", methods=["POST", "GET"])
+def register():
     if request.method == "POST":
         if "user" in session:
             session.pop("user", None)
+        
+        current_time = time.time() 
+        name = request.form["usrname"]
+        email = request.form["email"]
+        passwd = request.form["passwd"]
+
+        db = Database()
+        db.insert_entry(USER_TABLE, User(Functions.create_id(current_time), name, email, Functions.hash_passwd(passwd), Functions.convert_time(current_time)))
+        db.close()
 
         flash("You have created an account!", "info")
         return redirect(url_for("views.log_in"))
 
-    return render_template("signup.html", kwargs=kwargs)
+    return render_template("register.html", kwargs=kwargs)
 
 
 @view.route("/logout")

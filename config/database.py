@@ -2,10 +2,10 @@ import sqlite3
 import hashlib
 import random
 import time
-from config_objects import User, Message, Channel, UserChannel
+from .config_objects import User, Message, Channel, UserChannel
 
 # GLOBAL VARIABLES
-FILE = ":memory:" # "./config/database.db"
+FILE = "./config/database.db"
 
 USER_TABLE = "users"
 MESSAGE_TABLE = "messages"
@@ -31,7 +31,7 @@ class Database:
         :return: None
         """
         queries = [ 
-            f"{USER_TABLE} (id INTEGER, name TEXT, mail TEXT, password TEXT, create_time TEXT)",
+            f"{USER_TABLE} (id INTEGER, name TEXT, email TEXT, password TEXT, create_time TEXT)",
             f"{MESSAGE_TABLE} (id INTEGER, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
             f"{CHANNEL_TABLE} (id INTEGER, name TEXT, create_time TEXT, group_server INTEGER)",
             f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, channel_index INTEGER)",
@@ -56,6 +56,20 @@ class Database:
             return CONFIG_OBJECTS[table](*fetched)
 
         return None
+
+    def get_user(self, email):
+        """
+        Get specifc user via his email
+        :param email: User email
+        :return: User object
+        """
+        self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE email='{email}'")
+
+        if fetched := self.cursor.fetchone():
+            return User(*fetched)
+
+        return None
+
 
     def get_user_channels(self, req_id):
         """
@@ -123,15 +137,17 @@ class Database:
 
 
 class Functions:
-    def create_id(self, creation_time):
+    @staticmethod
+    def create_id(creation_time):
         """
         Create unique ID
         :param creation_time: Epoch creation time
         :return: Creation time(int)
         """
-        return int(str(creation_time).replace(".", "") + ''.join([str(random.randint(0, 9)) for _ in range(4)]))
+        return int(str(round(creation_time)) + ''.join([str(random.randint(0, 9)) for _ in range(6)]))
 
-    def convert_time(self, creation_time):
+    @staticmethod
+    def convert_time(creation_time):
         """
         Convert time from epoch to normal data
         :param creation_time: Epoch creation time
@@ -139,10 +155,11 @@ class Functions:
         """
         return str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(creation_time)))
 
-    def hash_passwd(self):
+    @staticmethod
+    def hash_passwd(passw):
         """
         Hash user password
         :param passw: User password
         :return: Hashed password (str)
         """
-        return str(hashlib.sha256(str(self.password).strip().encode()).hexdigest())
+        return str(hashlib.sha256(str(passw).strip().encode()).hexdigest())

@@ -21,7 +21,7 @@
                     <a href="/">Home</a>
                     <a href="settings">Settings</a>
                     <hr>
-                    <a href="signup">Sign Up</a>
+                    <a href="register">Register</a>
                     <a href="login">Log In</a>
                     <a href="logout">Log Out</a>
                 </div>
@@ -29,11 +29,11 @@
         </div>
 
         <!-- FLASH A TEMP MESSAGE -->
-        {% with messages = get_flashed_messages() %} 
+        {% with messages = get_flashed_messages(with_categories=true) %} 
             {% if messages %} 
-                {% for msg in messages %}
-                    <div class="flash-box">
-                        <p class="flash-text">{{msg}}</p>
+                {% for category, message in messages %}
+                    <div class="flash-box" id="flash-{{ category }}">
+                        <p class="flash-text">{{message}}</p>
                     </div>
                 {% endfor %} 
             {% endif %} 

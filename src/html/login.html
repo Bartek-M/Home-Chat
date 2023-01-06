@@ -4,22 +4,24 @@
 <div class="login-page">
     <div class="login-window">
         <div class="login-center">
-            <h1 class="login-text">LOG IN</h1>
+            <h1 class="login-text">Welcome back!</h1>
         </div>
 
         <form action="" method="POST">
             <div class="login-data">
-                <h2 class="login-text">Username:</h1>
-                <input class="login-input" placeholder="Your username" name="usrname" size="30" required />
+                <p class="login-text">EMAIL</p>
+                <input class="login-input" name="email" maxlength=100 required />
             </div>
             <div class="login-data">
-                <h2 class="login-text">Password:</h1>
-                <input class="login-input" type="password" placeholder="Your password" name="passw" size="30" required />
+                <p class="login-text">PASSWORD</p>
+                <input class="login-input" type="password" name="passwd" maxlength=50 required />
             </div>
+            <p id="forgot-passw"><a class="link" href="password-recovery">Forgot your password?</a></p>
 
             <div class="login-center">
-                <input id="login-submit" type="submit" value="SUBMIT" />
+                <input id="login-submit" type="submit" value="LOG IN" />
             </div>
+            <p id="login-redirect">Need an account? <a class="link" href="register">Register</a></p>
         </form>
     </div>
 </div>

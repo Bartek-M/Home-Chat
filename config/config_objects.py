@@ -2,19 +2,19 @@ class User:
     """
     Representation of a user
     """
-    def __init__(self, user_id, name, mail, password, create_time):
+    def __init__(self, user_id, name, email, password, create_time):
         self.user_id = user_id
         self.name = name
-        self.mail = mail
+        self.email = email
         self.password = password
         self.create_time = create_time 
 
     def __repr__(self):
         """
         Representation
-        :return: (user_id, name, password, channels, creation_time)
+        :return: (user_id, name, email, password, channels, creation_time)
         """
-        return f"({self.user_id}, '{self.name}', '{self.mail}', '{self.password}', '{self.create_time}')"
+        return f"({self.user_id}, '{self.name}', '{self.email}', '{self.password}', '{self.create_time}')"
 
 
 class Message:

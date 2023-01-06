@@ -1,0 +1,31 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<div class="login-page">
+    <div class="login-window">
+        <div class="login-center">
+            <h1 class="login-text">Create an account</h1>
+        </div>
+
+        <form action="" method="POST">
+            <div class="login-data">
+                <p class="login-text">EMAIL</p>
+                <input class="login-input" type="email" name="email" size="30" required />
+            </div>
+            <div class="login-data">
+                <p class="login-text">USERNAME</p>
+                <input class="login-input" name="usrname" size="30" required />
+            </div>
+            <div class="login-data">
+                <p class="login-text">PASSWORD</p>
+                <input class="login-input" type="password" name="passwd" size="30" required />
+            </div>
+
+            <div class="login-center">
+                <input id="login-submit" type="submit" value="CONTINUE" />
+            </div>
+            <p id="login-redirect">Already have an account? <a class="link" href="login">Log In</a></p>
+        </form>
+    </div>
+</div>
+{% endblock %}
