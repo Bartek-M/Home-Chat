@@ -71,3 +71,20 @@ class UserChannel:
         :return: (user_id, name)
         """
         return f"({self.user_id}, {self.channel_id}, '{self.join_time}', {self.channel_index})"
+
+
+class UserSettings:
+    """
+    Representation of user settings
+    """
+    def __init__(self, user_id, dark_mode, auth):
+        self.user_id = user_id
+        self.dark_mode = dark_mode
+        self.auth = auth
+
+    def __repr__(self):
+        """
+        Representation
+        :return: (user_id, dark_mode, 'auth')
+        """
+        return f"({self.user_id}, {self.dark_mode}, '{self.auth}')"

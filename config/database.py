@@ -11,6 +11,7 @@ USER_TABLE = "users"
 MESSAGE_TABLE = "messages"
 CHANNEL_TABLE = "channels"
 USER_CHANNEL_TABLE = "user_channels"
+USER_SETTING_TABLE = "user_settings"
 
 CONFIG_OBJECTS = {USER_TABLE: User, MESSAGE_TABLE: Message, CHANNEL_TABLE: Channel, USER_CHANNEL_TABLE: UserChannel} 
 
@@ -33,7 +34,8 @@ class Database:
             f"{USER_TABLE} (id INTEGER, name TEXT, mail TEXT, password TEXT, create_time TEXT)",
             f"{MESSAGE_TABLE} (id INTEGER, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
             f"{CHANNEL_TABLE} (id INTEGER, name TEXT, create_time TEXT, group_server INTEGER)",
-            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, channel_index INTEGER)"
+            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, channel_index INTEGER)",
+            f"{USER_SETTING_TABLE} (id INTEGER, dark_mode INEGER, auth TEXT)"
         ]
 
         for query in queries:
