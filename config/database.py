@@ -2,7 +2,7 @@ import sqlite3
 import hashlib
 import random
 import time
-from config_obj import User, Message, Channel, UserChannel
+from config_objects import User, Message, Channel, UserChannel
 
 # GLOBAL VARIABLES
 FILE = ":memory:" # "./config/database.db"
@@ -30,10 +30,10 @@ class Database:
         :return: None
         """
         queries = [ 
-            f"{USER_TABLE} (id INTEGER, name TEXT, password TEXT, create_time TEXT)",
+            f"{USER_TABLE} (id INTEGER, name TEXT, mail TEXT, password TEXT, create_time TEXT)",
             f"{MESSAGE_TABLE} (id INTEGER, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
             f"{CHANNEL_TABLE} (id INTEGER, name TEXT, create_time TEXT, group_server INTEGER)",
-            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, access_time REAL)"
+            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, channel_index INTEGER)"
         ]
 
         for query in queries:
@@ -81,16 +81,42 @@ class Database:
 
         return None
 
-    def insert_entry(self):
-        pass
+    def insert_entry(self, table, entry):
+        """
+        Insert entry into specific table
+        :param table: Table you want to insert into 
+        :param entry: Entry you want to insert
+        :return: None
+        """
+        self.cursor.execute(f"INSERT INTO {table} VALUES {entry}")
+        self.conn.commit()
 
-    def update_entry(self):
-        pass
+    def update_entry(self, table, req_id, entry):
+        """
+        Update specific entry
+        :param table: Table you want to update
+        :param req_id: ID of entry you want to update
+        :param entry: Updated entry (eg. name='new_name')
+        :return: None
+        """
+        self.cursor.execute(f"UPDATE {table} SET {entry} WHERE id={req_id}")
+        self.conn.commit()
 
-    def delete_entry(self):
-        pass
+    def delete_entry(self, table, req_id):
+        """
+        Delete specific entry
+        :param table: Table you want to delete in
+        :param req_id: ID of entry you want to delete
+        :return: None
+        """
+        self.cursor.execute(f"DELETE FROM {table} WHERE id={req_id}")
+        self.conn.commit()
 
     def close(self):
+        """
+        Close connection
+        :return: None
+        """
         self.conn.close()
 
 
@@ -117,4 +143,4 @@ class Functions:
         :param passw: User password
         :return: Hashed password (str)
         """
-        return str(hashlib.sha256(str(self.password).strip().encode()).hexdigest())       
+        return str(hashlib.sha256(str(self.password).strip().encode()).hexdigest())
