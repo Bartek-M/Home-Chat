@@ -45,7 +45,7 @@ class Channel:
         self.channel_id = channel_id
         self.name = name
         self.create_time = create_time
-        self.group = group_server
+        self.group_server = group_server
 
     def __repr__(self):
         """

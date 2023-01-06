@@ -1,7 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session, flash
-from config.database import Database, Functions
-from config.database import USER_TABLE
-from config.config_objects import User
+from config.database import *
 import time
 
 
@@ -17,8 +15,8 @@ def home():
         flash("You are not logged in!", "error")
         return redirect(url_for("views.log_in"))
 
-    usr = session["user"]["name"]  
-    return render_template("index.html", text=f"Hello {usr}!", kwargs=kwargs)
+    usr = session.get("user")
+    return render_template("index.html", text=f"Hello {usr.get('name')}!", kwargs=kwargs)
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -30,17 +28,14 @@ def log_in():
     if request.method == "POST":
         db = Database()
 
-        user = db.get_user(request.form["email"])
-        hashed_passw = Functions.hash_passwd(request.form["passwd"])
+        user = db.get_user(request.form.get("email"))
+        hashed_passw = Functions.hash_passwd(request.form.get("passwd"))
 
         if not user or hashed_passw != user.password:
-            db.close()
             flash("Invalid email or password!", "error")
             return render_template("login.html", kwargs=kwargs)
 
         session["user"] = user.__dict__
-        db.close()
-
         flash("You have been logged in!", "info")
         return redirect(url_for("views.home"))
             
@@ -54,13 +49,12 @@ def register():
             session.pop("user", None)
         
         current_time = time.time() 
-        name = request.form["usrname"]
-        email = request.form["email"]
-        passwd = request.form["passwd"]
+        name = request.form.get("usrname")
+        email = request.form.get("email")
+        passwd = request.form.get("passwd")
 
         db = Database()
         db.insert_entry(USER_TABLE, User(Functions.create_id(current_time), name, email, Functions.hash_passwd(passwd), Functions.convert_time(current_time)))
-        db.close()
 
         flash("You have created an account!", "info")
         return redirect(url_for("views.log_in"))

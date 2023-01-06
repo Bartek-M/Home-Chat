@@ -2,10 +2,10 @@ import sqlite3
 import hashlib
 import random
 import time
-from .config_objects import User, Message, Channel, UserChannel
+from models import User, Message, Channel, UserChannel, UserSettings
 
 # GLOBAL VARIABLES
-FILE = "./config/database.db"
+FILE = ":memory:" # ./config/database.db | :memory:
 
 USER_TABLE = "users"
 MESSAGE_TABLE = "messages"
@@ -31,14 +31,14 @@ class Database:
         :return: None
         """
         queries = [ 
-            f"{USER_TABLE} (id INTEGER, name TEXT, email TEXT, password TEXT, create_time TEXT)",
-            f"{MESSAGE_TABLE} (id INTEGER, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
-            f"{CHANNEL_TABLE} (id INTEGER, name TEXT, create_time TEXT, group_server INTEGER)",
+            f"{USER_TABLE} (id INTEGER UNIQUE, name TEXT, email TEXT UNIQUE, password TEXT, create_time TEXT)",
+            f"{MESSAGE_TABLE} (id INTEGER UNIQUE, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
+            f"{CHANNEL_TABLE} (id INTEGER UNIQUE, name TEXT, create_time TEXT, group_server INTEGER)",
             f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, channel_index INTEGER)",
             f"{USER_SETTING_TABLE} (id INTEGER, dark_mode INEGER, auth TEXT)"
         ]
 
-        for query in queries:
+        for query in queries:  
             self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {query}")
         
         self.conn.commit()
@@ -69,7 +69,6 @@ class Database:
             return User(*fetched)
 
         return None
-
 
     def get_user_channels(self, req_id):
         """
@@ -127,13 +126,6 @@ class Database:
         """
         self.cursor.execute(f"DELETE FROM {table} WHERE id={req_id}")
         self.conn.commit()
-
-    def close(self):
-        """
-        Close connection
-        :return: None
-        """
-        self.conn.close()
 
 
 class Functions:
