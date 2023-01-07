@@ -1,15 +1,17 @@
 /* GENERAL STUFF */
 body {
-    background-color: var(--BG_COLOR);
-    color: var(--FT_COLOR);
-    font-family: "Lucida Console", "Courier New", monospace;
+    background-color: var(--BACKGROUND_COLOR);
+    color: var(--FONT_RV_COLOR);
+    font-family: "FF DIN Pro", sans-serif;
     width: 100vw;
     height: 100vh;
     margin: 0;
 }
 
+
+/* GLOBALS */
 button:hover { cursor: pointer; }
-a { color: var(--FT_RV_COLOR); text-decoration: none; }
+a { color: var(--FONT_COLOR); text-decoration: none; }
 
 .link { color: var(--BLUE); }
 .link:hover { text-decoration: underline; }
@@ -20,8 +22,8 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--SEC_BG_COLOR);
-    color: var(--FT_RV_COLOR);
+    background-color: var(--BACKGROUND_COLOR_2);
+    color: var(--FONT_COLOR);
     padding: 0;
 }
 
@@ -31,10 +33,10 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
 
 .top-dropdown-btn {
     background-color: transparent;
-    color: var(--FT_RV_COLOR);
+    color: var(--FONT_COLOR);
     font-size: 30px;
-    height: 48px;
-    width: 48px;
+    height: 53px;
+    width: 53px;
     border: 0;
 }
 
@@ -43,7 +45,7 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
     position: absolute;
     right: 0;
     z-index: 10;
-    background-color: var(--SEC_BG_COLOR);
+    background-color: var(--BACKGROUND_COLOR_2);
     border-bottom-left-radius: 10px;
     border-color: transparent;
 }
@@ -64,38 +66,102 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
 
 /* FLASH MESSAGE */
 .flash-box {
-    width: max-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
-    margin: 0.5rem;
+}
+
+.flash-message {
+    width: max-content;
+    margin: 0;
     padding: 0.5rem;
     opacity: 0;
     border-color: transparent;
     border-radius: 5px;
-    animation: fade 4s;
+    animation: fade 6s;
 }
 
-#flash-info {
-    background-color: rgba(0, 192, 61, 0.94);
-}
-
-#flash-error {
-    background-color: rgba(192, 0, 61, 0.94);
-}
+#flash-info { background-color: var(--FLASH_INFO) }
+#flash-error { background-color: var(--FLASH_ERROR)}
 
 .flash-text {
-    color: var(--FT_RV_COLOR);
+    color: var(--FONT_COLOR);
     margin: 0;
 }
 
 @keyframes fade {
     0%, 100% { opacity: 0 }
-    25% { opacity: 1 }
+    25%, 45% { opacity: 1 }
 }
 
 
 /* HOME PAGE */
+.home-page {
+    display: flex;
+    width: 100%;
+    height: calc(100% - 53px - 1rem);
+}
+
+/* CHANNEL LIST */
+.channel-list {
+    width: 10%;
+    height: 100%;
+}
+
+/* CHANNEL VIEW */
+.channel-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 90%;
+    height: 100%;
+    padding: 0.5rem;
+    border-left: 1px solid var(--BORDER_COLOR);
+}
+
+.channel-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    height: 38px;
+    border-radius: 5px;
+    border-color: transparent;
+    background-color: var(--BACKGROUND_COLOR_3);
+}
+
+.writing-form {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#message-inpt {
+    border-color: transparent;
+    border-radius: 5px;
+    outline: 0;
+    background-color: var(--BACKGROUND_COLOR_3);
+    color: var(--FONT_COLOR);
+    font-size: 16px;
+    padding-left: 0.5rem;
+    height: 30px;
+    width: 100%
+}
+
+#message-send {
+    background-color: var(--GREEN);
+    color: var(--FONT_COLOR);
+    border-radius: 5px;
+    border-color: transparent;
+    font-size: 16px;
+    height: 30px;
+}
 
 
 /* SETTINGS PAGE */
@@ -111,8 +177,8 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
 }
 
 .login-window {
-    background-color: var(--SEC_BG_COLOR);
-    color: var(--FT_RV_COLOR);
+    background-color: var(--BACKGROUND_COLOR_2);
+    color: var(--FONT_COLOR);
     border-radius: 5px;
     padding: 1.5rem;
     margin: 1rem;
@@ -135,8 +201,8 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
     border-color: transparent;
     border-radius: 5px;
     outline: 0;
-    background-color: var(--THR_BG_COLOR);
-    color: var(--FT_RV_COLOR);
+    background-color: var(--BACKGROUND_COLOR_3);
+    color: var(--FONT_COLOR);
     font-size: 16px;
     padding-left: 0.5rem;
     height: 24px;
@@ -152,8 +218,8 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
 }
 
 #login-submit {
-    background-color: rgb(0, 192, 61);
-    color: var(--FT_RV_COLOR);
+    background-color: var(--GREEN);
+    color: var(--FONT_COLOR);
     border-radius: 5px;
     border-color: transparent;
     width: 100%;
@@ -164,7 +230,7 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
 
 #login-submit:hover {
     cursor: pointer;
-    background-color: rgb(0, 138, 44);
+    background-color: var(--DIM_GREEN);
 }
 
 #login-redirect {
@@ -173,7 +239,7 @@ a { color: var(--FT_RV_COLOR); text-decoration: none; }
 }
 
 
-/* SIGNUP PAGE */
+/* OVERLAY */
 
 
 /* NOT FOUND - 404 */

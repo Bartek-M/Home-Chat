@@ -2,7 +2,21 @@
 
 {% block content %}
 <div class="home-page">
-    <h1>Home Page</h1>
-    <p>{{ text }}</p>
+    <!-- CHANNELS -->
+    <div class="channel-list">
+
+    </div>
+
+    <!-- CURRENT CHANNEL -->
+    <div class="channel-view">
+        <div class="channel-info">
+            Testing channel
+            {{text}}
+        </div>
+        <form class="writing-form" action="" method="POST">
+            <input id="message-inpt" type="text" name="message" placeholder="Start messaging..."/>
+            <input id="message-send" type="submit" value="SEND"/>
+        </form>
+    </div>
 </div>
 {% endblock %}

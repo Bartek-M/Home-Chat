@@ -2,10 +2,10 @@ import sqlite3
 import hashlib
 import random
 import time
-from models import User, Message, Channel, UserChannel, UserSettings
+from .models import User, Message, Channel, UserChannel, UserSettings
 
 # GLOBAL VARIABLES
-FILE = ":memory:" # ./config/database.db | :memory:
+FILE = "./config/database.db" # ./config/database.db | :memory:
 
 USER_TABLE = "users"
 MESSAGE_TABLE = "messages"
@@ -13,7 +13,7 @@ CHANNEL_TABLE = "channels"
 USER_CHANNEL_TABLE = "user_channels"
 USER_SETTING_TABLE = "user_settings"
 
-CONFIG_OBJECTS = {USER_TABLE: User, MESSAGE_TABLE: Message, CHANNEL_TABLE: Channel, USER_CHANNEL_TABLE: UserChannel} 
+CONFIG_OBJECTS = {USER_TABLE: User, MESSAGE_TABLE: Message, CHANNEL_TABLE: Channel, USER_CHANNEL_TABLE: UserChannel, USER_SETTING_TABLE: UserSettings} 
 
 
 class Database:
@@ -126,6 +126,13 @@ class Database:
         """
         self.cursor.execute(f"DELETE FROM {table} WHERE id={req_id}")
         self.conn.commit()
+
+    def close(self):
+        """
+        Close database connection
+        :return: None
+        """
+        self.conn.close()
 
 
 class Functions:

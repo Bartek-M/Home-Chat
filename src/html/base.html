@@ -31,11 +31,13 @@
         <!-- FLASH A TEMP MESSAGE -->
         {% with messages = get_flashed_messages(with_categories=true) %} 
             {% if messages %} 
-                {% for category, message in messages %}
-                    <div class="flash-box" id="flash-{{ category }}">
-                        <p class="flash-text">{{message}}</p>
-                    </div>
-                {% endfor %} 
+                <div class="flash-box">
+                    {% for category, message in messages %}
+                        <div class="flash-message" id="flash-{{ category }}">
+                            <p class="flash-text">{{message}}</p>
+                        </div>
+                    {% endfor %} 
+                </div>
             {% endif %} 
         {% endwith %}
 

@@ -8,7 +8,7 @@ kwargs = {"theme": True}
 
 
 # PAGES
-@view.route("/")
+@view.route("/", methods=["POST", "GET"])
 @view.route("/home", methods=["POST", "GET"])
 def home():
     if "user" not in session:
@@ -16,7 +16,7 @@ def home():
         return redirect(url_for("views.log_in"))
 
     usr = session.get("user")
-    return render_template("index.html", text=f"Hello {usr.get('name')}!", kwargs=kwargs)
+    return render_template("index.html", text=f"{usr.get('name')}!", kwargs=kwargs)
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -30,6 +30,7 @@ def log_in():
 
         user = db.get_user(request.form.get("email"))
         hashed_passw = Functions.hash_passwd(request.form.get("passwd"))
+        db.close()
 
         if not user or hashed_passw != user.password:
             flash("Invalid email or password!", "error")
@@ -55,6 +56,7 @@ def register():
 
         db = Database()
         db.insert_entry(USER_TABLE, User(Functions.create_id(current_time), name, email, Functions.hash_passwd(passwd), Functions.convert_time(current_time)))
+        db.close()
 
         flash("You have created an account!", "info")
         return redirect(url_for("views.log_in"))
