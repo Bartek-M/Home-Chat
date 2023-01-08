@@ -1,17 +1,7 @@
 /* VARIABLES FOR LIGHT THEME */
 :root {
     --BACKGROUND_COLOR: #FFFFFF;
-    --BACKGROUND_COLOR_2: #0F1626;
-    --BACKGROUND_COLOR_3: #242535;
-    
-    --FONT_COLOR: #FFFFFF;
     --FONT_RV_COLOR: #000000;
+    --FONT_DIM_COLOR: #7a7a7a;
     --BORDER_COLOR: #d3d3d3;
-
-    --BLUE: #008eb9;
-    --GREEN: rgb(0, 192, 61);
-    --DIM_GREEN: rgb(0, 138, 44);
-
-    --FLASH_INFO: rgba(0, 192, 61, 0.94);
-    --FLASH_ERROR: rgba(192, 0, 61, 0.94);
 }

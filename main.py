@@ -14,7 +14,7 @@ app.register_blueprint(view, url_prefix="/")
 # not found
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("not_found.html", kwargs={"theme": True}), 404
+    return render_template("not_found.html", theme=1), 404
 
 
 if __name__ == "__main__":

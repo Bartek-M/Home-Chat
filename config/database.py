@@ -35,7 +35,7 @@ class Database:
             f"{MESSAGE_TABLE} (id INTEGER UNIQUE, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
             f"{CHANNEL_TABLE} (id INTEGER UNIQUE, name TEXT, create_time TEXT, group_server INTEGER)",
             f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, channel_index INTEGER)",
-            f"{USER_SETTING_TABLE} (id INTEGER, dark_mode INEGER, auth TEXT)"
+            f"{USER_SETTING_TABLE} (id INTEGER, theme INEGER, auth TEXT)"
         ]
 
         for query in queries:  

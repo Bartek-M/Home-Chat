@@ -1,17 +1,7 @@
 /* VARIABLES FOR DARK THEME */
 :root {
     --BACKGROUND_COLOR: #000000;
-    --BACKGROUND_COLOR_2: #0F1626;
-    --BACKGROUND_COLOR_3: #242535;
-    
-    --FONT_COLOR: #FFFFFF;
     --FONT_RV_COLOR: #FFFFFF;
+    --FONT_DIM_COLOR: #8b8b8b;
     --BORDER_COLOR: #1d1d1d;
-
-    --BLUE: #008eb9;
-    --GREEN: rgb(0, 192, 61);
-    --DIM_GREEN: rgb(0, 138, 44);
-
-    --FLASH_INFO: rgba(0, 192, 61, 0.94);
-    --FLASH_ERROR: rgba(192, 0, 61, 0.94);
 }

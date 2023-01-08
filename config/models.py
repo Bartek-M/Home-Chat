@@ -77,14 +77,14 @@ class UserSettings:
     """
     Representation of user settings
     """
-    def __init__(self, user_id, dark_mode, auth):
+    def __init__(self, user_id, theme=None, auth=None):
         self.user_id = user_id
-        self.dark_mode = dark_mode
-        self.auth = auth
+        self.theme = theme if theme else 0
+        self.auth = auth if auth else False
 
     def __repr__(self):
         """
         Representation
-        :return: (user_id, dark_mode, 'auth')
+        :return: (user_id, theme, 'auth')
         """
-        return f"({self.user_id}, {self.dark_mode}, '{self.auth}')"
+        return f"({self.user_id}, {self.theme}, '{self.auth}')"
