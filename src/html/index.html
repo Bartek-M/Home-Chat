@@ -1,5 +1,7 @@
 {% extends "base.html" %} 
 
+{% block settings %}<button class="top-dropdown-item" id="open-settings">Settings</button>{% endblock %}
+
 {% block content %}
 <div class="home-page">
     <!-- CHANNELS -->
@@ -9,17 +11,28 @@
 
     <!-- CURRENT CHANNEL -->
     <div class="channel-view">
-        <div class="nochannel-view">
+        <!-- <div class="nochannel-view">
             <h1 class="nochannel-text">Open any channel and start chatting</h1>
-        </div>
-        <!-- <div class="channel-info">
+        </div> -->
+        <div class="channel-info">
             Testing channel
             {{text}}
         </div>
-        <div class="writing-box">
-            <input id="message-inpt" type="text" name="message" placeholder="Start messaging:"/>
+        <div class="messages-box" id="messages-win">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message">
+                        <div class="message-author">{{ Database.get_entry("users", message.user_id).name }}</div>
+                        <div class="message-content">{{ message.content }}</div>
+                        <div class="message-data">{{ message.create_time }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="writing-box" id="message-form">
+            <input id="message-inpt" type="text" name="message" autocomplete="off" placeholder="Start messaging:"/>
             <input id="message-send" type="submit" value="SEND"/>
-        </div> -->
+        </div>
     </div>
 </div>
 
@@ -32,4 +45,13 @@
         </svg>
     </button>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    var user_id = "{{ user_id }}"
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script charset="utf-8" src="{{ url_for('static', filename='js/chat.js') }}"></script>
 {% endblock %}

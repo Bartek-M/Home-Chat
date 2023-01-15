@@ -50,6 +50,7 @@ class Database:
         :param req_id: ID of entry you want to get
         :return: Desired config object or None
         """
+        print(table, req_id)
         self.cursor.execute(f"SELECT * FROM {table} WHERE id={req_id}")
 
         if fetched := self.cursor.fetchone():
@@ -93,6 +94,19 @@ class Database:
 
         if fetched := self.cursor.fetchall():
             return [Message(*entry) for entry in sorted(fetched, key=lambda x: x[4])]
+
+        return None
+
+    def get_all(self, table):
+        """
+        Get all entries in specific table
+        :param table: Table you want to check
+        :return: List data or None
+        """
+        self.cursor.execute(f"SELECT * FROM {table}")
+
+        if fetched := self.cursor.fetchall():
+            return fetched
 
         return None
 

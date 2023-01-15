@@ -1,4 +1,4 @@
-console.log("Hello World!")
+console.log("Hello from backend :)")
 
 // GLOBAL ELEMENTS
 const ovelay = document.getElementById("overlay") // Overlay
@@ -32,7 +32,9 @@ function overlay_close() {
 top_btn.addEventListener("click", () => { overlay_open(top_menu); });
 top_close.addEventListener("click", () => { overlay_close() });
 
-open_settings.addEventListener("click", () => { overlay_open(settings) })
-close_settings.addEventListener("click", () => { overlay_close() })
+if (open_settings || close_settings) {
+    open_settings.addEventListener("click", () => { overlay_open(settings) })
+    close_settings.addEventListener("click", () => { overlay_close() })
+}
 
 ovelay.addEventListener("click", () => { overlay_close() })

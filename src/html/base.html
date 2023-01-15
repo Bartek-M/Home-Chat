@@ -31,7 +31,7 @@
                             </button>
                         </div>
                         <button class="top-dropdown-item"><a href="/">Home</a></button>
-                        <button class="top-dropdown-item" id="open-settings">Settings</button>
+                        {% block settings %} {% endblock %}
                         <button class="top-dropdown-item"><a href="about">About</a></button>
                     </div>
                     <div class="top-dropdown-content">
@@ -64,7 +64,8 @@
         <div id="overlay"></div> 
         
         <!-- JAVASCRIPT -->
-        <script src="{{ url_for('static', filename='index.js') }}"></script>   
+        <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+        {% block javascript %} {% endblock %}
 
         <!-- REMOVE 'CONFIRM FORM RESUBMISSION' MESSAGE -->
         <script>

@@ -14,10 +14,18 @@ def home():
         flash("You are not logged in!", "error")
         return redirect(url_for("views.log_in"))
 
+    db = Database()
     usr = session.get("user")
     settings = session.get("settings")
 
-    return render_template("index.html", text=f"{usr.get('name')}!", theme=settings.get("theme"))
+    # if request.method == "POST":
+    #     if msg := request.form.get("message"):
+    #         time_now = time.time()
+    #         db.insert_entry(MESSAGE_TABLE, Message(Functions.create_id(time_now), usr.get("user_id"), 1234, msg, Functions.convert_time(time_now)))
+
+    messages = db.get_channel_messages(1234) 
+
+    return render_template("index.html", text=f"{usr.get('name')}!", user_id=usr.get("user_id"), theme=settings.get("theme"), messages=messages, Database=db)
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -80,3 +88,14 @@ def log_out():
 
 
 # GENERAL FUNCTIONS
+@view.route("/database")
+def database():
+    tables = [USER_TABLE, MESSAGE_TABLE, CHANNEL_TABLE, USER_CHANNEL_TABLE, USER_SETTING_TABLE]
+    db = Database()
+
+    for table in tables:
+        print(f"{table}:\n{db.get_all(table)}\n")
+
+    db.close()
+
+    return redirect(url_for("views.home"))
