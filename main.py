@@ -21,10 +21,13 @@ def handle(data):
     user_id, content = data.values()
 
     db = Database()
-    user_name = db.get_entry(USER_TABLE, user_id).name
+    user = db.get_entry(USER_TABLE, user_id)
     current_time = time.time()
 
-    socketio.emit("message response", {"author_name": user_name, "content": content, "time": Functions.convert_time(current_time)})
+    message_id = 1234
+    channel_id = 1234
+
+    socketio.emit("message response", {"author_name": user.name, "user_id": user.user_id, "message_id": message_id, "channel_id": channel_id, "content": content, "time": Functions.convert_time(current_time)})
 
 @socketio.on("connecting")
 def handle(user_id):

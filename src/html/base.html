@@ -1,79 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Home Chat</title>
+<head>
+    <title>Home Chat</title>
 
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/dark_vars.css') if theme else url_for('static', filename='css/light_vars.css')}}" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
-        <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icon.ico') }}" />
-    </head>
-    <body>
-        <!-- TOPBAR -->
-        <div class="top-bar">
-            <h1 class="top-bar-text"><a href="/">Home Chat</a></h1>
-            <div class="top-bar-menu">
-                <button id="top-dropdown-btn">
-                    <svg class="icons" width="32" height="32" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-                    </svg>
-                </button>
-                <div id="top-dropdown-menu">
-                    <div class="top-dropdown-content">
-                        <div class="top-dropdown-close">
-                            <button id="top-menu-close">
-                                <svg class="icons" width="16" height="16" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <button class="top-dropdown-item"><a href="/">Home</a></button>
-                        {% block settings %} {% endblock %}
-                        <button class="top-dropdown-item"><a href="about">About</a></button>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark_vars.css') if theme else url_for('static', filename='css/light_vars.css')}}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+    <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icon.ico') }}" />
+</head>
+<body>
+    <!-- TOPBAR -->
+    <div class="top-bar">
+        <h1 class="top-bar-text"><a href="/">Home Chat</a></h1>
+        <div class="top-bar-menu">
+            <button id="top-dropdown-btn">
+                <svg class="icons" width="32" height="32" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </button>
+            <div id="top-dropdown-menu">
+                <div class="top-dropdown-content">
+                    <div class="top-dropdown-close">
+                        <button id="top-menu-close">
+                            <svg class="icons" width="16" height="16" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="top-dropdown-content">
-                        <hr style="width:100%">
-                        <button class="top-dropdown-item"><a href="register">Register</a></button>
-                        <button class="top-dropdown-item"><a href="login">Log In</a></button>
-                        <button class="top-dropdown-item"><a href="logout">Log Out</a></button>
-                    </div>
+                    <button class="top-dropdown-item"><a href="/">Home</a></button>
+                    {% block settings %} {% endblock %}
+                    <button class="top-dropdown-item"><a href="about">About</a></button>
+                </div>
+                <div class="top-dropdown-content">
+                    <hr style="width:100%">
+                    <button class="top-dropdown-item"><a href="register">Register</a></button>
+                    <button class="top-dropdown-item"><a href="login">Log In</a></button>
+                    <button class="top-dropdown-item"><a href="logout">Log Out</a></button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- FLASH A TEMP MESSAGE -->
-        {% with messages = get_flashed_messages(with_categories=true) %} 
-            {% if messages %} 
-                <div class="flash-box">
-                    {% for category, message in messages %}
-                        <div class="flash-message" id="flash-{{ category }}">
-                            <p class="flash-text">{{message}}</p>
-                        </div>
-                    {% endfor %} 
-                </div>
-            {% endif %} 
-        {% endwith %}
+    <!-- FLASH A TEMP MESSAGE -->
+    {% with messages = get_flashed_messages(with_categories=true) %} 
+        {% if messages %} 
+            <div class="flash-box">
+                {% for category, message in messages %}
+                    <div class="flash-message" id="flash-{{ category }}">
+                        <p class="flash-text">{{message}}</p>
+                    </div>
+                {% endfor %} 
+            </div>
+        {% endif %} 
+    {% endwith %}
 
-        <!-- CUSTOM PAGE CONTENT -->
-        {% block content %} {% endblock %}
-        
-        <!-- PAGE OVERLAY -->
-        <div id="overlay"></div> 
-        
-        <!-- JAVASCRIPT -->
-        <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-        {% block javascript %} {% endblock %}
+    <!-- CUSTOM PAGE CONTENT -->
+    {% block content %} {% endblock %}
+    
+    <!-- PAGE OVERLAY -->
+    <div id="overlay"></div> 
+    
+    <!-- JAVASCRIPT -->
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    {% block javascript %} {% endblock %}
 
-        <!-- REMOVE 'CONFIRM FORM RESUBMISSION' MESSAGE -->
-        <script>
-            document.addEventListener('touchstart', function() {});
+    <!-- REMOVE 'CONFIRM FORM RESUBMISSION' MESSAGE -->
+    <script>
+        document.addEventListener('touchstart', function() {});
 
-            if (window.history.replaceState) {
-                window.history.replaceState(null, null, window.location.href)
-            }
-        </script>
-    </body>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href)
+        }
+    </script>
+</body>
 </html>

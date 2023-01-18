@@ -79,7 +79,7 @@ class UserSettings:
     """
     def __init__(self, user_id, theme=None, auth=None):
         self.user_id = user_id
-        self.theme = theme if theme else 0
+        self.theme = theme if theme else 1
         self.auth = auth if auth else False
 
     def __repr__(self):

@@ -18,17 +18,7 @@
             Testing channel
             {{text}}
         </div>
-        <div class="messages-box" id="messages-win">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="message">
-                        <div class="message-author">{{ Database.get_entry("users", message.user_id).name }}</div>
-                        <div class="message-content">{{ message.content }}</div>
-                        <div class="message-data">{{ message.create_time }}</div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
+        <div class="messages-box" id="messages-win"></div>
         <div class="writing-box" id="message-form">
             <input id="message-inpt" type="text" name="message" autocomplete="off" placeholder="Start messaging:"/>
             <input id="message-send" type="submit" value="SEND"/>

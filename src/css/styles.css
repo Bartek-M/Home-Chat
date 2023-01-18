@@ -1,7 +1,7 @@
 /* GENERAL STUFF */
 :root {
-    --BACKGROUND_COLOR_2: #0F1626;
-    --BACKGROUND_COLOR_3: #242535;
+    --BACKGROUND_COLOR_2: #0d1117;
+    --BACKGROUND_COLOR_3: #161b22;
     --FONT_COLOR: #FFFFFF;
 
     --BLUE: #008eb9;
@@ -25,7 +25,6 @@ body {
     height: 100%;
     margin: 0;
     overflow: hidden;
-    position: fixed;
 }
 
 
@@ -108,8 +107,9 @@ a { color: var(--FONT_COLOR); text-decoration: none; }
 .home-page {
     display: flex;
     width: 100%;
-    height: calc(100% - 53px - 1rem);
+    height: calc(100% - 53px);
 }
+
 
 /* CHANNEL LIST */
 .channel-list {
@@ -117,14 +117,15 @@ a { color: var(--FONT_COLOR); text-decoration: none; }
     height: 100%;
 }
 
+
 /* CHANNEL VIEW */
+/* channel info */
 .channel-view {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
     height: 100%;
-    padding: 0.5rem;
     border-left: 1px solid var(--BORDER_COLOR);
 }
 
@@ -148,26 +149,50 @@ a { color: var(--FONT_COLOR); text-decoration: none; }
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 0.5rem;
     padding: 0.5rem;
     height: 38px;
     border-radius: 5px;
     border-color: transparent;
     background-color: var(--BACKGROUND_COLOR_3);
     color: var(--FONT_COLOR)
-}
+}   
 
+/* messages */
 .messages-box {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%;
+    height: 95%;
     padding: 1rem;
     gap: 1rem;
+    overflow-y: scroll;
 }
 
+.messages-box::-webkit-scrollbar { width: 10px }
+.messages-box::-webkit-scrollbar-track { background: transparent }
+.messages-box::-webkit-scrollbar-thumb { background-color: var(--BACKGROUND_COLOR_2); border-radius: 20px; border-color: transparent }
+
+.message-info {
+    font-size: 11px;
+    color: var(--FONT_DIM_COLOR);
+}
+
+.message-content {
+    background-color: var(--BACKGROUND_COLOR_3);
+    color: var(--FONT_COLOR);
+    border-radius: 5px;
+    border-color: transparent;
+    width: max-content;
+    padding: 8px 12px;
+    font-size: 15px;
+    line-height: 20px;
+}
+
+/* sending messages */
 .writing-box {
     display: flex;
     align-items: center;
+    margin: 0.5rem;
     gap: 0.5rem;
 }
 

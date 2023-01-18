@@ -50,7 +50,6 @@ class Database:
         :param req_id: ID of entry you want to get
         :return: Desired config object or None
         """
-        print(table, req_id)
         self.cursor.execute(f"SELECT * FROM {table} WHERE id={req_id}")
 
         if fetched := self.cursor.fetchone():

@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, redirect, url_for, request, sessio
 from config.database import *
 import time
 
-
 view = Blueprint(__name__, "view") # Define views
 
 
@@ -14,18 +13,10 @@ def home():
         flash("You are not logged in!", "error")
         return redirect(url_for("views.log_in"))
 
-    db = Database()
     usr = session.get("user")
     settings = session.get("settings")
 
-    # if request.method == "POST":
-    #     if msg := request.form.get("message"):
-    #         time_now = time.time()
-    #         db.insert_entry(MESSAGE_TABLE, Message(Functions.create_id(time_now), usr.get("user_id"), 1234, msg, Functions.convert_time(time_now)))
-
-    messages = db.get_channel_messages(1234) 
-
-    return render_template("index.html", text=f"{usr.get('name')}!", user_id=usr.get("user_id"), theme=settings.get("theme"), messages=messages, Database=db)
+    return render_template("index.html", text=f"{usr.get('name')}!", user_id=usr.get("user_id"), theme=settings.get("theme"))
 
 
 @view.route("/login", methods=["POST", "GET"])
