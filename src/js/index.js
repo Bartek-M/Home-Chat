@@ -38,3 +38,11 @@ if (open_settings || close_settings) {
 }
 
 ovelay.addEventListener("click", () => { overlay_close() })
+
+
+// GLOBAL FUNCTIONS
+
+// Convert EPOCH time to local
+function time(epoch) {
+
+}

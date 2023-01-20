@@ -5,9 +5,9 @@
 {% block content %}
 <div class="home-page">
     <!-- CHANNELS -->
-    <div class="channel-list">
+    <nav class="channel-list">
 
-    </div>
+    </nav>
 
     <!-- CURRENT CHANNEL -->
     <div class="channel-view">
@@ -18,9 +18,9 @@
             Testing channel
             {{text}}
         </div>
-        <div class="messages-box" id="messages-win"></div>
+        <div class="messages-win" id="messages-window-box"></div>
         <div class="writing-box" id="message-form">
-            <input id="message-inpt" type="text" name="message" autocomplete="off" placeholder="Start messaging:"/>
+            <span id="message-inpt" contenteditable></span>
             <input id="message-send" type="submit" value="SEND"/>
         </div>
     </div>

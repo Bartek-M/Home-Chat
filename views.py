@@ -29,14 +29,17 @@ def log_in():
         db = Database()
 
         user = db.get_user(request.form.get("email"))
-        hashed_passw = Functions.hash_passwd(request.form.get("passwd"))
+        settings = db.get_entry(USER_SETTING_TABLE, user.user_id)
 
-        if not user or hashed_passw != user.password:
+        usr_passw = settings.password
+        hashed_passw = Functions.hash_passwd(request.form.get("passwd"), usr_passw.split("$")[0])
+
+        if not user or hashed_passw != usr_passw:
             flash("Invalid email or password!", "error")
             return render_template("login.html", theme=1)
 
         session["user"] = user.__dict__
-        session["settings"] = db.get_entry(USER_SETTING_TABLE, user.user_id).__dict__
+        session["settings"] = settings.__dict__
         db.close()
 
         flash("You have been logged in!", "info")
@@ -58,8 +61,8 @@ def register():
         passwd = request.form.get("passwd")
 
         db = Database()
-        db.insert_entry(USER_TABLE, User(id, name, email, Functions.hash_passwd(passwd), Functions.convert_time(current_time)))
-        db.insert_entry(USER_SETTING_TABLE, UserSettings(id))
+        db.insert_entry(USER_TABLE, User(id, name, email, current_time))
+        db.insert_entry(USER_SETTING_TABLE, UserSettings(id, Functions.hash_passwd(passwd)))
         db.close()
 
         flash("You have created an account!", "info")

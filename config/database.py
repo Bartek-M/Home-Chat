@@ -1,7 +1,7 @@
 import sqlite3
 import hashlib
+import secrets
 import random
-import time
 from .models import User, Message, Channel, UserChannel, UserSettings
 
 # GLOBAL VARIABLES
@@ -31,11 +31,11 @@ class Database:
         :return: None
         """
         queries = [ 
-            f"{USER_TABLE} (id INTEGER UNIQUE, name TEXT, email TEXT UNIQUE, password TEXT, create_time TEXT)",
+            f"{USER_TABLE} (id INTEGER UNIQUE, name TEXT, email TEXT UNIQUE, create_time TEXT)",
             f"{MESSAGE_TABLE} (id INTEGER UNIQUE, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
-            f"{CHANNEL_TABLE} (id INTEGER UNIQUE, name TEXT, create_time TEXT, group_server INTEGER)",
-            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, join_time TEXT, channel_index INTEGER)",
-            f"{USER_SETTING_TABLE} (id INTEGER, theme INEGER, auth TEXT)"
+            f"{CHANNEL_TABLE} (id INTEGER UNIQUE, name TEXT, create_time TEXT, group_name TEXT)",
+            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER)",
+            f"{USER_SETTING_TABLE} (id INTEGER, password TEXT, theme INEGER, auth TEXT)"
         ]
 
         for query in queries:  
@@ -96,19 +96,6 @@ class Database:
 
         return None
 
-    def get_all(self, table):
-        """
-        Get all entries in specific table
-        :param table: Table you want to check
-        :return: List data or None
-        """
-        self.cursor.execute(f"SELECT * FROM {table}")
-
-        if fetched := self.cursor.fetchall():
-            return fetched
-
-        return None
-
     def insert_entry(self, table, entry):
         """
         Insert entry into specific table
@@ -148,6 +135,24 @@ class Database:
         self.conn.close()
 
 
+    # TEMP FUNCTION
+    def get_all(self, table):
+        """
+        TEMP FUNC
+
+        Get all entries in specific table
+        :param table: Table you want to check
+        :return: List data or None
+        """
+        self.cursor.execute(f"SELECT * FROM {table}")
+
+        if fetched := self.cursor.fetchall():
+            return fetched
+
+        return None
+    # TEMP FUNCTION
+
+
 class Functions:
     @staticmethod
     def create_id(creation_time):
@@ -156,22 +161,14 @@ class Functions:
         :param creation_time: Epoch creation time
         :return: Creation time(int)
         """
-        return int(str(round(creation_time)) + ''.join([str(random.randint(0, 9)) for _ in range(6)]))
+        return (int((creation_time - 1155909600) * 1000) << 23) + random.SystemRandom().getrandbits(22)
 
     @staticmethod
-    def convert_time(creation_time):
-        """
-        Convert time from epoch to normal data
-        :param creation_time: Epoch creation time
-        :return: Converted time (str)
-        """
-        return str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(creation_time)))
-
-    @staticmethod
-    def hash_passwd(passw):
+    def hash_passwd(passw, salt=secrets.token_hex(16)):
         """
         Hash user password
         :param passw: User password
-        :return: Hashed password (str)
+        :param salt: Salt for additional encryption
+        :return: Secured password (str)
         """
-        return str(hashlib.sha256(str(passw).strip().encode()).hexdigest())
+        return f"{salt}${hashlib.sha256((salt + passw).encode()).hexdigest()}"

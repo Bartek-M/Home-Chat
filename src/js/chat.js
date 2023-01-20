@@ -4,19 +4,27 @@ socket.on("connect", () => { socket.emit("connecting", user_id) })
 
 
 // Update messages
-socket.on("message response", (data) => {
-    var { author_name, user_id, message_id, channel_id, content, time } = data
-    var content = 
-        `<div class="message-list-item" id="chat-message-${channel_id}-${message_id}>">` +
-            '<div class="message-info">' +
-                `${author_name} • ${time}` +
-            '</div>' +
-            '<div class="message-content">' +
-                `${content}` +
-            '</div>' +
-        '</div>'
+socket.on("message recive", (data) => {
+    var { id, channel_id, author, content, time} = data
+    var content =
+        `<li class="message-list-item" id="chat-message-${channel_id}-${id}>">` +
 
-    document.getElementById("messages-win").innerHTML += content
+        '<div class="message-author-icon">' +
+        `<img src="https://avatarfiles.alphacoders.com/168/168291.png"/>` +
+        '</div>' +
+
+        '<div class="message-content">' +
+        '<div class="message-info">' +
+        `<p class="message-author">${author.name}</p><p class="message-time">${time}<p>` +
+        '</div>' +
+
+        '<div class="message-text">' +
+        `${content}` +
+        '</div>' +
+        '</div>' +
+        '</li>'
+
+    document.getElementById("messages-window-box").innerHTML += content
 })
 
 
@@ -28,10 +36,10 @@ send_btn.addEventListener("click", () => { send() })
 message_inpt.addEventListener("keyup", (e) => { if (e.key === "Enter" || e.keyCode === 13) { send() } })
 
 function send() {
-    let text = message_inpt.value
+    let text = message_inpt.innerText
 
     if (text.length) {
         socket.emit("message send", { user_id: user_id, content: text })
-        message_inpt.value = ""
+        message_inpt.innerText = ""
     }
 }
