@@ -25,50 +25,51 @@ def log_in():
         flash("You are already logged in!", "info")
         return redirect(url_for("views.home"))
 
-    if request.method == "POST":
-        db = Database()
+    if request.method != "POST":
+        return render_template("login.html", theme=1)
 
-        user = db.get_user(request.form.get("email"))
+    db = Database()
+
+    if user := db.get_user(request.form.get("email")):
         settings = db.get_entry(USER_SETTING_TABLE, user.user_id)
 
-        usr_passw = settings.password
-        hashed_passw = Functions.hash_passwd(request.form.get("passwd"), usr_passw.split("$")[0])
+        if Functions.hash_passwd(request.form.get("passwd"), settings.password.split("$")[0]) == settings.password:
+            session["user"] = user.__dict__
+            session["settings"] = settings.__dict__
+            db.close()
 
-        if not user or hashed_passw != usr_passw:
-            flash("Invalid email or password!", "error")
-            return render_template("login.html", theme=1)
+            flash("You have been logged in!", "info")
+            return redirect(url_for("views.home"))
 
-        session["user"] = user.__dict__
-        session["settings"] = settings.__dict__
-        db.close()
-
-        flash("You have been logged in!", "info")
-        return redirect(url_for("views.home"))
-            
+    flash("Invalid email or password!", "error")
     return render_template("login.html", theme=1)
-
-
+            
+    
 @view.route("/register", methods=["POST", "GET"])
 def register():
-    if request.method == "POST":
-        if "user" in session:
-            session.pop("user", None)
-        
-        current_time = time.time() 
-        id = Functions.create_id(current_time)
-        name = request.form.get("usrname")
-        email = request.form.get("email")
-        passwd = request.form.get("passwd")
+    if request.method != "POST":
+        return render_template("register.html", theme=1)
+    
+    if "user" in session:
+        session.pop("user", None)  
 
-        db = Database()
-        db.insert_entry(USER_TABLE, User(id, name, email, current_time))
-        db.insert_entry(USER_SETTING_TABLE, UserSettings(id, Functions.hash_passwd(passwd)))
-        db.close()
+    db = Database()
 
-        flash("You have created an account!", "info")
-        return redirect(url_for("views.log_in"))
+    if db.get_user(email := request.form.get("email")):
+        flash("Email is already registered!", "error")
+        return render_template("register.html", theme=1)
 
-    return render_template("register.html", theme=1)
+    current_time = time.time() 
+    id = Functions.create_id(current_time)
+    name = request.form.get("usrname")
+    passwd = request.form.get("passwd")
+
+    db.insert_entry(USER_TABLE, User(id, name, email, current_time))
+    db.insert_entry(USER_SETTING_TABLE, UserSettings(id, Functions.hash_passwd(passwd)))
+    db.close()
+
+    flash("You have created an account!", "info")
+    return redirect(url_for("views.log_in"))
 
 
 @view.route("/logout")

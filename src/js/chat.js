@@ -1,30 +1,37 @@
 // Connect
 var socket = io()
-socket.on("connect", () => { socket.emit("connecting", user_id) })
 
 
 // Update messages
+var messages = {}
+
 socket.on("message recive", (data) => {
-    var { id, channel_id, author, content, time} = data
-    var content =
-        `<li class="message-list-item" id="chat-message-${channel_id}-${id}>">` +
+    var { id, channel_id, author, content, time } = data
 
-        '<div class="message-author-icon">' +
-        `<img src="https://avatarfiles.alphacoders.com/168/168291.png"/>` +
-        '</div>' +
+    var repeat = false
+    if (messages[channel_id]) { if (messages[channel_id][0] == author.user_id) { repeat = true } }
 
-        '<div class="message-content">' +
-        '<div class="message-info">' +
-        `<p class="message-author">${author.name}</p><p class="message-time">${time}<p>` +
-        '</div>' +
+    if (!repeat) {
+        var content =
+            `<li class="message-list-item" id="chat-messages-${channel_id}-${id}>">` +
+            `<img class="avatar" src="https://avatarfiles.alphacoders.com/168/168291.png"/>` +
+            '<div class="message-content">' +
+            `<div class="message-info"><p class="message-author">${author.name}</p><p class="message-time">${time}<p></div>` +
+            `<div class="message-text">${content}</div>` +
+            '</div></li>'
+    } else {
+        var content =
+            `<li class="message-list-item repeated-message-list-item" id="chat-messages-${channel_id}-${id}>">` +
+            `<div class="message-hidden-time">${time}</div>` +
+            '<div class="message-content">' +
+            `<div class="message-text">${content}</div>` + 
+            '</div></li>'
+    }
 
-        '<div class="message-text">' +
-        `${content}` +
-        '</div>' +
-        '</div>' +
-        '</li>'
-
-    document.getElementById("messages-window-box").innerHTML += content
+    document.getElementById("messages-list").innerHTML += content
+    smooth_scroll("chat-window")
+    
+    messages[channel_id] = [author.user_id, time]
 })
 
 
@@ -33,13 +40,12 @@ const send_btn = document.getElementById("message-send")
 const message_inpt = document.getElementById("message-inpt")
 
 send_btn.addEventListener("click", () => { send() })
-message_inpt.addEventListener("keyup", (e) => { if (e.key === "Enter" || e.keyCode === 13) { send() } })
+message_inpt.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" & !e.shiftKey) { send(); e.preventDefault() }
+})
 
 function send() {
-    let text = message_inpt.innerText
-
-    if (text.length) {
-        socket.emit("message send", { user_id: user_id, content: text })
-        message_inpt.innerText = ""
-    }
+    let text = message_inpt.innerText.trim()
+    if (text.length) { socket.emit("message send", { user_id: user_id, content: text }) }
+    message_inpt.innerText = ""
 }

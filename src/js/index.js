@@ -43,6 +43,12 @@ ovelay.addEventListener("click", () => { overlay_close() })
 // GLOBAL FUNCTIONS
 
 // Convert EPOCH time to local
-function time(epoch) {
+function format_time(time, format) {
 
+}
+
+// Smooth scroll
+function smooth_scroll(id) {
+    var div = document.getElementById(id)
+    div.scrollBy(0, div.scrollHeight - div.clientHeight)
 }

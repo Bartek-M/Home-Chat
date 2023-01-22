@@ -22,23 +22,27 @@ def handle(data):
 
     db = Database()
     user = db.get_entry(USER_TABLE, user_id).__dict__
-    current_time = datetime.utcnow().isoformat()
+    current_time = datetime.utcnow().strftime("%H:%M")
     
     message_id = 1234
     channel_id = 1234
 
     socketio.emit("message recive", {"id": message_id, "channel_id": channel_id, "author": user, "content": content, "time": current_time})
 
-@socketio.on("connecting")
-def handle(user_id):
-    print(f"[CONNECTION] {user_id}")
+@socketio.on("connect")
+def handle():
+    print("connect")
+
+@socketio.on("disconnect")
+def handle():
+    print("diconnect")
 
 
 # not found
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found(_):
     return render_template("not_found.html", theme=1), 404
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=False, host=ADDR, port=PORT)
+    socketio.run(app, debug=True, host=ADDR, port=PORT)

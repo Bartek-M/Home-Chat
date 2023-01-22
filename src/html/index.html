@@ -15,10 +15,12 @@
             <h1 class="nochannel-text">Open any channel and start chatting</h1>
         </div> -->
         <div class="channel-info">
-            Testing channel
-            {{text}}
+            Testing channel {{text}}
         </div>
-        <div class="messages-win" id="messages-window-box"></div>
+        <div id="chat-window">
+            <div id="messages-list"></div>
+            <div class="scroller-spacer"></div>
+        </div>
         <div class="writing-box" id="message-form">
             <span id="message-inpt" contenteditable></span>
             <input id="message-send" type="submit" value="SEND"/>
