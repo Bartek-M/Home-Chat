@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO
 from config.database import *
 from views import view
-from datetime import datetime
+import time
 
 # GLOBAL VARIABLES
 ADDR = "127.0.0.1" # 192.168.0.194 | 127.0.0.1
@@ -22,7 +22,7 @@ def handle(data):
 
     db = Database()
     user = db.get_entry(USER_TABLE, user_id).__dict__
-    current_time = datetime.utcnow().strftime("%H:%M")
+    current_time = time.time()
     
     message_id = 1234
     channel_id = 1234

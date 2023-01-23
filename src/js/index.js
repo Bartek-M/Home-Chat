@@ -43,8 +43,11 @@ ovelay.addEventListener("click", () => { overlay_close() })
 // GLOBAL FUNCTIONS
 
 // Convert EPOCH time to local
-function format_time(time, format) {
+function format_time(time, format = "full") {
+    if (format == "full") { return new Date(time * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).replaceAll(",", "") }
+    if (format == "time") { return new Date(time * 1000).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) }
 
+    return undefined
 }
 
 // Smooth scroll

@@ -31,10 +31,10 @@ class Database:
         :return: None
         """
         queries = [ 
-            f"{USER_TABLE} (id INTEGER UNIQUE, name TEXT, email TEXT UNIQUE, create_time TEXT)",
-            f"{MESSAGE_TABLE} (id INTEGER UNIQUE, user_id INTEGER, channel_id INTEGER, content TEXT, create_time TEXT)",
-            f"{CHANNEL_TABLE} (id INTEGER UNIQUE, name TEXT, create_time TEXT, group_name TEXT)",
-            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER)",
+            f"{USER_TABLE} (id INTEGER UNIQUE, name TEXT, email TEXT UNIQUE, create_time REAL)",
+            f"{MESSAGE_TABLE} (id INTEGER UNIQUE, user_id INTEGER, channel_id INTEGER, content TEXT, create_time REAL)",
+            f"{CHANNEL_TABLE} (id INTEGER UNIQUE, name TEXT, create_time REAL)",
+            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, nick TEXT)",
             f"{USER_SETTING_TABLE} (id INTEGER, password TEXT, theme INEGER, auth TEXT)"
         ]
 

@@ -2,8 +2,8 @@ class User:
     """
     Representation of a user
     """
-    def __init__(self, user_id, name, email, create_time):
-        self.user_id = user_id
+    def __init__(self, id, name, email, create_time):
+        self.id = id
         self.name = name
         self.email = email
         self.create_time = create_time 
@@ -11,17 +11,17 @@ class User:
     def __repr__(self):
         """
         Representation
-        :return: (user_id, name, email, creation_time)
+        :return: (id, name, email, creation_time)
         """
-        return f"({self.user_id}, '{self.name}', '{self.email}', '{self.create_time}')"
+        return f"({self.id}, '{self.name}', '{self.email}', {self.create_time})"
 
 
 class Message:
     """
     Representation of a message
     """
-    def __init__(self, message_id, user_id, channel_id, content, create_time):
-        self.message_id = message_id
+    def __init__(self, id, user_id, channel_id, content, create_time):
+        self.id = id
         self.user_id = user_id
         self.channel_id = channel_id
 
@@ -31,45 +31,43 @@ class Message:
     def __repr__(self):
         """
         Representation
-        :return: (message_id, user_id, channel_id, content, create_time)
+        :return: (id, user_id, channel_id, content, create_time)
         """
-        return f"({self.message_id}, {self.user_id}, {self.channel_id}, '{self.content}', '{self.create_time}')"
+        return f"({self.id}, {self.user_id}, {self.channel_id}, '{self.content}', {self.create_time})"
 
 
 class Channel:
     """
     Representation of a channel
     """
-    def __init__(self, channel_id, name, create_time, group_name=""):
-        self.channel_id = channel_id
+    def __init__(self, id, name, create_time):
+        self.id = id
         self.name = name
         self.create_time = create_time
-        self.group_name = group_name
 
     def __repr__(self):
         """
         Representation
-        :return: (channel_id, name, create_time, group_name)
+        :return: (id, name, create_time)
         """
-        return f"({self.channel_id}, '{self.name}', '{self.create_time}', {self.group_name})"
+        return f"({self.id}, '{self.name}', {self.create_time})"
 
 
 class UserChannel:
     """
     Representation of a user channels
     """
-    def __init__(self, user_id, channel_id, join_time, channel_index):
+    def __init__(self, user_id, channel_id, nick):
         self.user_id = user_id
         self.channel_id = channel_id
-        self.join_time = join_time
-        self.channel_index = channel_index
+        self.nick = nick
 
     def __repr__(self):
         """
         Representation
         :return: (user_id, name)
         """
-        return f"({self.user_id}, {self.channel_id})"
+        return f"({self.user_id}, {self.channel_id}, '{self.nick}')"
 
 
 class UserSettings:
@@ -85,6 +83,6 @@ class UserSettings:
     def __repr__(self):
         """
         Representation
-        :return: (user_id, 'password', theme, 'auth')
+        :return: (user_id, password, theme, auth)
         """
         return f"({self.user_id}, '{self.password}', {self.theme}, '{self.auth}')"

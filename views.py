@@ -16,7 +16,7 @@ def home():
     usr = session.get("user")
     settings = session.get("settings")
 
-    return render_template("index.html", text=f"{usr.get('name')}!", user_id=usr.get("user_id"), theme=settings.get("theme"))
+    return render_template("index.html", text=f"{usr.get('name')}!", user_id=usr.get("id"), theme=settings.get("theme"))
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -31,7 +31,7 @@ def log_in():
     db = Database()
 
     if user := db.get_user(request.form.get("email")):
-        settings = db.get_entry(USER_SETTING_TABLE, user.user_id)
+        settings = db.get_entry(USER_SETTING_TABLE, user.id)
 
         if Functions.hash_passwd(request.form.get("passwd"), settings.password.split("$")[0]) == settings.password:
             session["user"] = user.__dict__
@@ -61,11 +61,9 @@ def register():
 
     current_time = time.time() 
     id = Functions.create_id(current_time)
-    name = request.form.get("usrname")
-    passwd = request.form.get("passwd")
 
-    db.insert_entry(USER_TABLE, User(id, name, email, current_time))
-    db.insert_entry(USER_SETTING_TABLE, UserSettings(id, Functions.hash_passwd(passwd)))
+    db.insert_entry(USER_TABLE, User(id, request.form.get("usrname"), email, current_time))
+    db.insert_entry(USER_SETTING_TABLE, UserSettings(id, Functions.hash_passwd(request.form.get("passwd"))))
     db.close()
 
     flash("You have created an account!", "info")
