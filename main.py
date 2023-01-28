@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO
 from config.database import *
 from views import view
+from api import api
 import time
 
 # GLOBAL VARIABLES
@@ -10,9 +11,12 @@ PORT = 5000
 
 # INITIALIZE FLASK
 app = Flask(__name__, static_folder="src", template_folder="src/html")
+app.url_map.strict_slashes = False
 app.secret_key = 'jkuQ/jM"?L5Vh]071iE{P9ziv?7xQUeeA8rFZ9*{' # Secret key for session
-app.register_blueprint(view, url_prefix="/")
 socketio = SocketIO(app)
+
+app.register_blueprint(view, url_prefix="/")
+app.register_blueprint(api, url_prefix="/api")
 
 
 # Handle socketio server

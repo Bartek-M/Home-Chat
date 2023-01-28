@@ -6,24 +6,25 @@
 <div class="home-page">
     <!-- CHANNELS -->
     <nav class="channel-list">
-
+        <li class="channel-list-item">
+            <div class="channel-list-pill" id="channel-pill-1234"></div>
+            <button open-channel-btn id="channel-button-1234">
+                <img class="channel-list-icon" src="/api/photos/123456789.webp" />
+            </button>
+        </li>
+        <li class="channel-list-item">
+            <div class="channel-list-pill" id="channel-pill-4321"></div>
+            <button open-channel-btn id="channel-button-4321">
+                <img class="channel-list-icon" src="/api/photos/987654321.webp" />
+            </button>
+        </li>
     </nav>
 
     <!-- CURRENT CHANNEL -->
     <div class="channel-view">
-        <!-- <div class="nochannel-view">
+        <div class="nochannel-view">
+            <h2 id="not-found-error">404</h2>
             <h1 class="nochannel-text">Open any channel and start chatting</h1>
-        </div> -->
-        <div class="channel-info">
-            Testing channel {{text}}
-        </div>
-        <div id="chat-window">
-            <div id="messages-list"></div>
-            <div class="scroller-spacer"></div>
-        </div>
-        <div class="writing-box" id="message-form">
-            <span id="message-inpt" contenteditable></span>
-            <input id="message-send" type="submit" value="SEND"/>
         </div>
     </div>
 </div>
