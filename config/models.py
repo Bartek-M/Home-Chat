@@ -2,18 +2,18 @@ class User:
     """
     Representation of a user
     """
-    def __init__(self, id, name, email, create_time):
+    def __init__(self, id, name, avatar, create_time):
         self.id = id
         self.name = name
-        self.email = email
+        self.avatar = avatar
         self.create_time = create_time 
 
     def __repr__(self):
         """
         Representation
-        :return: (id, name, email, creation_time)
+        :return: (id, name, avatar, creation_time)
         """
-        return f"({self.id}, '{self.name}', '{self.email}', {self.create_time})"
+        return f"('{self.id}', '{self.name}', '{self.avatar}', '{self.create_time}')"
 
 
 class Message:
@@ -33,24 +33,26 @@ class Message:
         Representation
         :return: (id, user_id, channel_id, content, create_time)
         """
-        return f"({self.id}, {self.user_id}, {self.channel_id}, '{self.content}', {self.create_time})"
+        return f"('{self.id}', '{self.user_id}', '{self.channel_id}', '{self.content}', '{self.create_time}')"
 
 
 class Channel:
     """
     Representation of a channel
     """
-    def __init__(self, id, name, create_time):
+    def __init__(self, id, name, icon, create_time, direct=""):
         self.id = id
         self.name = name
+        self.icon = icon
         self.create_time = create_time
+        self.direct = direct
 
     def __repr__(self):
         """
         Representation
         :return: (id, name, create_time)
         """
-        return f"({self.id}, '{self.name}', {self.create_time})"
+        return f"('{self.id}', '{self.name}', '{self.icon}', '{self.create_time}', '{self.direct}')"
 
 
 class UserChannel:
@@ -67,15 +69,16 @@ class UserChannel:
         Representation
         :return: (user_id, name)
         """
-        return f"({self.user_id}, {self.channel_id}, '{self.nick}')"
+        return f"('{self.user_id}', '{self.channel_id}', '{self.nick}')"
 
 
 class UserSettings:
     """
     Representation of user settings
     """
-    def __init__(self, user_id, password, theme=None, auth=None):
-        self.user_id = user_id
+    def __init__(self, id, email, password, theme=None, auth=None):
+        self.id = id
+        self.email = email
         self.password = password
         self.theme = theme if theme else 1
         self.auth = auth if auth else False
@@ -83,6 +86,6 @@ class UserSettings:
     def __repr__(self):
         """
         Representation
-        :return: (user_id, password, theme, auth)
+        :return: (id, email, password, theme, auth)
         """
-        return f"({self.user_id}, '{self.password}', {self.theme}, '{self.auth}')"
+        return f"('{self.id}', '{self.email}', '{self.password}', '{self.theme}', '{self.auth}')"

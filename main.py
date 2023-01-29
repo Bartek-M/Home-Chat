@@ -22,16 +22,21 @@ app.register_blueprint(api, url_prefix="/api")
 # Handle socketio server
 @socketio.on("message send")
 def handle(data):
-    user_id, content = data.values()
+    user_id, channel_id, content = data.values()
+    current_time = time.time()
 
     db = Database()
     user = db.get_entry(USER_TABLE, user_id).__dict__
-    current_time = time.time()
-    
-    message_id = 1234
-    channel_id = 1234
 
-    socketio.emit("message recive", {"id": message_id, "channel_id": channel_id, "author": user, "content": content, "time": current_time})
+    if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+        channel = Channel(channel_id, "Test", "123456789", current_time)
+        db.insert_entry(CHANNEL_TABLE, channel)
+
+    message = Message(Functions.create_id(current_time), user["id"], channel.id, content, current_time)
+    db.insert_entry(MESSAGE_TABLE, message)
+    db.close()
+
+    socketio.emit("message recive", {"id": message.id, "channel_id": channel.id, "author": user, "content": message.content, "time": str(current_time)})
 
 @socketio.on("connect")
 def handle():

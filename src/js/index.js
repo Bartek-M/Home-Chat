@@ -44,6 +44,8 @@ ovelay.addEventListener("click", () => { overlay_close() })
 
 // Convert EPOCH time to local
 function format_time(time, format = "full") {
+    time = parseFloat(time)
+
     if (format == "full") { return new Date(time * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).replaceAll(",", "") }
     if (format == "time") { return new Date(time * 1000).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) }
 
@@ -54,4 +56,36 @@ function format_time(time, format = "full") {
 function smooth_scroll(id) {
     var div = document.getElementById(id)
     div.scrollBy(0, div.scrollHeight - div.clientHeight)
+}
+
+
+// Get channel messages
+async function get_messages(channel_id) {
+    return await fetch(`/api/channels/${channel_id}/messages`)
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
+
+
+// Get user channels
+async function get_user(user_id) {
+    return await fetch(`/api/users/${user_id}/channels`)
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
+
+
+// Get user
+async function get_user(user_id) {
+    return await fetch(`/api/users/${user_id}`)
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
+
+
+// Get channel
+async function get_user(channel_id) {
+    return await fetch(`/api/channels/${channel_id}`)
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
 }

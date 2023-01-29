@@ -30,8 +30,8 @@ def log_in():
 
     db = Database()
 
-    if user := db.get_user(request.form.get("email")):
-        settings = db.get_entry(USER_SETTING_TABLE, user.id)
+    if settings := db.get_user(request.form.get("email")):
+        user = db.get_entry(USER_TABLE, settings.id)
 
         if Functions.hash_passwd(request.form.get("passwd"), settings.password.split("$")[0]) == settings.password:
             session["user"] = user.__dict__
@@ -62,8 +62,8 @@ def register():
     current_time = time.time() 
     id = Functions.create_id(current_time)
 
-    db.insert_entry(USER_TABLE, User(id, request.form.get("usrname"), email, current_time))
-    db.insert_entry(USER_SETTING_TABLE, UserSettings(id, Functions.hash_passwd(request.form.get("passwd"))))
+    db.insert_entry(USER_TABLE, User(id, request.form.get("usrname"), "generic", current_time))
+    db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email, Functions.hash_passwd(request.form.get("passwd"))))
     db.close()
 
     flash("You have created an account!", "info")

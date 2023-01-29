@@ -31,11 +31,11 @@ class Database:
         :return: None
         """
         queries = [ 
-            f"{USER_TABLE} (id INTEGER UNIQUE, name TEXT, email TEXT UNIQUE, create_time REAL)",
-            f"{MESSAGE_TABLE} (id INTEGER UNIQUE, user_id INTEGER, channel_id INTEGER, content TEXT, create_time REAL)",
-            f"{CHANNEL_TABLE} (id INTEGER UNIQUE, name TEXT, create_time REAL)",
-            f"{USER_CHANNEL_TABLE} (id INTEGER, channel_id INTEGER, nick TEXT)",
-            f"{USER_SETTING_TABLE} (id INTEGER, password TEXT, theme INEGER, auth TEXT)"
+            f"{USER_TABLE} (id TEXT UNIQUE, name TEXT, avatar TEXT, create_time TEXT)",
+            f"{MESSAGE_TABLE} (id TEXT UNIQUE, user_id TEXT, channel_id TEXT, content TEXT, create_time TEXT)",
+            f"{CHANNEL_TABLE} (id TEXT UNIQUE, name TEXT, icon TEXT, create_time TEXT, direct TEXT)",
+            f"{USER_CHANNEL_TABLE} (id TEXT, channel_id TEXT UNIQUE, nick TEXT)",
+            f"{USER_SETTING_TABLE} (id TEXT UNIQUE, email TEXT UNIQUE, password TEXT, theme INEGER, auth TEXT)"
         ]
 
         for query in queries:  
@@ -50,7 +50,7 @@ class Database:
         :param req_id: ID of entry you want to get
         :return: Desired config object or None
         """
-        self.cursor.execute(f"SELECT * FROM {table} WHERE id={req_id}")
+        self.cursor.execute(f"SELECT * FROM {table} WHERE id='{req_id}'")
 
         if fetched := self.cursor.fetchone():
             return CONFIG_OBJECTS[table](*fetched)
@@ -63,10 +63,10 @@ class Database:
         :param email: User email
         :return: User object
         """
-        self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE email='{email}'")
+        self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email='{email}'")
 
         if fetched := self.cursor.fetchone():
-            return User(*fetched)
+            return UserSettings(*fetched)
 
         return None
 
@@ -74,27 +74,27 @@ class Database:
         """
         Get all channels which belongs to a certain user
         :param req_id: ID of user or channel you want to get
-        :return: List of UserChannel objects or None
+        :return: List of UserChannel objects or []
         """
-        self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE id={req_id} OR channel_id={req_id}")
+        self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE id='{req_id}' OR channel_id='{req_id}'")
         
         if fetched := self.cursor.fetchall():
-            return [UserChannel(*entry) for entry in sorted(fetched, key=lambda x: x[3])]
+            return [UserChannel(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[3])]
 
-        return None
+        return []
 
     def get_channel_messages(self, req_id):
         """
         Get all messages in current channel
         :param req_id: ID of channel you want to get messages from
-        :return: List of Message objects or None
+        :return: List of Message objects or []
         """
-        self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id={req_id}")
+        self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id='{req_id}'")
 
         if fetched := self.cursor.fetchall():
-            return [Message(*entry) for entry in sorted(fetched, key=lambda x: x[4])]
+            return [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]
 
-        return None
+        return []
 
     def insert_entry(self, table, entry):
         """
@@ -114,7 +114,7 @@ class Database:
         :param entry: Updated entry (eg. name='new_name')
         :return: None
         """
-        self.cursor.execute(f"UPDATE {table} SET {entry} WHERE id={req_id}")
+        self.cursor.execute(f"UPDATE {table} SET {entry} WHERE id='{req_id}'")
         self.conn.commit()
 
     def delete_entry(self, table, req_id):
@@ -124,7 +124,7 @@ class Database:
         :param req_id: ID of entry you want to delete
         :return: None
         """
-        self.cursor.execute(f"DELETE FROM {table} WHERE id={req_id}")
+        self.cursor.execute(f"DELETE FROM {table} WHERE id='{req_id}'")
         self.conn.commit()
 
     def close(self):
