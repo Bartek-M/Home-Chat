@@ -16,6 +16,8 @@ var active = [] // Active elements
 
 // Overlay open and close
 function overlay_open(element) {
+    overlay_close()
+
     element.classList.add("active")
     ovelay.classList.add("active")
     active.push(element)
@@ -38,6 +40,7 @@ if (open_settings || close_settings) {
 }
 
 ovelay.addEventListener("click", () => { overlay_close() })
+document.addEventListener("keyup", (e) => { if (e.key === "Escape") overlay_close() })
 
 
 // GLOBAL FUNCTIONS
@@ -58,34 +61,30 @@ function smooth_scroll(id) {
     div.scrollBy(0, div.scrollHeight - div.clientHeight)
 }
 
-
 // Get channel messages
-async function get_messages(channel_id) {
-    return await fetch(`/api/channels/${channel_id}/messages`)
+async function get_channel_messages(channel_id) {
+    return await fetch(`/api/channels/${channel_id}/messages/`)
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
 }
-
 
 // Get user channels
-async function get_user(user_id) {
-    return await fetch(`/api/users/${user_id}/channels`)
+async function get_user_channels(user_id) {
+    return await fetch(`/api/users/${user_id}/channels/`)
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
 }
-
 
 // Get user
 async function get_user(user_id) {
-    return await fetch(`/api/users/${user_id}`)
+    return await fetch(`/api/users/${user_id}/`)
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
 }
 
-
 // Get channel
-async function get_user(channel_id) {
-    return await fetch(`/api/channels/${channel_id}`)
+async function get_channel(channel_id) {
+    return await fetch(`/api/channels/${channel_id}/`)
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
 }

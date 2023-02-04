@@ -1,4 +1,5 @@
 from flask import Blueprint, request, send_file, jsonify
+from flask import redirect, url_for
 from config.database import *
 
 api = Blueprint(__name__, "api") # Define api
@@ -31,9 +32,9 @@ def get_user(user_id):
     return jsonify(user)
 
 @api.route("/users/<user_id>/channels")
-def channel_messages(channels):
+def user_channels(channels):
     db = Database()
-    messages = db.get_channel_messages(channels)
+    messages = db.get_user_channels(channels)
     db.close()
 
     return jsonify(messages)
@@ -51,3 +52,17 @@ def get_photo(photo_id):
 @api.route("/photos/upload")
 def upload_photo():
     return "File Uploaded"
+
+
+# TEMP DATABASE
+@api.route("/database")
+def database():
+    tables = [USER_TABLE, MESSAGE_TABLE, CHANNEL_TABLE, USER_CHANNEL_TABLE, USER_SETTING_TABLE]
+    db = Database()
+
+    for table in tables:
+        print(f"{table}:\n{db.get_all(table)}\n")
+
+    db.close()
+
+    return redirect(url_for("views.home"))

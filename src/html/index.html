@@ -3,6 +3,7 @@
 {% block settings %}<button class="top-dropdown-item" id="open-settings">Settings</button>{% endblock %}
 
 {% block content %}
+<!-- MAIN HOMEPAGE -->
 <div class="home-page">
     <!-- CHANNELS -->
     <nav class="channel-list">
@@ -38,16 +39,39 @@
     </div>
 </div>
 
+<!-- SETTINGS -->
 <div id="settings-page">
-    <h1>Settings :)</h1>
+    <!-- SIDEBAR -->
+    <div class="settings-sidebar-wrapper">
+        <nav class="settings-sidebar">
+            <p class="settings-category-text">USER SETTINGS</p>
+            <button class="settings-sidebar-item">Account</button>
+            <button class="settings-sidebar-item">Safety</button>
+            <button class="settings-sidebar-item">Friends</button>
+            <hr class="settings-sidebar-separator">
 
-    
-    
-    <button id="close-settings">
-        <svg class="icons" width="16" height="16" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-        </svg>
-    </button>
+            <p class="settings-category-text">APP SETTINGS</p>
+            <button class="settings-sidebar-item">Appearance</button>
+            <button class="settings-sidebar-item">Advanced</button>
+            <hr class="settings-sidebar-separator">
+
+            <a class="settings-sidebar-item" href="logout">Log Out</a>
+            <p class="settings-category-text" id="settings-sidebar-info">Test</p>
+        </nav>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="settings-page">
+        <div id="settings-content">
+            <h2 id="not-found-error">404</h2>
+            <h1 class="nochannel-text">Open any cattegory and </h1>
+        </div>
+        <button id="close-settings">
+            <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+            </svg>
+        </button>
+    </div>
 </div>
 {% endblock %}
 

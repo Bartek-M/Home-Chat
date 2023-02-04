@@ -57,7 +57,7 @@ function add_message(message) {
 
 // Display channel
 async function open_channel(channel_id) {
-    var message_list = await get_messages(channel_id)
+    var message_list = await get_channel_messages(channel_id)
 
     if (opened) {
         document.getElementById(`channel-pill-${opened}`).style = ""

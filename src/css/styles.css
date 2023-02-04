@@ -12,12 +12,12 @@
     --SCROLLBAR: #4b4b4b; 
     --SCROLLBAR_DARKER: #272727;
 
-    --FLASH_INFO: rgba(0, 171, 107, .94);
-    --FLASH_ERROR: rgba(192, 0, 61, .94);
+    --FLASH_MESSAGE: #202225;
 }
 
 html {
     height: 100%;
+    width: 100%;
     background-color: var(--BACKGROUND_COLOR);
 }
 
@@ -82,11 +82,11 @@ input { -webkit-appearance: none }
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: fixed;
+    position: absolute;
     top: 0%;
-    right: 0%;
-    transform: scale(0);
-    transition: 200ms ease-in-out;
+    right: -200px;
+    opacity: 0;
+    transition: 400ms;
     background-color: var(--COLOR_2);
     z-index: 10;
     width: 130px;
@@ -107,7 +107,7 @@ input { -webkit-appearance: none }
     align-items: center;
 }
 
-#top-dropdown-menu.active { transform: scale(1); }
+#top-dropdown-menu.active { transition: 400ms; right: 0; opacity: 1; }
 
 .top-dropdown-item {
     width: 100%;
@@ -126,7 +126,6 @@ input { -webkit-appearance: none }
     width: 100%;
     height: calc(100% - 53px);
 }
-
 
 /* CHANNEL LIST */
 .channel-list {
@@ -367,24 +366,86 @@ input { -webkit-appearance: none }
 
 /* SETTINGS PAGE */
 #settings-page {
-    position: fixed;
+    display: flex; 
+    justify-content: center;
+    background-color: var(--BACKGROUND_COLOR);
+    position: absolute;
     transform: scale(0);
-    transition: 200ms ease-in-out;
+    transition: 400ms ease-in-out;
     z-index: 15;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--BACKGROUND_COLOR);
 }
 
-#settings-page.active {
-    transform: scale(1);
+#settings-page.active { transform: scale(1) }
+
+/* siderbar */
+.settings-sidebar-wrapper {
+    display: flex;
+    justify-content: right;
+    position: relative;
+    overflow-y: scroll;
 }
 
-#close-settings svg {
-    fill: var(--FONT_RV_COLOR);
+.settings-sidebar {
+    display: flex;
+    width: 180px;
+    flex-direction: column;
+    height: max-content;
+    padding: 60px 6px 60px 20px;
 }
+
+.settings-category-text {
+    font-size: 12px; 
+    color: var(--FONT_DIM_COLOR);
+    padding: 6px 10px;
+}
+
+.settings-sidebar-item {
+    text-align: left;
+    color: var(--FONT_COLOR);
+    font-size: 16px;
+    padding: 6px 10px;
+    margin-bottom: 2px;
+    border-radius: 8px;
+}
+
+.settings-sidebar-item:hover { background-color: var(--BORDER_COLOR) }
+
+.settings-sidebar-separator {
+    width: 140px;
+    height: 1px;
+    border: 0;
+    margin: .5rem;
+    background-color: var(--BORDER_COLOR);
+}
+
+/* content */
+.settings-page {
+    display: flex;
+    justify-content: left;
+    border-left: 1px solid var(--BORDER_COLOR);
+    padding: 60px 0;
+}
+
+#settings-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 40px;
+}
+
+#close-settings { 
+    height: 40px;
+    width: 40px; 
+    border: 2px solid var(--FONT_DIM_COLOR);
+    border-radius: 50%;
+}
+
+#close-settings:hover { border-color: var(--BLUE); }
 
 
 /* LOGIN & SIGNUP PAGE */
@@ -473,6 +534,7 @@ input { -webkit-appearance: none }
 
 #overlay.active {
     opacity: 1;
+    transition: 200ms ease-in-out;
     pointer-events: all;
 }
 
@@ -487,30 +549,32 @@ input { -webkit-appearance: none }
     margin-top: .5rem;
     position: absolute;
     left: 50%;
+    top: -100px;
+    z-index: 100;
+    opacity: 0;
     transform: translate(-50%, 0);
+    animation: top-slide 3s;
 }
 
 .flash-message {
+    display: flex;
+    gap: .5rem;
     width: max-content;
+    background-color: var(--FLASH_MESSAGE);
     margin: 0;
-    padding: .5rem;
-    opacity: 0;
+    padding: 1rem;
     border-color: transparent;
-    border-radius: 8px;
-    animation: fade 6s;
+    border-radius: 50px;
 }
-
-#flash-info { background-color: var(--FLASH_INFO) }
-#flash-error { background-color: var(--FLASH_ERROR)}
 
 .flash-text {
     color: var(--FONT_COLOR);
     margin: 0;
 }
 
-@keyframes fade {
-    0%, 100% { opacity: 0 }
-    25%, 45% { opacity: 1 }
+@keyframes top-slide {
+    0%, 100% { top: -100px; opacity: 0; }
+    25%, 75% { top: 53px; opacity: 1; }
 }
 
 

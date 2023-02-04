@@ -10,7 +10,7 @@ view = Blueprint(__name__, "view") # Define views
 @view.route("/home")
 def home():
     if "user" not in session:
-        flash("You are not logged in!", "error")
+        flash("Not logged in!", "error")
         return redirect(url_for("views.log_in"))
 
     usr = session.get("user")
@@ -22,7 +22,7 @@ def home():
 @view.route("/login", methods=["POST", "GET"])
 def log_in():
     if "user" in session:
-        flash("You are already logged in!", "info")
+        flash("Already logged in!", "info")
         return redirect(url_for("views.home"))
 
     if request.method != "POST":
@@ -38,7 +38,7 @@ def log_in():
             session["settings"] = settings.__dict__
             db.close()
 
-            flash("You have been logged in!", "info")
+            flash("Logged in!", "info")
             return redirect(url_for("views.home"))
 
     flash("Invalid email or password!", "error")
@@ -66,7 +66,7 @@ def register():
     db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email, Functions.hash_passwd(request.form.get("passwd"))))
     db.close()
 
-    flash("You have created an account!", "info")
+    flash("Created an account!", "info")
     return redirect(url_for("views.log_in"))
 
 
@@ -75,20 +75,9 @@ def log_out():
     if "user" in session:
         session.pop("user", None)
         session.pop("settings", None)
-        flash("You have been logged out!", "info")
+        flash("Logged out!", "info")
 
     return redirect(url_for("views.log_in"))
 
 
 # GENERAL FUNCTIONS
-@view.route("/database")
-def database():
-    tables = [USER_TABLE, MESSAGE_TABLE, CHANNEL_TABLE, USER_CHANNEL_TABLE, USER_SETTING_TABLE]
-    db = Database()
-
-    for table in tables:
-        print(f"{table}:\n{db.get_all(table)}\n")
-
-    db.close()
-
-    return redirect(url_for("views.home"))
