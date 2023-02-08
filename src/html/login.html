@@ -1,27 +1,23 @@
 {% extends "base.html" %} 
 
 {% block content %}
-<div class="login-page">
+<div class="login-page all-center-container">
     <div class="login-window">
-        <div class="login-center">
-            <h1 class="login-text">Welcome back!</h1>
-        </div>
+        <div class="all-center-container"><h1>Welcome back!</h1> </div>
 
         <form action="" method="POST">
-            <div class="login-data">
-                <p class="login-text">EMAIL</p>
+            <div class="login-data column-container">
+                <p>EMAIL</p>
                 <input class="login-input" name="email" maxlength=100 required />
             </div>
-            <div class="login-data">
-                <p class="login-text">PASSWORD</p>
+            <div class="login-data column-container">
+                <p>PASSWORD</p>
                 <input class="login-input" type="password" name="passwd" maxlength=50 required />
             </div>
-            <p id="forgot-passw"><a class="link" href="password-recovery">Forgot your password?</a></p>
+            <p class="login-redirect"><a class="link" href="password-recovery">Forgot your password?</a></p>
 
-            <div class="login-center">
-                <input id="login-submit" type="submit" value="LOG IN" />
-            </div>
-            <p id="login-redirect">Need an account? <a class="link" href="register">Register</a></p>
+            <div class="login-center column-container"><input id="login-submit" type="submit" value="LOG IN" /></div>
+            <p class="login-redirect">Need an account? <a class="link" href="register">Register</a></p>
         </form>
     </div>
 </div>

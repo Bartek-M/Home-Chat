@@ -1,15 +1,15 @@
 console.log("Hello from backend :)")
 
+// USER OBJECT
+var me
+
+
 // GLOBAL ELEMENTS
 const ovelay = document.getElementById("overlay") // Overlay
 
 const top_menu = document.getElementById("top-dropdown-menu") // Top dropdown menu
 const top_btn = document.getElementById("top-dropdown-btn") // Top dropdown button
 const top_close = document.getElementById("top-menu-close") // Top dropdown menu close button
-
-const settings = document.getElementById("settings-page")
-const open_settings = document.getElementById("open-settings") // Open settings button
-const close_settings = document.getElementById("close-settings") // Close settings button
 
 var active = [] // Active elements
 
@@ -34,17 +34,11 @@ function overlay_close() {
 top_btn.addEventListener("click", () => { overlay_open(top_menu); });
 top_close.addEventListener("click", () => { overlay_close() });
 
-if (open_settings || close_settings) {
-    open_settings.addEventListener("click", () => { overlay_open(settings) })
-    close_settings.addEventListener("click", () => { overlay_close() })
-}
-
 ovelay.addEventListener("click", () => { overlay_close() })
 document.addEventListener("keyup", (e) => { if (e.key === "Escape") overlay_close() })
 
 
 // GLOBAL FUNCTIONS
-
 // Convert EPOCH time to local
 function format_time(time, format = "full") {
     time = parseFloat(time)
@@ -59,6 +53,17 @@ function format_time(time, format = "full") {
 function smooth_scroll(id) {
     var div = document.getElementById(id)
     div.scrollBy(0, div.scrollHeight - div.clientHeight)
+}
+
+
+// API FUNCTIONS
+async function get_me() {
+    if (!me) {
+        console.log("fetching user profile")
+        me = await get_user("@me")
+    }
+
+    return me
 }
 
 // Get channel messages

@@ -26,6 +26,7 @@ def channel_messages(channel_id):
 @api.route("/users/<user_id>")
 def get_user(user_id):
     db = Database()
+    user_id = user_id if user_id != "@me" else "4354377540845690365"
     user = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else {}
     db.close()
 

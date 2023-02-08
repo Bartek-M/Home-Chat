@@ -4,23 +4,23 @@
 
 {% block content %}
 <!-- MAIN HOMEPAGE -->
-<div class="home-page">
+<div class="home-page container">
     <!-- CHANNELS -->
-    <nav class="channel-list">
-        <li class="channel-list-item">
+    <nav class="channel-list column-container scroller-container">
+        <li class="channel-list-item all-center-container">
             <div class="channel-list-pill" id="channel-pill-1234"></div>
             <button open-channel-btn id="channel-button-1234">
                 <img class="channel-list-icon" src="/api/photos/123456789.webp" />
             </button>
         </li>
-        <li class="channel-list-item">
+        <li class="channel-list-item all-center-container">
             <div class="channel-list-pill" id="channel-pill-4321"></div>
             <button open-channel-btn id="channel-button-4321">
                 <img class="channel-list-icon" src="/api/photos/987654321.webp" />
             </button>
         </li>
-        <hr id="channel-separator">
-        <li class="channel-list-item">
+        <hr class="separator">
+        <li class="channel-list-item all-center-container">
             <div class="channel-list-pill" id="channel-pill-4321"></div>
             <button id="add-channel-btn">
                 <svg width="38" height="38" viewBox="0 0 16 16">
@@ -31,41 +31,38 @@
     </nav>
 
     <!-- CURRENT CHANNEL -->
-    <div class="channel-view">
-        <div class="nochannel-view">
-            <h2 id="not-found-error">404</h2>
-            <h1 class="nochannel-text">Open any channel and start chatting</h1>
+    <div class="channel-view spaced-column-container">
+        <div class="nochannel-view all-center-column-container">
+            <h2 class="not-found-error">404</h2>
+            <h2>Open any channel and start chatting</h2>
         </div>
     </div>
 </div>
 
 <!-- SETTINGS -->
-<div id="settings-page">
+<div id="settings">
     <!-- SIDEBAR -->
-    <div class="settings-sidebar-wrapper">
-        <nav class="settings-sidebar">
+    <div class="settings-sidebar-wrapper scroller-container">
+        <nav class="settings-sidebar column-container">
             <p class="settings-category-text">USER SETTINGS</p>
-            <button class="settings-sidebar-item">Account</button>
-            <button class="settings-sidebar-item">Safety</button>
-            <button class="settings-sidebar-item">Friends</button>
-            <hr class="settings-sidebar-separator">
+            <button open-settings-category id="settings-open-account">Account</button>
+            <button open-settings-category id="settings-open-security">Security</button>
+            <button open-settings-category id="settings-open-friends">Friends</button>
+            <hr class="separator">
 
             <p class="settings-category-text">APP SETTINGS</p>
-            <button class="settings-sidebar-item">Appearance</button>
-            <button class="settings-sidebar-item">Advanced</button>
-            <hr class="settings-sidebar-separator">
+            <button open-settings-category id="settings-open-appearance">Appearance</button>
+            <button open-settings-category id="settings-open-advanced">Advanced</button>
+            <hr class="separator">
 
-            <a class="settings-sidebar-item" href="logout">Log Out</a>
+            <a href="logout">Log Out</a>
             <p class="settings-category-text" id="settings-sidebar-info">Test</p>
         </nav>
     </div>
 
     <!-- CONTENT -->
     <div class="settings-page">
-        <div id="settings-content">
-            <h2 id="not-found-error">404</h2>
-            <h1 class="nochannel-text">Open any cattegory and </h1>
-        </div>
+        <div class="column-container" id="settings-content"></div>
         <button id="close-settings">
             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
