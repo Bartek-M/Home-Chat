@@ -62,8 +62,8 @@
 
     <!-- CONTENT -->
     <div class="settings-page">
-        <div class="column-container" id="settings-content"></div>
-        <button id="close-settings">
+        <div class="column-container scroller-container" id="settings-content"></div>
+        <button all-close class="all-center-container" id="close-settings">
             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
             </svg>
@@ -73,10 +73,9 @@
 {% endblock %}
 
 {% block javascript %}
-<script>
-    var user_id = "{{ user_id }}"
-</script>
+<script>var user_id = "{{ user_id }}"</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script charset="utf-8" src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script charset="utf-8" src="{{ url_for('static', filename='js/settings.js') }}"></script>
 {% endblock %}

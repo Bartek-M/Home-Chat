@@ -1,6 +1,6 @@
 /* GENERAL STUFF */
 :root {
-    --COLOR_2: #0a1930;
+    --MAIN_COLOR: #0a1930;
     --COLOR_3: #13161b;
     --COLOR_4: #202225;
     --FONT_COLOR: #FFFFFF;
@@ -8,13 +8,14 @@
     --BLACK: #000000;
     --BLUE: #008eb9;
     --GREEN: #00AB6B;
-    --DIM_GREEN: #00997C;
+    --DIM_GREEN: #00925d;
 
     --SCROLLBAR: #4b4b4b; 
     --SCROLLBAR_DARKER: #272727;
 
     --BUTTON: #4F545C;
     --BUTTON_HOVER: #3c3f45;
+    --RED_BUTTON: #ed4245;
 }
 
 html {
@@ -42,7 +43,7 @@ span, button, div, input, label, select { outline: 0 }
 li { list-style: none; }
 hr { border: 0 }
 
-button, input { font-size: inherit; background-color: transparent; border: 0; color: inherit; }
+button, input { font-size: inherit; background-color: transparent; border: 0; color: inherit; user-select: none; }
 button:hover { cursor: pointer; }
 button:hover svg { fill: var(--BLUE) }
 a { color: var(--FONT_COLOR); text-decoration: none; }
@@ -55,7 +56,7 @@ input { -webkit-appearance: none }
 
 ::-webkit-scrollbar { width: 6px }
 ::-webkit-scrollbar-track { background-color: transparent }
-::-webkit-scrollbar-thumb { background-color: var(--SCROLLBAR); border-radius: 9999px }
+::-webkit-scrollbar-thumb { background-color: var(--SCROLLBAR); border-radius: 9999px; transition: .17s ease; }
 ::-webkit-scrollbar-thumb:hover { cursor: pointer; background-color: var(--SCROLLBAR_DARKER) }
 ::-webkit-scrollbar-button { height: 2.5px }
 
@@ -74,7 +75,7 @@ input { -webkit-appearance: none }
 
 
 /* TOP BAR */
-.top-bar { background-color: var(--COLOR_2); color: var(--FONT_COLOR); }
+.top-bar { background-color: var(--MAIN_COLOR); color: var(--FONT_COLOR); }
 .top-bar-text { font-size: 2rem; margin: .5rem 1rem; }
 #top-dropdown-btn { width: 53px; height: 53px; }
 
@@ -87,7 +88,7 @@ input { -webkit-appearance: none }
     width: 130px;
     height: 100%;
     transition: 400ms;
-    background-color: var(--COLOR_2);
+    background-color: var(--MAIN_COLOR);
 }
 
 #top-menu-close {
@@ -99,7 +100,13 @@ input { -webkit-appearance: none }
 #top-dropdown-menu.active { transition: 400ms; right: 0; opacity: 1; }
 .menu-bar-items { width: 100%; margin-bottom: 1rem; gap: 0;}
 
-.top-dropdown-item { width: calc(100% - 1rem); color: var(--FONT_COLOR); border-radius: 8px; padding: 6px 10px;}
+.top-dropdown-item { 
+    color: var(--FONT_COLOR); 
+    width: calc(100% - 1rem); 
+    padding: 6px 10px;
+    border-radius: 3px; 
+    transition: .17s ease;
+}
 .top-dropdown-item:hover { background-color: var(--BUTTON_HOVER); }
 
 
@@ -127,6 +134,7 @@ input { -webkit-appearance: none }
     height: 0;
     position: absolute;
     left: 0;
+    transition: .17s ease;
 }
 
 .channel-list-icon {
@@ -135,6 +143,7 @@ input { -webkit-appearance: none }
     object-fit: cover;
     border-radius: 50%;
     pointer-events: auto;
+    transition: .17s ease;
 }
 
 .channel-list-icon:hover { border-radius: 10px; }
@@ -147,8 +156,9 @@ input { -webkit-appearance: none }
     padding: 0;
     border-radius: 50%;
     pointer-events: auto;
+    transition: .17s ease;
 }
-#add-channel-btn svg { fill: var(--BLUE)  }
+#add-channel-btn svg { fill: var(--BLUE); transition: .17s ease; }
 #add-channel-btn:hover { border-radius: 10px; background-color: var(--BLUE);}
 #add-channel-btn:hover svg { fill: var(--FONT_RV_COLOR) }
 
@@ -184,7 +194,7 @@ input { -webkit-appearance: none }
 }
 
 #channel-settings { width: 48px; height: 48px; }
-#channel-settings svg { fill: var(--FONT_RV_COLOR) }
+#channel-settings svg { fill: var(--FONT_RV_COLOR); transition: .17s ease; }
 #channel-settings:hover svg { fill: var(--BLUE) }
 
 
@@ -196,12 +206,12 @@ input { -webkit-appearance: none }
 }
 
 .message-list-item {
-    margin: 1rem 1rem 0 0;
+    margin: 1rem .5rem 0 0;
     padding: 2px 0;
     user-select: text;
 }
 
-.repeated-message-list-item { align-items: center; margin: 0 1rem 0 0; padding: .125rem 0 }
+.repeated-message-list-item { align-items: center; margin: 0 .5rem 0 0; padding: .125rem 0 }
 .repeated-message-list-item:hover .message-hidden-time { color: var(--FONT_DIM_COLOR) }
 
 .avatar {
@@ -218,6 +228,7 @@ input { -webkit-appearance: none }
     font-size: 12px;
     color: transparent;
     user-select: none;
+    transition: .17s ease;
 }
 
 .message-info { align-items: end; line-height: 1.375rem; }
@@ -251,6 +262,7 @@ input { -webkit-appearance: none }
     border-radius: 8px;
     line-height: 1.375rem;
     padding: .5rem;
+    transition: .17s ease;
 }
 
 #message-send:hover { cursor: pointer; background-color: var(--DIM_GREEN); }
@@ -279,8 +291,10 @@ input { -webkit-appearance: none }
     flex: 1 1 218px;
     justify-content: right;
     width: 20%;
-    background-color: var(--COLOR_2);
+    background-color: var(--MAIN_COLOR);
 }
+
+.settings-sidebar-wrapper::-webkit-scrollbar { display: none; }
 
 .settings-sidebar {
     width: 180px;
@@ -299,7 +313,8 @@ input { -webkit-appearance: none }
     text-align: left;
     padding: 6px 10px;
     margin-bottom: 2px;
-    border-radius: 8px;
+    border-radius: 3px;
+    transition: .17s ease;
 }
 
 .settings-sidebar button:hover, .settings-sidebar a:hover { background-color: var(--BUTTON_HOVER) }
@@ -310,28 +325,53 @@ input { -webkit-appearance: none }
     display: flex;
     flex: 1 1 800px;
     justify-content: left;
+    gap: .5rem;
     border-left: 1px solid var(--BORDER_COLOR);
-    padding: 60px 0;
 }
 
 #settings-content {
-    padding: 0 40px;
+    padding: 60px 20px 60px 40px;
     gap: 1.25rem;
     min-width: 680px;
     max-width: 680px;
+    user-select: text;
 }
 
 #close-settings { 
     width: 40px;
     height: 40px;
+    margin-top: 60px;
     border: 2px solid var(--FONT_DIM_COLOR);
     border-radius: 50%;
+    transition: .17s ease;
 }
 
 #close-settings:hover { border-color: var(--BLUE); }
 
 
 /* SETTINGS PAGES */
+.settings-card {
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--COLOR_3);
+}
+
+.settings-btn {
+    font-size: 14px;
+    padding: 2px 16px;
+    border-radius: 3px;
+    height: 32px;
+    transition: .17s ease; 
+}
+
+.stng-edit-btn { background-color: var(--BUTTON); width: 60px; }
+.stng-warning-btn { border: 1px solid var(--RED_BUTTON); width: max-content; }
+.stng-action-btn { border: 1px solid var(--BLUE); width: max-content; }
+
+.stng-edit-btn:hover { background-color: var(--BUTTON_HOVER); }
+.stng-warning-btn:hover { background-color: var(--RED_BUTTON); }
+.stng-action-btn:hover { background-color: var(--BLUE); }
+
 .settings-avatar {
     width: 80px;
     height: 80px;
@@ -341,13 +381,7 @@ input { -webkit-appearance: none }
 }
 
 /* settings account */
-.settings-profile-card {
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: var(--COLOR_3);
-}
-
-.user-info { justify-content: left; }
+.user-info { justify-content: left; gap: 1rem }
 
 .account-settings {
     background-color: var(--COLOR_4);
@@ -356,25 +390,14 @@ input { -webkit-appearance: none }
 }
 
 .account-settings { gap: 1.5rem; }
-.account-category-info { font-size: 12px; color: var(--FONT_DIM_COLOR) }
-
-.account-settings button { 
-    background-color: var(--BUTTON);
-    font-size: 14px;
-    padding: 2px 16px;
-    border-radius: 3px;
-    width: 60px;
-    height: 32px;
-}
-
-.account-settings button:hover { background-color: var(--BUTTON_HOVER); }
+.settings-category-info { font-size: 12px; color: var(--FONT_DIM_COLOR) }
 
 
 /* LOGIN & SIGNUP PAGE */
 .login-page { width: 100%; height: 80%; }
 
 .login-window {
-    background-color: var(--COLOR_2);
+    background-color: var(--MAIN_COLOR);
     color: var(--FONT_COLOR);
     border-radius: 8px;
     padding: 1.5rem;
@@ -402,6 +425,7 @@ input { -webkit-appearance: none }
     margin-top: 2rem;
     padding: .5rem;
     font-size: 16px;
+    transition: .17s ease;
 }
 
 #login-submit:hover { cursor: pointer; background-color: var(--DIM_GREEN); }
@@ -429,7 +453,7 @@ input { -webkit-appearance: none }
 
 
 /* FLASH MESSAGE */
-.flash-box {
+#flash-box {
     position: fixed;
     left: 50%;
     top: -100px;

@@ -23,7 +23,7 @@
             </button>
             <div class="spaced-column-container" id="top-dropdown-menu">
                 <div class="menu-bar-items all-center-column-container">
-                    <button id="top-menu-close">
+                    <button all-close id="top-menu-close">
                         <svg class="icons" width="16" height="16" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                         </svg>
@@ -44,8 +44,8 @@
 
     <!-- FLASH A TEMP MESSAGE -->
     {% with messages = get_flashed_messages(with_categories=true) %} 
-        {% if messages %} 
-            <div class="flash-box all-center-column-container">
+        {% if messages %}
+            <div class="all-center-column-container" id="flash-box"></div>
                 {% for category, message in messages %}
                     <div class="flash-message container">
                         {% if category == "error" %}
@@ -68,7 +68,7 @@
     {% block content %} {% endblock %}
     
     <!-- PAGE OVERLAY -->
-    <div id="overlay"></div> 
+    <div all-close id="overlay"></div> 
     
     <!-- JAVASCRIPT -->
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>

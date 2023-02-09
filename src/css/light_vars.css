@@ -1,7 +1,9 @@
 /* VARIABLES FOR LIGHT THEME */
 :root {
     --BACKGROUND_COLOR: #FFFFFF;
+
     --FONT_RV_COLOR: #000000;
     --FONT_DIM_COLOR: #7a7a7a;
+    
     --BORDER_COLOR: #d3d3d3;
 }

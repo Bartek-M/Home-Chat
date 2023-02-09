@@ -6,10 +6,10 @@ var me
 
 // GLOBAL ELEMENTS
 const ovelay = document.getElementById("overlay") // Overlay
+const all_close = document.querySelectorAll("[all-close]") // All closing elements
 
 const top_menu = document.getElementById("top-dropdown-menu") // Top dropdown menu
 const top_btn = document.getElementById("top-dropdown-btn") // Top dropdown button
-const top_close = document.getElementById("top-menu-close") // Top dropdown menu close button
 
 var active = [] // Active elements
 
@@ -32,9 +32,8 @@ function overlay_close() {
 
 // BUTTONS
 top_btn.addEventListener("click", () => { overlay_open(top_menu); });
-top_close.addEventListener("click", () => { overlay_close() });
 
-ovelay.addEventListener("click", () => { overlay_close() })
+all_close.forEach((element) => element.addEventListener("click", () => { overlay_close() }))
 document.addEventListener("keyup", (e) => { if (e.key === "Escape") overlay_close() })
 
 
@@ -55,13 +54,14 @@ function smooth_scroll(id) {
     div.scrollBy(0, div.scrollHeight - div.clientHeight)
 }
 
+async function copy_text(text) {
+    await navigator.clipboard.writeText(text).catch(() => {})
+}
+
 
 // API FUNCTIONS
 async function get_me() {
-    if (!me) {
-        console.log("fetching user profile")
-        me = await get_user("@me")
-    }
+    if (!me) { me = await get_user("@me") }
 
     return me
 }

@@ -1,21 +1,10 @@
 // Buttons
-const settings = document.getElementById("settings")
-const open_settings = document.getElementById("open-settings") // Open settings button
-const close_settings = document.getElementById("close-settings") // Close settings button
-
-const open_category_btns = document.querySelectorAll("[open-settings-category]")
-open_category_btns.forEach(button => { button.addEventListener("click", () => settings_pages[button.id.replace("settings-open-", "")]()) })
-
 const open_channel_btns = document.querySelectorAll("[open-channel-btn]")
 open_channel_btns.forEach(button => { button.addEventListener("click", () => open_channel(button.id.replace("channel-button-", ""))) })
 
 
 // GET IMPORTANT THINGS
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("LOADED")
-    await get_me()
-    open_settings_account()
-})
+document.addEventListener("DOMContentLoaded", async () =>  {} )
 
 
 // CHANNELS & MESSAGES
@@ -134,61 +123,3 @@ function send() {
     if (text.length) { socket.emit("message send", { user_id: user_id, channel_id: opened, content: text }) }
     message_inpt.innerText = ""
 }
-
-
-// SETTINGS
-function open_settings_account() {
-    let page = `
-    <h2 class="settings-title">Account</h2>
-    <div class="settings-profile-card column-container">
-        <div class="user-info all-center-container">
-            <img class="settings-avatar" src="/api/photos/${me.avatar}.webp"/>
-            <h1>${me.name}</h1>
-        </div>
-        <div class="account-settings column-container">
-            <div class="spaced-container">
-                <div class="column-container">
-                    <p class="account-category-info">USERNAME</p>
-                    <p>${me.name}</p>
-                </div>
-                <button settings-edit id="settings-edit-username">EDIT</button>
-            </div>
-            <div class="spaced-container">
-                <div class="column-container">
-                    <p class="account-category-info">EMAIL</p>
-                    <p>NOT YET</p>
-                </div>
-                <button settings-edit id="settings-edit-email">EDIT</button>
-            </div>
-            <div class="spaced-container">
-                <div class="column-container">
-                    <p class="account-category-info">PHONE NUMBER</p>
-                    <p>NOT YET</p>
-                </div>
-                <button settings-edit id="settings-edit-phone">EDIT</button>
-            </div>
-        </div>
-    </div>
-    <div class="settings-account-remove">
-
-    </div>
-    `
-
-    document.getElementById("settings-content").innerHTML = page
-}
-
-function open_settings_security() { }
-function open_settings_friends() { }
-function open_settings_appearance() { }
-function open_settings_advanced() { }
-
-let settings_pages = {
-    "account": open_settings_account,
-    "security": open_settings_security,
-    "friends": open_settings_friends,
-    "appearance": open_settings_appearance,
-    "advanced": open_settings_advanced
-}
-
-open_settings.addEventListener("click", () => { overlay_open(settings) })
-close_settings.addEventListener("click", () => { overlay_close() })
