@@ -4,7 +4,7 @@ open_channel_btns.forEach(button => { button.addEventListener("click", () => ope
 
 
 // GET IMPORTANT THINGS
-document.addEventListener("DOMContentLoaded", async () =>  {} )
+document.addEventListener("DOMContentLoaded", async () => { })
 
 
 // CHANNELS & MESSAGES
@@ -53,6 +53,7 @@ function add_message(message) {
 
 // Display channel
 async function open_channel(channel_id) {
+    if (channel_id === opened) { return }
     var message_list = await get_channel_messages(channel_id)
 
     if (opened) {

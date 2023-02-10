@@ -1,8 +1,6 @@
 /* GENERAL STUFF */
 :root {
-    --MAIN_COLOR: #0a1930;
-    --COLOR_3: #13161b;
-    --COLOR_4: #202225;
+    --MAIN_COLOR: #0d203d;
     --FONT_COLOR: #FFFFFF;
 
     --BLACK: #000000;
@@ -17,6 +15,31 @@
     --BUTTON_HOVER: #3c3f45;
     --RED_BUTTON: #ed4245;
 }
+
+@media (prefers-color-scheme : dark) {
+:root {
+    --BACKGROUND_COLOR: #010409;
+    --COLOR_3: #13161b;
+    --COLOR_4: #202225;
+
+    --FONT_RV_COLOR: #FFFFFF;
+    --FONT_DIM_COLOR: #8b8b8b;
+    
+    --BORDER_COLOR: #1d1d1d;
+}}
+
+@media (prefers-color-scheme : light) {
+:root {
+    --BACKGROUND_COLOR: #FFFFFF;
+    --COLOR_3: #e3e5e8;
+    --COLOR_4: #f2f3f5;
+
+    --FONT_RV_COLOR: #000000;
+    --FONT_DIM_COLOR: #7a7a7a;
+    
+    --BORDER_COLOR: #d3d3d3;
+}}
+    
 
 html {
     height: 100%;
@@ -60,7 +83,7 @@ input { -webkit-appearance: none }
 ::-webkit-scrollbar-thumb:hover { cursor: pointer; background-color: var(--SCROLLBAR_DARKER) }
 ::-webkit-scrollbar-button { height: 2.5px }
 
-.separator { width: calc(100% - 2rem); height: 2px; margin: .5rem 1rem; background-color: var(--BORDER_COLOR);}
+.separator { width: calc(100% - 2rem); height: 2px; margin: .5rem 1rem; background-color: var(--BUTTON_HOVER);}
 .scroller-spacer { min-height: 30px;}
 .scroller-container { position: relative; overflow-y: scroll; overflow-x: hidden } 
 
@@ -160,7 +183,7 @@ input { -webkit-appearance: none }
 }
 #add-channel-btn svg { fill: var(--BLUE); transition: .17s ease; }
 #add-channel-btn:hover { border-radius: 10px; background-color: var(--BLUE);}
-#add-channel-btn:hover svg { fill: var(--FONT_RV_COLOR) }
+#add-channel-btn:hover svg { fill: var(--FONT_COLOR) }
 
 
 /* CHANNEL VIEW */
@@ -168,11 +191,10 @@ input { -webkit-appearance: none }
 .channel-view {
     width: calc(100% - 72px);
     height: 100%;
+    gap: 0;
     border-left: 1px solid var(--BORDER_COLOR);
     background-color: inherit;
 }
-
-.nochannel-view { width: 100%; height: 80%; }
 
 .channel-title {
     min-height: 48px;
@@ -181,7 +203,7 @@ input { -webkit-appearance: none }
     border-radius: 8px;
     border-color: transparent;
     background-color: var(--COLOR_3);
-    color: var(--FONT_COLOR);
+    color: var(--FONT_RV_COLOR);
 }
 
 .channel-name { font-size: 20px; }
@@ -240,7 +262,7 @@ input { -webkit-appearance: none }
 /* sending messages */
 .writing-box {
     align-items: start;
-    color: var(--FONT_COLOR);
+    color: var(--FONT_RV_COLOR);
     background-color: var(--COLOR_3);
     border-color: transparent;
     border-radius: 8px;
@@ -259,6 +281,7 @@ input { -webkit-appearance: none }
 
 #message-send {
     background-color: var(--GREEN);
+    color: var(--FONT_COLOR);
     border-radius: 8px;
     line-height: 1.375rem;
     padding: .5rem;
@@ -292,6 +315,7 @@ input { -webkit-appearance: none }
     justify-content: right;
     width: 20%;
     background-color: var(--MAIN_COLOR);
+    color: var(--FONT_COLOR)
 }
 
 .settings-sidebar-wrapper::-webkit-scrollbar { display: none; }
@@ -364,13 +388,13 @@ input { -webkit-appearance: none }
     transition: .17s ease; 
 }
 
-.stng-edit-btn { background-color: var(--BUTTON); width: 60px; }
-.stng-warning-btn { border: 1px solid var(--RED_BUTTON); width: max-content; }
-.stng-action-btn { border: 1px solid var(--BLUE); width: max-content; }
+.stng-edit-btn { background-color: var(--BUTTON); color: var(--FONT_COLOR); width: 60px; }
+.stng-warning-btn { border: 2px solid var(--RED_BUTTON); width: max-content; }
+.stng-action-btn { border: 2px solid var(--BLUE); width: max-content; }
 
 .stng-edit-btn:hover { background-color: var(--BUTTON_HOVER); }
-.stng-warning-btn:hover { background-color: var(--RED_BUTTON); }
-.stng-action-btn:hover { background-color: var(--BLUE); }
+.stng-warning-btn:hover { background-color: var(--RED_BUTTON); color: var(--FONT_COLOR) }
+.stng-action-btn:hover { background-color: var(--BLUE); color: var(--FONT_COLOR)}
 
 .settings-avatar {
     width: 80px;

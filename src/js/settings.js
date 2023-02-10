@@ -75,6 +75,42 @@ function open_settings_account() {
 function open_settings_security() {
     let page = `
     <h2 class="settings-title">Security</h2>
+    <div class="spaced-container">
+        <div class="column-container">
+            <p class="settings-category-info">PASSWORD</p>
+            <p>It's good to have a strong password everywhere<p>
+        </div>
+        <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-password">Edit</button>
+    </div>
+    <div class="spaced-container">
+        <div class="column-container">
+            <p class="settings-category-info">AUTO LOGIN</p>
+            <p>There's no need to login it everytime<p>
+        </div>
+        <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-autologin">Edit</button>
+    </div>
+    <div class="spaced-container">
+        <div class="column-container">
+            <p class="settings-category-info">TWO FACTOR AUTHENTICATION</p>
+            <p>Good way to add an extra layer of security for your account<p>
+        </div>
+        <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-2fa">Edit</button>
+    </div>
+    <hr class="separator"/>
+    <div class="spaced-container">
+        <div class="column-container">
+            <p class="settings-category-info">ACCOUNT VISIBILITY</p>
+            <p>Change your account visibility<p>
+        </div>
+        <button settings-edit class="settings-btn stng-action-btn" id="settings-edit-to-do">TO-DO!!!!</button>
+    </div>
+    <div class="spaced-container">
+        <div class="column-container">
+            <p class="settings-category-info">TOKEN REGENRATE</p>
+            <p>Token is the most secret thing; you can regenerate it if you need to<p>
+        </div>
+        <button settings-edit class="settings-btn stng-warning-btn" id="settings-edit-regenerate-token">Regenerate</button>
+    </div>
     `
 
     return page

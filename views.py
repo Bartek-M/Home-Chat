@@ -16,7 +16,7 @@ def home():
     usr = session.get("user")
     settings = session.get("settings")
 
-    return render_template("index.html", text=f"{usr.get('name')}", user_id=usr.get("id"), theme=settings.get("theme"))
+    return render_template("index.html", text=f"{usr.get('name')}", user_id=usr.get("id"))
 
 
 @view.route("/login", methods=["POST", "GET"])
