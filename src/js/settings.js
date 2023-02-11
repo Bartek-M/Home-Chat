@@ -6,11 +6,14 @@ run()
 
 // BUTTONS
 const settings = document.getElementById("settings")
-const open_settings = document.getElementById("open-settings") // Open settings button
-open_settings.addEventListener("click", () => { overlay_open(settings) })
+const open_settings_btn = document.getElementById("open-settings") // Open settings button
+open_settings_btn.addEventListener("click", () => { main_overlay_open(settings) })
 
 const open_category_btns = document.querySelectorAll("[open-settings-category]")
 open_category_btns.forEach(button => { button.addEventListener("click", () => open_category(button.id.replace("settings-open-", ""))) })
+
+const settings_edit_btns = document.querySelectorAll("[settings-edit]")
+settings_edit_btns.forEach(button => { button.addEventListener("click", () => secnd_overlay_open(button)) })
 
 
 // ACTIONS
@@ -148,11 +151,12 @@ let settings_pages = {
     "advanced": open_settings_advanced
 }
 
-function open_category(category = "account") {
+function open_category(category="account") {
     if (category === current_page) { return }
 
     if (current_page) { document.getElementById(`settings-open-${current_page}`).style = "" }
     document.getElementById(`settings-open-${category}`).style.backgroundColor = "var(--BUTTON_HOVER)"
+    document.getElementById(`settings-open-${category}`).style.color = "var(--FONT_COLOR)"
 
     document.getElementById("settings-content").innerHTML = settings_pages[category]()
     current_page = category

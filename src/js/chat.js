@@ -68,7 +68,7 @@ async function open_channel(channel_id) {
     document.getElementById(`channel-pill-${channel_id}`).style.height = "40px"
     document.getElementById(`channel-button-${channel_id}`).children[0].style.borderRadius = "10px"
 
-    document.getElementsByClassName("channel-view")[0].innerHTML = `
+    document.getElementsByClassName("main-view")[0].innerHTML = `
         <div class="channel-title spaced-container">
             <div class="all-center-container">
                 <img class="channel-icon" src="/api/photos/123456789.webp"/>

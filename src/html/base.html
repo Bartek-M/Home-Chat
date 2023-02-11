@@ -12,37 +12,7 @@
     <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icon.ico') }}" />
 </head>
 <body>
-    <!-- TOPBAR -->
-    <nav class="top-bar spaced-container">
-        <h1 class="top-bar-text"><a href="/">Home Chat</a></h1>
-        <div class="top-bar-menu">
-            <button class="all-center-container" id="top-dropdown-btn">
-                <svg class="icons" width="32" height="32" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-                </svg>
-            </button>
-            <div class="spaced-column-container" id="top-dropdown-menu">
-                <div class="menu-bar-items all-center-column-container">
-                    <button all-close id="top-menu-close">
-                        <svg class="icons" width="16" height="16" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-                        </svg>
-                    </button>
-                    <button class="top-dropdown-item"><a href="/">Home</a></button>
-                    {% block settings %} {% endblock %}
-                    <button class="top-dropdown-item"><a href="about">About</a></button>
-                </div>
-                <div class="menu-bar-items all-center-column-container">
-                    <hr class="separator">
-                    <button class="top-dropdown-item"><a href="register">Register</a></button>
-                    <button class="top-dropdown-item"><a href="login">Log In</a></button>
-                    <button class="top-dropdown-item"><a href="logout">Log Out</a></button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- FLASH A TEMP MESSAGE -->
+    <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %} 
         {% if messages %}
             <div class="all-center-column-container" id="flash-box">
@@ -64,12 +34,12 @@
         {% endif %} 
     {% endwith %}
 
-    <!-- CUSTOM PAGE CONTENT -->
+    <!-- CUSTOM CONTENT -->
     {% block content %} {% endblock %}
     
-    <!-- PAGE OVERLAY -->
-    <div all-close id="overlay"></div>
-    <!-- <div high-close id="high-overlay"></div>   -->
+    <!-- OVERLAY -->
+    <div all-close class="overlay" id="overlay-main"></div>
+    <div high-close class="overlay" id="overlay-secnd"></div>  
     
     <!-- JAVASCRIPT -->
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>

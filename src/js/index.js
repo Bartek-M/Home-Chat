@@ -5,36 +5,54 @@ var me
 
 
 // GLOBAL ELEMENTS
-const ovelay = document.getElementById("overlay") // Overlay
+const main_overlay = document.getElementById("overlay-main") // Main Overlay
+const secnd_overlay = document.getElementById("overlay-secnd") // Secondary overlay
+
 const all_close = document.querySelectorAll("[all-close]") // All closing elements
+const secnd_close = document.querySelectorAll("[secnd-close]") // Secondary closing elements
 
-const top_menu = document.getElementById("top-dropdown-menu") // Top dropdown menu
-const top_btn = document.getElementById("top-dropdown-btn") // Top dropdown button
-
-var active = [] // Active elements
+var main_active = [] // Active elements
+var secnd_active = [] // Secondary active elements
 
 
 // Overlay open and close
-function overlay_open(element) {
-    overlay_close()
+function main_overlay_open(element) {
+    main_overlay_close()
 
     element.classList.add("active")
-    ovelay.classList.add("active")
-    active.push(element)
+    main_overlay.classList.add("active")
+    main_active.push(element)
 }
 
-function overlay_close() {
-    active.forEach(element => { element.classList.remove("active") })
-    active = []
-    ovelay.classList.remove("active")
+function main_overlay_close() {
+    main_active.forEach(element => { element.classList.remove("active") })
+    main_active = []
+    main_overlay.classList.remove("active")
+}
+
+function secnd_overlay_open(element) {
+    secnd_overlay_close()
+
+    element.classList.add("active")
+    secnd_overlay.classList.add("active")
+    secnd_active.push(element)
+}
+
+function secnd_overlay_close() {
+    secnd_active.forEach(element => { element.classList.remove("active") })
+    secnd_active = []
+    secnd_overlay.classList.remove("active")
 }
 
 
 // BUTTONS
-top_btn.addEventListener("click", () => { overlay_open(top_menu); });
-
-all_close.forEach((element) => element.addEventListener("click", () => { overlay_close() }))
-document.addEventListener("keyup", (e) => { if (e.key === "Escape") overlay_close() })
+all_close.forEach((element) => element.addEventListener("click", () => { main_overlay_close() }))
+document.addEventListener("keyup", (e) => {
+    if (e.key === "Escape") {
+        if (secnd_active) { secnd_overlay_close }
+        else { main_overlay_close() }
+    }
+})
 
 
 // GLOBAL FUNCTIONS
@@ -55,7 +73,7 @@ function smooth_scroll(id) {
 }
 
 async function copy_text(text) {
-    await navigator.clipboard.writeText(text).catch(() => {})
+    await navigator.clipboard.writeText(text).catch(() => { })
 }
 
 
