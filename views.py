@@ -14,9 +14,8 @@ def home():
         return redirect(url_for("views.log_in"))
 
     usr = session.get("user")
-    settings = session.get("settings")
 
-    return render_template("index.html", text=f"{usr.get('name')}", user_id=usr.get("id"))
+    return render_template("index.html", user_id=usr.get("id"))
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -32,10 +31,10 @@ def log_in():
 
     if settings := db.get_user(request.form.get("email")):
         user = db.get_entry(USER_TABLE, settings.id)
+        secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
 
-        if Functions.hash_passwd(request.form.get("passwd"), settings.password.split("$")[0]) == settings.password:
+        if Functions.hash_passwd(request.form.get("passwd"), secrets.password.split("$")[0]) == secrets.password:
             session["user"] = user.__dict__
-            session["settings"] = settings.__dict__
             db.close()
 
             flash("Logged in!", "info")
@@ -63,7 +62,9 @@ def register():
     id = Functions.create_id(current_time)
 
     db.insert_entry(USER_TABLE, User(id, request.form.get("usrname"), "generic", current_time))
-    db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email, Functions.hash_passwd(request.form.get("passwd"))))
+    db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
+    db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Functions.hash_passwd(request.form.get("passwd"))))
+
     db.close()
 
     flash("Created an account!", "info")
@@ -74,7 +75,6 @@ def register():
 def log_out():
     if "user" in session:
         session.pop("user", None)
-        session.pop("settings", None)
         flash("Logged out!", "info")
 
     return redirect(url_for("views.log_in"))

@@ -6,33 +6,33 @@
 <!-- MAIN HOMEPAGE -->
 <div class="home-page container">
     <!-- CHANNELS -->
-    <nav class="channel-list spaced-column-container scroller-container">
-        <div class="channel-list-elements all-center-column-container scroller-container">
-            <li class="channel-list-item all-center-container">
-                <div class="channel-list-pill" id="channel-pill-1234"></div>
+    <nav class="main-sidebar spaced-column-container scroller-container">
+        <div class="main-sidebar-elements all-center-column-container scroller-container">
+            <li class="main-sidebar-item all-center-container">
+                <div class="main-sidebar-pill" id="channel-pill-1234"></div>
                 <button open-channel-btn id="channel-button-1234">
-                    <img class="channel-list-icon" src="/api/photos/123456789.webp" />
+                    <img class="main-sidebar-icon" src="/api/photos/123456789.webp" />
                 </button>
             </li>
-            <li class="channel-list-item all-center-container">
-                <div class="channel-list-pill" id="channel-pill-4321"></div>
+            <li class="main-sidebar-item all-center-container">
+                <div class="main-sidebar-pill" id="channel-pill-4321"></div>
                 <button open-channel-btn id="channel-button-4321">
-                    <img class="channel-list-icon" src="/api/photos/987654321.webp" />
+                    <img class="main-sidebar-icon" src="/api/photos/987654321.webp" />
                 </button>
             </li>
         </div>
-        <div class="channel-list-elements all-center-column-container">
+        <div class="main-sidebar-elements all-center-column-container">
             <hr class="separator">
-            <li class="channel-list-item all-center-container">
-                <div class="channel-list-pill" id="channel-pill-addchannel"></div>
+            <li class="main-sidebar-item all-center-container">
+                <div class="main-sidebar-pill" id="channel-pill-addchannel"></div>
                 <button class="channels-sidebar-settings all-center-container" id="add-channel">
                     <svg width="32" height="32" viewBox="0 0 16 16">
                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                     </svg>
                 </button>
             </li>
-            <li class="channel-list-item all-center-container">
-                <div class="channel-list-pill" id="channel-pill-settings"></div>
+            <li class="main-sidebar-item all-center-container">
+                <div class="main-sidebar-pill" id="channel-pill-settings"></div>
                 <button class="channels-sidebar-settings all-center-container" id="open-settings">
                     <svg width="24" height="24" viewBox="0 0 16 16">
                         <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
@@ -74,14 +74,19 @@
     </div>
 
     <!-- CONTENT -->
-    <div class="settings-page">
-        <div class="column-container scroller-container" id="settings-content"></div>
+    <div class="settings-page scroller-container">
+        <div class="column-container" id="settings-content"></div>
         <button all-close class="all-center-container" id="close-settings">
             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
             </svg>
         </button>
     </div>
+</div>
+
+<!-- SETTINGS EDIT CARD -->
+<div class="all-center-column-container" id="settings-edit-card">
+    <h1>EDIT TEST</h1>
 </div>
 {% endblock %}
 

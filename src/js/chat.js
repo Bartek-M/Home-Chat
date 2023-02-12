@@ -45,10 +45,8 @@ function add_message(message) {
             </li>`
     }
 
-    document.getElementById("messages-list").innerHTML += content
-    smooth_scroll("chat-window")
-
     messages[channel_id] = [author.id, time]
+    return content
 }
 
 // Display channel
@@ -90,6 +88,8 @@ async function open_channel(channel_id) {
         </div>
     `
 
+    let messages_list_items = ``
+
     for (const message of message_list) {
         if (fetched_users[message.user_id]) { message.author = fetched_users[message.user_id] }
         else { message.author = await get_user(String(message.user_id)); fetched_users[message.user_id] = message.author }
@@ -99,8 +99,11 @@ async function open_channel(channel_id) {
         delete message.user_id
         delete message.create_time
 
-        add_message(message)
+        messages_list_items += add_message(message)
     }
+
+    document.getElementById("messages-list").innerHTML += messages_list_items
+    smooth_scroll("chat-window")    
 
     send_btn = document.getElementById("message-send")
     message_inpt = document.getElementById("message-inpt")
@@ -115,7 +118,10 @@ async function open_channel(channel_id) {
 const socket = io()
 
 // Update messages
-socket.on("message recive", (data) => { add_message(data) })
+socket.on("message recive", (data) => { 
+    document.getElementById("messages-list").innerHTML += add_message(data)
+    smooth_scroll("chat-window")    
+})
 
 // Send a message
 function send() {

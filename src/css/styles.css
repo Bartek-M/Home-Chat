@@ -1,8 +1,8 @@
 /* GENERAL STUFF */
 :root {
     --BACKGROUND_COLOR: #010409;
-    --MAIN_COLOR: #090c0f;
-    --COLOR_3: #13161b;
+    --MAIN_COLOR: #161b22;
+    --COLOR_3: #101216;
     --COLOR_4: #202225;
 
     --FONT_COLOR: #FFFFFF;
@@ -26,7 +26,7 @@
 @media (prefers-color-scheme : dark) {
 :root {
     --BACKGROUND_COLOR: #010409;
-    --MAIN_COLOR: #090c0f;
+    --MAIN_COLOR: #161b22;
     --COLOR_3: #13161b;
     --COLOR_4: #202225;
 
@@ -50,13 +50,7 @@
 }}
     
 
-html {
-    height: 100%;
-    width: 100%;
-    background-color: var(--BACKGROUND_COLOR);
-}
-
-body {
+html, body {
     background-color: var(--BACKGROUND_COLOR);
     color: var(--FONT_RV_COLOR);
     font-family: "FF DIN Pro", sans-serif;
@@ -75,7 +69,7 @@ span, button, div, input, label, select { outline: 0 }
 li { list-style: none; }
 hr { border: 0 }
 
-button, input { font-size: inherit; background-color: transparent; border: 0; color: inherit; user-select: none; }
+button, input { font-size: inherit; background-color: transparent; border: 0; padding: 0; color: inherit; user-select: none; }
 button:hover { cursor: pointer; }
 button:hover svg { fill: var(--BLUE) }
 a { color: var(--FONT_COLOR); text-decoration: none; }
@@ -92,41 +86,38 @@ input { -webkit-appearance: none }
 ::-webkit-scrollbar-thumb:hover { cursor: pointer; background-color: var(--SCROLLBAR_DARKER) }
 ::-webkit-scrollbar-button { height: 2.5px }
 
-.separator { width: calc(100% - 2rem); height: 2px; margin: .5rem 1rem; background-color: var(--BUTTON_HOVER);}
+.separator { width: calc(100% - 2rem); min-height: 2px; margin: .5rem 1rem; background-color: var(--BUTTON_HOVER);}
 .scroller-spacer { min-height: 30px;}
 .scroller-container { position: relative; overflow-y: scroll; overflow-x: hidden } 
 
+[class*="container"] { display: flex; gap: .5rem; }
+.spaced-container { gap: 1rem; justify-content: space-between; align-items: center; }
+.all-center-container { justify-content: center; align-items: center; }
 
-.container { display: flex; gap: .5rem;}
-.spaced-container { display: flex; gap: .5rem; justify-content: space-between; align-items: center; }
-.all-center-container { display: flex; gap: .5rem; justify-content: center; align-items: center; }
-
-.column-container { display: flex; flex-direction: column; gap: .5rem;}
-.spaced-column-container { display: flex; flex-direction: column; gap: .5rem; justify-content: space-between; align-items: center; }
-.all-center-column-container { display: flex; flex-direction: column; gap: .5rem; justify-content: center; align-items: center; }
-
-/* @media screen and (max-width: ) */
+[class*="column"] { flex-direction: column; }
+.spaced-column-container { gap: 1rem; justify-content: space-between; align-items: center; }
+.all-center-column-container { justify-content: center; align-items: center; }
 
 
 /* HOME PAGE */
 .home-page { width: 100%; height: 100%; gap: 0}
 
-/* CHANNEL LIST */
-.channel-list {
-    width: 72px;
+/* main sidebar */
+.main-sidebar {
+    width: 64px;
     height: calc(100% - 1.5rem);
     padding: .75rem 0;
     background-color: var(--MAIN_COLOR);
 }
-.channel-list::-webkit-scrollbar { display: none; }
+.main-sidebar::-webkit-scrollbar { display: none; }
 
-.channel-list-elements { width: 100%; }
-.channel-list-elements::-webkit-scrollbar { display: none; }
+.main-sidebar-elements { width: 100%; }
+.main-sidebar-elements::-webkit-scrollbar { display: none; }
 
-.channel-list-item { pointer-events: none; }
-.channel-list-item:hover .channel-list-pill { height: 20px; }
+.main-sidebar-item { pointer-events: none; }
+.main-sidebar-item:hover .main-sidebar-pill { height: 20px; }
 
-.channel-list-pill { 
+.main-sidebar-pill { 
     background-color: var(--FONT_DIM_COLOR); 
     border-radius: 0 4px 4px 0; 
     margin-left: -4px;
@@ -137,7 +128,7 @@ input { -webkit-appearance: none }
     transition: .17s ease;
 }
 
-.channel-list-icon {
+.main-sidebar-icon {
     width: 48px;
     height: 48px;
     object-fit: cover;
@@ -146,7 +137,7 @@ input { -webkit-appearance: none }
     transition: .17s ease;
 }
 
-.channel-list-icon:hover { border-radius: 10px; }
+.main-sidebar-icon:hover { border-radius: 10px; }
 
 .channels-sidebar-settings { 
     background-color: var(--COLOR_3);
@@ -165,7 +156,7 @@ input { -webkit-appearance: none }
 /* CHANNEL VIEW */
 /* channel info */
 .main-view {
-    width: calc(100% - 72px);
+    width: calc(100% - 64px);
     height: 100%;
     gap: 0;
     border-left: 1px solid var(--BORDER_COLOR);
@@ -178,7 +169,7 @@ input { -webkit-appearance: none }
     margin: .5rem .5rem 0 .5rem;
     border-radius: 8px;
     border-color: transparent;
-    background-color: var(--COLOR_3);
+    background-color: var(--MAIN_COLOR);
     color: var(--FONT_RV_COLOR);
 }
 
@@ -239,7 +230,7 @@ input { -webkit-appearance: none }
 .writing-box {
     align-items: start;
     color: var(--FONT_RV_COLOR);
-    background-color: var(--COLOR_3);
+    background-color: var(--MAIN_COLOR);
     border-color: transparent;
     border-radius: 8px;
     margin: 0 .5rem .5rem .5rem;
@@ -273,13 +264,13 @@ input { -webkit-appearance: none }
     justify-content: center;
     background-color: inherit;
     position: fixed;
-    transform: scale(0);
-    transition: 250ms ease-in-out;
     z-index: 15;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    transform: scale(0);
+    transition: 250ms ease-in-out;
 }
 
 #settings.active { transform: scale(1); }
@@ -287,9 +278,10 @@ input { -webkit-appearance: none }
 /* siderbar */
 .settings-sidebar-wrapper {
     display: flex;
+    flex: 1 1 200px;
     justify-content: right;
     background-color: var(--MAIN_COLOR);
-    color: var(--FONT_COLOR)
+    color: var(--FONT_COLOR);
 }
 
 .settings-sidebar-wrapper::-webkit-scrollbar { display: none; }
@@ -318,10 +310,10 @@ input { -webkit-appearance: none }
 
 .settings-sidebar button:hover, .settings-sidebar a:hover { background-color: var(--BUTTON_HOVER); color: var(--FONT_COLOR)}
 
-
 /* content */
 .settings-page {
     display: flex;
+    flex: 1 2 800px;
     justify-content: left;
     gap: .5rem;
     border-left: 1px solid var(--BORDER_COLOR);
@@ -330,15 +322,14 @@ input { -webkit-appearance: none }
 #settings-content {
     padding: 60px 20px 60px 40px;
     gap: 1.25rem;
-    min-width: 300px;
-    width: 800px;
+    width: min(700px, 100%);
     user-select: text;
 }
 
 #close-settings { 
-    position: fixed;
-    top: 60px;
-    right: 1rem;
+    position: absolute;
+    top: 20px;
+    right: 20px;
     width: 40px;
     height: 40px;
     border: 2px solid var(--FONT_DIM_COLOR);
@@ -348,6 +339,26 @@ input { -webkit-appearance: none }
 
 #close-settings:hover { border-color: var(--BLUE); }
 
+/* responsive settings */
+@media screen and (max-width: 700px) {
+    #settings {
+        flex-direction: column;
+        align-items: center;
+        justify-content: unset;
+    }
+    
+    .settings-sidebar-wrapper { 
+        position: fixed; 
+        z-index: 16;
+        width: 100%; 
+        justify-content: left;
+    }
+
+    .settings-sidebar { width: calc(100% - 4rem); padding: 2rem; }
+    #settings-content { padding: 40px 1rem 40px 1rem; }
+    .settings-page { border: 0; }
+    .settings-page, .settings-sidebar-wrapper { flex: unset }
+}
 
 /* SETTINGS PAGES */
 .settings-card {
@@ -355,6 +366,8 @@ input { -webkit-appearance: none }
     border-radius: 8px;
     background-color: var(--COLOR_3);
 }
+
+.settings-category-info { font-size: 12px; color: var(--FONT_DIM_COLOR) }
 
 .settings-btn {
     font-size: 14px;
@@ -390,7 +403,19 @@ input { -webkit-appearance: none }
 }
 
 .account-settings { gap: 1.5rem; }
-.settings-category-info { font-size: 12px; color: var(--FONT_DIM_COLOR) }
+
+/* settings-popup-card */
+#settings-edit-card {
+    position: fixed;
+    z-index: 25;
+    top: 40%;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--MAIN_COLOR);
+    transform: scale(0);
+    transition: 250ms ease-in-out;
+}
+#settings-edit-card.active { transform: scale(1); }
 
 
 /* LOGIN & SIGNUP PAGE */
@@ -408,11 +433,10 @@ input { -webkit-appearance: none }
 .login-data { margin-top: 1rem; }
 
 .login-input {
-    border-color: transparent;
     border-radius: 8px;
     background-color: var(--FONT_COLOR);
     color: var(--BLACK);
-    padding-left: .5rem;
+    padding: 2px .5rem;
     height: 24px;
 }
 
@@ -420,7 +444,6 @@ input { -webkit-appearance: none }
     background-color: var(--GREEN);
     color: var(--FONT_COLOR);
     border-radius: 8px;
-    border-color: transparent;
     width: 100%;
     margin-top: 2rem;
     padding: .5rem;
@@ -479,7 +502,7 @@ input { -webkit-appearance: none }
 
 
 /* NOT FOUND - 404 */
-.not-found { height: 70%; padding: 2rem; color: var(--FONT_DIM_COLOR)}
+.not-found { height: 70%; color: var(--FONT_DIM_COLOR)}
 .not-found h2 { text-align: center; }
 
 .not-found-error {

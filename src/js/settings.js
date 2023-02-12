@@ -12,19 +12,22 @@ open_settings_btn.addEventListener("click", () => { main_overlay_open(settings) 
 const open_category_btns = document.querySelectorAll("[open-settings-category]")
 open_category_btns.forEach(button => { button.addEventListener("click", () => open_category(button.id.replace("settings-open-", ""))) })
 
-const settings_edit_btns = document.querySelectorAll("[settings-edit]")
-settings_edit_btns.forEach(button => { button.addEventListener("click", () => secnd_overlay_open(button)) })
-
 
 // ACTIONS
 const actions = { "copy-id": copy_id }
 
 function copy_id() { copy_text(me.id) }
 
+function open_edit_window(editable) {
+    console.log(editable)
+    document.getElementById("settings-edit-card").innerHTML += editable
+    secnd_overlay_open(document.getElementById("settings-edit-card"))
+}
+
 
 // PAGES
-function open_settings_account() {
-    let page = `
+function page_account() {
+    return `
     <h2 class="settings-title">Account</h2>
     <div class="settings-card column-container">
         <div class="user-info all-center-container">
@@ -71,12 +74,10 @@ function open_settings_account() {
         <button settings-edit class="settings-btn stng-warning-btn" id="settings-edit-delete-account">Delete Account</button>
     </div>
     `
-
-    return page
 }
 
-function open_settings_security() {
-    let page = `
+function page_security() {
+    return `
     <h2 class="settings-title">Security</h2>
     <div class="spaced-container">
         <div class="column-container">
@@ -84,13 +85,6 @@ function open_settings_security() {
             <p>It's good to have a strong password everywhere<p>
         </div>
         <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-password">Edit</button>
-    </div>
-    <div class="spaced-container">
-        <div class="column-container">
-            <p class="settings-category-info">AUTO LOGIN</p>
-            <p>There's no need to login it everytime<p>
-        </div>
-        <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-autologin">Edit</button>
     </div>
     <div class="spaced-container">
         <div class="column-container">
@@ -105,7 +99,7 @@ function open_settings_security() {
             <p class="settings-category-info">ACCOUNT VISIBILITY</p>
             <p>Change your account visibility<p>
         </div>
-        <button settings-edit class="settings-btn stng-action-btn" id="settings-edit-to-do">TO-DO!!!!</button>
+        <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-to-do">Edit</button>
     </div>
     <div class="spaced-container">
         <div class="column-container">
@@ -115,40 +109,32 @@ function open_settings_security() {
         <button settings-edit class="settings-btn stng-warning-btn" id="settings-edit-regenerate-token">Regenerate</button>
     </div>
     `
-
-    return page
 }
 
-function open_settings_friends() {
-    let page = `
+function page_friends() {
+    return `
     <h2 class="settings-title">Friends</h2>
     `
-
-    return page
 }
 
-function open_settings_appearance() {
-    let page = `
+function page_appearance() {
+    return `
     <h2 class="settings-title">Appearance</h2>
     `
-
-    return page
 }
 
-function open_settings_advanced() {
-    let page = `
+function page_advanced() {
+    return `
     <h2 class="settings-title">Advanced</h2>
     `
-
-    return page
 }
 
 let settings_pages = {
-    "account": open_settings_account,
-    "security": open_settings_security,
-    "friends": open_settings_friends,
-    "appearance": open_settings_appearance,
-    "advanced": open_settings_advanced
+    "account": page_account,
+    "security": page_security,
+    "friends": page_friends,
+    "appearance": page_appearance,
+    "advanced": page_advanced
 }
 
 function open_category(category="account") {
@@ -163,4 +149,7 @@ function open_category(category="account") {
 
     const settings_action_btns = document.querySelectorAll("[settings-action]")
     settings_action_btns.forEach(button => { button.addEventListener("click", () => actions[button.id.replace("settings-action-", "")]()) })
+
+    const settings_edit_btns = document.querySelectorAll("[settings-edit]")
+    settings_edit_btns.forEach(button => { button.addEventListener("click", () => open_edit_window(button.id.replace("settings-edit-", "")) ) })
 }

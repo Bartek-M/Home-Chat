@@ -6,6 +6,8 @@ api = Blueprint(__name__, "api") # Define api
 
 
 # API PAGES
+
+# CHANNELS
 @api.route("/channels/<channel_id>")
 def get_channel(channel_id):
     db = Database()
@@ -15,35 +17,39 @@ def get_channel(channel_id):
     return jsonify(channel)
 
 @api.route("/channels/<channel_id>/messages")
-def channel_messages(channel_id):
+def get_messages(channel_id):
     db = Database()
     messages = db.get_channel_messages(channel_id)
     db.close()
 
     return jsonify(messages)
 
-
+# USERS
 @api.route("/users/<user_id>")
-def get_user(user_id):
+def get_user(user_id,):
     db = Database()
-    user_id = user_id if user_id != "@me" else "4354377540845690365"
+    user_id = user_id if user_id != "@me" else "4364529856641041514"
     user = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else {}
     db.close()
 
     return jsonify(user)
 
 @api.route("/users/<user_id>/channels")
-def user_channels(channels):
+def get_channels(user_id):
     db = Database()
-    messages = db.get_user_channels(channels)
+    messages = db.get_user_channels(user_id)
     db.close()
 
     return jsonify(messages)
 
-
 # SETTINGS
-@api.route("/users/<user_id>/settings")
+@api.route("/settings/@me")
+def settings():
+    db = Database()
+    user_settings = db.get_
+    db.close()
 
+    return jsonify(user_settings)
 
 # PHOTOS
 @api.route("/photos/<photo_id>")

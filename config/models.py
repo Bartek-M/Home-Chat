@@ -50,7 +50,7 @@ class Channel:
     def __repr__(self):
         """
         Representation
-        :return: (id, name, create_time)
+        :return: (id, name, create_time, direct)
         """
         return f"('{self.id}', '{self.name}', '{self.icon}', '{self.create_time}', '{self.direct}')"
 
@@ -67,7 +67,7 @@ class UserChannel:
     def __repr__(self):
         """
         Representation
-        :return: (user_id, name)
+        :return: (user_id, name, nick)
         """
         return f"('{self.user_id}', '{self.channel_id}', '{self.nick}')"
 
@@ -76,16 +76,33 @@ class UserSettings:
     """
     Representation of user settings
     """
-    def __init__(self, id, email, password, theme=None, auth=None):
+    def __init__(self, id, email, theme="auto", visibility="public", auth="password"):
         self.id = id
         self.email = email
-        self.password = password
-        self.theme = theme if theme else 1
-        self.auth = auth if auth else False
+        self.theme = theme # auto | light | dark
+        self.visibility = visibility # public | private
+        self.auth = auth # password | 2fa
 
     def __repr__(self):
         """
         Representation
-        :return: (id, email, password, theme, auth)
+        :return: (id, email, theme, visibility, auth)
         """
-        return f"('{self.id}', '{self.email}', '{self.password}', '{self.theme}', '{self.auth}')"
+        return f"('{self.id}', '{self.email}', '{self.theme}', '{self.visibility}', '{self.auth}')"
+
+
+class UserSecrets:
+    """
+    Representation of user secrets
+    """
+    def __init__(self, id, password, auth_code=None):
+        self.id = id
+        self.password = password
+        self.auth_code = auth_code
+
+    def __repr__(self):
+        """
+        Representation
+        :return: (id, password, auth_code)
+        """
+        return f"('{self.id}', '{self.password}', '{self.auth_code}')"

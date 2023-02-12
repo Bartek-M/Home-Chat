@@ -1,6 +1,6 @@
 console.log("Hello from backend :)")
 
-// USER OBJECT
+// OBJECTS
 var me
 
 
@@ -9,7 +9,7 @@ const main_overlay = document.getElementById("overlay-main") // Main Overlay
 const secnd_overlay = document.getElementById("overlay-secnd") // Secondary overlay
 
 const all_close = document.querySelectorAll("[all-close]") // All closing elements
-const secnd_close = document.querySelectorAll("[secnd-close]") // Secondary closing elements
+const secnd_close = document.querySelectorAll("[high-close]") // Secondary closing elements
 
 var main_active = [] // Active elements
 var secnd_active = [] // Secondary active elements
@@ -18,6 +18,7 @@ var secnd_active = [] // Secondary active elements
 // Overlay open and close
 function main_overlay_open(element) {
     main_overlay_close()
+    secnd_overlay_close()
 
     element.classList.add("active")
     main_overlay.classList.add("active")
@@ -47,9 +48,11 @@ function secnd_overlay_close() {
 
 // BUTTONS
 all_close.forEach((element) => element.addEventListener("click", () => { main_overlay_close() }))
+secnd_close.forEach((element) => element.addEventListener("click", () => { secnd_overlay_close() }))
+
 document.addEventListener("keyup", (e) => {
     if (e.key === "Escape") {
-        if (secnd_active) { secnd_overlay_close }
+        if (secnd_active.length) { secnd_overlay_close() }
         else { main_overlay_close() }
     }
 })

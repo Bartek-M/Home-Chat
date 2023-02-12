@@ -2,7 +2,7 @@ import sqlite3
 import hashlib
 import secrets
 import random
-from .models import User, Message, Channel, UserChannel, UserSettings
+from .models import User, Message, Channel, UserChannel, UserSettings, UserSecrets
 
 # GLOBAL VARIABLES
 FILE = "./config/database.db" # ./config/database.db | :memory:
@@ -12,8 +12,16 @@ MESSAGE_TABLE = "messages"
 CHANNEL_TABLE = "channels"
 USER_CHANNEL_TABLE = "user_channels"
 USER_SETTING_TABLE = "user_settings"
+USER_SECRET_TABLE = "user_secrets"
 
-CONFIG_OBJECTS = {USER_TABLE: User, MESSAGE_TABLE: Message, CHANNEL_TABLE: Channel, USER_CHANNEL_TABLE: UserChannel, USER_SETTING_TABLE: UserSettings} 
+CONFIG_OBJECTS = {
+    USER_TABLE: User, 
+    MESSAGE_TABLE: Message, 
+    CHANNEL_TABLE: Channel, 
+    USER_CHANNEL_TABLE: UserChannel, 
+    USER_SETTING_TABLE: UserSettings, 
+    USER_SECRET_TABLE: UserSecrets
+} 
 
 
 class Database:
@@ -31,11 +39,24 @@ class Database:
         :return: None
         """
         queries = [ 
-            f"{USER_TABLE} (id TEXT UNIQUE, name TEXT, avatar TEXT, create_time TEXT)",
-            f"{MESSAGE_TABLE} (id TEXT UNIQUE, user_id TEXT, channel_id TEXT, content TEXT, create_time TEXT)",
-            f"{CHANNEL_TABLE} (id TEXT UNIQUE, name TEXT, icon TEXT, create_time TEXT, direct TEXT)",
-            f"{USER_CHANNEL_TABLE} (id TEXT, channel_id TEXT UNIQUE, nick TEXT)",
-            f"{USER_SETTING_TABLE} (id TEXT UNIQUE, email TEXT UNIQUE, password TEXT, theme INEGER, auth TEXT)"
+            f"""{USER_TABLE} (
+                id TEXT UNIQUE, name TEXT, avatar TEXT, create_time TEXT
+            )""",
+            f"""{MESSAGE_TABLE} (
+                id TEXT UNIQUE, user_id TEXT, channel_id TEXT, content TEXT, create_time TEXT
+            )""",
+            f"""{CHANNEL_TABLE} (
+                id TEXT UNIQUE, name TEXT, icon TEXT, create_time TEXT, direct TEXT
+            )""",
+            f"""{USER_CHANNEL_TABLE} (
+                id TEXT, channel_id TEXT UNIQUE, nick TEXT
+            )""",
+            f"""{USER_SETTING_TABLE} (
+                id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, visibility TEXT, auth TEXT
+            )""",
+            f"""{USER_SECRET_TABLE} (
+                id TEXT UNIQUE, password TEXT, auth_code TEXT
+            )"""
         ]
 
         for query in queries:  
