@@ -30,6 +30,7 @@ def handle(data):
 
     if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
         channel = Channel(channel_id, "Test", "123456789", current_time)
+
         db.insert_entry(CHANNEL_TABLE, channel)
 
     message = Message(Functions.create_id(current_time), user["id"], channel.id, content, current_time)

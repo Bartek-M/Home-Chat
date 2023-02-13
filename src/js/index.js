@@ -3,57 +3,58 @@ console.log("Hello from backend :)")
 // OBJECTS
 var me
 
+// Get os
+const os_list = {
+    "Windows NT 10.0": "Windows 10",
+    "Windows NT 6.2": "Windows 8",
+    "Windows NT 6.1": "Windows 7",
+    "Windows NT 6.0": "Windows Vista",
+    "Windows NT 5.1": "Windows XP",
+    "Windows NT 5.0": "Windows 2000",
+    "Mac": "Mac / iOS",
+    "X11": "UNIX",
+    "Linux": "Linux"
+}
+var user_os
+for (const os in os_list) { if (window.navigator.userAgent.indexOf(os) != -1) { user_os = os_list[os] } }
 
-// GLOBAL ELEMENTS
+
+// OVERLAY
 const main_overlay = document.getElementById("overlay-main") // Main Overlay
 const secnd_overlay = document.getElementById("overlay-secnd") // Secondary overlay
 
-const all_close = document.querySelectorAll("[all-close]") // All closing elements
-const secnd_close = document.querySelectorAll("[high-close]") // Secondary closing elements
+document.querySelectorAll("[all-close]").forEach((element) => element.addEventListener("click", () => { overlay_close(main_overlay) })) // All closing elements
+document.querySelectorAll("[high-close]").forEach((element) => element.addEventListener("click", () => { overlay_close(secnd_overlay) })) // Secondary closing elements
 
-var main_active = [] // Active elements
-var secnd_active = [] // Secondary active elements
+// Active elements
+var active = { main: [], secnd: [] }
 
-
-// Overlay open and close
-function main_overlay_open(element) {
-    main_overlay_close()
-    secnd_overlay_close()
+function overlay_open(overlay, element) {
+    overlay_close(overlay)
 
     element.classList.add("active")
-    main_overlay.classList.add("active")
-    main_active.push(element)
+    overlay.classList.add("active")
+
+    if (overlay == main_overlay) { active.main.push(element) }
+    else { active.secnd.push(element) }
 }
 
-function main_overlay_close() {
-    main_active.forEach(element => { element.classList.remove("active") })
-    main_active = []
-    main_overlay.classList.remove("active")
-}
+function overlay_close(overlay) {
+    if (overlay == main_overlay) {
+        active.main.forEach(element => { element.classList.remove("active") })
+        active.main = []
+        overlay.classList.remove("active")
+    }
 
-function secnd_overlay_open(element) {
-    secnd_overlay_close()
-
-    element.classList.add("active")
-    secnd_overlay.classList.add("active")
-    secnd_active.push(element)
-}
-
-function secnd_overlay_close() {
-    secnd_active.forEach(element => { element.classList.remove("active") })
-    secnd_active = []
+    active.secnd.forEach(element => { element.classList.remove("active") })
+    active.secnd = []
     secnd_overlay.classList.remove("active")
 }
 
-
-// BUTTONS
-all_close.forEach((element) => element.addEventListener("click", () => { main_overlay_close() }))
-secnd_close.forEach((element) => element.addEventListener("click", () => { secnd_overlay_close() }))
-
 document.addEventListener("keyup", (e) => {
     if (e.key === "Escape") {
-        if (secnd_active.length) { secnd_overlay_close() }
-        else { main_overlay_close() }
+        if (active[secnd_overlay].length) { overlay_close(secnd_overlay) }
+        else { overlay_close(main_overlay) }
     }
 })
 
@@ -63,8 +64,13 @@ document.addEventListener("keyup", (e) => {
 function format_time(time, format = "full") {
     time = parseFloat(time)
 
-    if (format == "full") { return new Date(time * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).replaceAll(",", "") }
-    if (format == "time") { return new Date(time * 1000).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) }
+    if (format == "full") {
+        return new Date(time * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).replaceAll(",", "")
+    }
+
+    if (format == "time") {
+        return new Date(time * 1000).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+    }
 
     return undefined
 }
@@ -76,41 +82,28 @@ function smooth_scroll(id) {
 }
 
 async function copy_text(text) {
-    await navigator.clipboard.writeText(text).catch(() => { })
+    await window.navigator.clipboard.writeText(text).catch(() => { })
 }
 
 
 // API FUNCTIONS
-async function get_me() {
-    if (!me) { me = await get_user("@me") }
+const API_PAGES = {
+    channel: (value) => `/api/channels/${value}/`,
+    channel_users: (value) => `/api/channels/${value}/users/`,
+    channel_messages: (value) => `/api/channels/${value}/messages/`,
+    user: (value) => `/api/users/${value}/`,
+    user_channels: (value) => `/api/users/${value}/channels/`,
+    user_friends: (value) => `/api/users/${value}/friends`,
+}
 
+
+async function api_me() {
+    if (!me) { me = await api_get("user", "@me") }
     return me
 }
 
-// Get channel messages
-async function get_channel_messages(channel_id) {
-    return await fetch(`/api/channels/${channel_id}/messages/`)
-        .then(async (response) => { return await response.json() })
-        .then((data) => { return data })
-}
-
-// Get user channels
-async function get_user_channels(user_id) {
-    return await fetch(`/api/users/${user_id}/channels/`)
-        .then(async (response) => { return await response.json() })
-        .then((data) => { return data })
-}
-
-// Get user
-async function get_user(user_id) {
-    return await fetch(`/api/users/${user_id}/`)
-        .then(async (response) => { return await response.json() })
-        .then((data) => { return data })
-}
-
-// Get channel
-async function get_channel(channel_id) {
-    return await fetch(`/api/channels/${channel_id}/`)
+async function api_get(page, id) {
+    return await fetch(API_PAGES[page](id))
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
 }

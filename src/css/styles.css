@@ -59,6 +59,7 @@ html, body {
     margin: 0;
     overflow: hidden;
     user-select: none;
+    -webkit-text-size-adjust: 100%;
 }
 
 
@@ -283,8 +284,11 @@ input { -webkit-appearance: none }
     background-color: var(--MAIN_COLOR);
     color: var(--FONT_COLOR);
 }
-
 .settings-sidebar-wrapper::-webkit-scrollbar { display: none; }
+
+.sidebar-title { font-size: 1.75rem; padding: 8px 10px;}
+#settings-dropdown-btn { display: none; }
+#settings-dropdown-btn svg { fill: var(--FONT_COLOR) }
 
 .settings-sidebar {
     width: 180px;
@@ -323,6 +327,7 @@ input { -webkit-appearance: none }
     padding: 60px 20px 60px 40px;
     gap: 1.25rem;
     width: min(700px, 100%);
+    height: max-content;
     user-select: text;
 }
 
@@ -348,16 +353,24 @@ input { -webkit-appearance: none }
     }
     
     .settings-sidebar-wrapper { 
-        position: fixed; 
-        z-index: 16;
         width: 100%; 
         justify-content: left;
+        max-height: 48px; 
+        overflow: hidden; 
+        transition: .17s ease;
     }
 
-    .settings-sidebar { width: calc(100% - 4rem); padding: 2rem; }
-    #settings-content { padding: 40px 1rem 40px 1rem; }
+    .settings-sidebar-wrapper.active { max-height: 368px; overflow-y: scroll; }
+    .settings-sidebar-wrapper.active svg { transform: rotate(180deg); }
+
+    .settings-sidebar-wrapper, .settings-page { flex: unset }
+
+    .settings-sidebar { width: calc(100% - 2rem); padding: 0 1rem; }
     .settings-page { border: 0; }
-    .settings-page, .settings-sidebar-wrapper { flex: unset }
+    .settings-page::-webkit-scrollbar { display: none; }
+
+    #settings-dropdown-btn { display: flex; }
+    #settings-content { padding: 20px 1rem; }
 }
 
 /* SETTINGS PAGES */

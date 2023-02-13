@@ -6,7 +6,6 @@ api = Blueprint(__name__, "api") # Define api
 
 
 # API PAGES
-
 # CHANNELS
 @api.route("/channels/<channel_id>")
 def get_channel(channel_id):
@@ -24,11 +23,12 @@ def get_messages(channel_id):
 
     return jsonify(messages)
 
+
 # USERS
 @api.route("/users/<user_id>")
 def get_user(user_id,):
     db = Database()
-    user_id = user_id if user_id != "@me" else "4364529856641041514"
+    user_id = user_id if user_id != "@me" else "4365166056053833144"
     user = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else {}
     db.close()
 
@@ -41,6 +41,15 @@ def get_channels(user_id):
     db.close()
 
     return jsonify(messages)
+
+@api.route("/users/<user_id>/friends")
+def get_friends(user_id):
+    db = Database()
+    friends = db.get_user_friends(user_id)
+    db.close()
+
+    return jsonify(friends)
+
 
 # SETTINGS
 @api.route("/settings/@me")
@@ -64,7 +73,7 @@ def upload_photo():
 # TEMP DATABASE
 @api.route("/database")
 def database():
-    tables = [USER_TABLE, MESSAGE_TABLE, CHANNEL_TABLE, USER_CHANNEL_TABLE, USER_SETTING_TABLE]
+    tables = [USER_TABLE, MESSAGE_TABLE, CHANNEL_TABLE, USER_CHANNEL_TABLE, USER_FRIENDS_TABLE, USER_SETTING_TABLE, USER_SECRET_TABLE]
     db = Database()
 
     for table in tables:

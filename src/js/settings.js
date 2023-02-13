@@ -1,16 +1,23 @@
 // SETTINGS
 var current_page
 
-const run = async () => { await get_me(); open_category() }
+const run = async () => { 
+    await api_me(); 
+    document.getElementById("settings-sidebar-info").innerText += `\n${user_os}`
+    open_category() 
+}
 run()
 
 // BUTTONS
 const settings = document.getElementById("settings")
 const open_settings_btn = document.getElementById("open-settings") // Open settings button
-open_settings_btn.addEventListener("click", () => { main_overlay_open(settings) })
+open_settings_btn.addEventListener("click", () => { overlay_open(main_overlay, settings) })
 
 const open_category_btns = document.querySelectorAll("[open-settings-category]")
 open_category_btns.forEach(button => { button.addEventListener("click", () => open_category(button.id.replace("settings-open-", ""))) })
+
+const settings_dropdown_btn = document.getElementById("settings-dropdown-btn")
+settings_dropdown_btn.addEventListener("click", () => { document.getElementById("settings-dropdown").classList.toggle("active") })
 
 
 // ACTIONS
@@ -19,9 +26,8 @@ const actions = { "copy-id": copy_id }
 function copy_id() { copy_text(me.id) }
 
 function open_edit_window(editable) {
-    console.log(editable)
     document.getElementById("settings-edit-card").innerHTML += editable
-    secnd_overlay_open(document.getElementById("settings-edit-card"))
+    overlay_open(secnd_overlay, document.getElementById("settings-edit-card"))
 }
 
 

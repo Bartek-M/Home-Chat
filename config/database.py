@@ -2,7 +2,7 @@ import sqlite3
 import hashlib
 import secrets
 import random
-from .models import User, Message, Channel, UserChannel, UserSettings, UserSecrets
+from .models import User, Message, Channel, UserChannel, UserFriend, UserSettings, UserSecrets
 
 # GLOBAL VARIABLES
 FILE = "./config/database.db" # ./config/database.db | :memory:
@@ -11,6 +11,7 @@ USER_TABLE = "users"
 MESSAGE_TABLE = "messages"
 CHANNEL_TABLE = "channels"
 USER_CHANNEL_TABLE = "user_channels"
+USER_FRIENDS_TABLE = "user_friends"
 USER_SETTING_TABLE = "user_settings"
 USER_SECRET_TABLE = "user_secrets"
 
@@ -18,7 +19,8 @@ CONFIG_OBJECTS = {
     USER_TABLE: User, 
     MESSAGE_TABLE: Message, 
     CHANNEL_TABLE: Channel, 
-    USER_CHANNEL_TABLE: UserChannel, 
+    USER_CHANNEL_TABLE: UserChannel,
+    USER_FRIENDS_TABLE: UserFriend,
     USER_SETTING_TABLE: UserSettings, 
     USER_SECRET_TABLE: UserSecrets
 } 
@@ -49,10 +51,13 @@ class Database:
                 id TEXT UNIQUE, name TEXT, icon TEXT, create_time TEXT, direct TEXT
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                id TEXT, channel_id TEXT UNIQUE, nick TEXT
+                user_id TEXT, channel_id TEXT UNIQUE, nick TEXT
+            )""",
+            f"""{USER_FRIENDS_TABLE} (
+                user_id TEXT, friend_id TEXT
             )""",
             f"""{USER_SETTING_TABLE} (
-                id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, visibility TEXT, auth TEXT
+                id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, visibility TEXT, auth TEXT
             )""",
             f"""{USER_SECRET_TABLE} (
                 id TEXT UNIQUE, password TEXT, auth_code TEXT
@@ -97,10 +102,23 @@ class Database:
         :param req_id: ID of user or channel you want to get
         :return: List of UserChannel objects or []
         """
-        self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE id='{req_id}' OR channel_id='{req_id}'")
+        self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id='{req_id}'")
         
         if fetched := self.cursor.fetchall():
             return [UserChannel(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[3])]
+
+        return []
+
+    def get_user_friends(self, req_id):
+        """
+        Get all user friends
+        :param req_id: ID of user you want to get friends from
+        :return: List of User objects or []
+        """
+        self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id='{req_id}' OR friend_id='{req_id}'")
+
+        if fetched := self.cursor.fetchall():
+            return sorted([self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__ for friend in fetched], key=lambda x: x.get("name"))
 
         return []
 

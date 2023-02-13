@@ -55,8 +55,17 @@
 <!-- SETTINGS -->
 <div id="settings">
     <!-- SIDEBAR -->
-    <div class="settings-sidebar-wrapper scroller-container">
+    <div class="settings-sidebar-wrapper scroller-container" id="settings-dropdown">
         <nav class="settings-sidebar column-container">
+            <div class="spaced-container">
+                <h2 class="sidebar-title">Home Chat</h2>
+                <button class="all-center-container" id="settings-dropdown-btn">
+                    <svg width="24" height="24" viewBox="0 0 16 16">
+                        <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z"/>
+                    </svg>
+                </button>
+            </div>
+
             <p class="settings-category-text">USER SETTINGS</p>
             <button open-settings-category id="settings-open-account">Account</button>
             <button open-settings-category id="settings-open-security">Security</button>
@@ -69,7 +78,7 @@
             <hr class="separator">
 
             <a href="logout">Log Out</a>
-            <p class="settings-category-text" id="settings-sidebar-info">Home Chat</p>
+            <p class="settings-category-text" id="settings-sidebar-info">ver. pre-9b413d5</p>
         </nav>
     </div>
 

@@ -71,14 +71,30 @@ class UserChannel:
         """
         return f"('{self.user_id}', '{self.channel_id}', '{self.nick}')"
 
+class UserFriend:
+    """
+    Representation of a user friend
+    """
+    def __init__(self, user_id, friend_id):
+        self.user_id = user_id
+        self.friend_id = friend_id
+
+    def __repr__(self):
+        """
+        Representation
+        :return: (user_id, friend_id)
+        """
+        return f"('{self.user_id}', '{self.friend_id}')"
+
 
 class UserSettings:
     """
     Representation of user settings
     """
-    def __init__(self, id, email, theme="auto", visibility="public", auth="password"):
+    def __init__(self, id, email, phone="not set", theme="auto", visibility="public", auth="password"):
         self.id = id
         self.email = email
+        self.phone = phone # not set | user_phone_number
         self.theme = theme # auto | light | dark
         self.visibility = visibility # public | private
         self.auth = auth # password | 2fa
@@ -86,9 +102,9 @@ class UserSettings:
     def __repr__(self):
         """
         Representation
-        :return: (id, email, theme, visibility, auth)
+        :return: (id, email, phone, theme, visibility, auth)
         """
-        return f"('{self.id}', '{self.email}', '{self.theme}', '{self.visibility}', '{self.auth}')"
+        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.visibility}', '{self.auth}')"
 
 
 class UserSecrets:

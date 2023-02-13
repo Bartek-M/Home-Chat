@@ -52,7 +52,7 @@ function add_message(message) {
 // Display channel
 async function open_channel(channel_id) {
     if (channel_id === opened) { return }
-    var message_list = await get_channel_messages(channel_id)
+    var message_list = await api_get("channel_messages", channel_id)
 
     if (opened) {
         document.getElementById(`channel-pill-${opened}`).style = ""
@@ -92,7 +92,7 @@ async function open_channel(channel_id) {
 
     for (const message of message_list) {
         if (fetched_users[message.user_id]) { message.author = fetched_users[message.user_id] }
-        else { message.author = await get_user(String(message.user_id)); fetched_users[message.user_id] = message.author }
+        else { message.author = await api_get("user", String(message.user_id)); fetched_users[message.user_id] = message.author }
 
         message.time = message.create_time
 
