@@ -15,6 +15,8 @@
     --DIM_GREEN: #00925d;
 
     --BORDER_COLOR: #1d1d1d;
+    --INPUT_COLOR: #252e3a;
+    
     --SCROLLBAR: #4b4b4b; 
     --SCROLLBAR_DARKER: #272727;
 
@@ -34,6 +36,7 @@
     --FONT_DIM_COLOR: #8b8b8b;
     
     --BORDER_COLOR: #1d1d1d;
+    --INPUT_COLOR: #252e3a;
 }}
 
 @media (prefers-color-scheme : light) {
@@ -47,13 +50,14 @@
     --FONT_DIM_COLOR: #7a7a7a;
     
     --BORDER_COLOR: #d3d3d3;
+    --INPUT_COLOR: #f6f8fa;
 }}
     
 
 html, body {
     background-color: var(--BACKGROUND_COLOR);
     color: var(--FONT_RV_COLOR);
-    font-family: "FF DIN Pro", sans-serif;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -64,7 +68,7 @@ html, body {
 
 
 /* GLOBALS */
-h1, h2, h3, p { margin: 0; color: inherit}
+h1, h2, h3, p { margin: 0; color: inherit; font-weight: 500;}
 span, button, div, input, label, select { outline: 0 }
 
 li { list-style: none; }
@@ -98,6 +102,17 @@ input { -webkit-appearance: none }
 [class*="column"] { flex-direction: column; }
 .spaced-column-container { gap: 1rem; justify-content: space-between; align-items: center; }
 .all-center-column-container { justify-content: center; align-items: center; }
+
+.input-field {
+    height: 24px;
+    margin-bottom: 1rem;
+    padding: 2px .5rem;
+    border-radius: 3px;
+    background-color: var(--INPUT_COLOR);
+    color: var(--FONT_RV_COLOR);
+}
+
+.category-text { font-size: .75rem; color: var(--FONT_DIM_COLOR); }
 
 
 /* HOME PAGE */
@@ -174,7 +189,7 @@ input { -webkit-appearance: none }
     color: var(--FONT_RV_COLOR);
 }
 
-.channel-name { font-size: 20px; }
+.channel-name { font-size: 1.25rem; }
 
 .channel-icon {
     width: 48px;
@@ -215,15 +230,15 @@ input { -webkit-appearance: none }
 
 .message-hidden-time {
     width: 40px;
-    font-size: 12px;
+    font-size: .75rem;
     color: transparent;
     user-select: none;
     transition: .17s ease;
 }
 
 .message-info { align-items: end; line-height: 1.375rem; }
-.message-author { font-size: 14px}
-.message-time { font-size: 12px; color: var(--FONT_DIM_COLOR) }
+.message-author { font-size: .875rem}
+.message-time { font-size: .75rem; color: var(--FONT_DIM_COLOR) }
 .message-text { line-height: 1.375rem; word-break: break-word; white-space: break-spaces; }
 
 
@@ -286,7 +301,7 @@ input { -webkit-appearance: none }
 }
 .settings-sidebar-wrapper::-webkit-scrollbar { display: none; }
 
-.sidebar-title { font-size: 1.75rem; padding: 8px 10px;}
+.sidebar-title { font-size: 1.75rem; }
 #settings-dropdown-btn { display: none; }
 #settings-dropdown-btn svg { fill: var(--FONT_COLOR) }
 
@@ -296,16 +311,10 @@ input { -webkit-appearance: none }
     gap: 0;
     padding: 60px 6px 60px 20px;
 }
-
-.settings-category-text {
-    font-size: 12px; 
-    color: var(--FONT_DIM_COLOR);
-    padding: 6px 10px;
-}
+.settings-sidebar button, .settings-sidebar a, .settings-sidebar h2, .settings-sidebar p { padding: 6px 10px; } 
 
 .settings-sidebar button, .settings-sidebar a {
     text-align: left;
-    padding: 6px 10px;
     margin-bottom: 2px;
     border-radius: 3px;
     color: var(--FONT_RV_COLOR);
@@ -319,7 +328,6 @@ input { -webkit-appearance: none }
     display: flex;
     flex: 1 2 800px;
     justify-content: left;
-    gap: .5rem;
     border-left: 1px solid var(--BORDER_COLOR);
 }
 
@@ -353,6 +361,7 @@ input { -webkit-appearance: none }
     }
     
     .settings-sidebar-wrapper { 
+        flex: unset;
         width: 100%; 
         justify-content: left;
         max-height: 48px; 
@@ -363,10 +372,8 @@ input { -webkit-appearance: none }
     .settings-sidebar-wrapper.active { max-height: 368px; overflow-y: scroll; }
     .settings-sidebar-wrapper.active svg { transform: rotate(180deg); }
 
-    .settings-sidebar-wrapper, .settings-page { flex: unset }
-
     .settings-sidebar { width: calc(100% - 2rem); padding: 0 1rem; }
-    .settings-page { border: 0; }
+    .settings-page { flex: unset; width: 100%; height: 100%; border: 0; }
     .settings-page::-webkit-scrollbar { display: none; }
 
     #settings-dropdown-btn { display: flex; }
@@ -380,10 +387,8 @@ input { -webkit-appearance: none }
     background-color: var(--COLOR_3);
 }
 
-.settings-category-info { font-size: 12px; color: var(--FONT_DIM_COLOR) }
-
 .settings-btn {
-    font-size: 14px;
+    font-size: .875rem;
     padding: 2px 16px;
     border-radius: 3px;
     min-height: 32px;
@@ -418,54 +423,76 @@ input { -webkit-appearance: none }
 .account-settings { gap: 1.5rem; }
 
 /* settings-popup-card */
-#settings-edit-card {
+.edit-card-wrapper { 
     position: fixed;
-    z-index: 25;
-    top: 40%;
-    padding: 1rem;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 25; 
+    pointer-events: none; 
+}
+
+#settings-edit-card { 
+    width: 450px;
+    gap: 2rem;
+    padding: 2rem 1rem 1rem 1rem;
+    margin: 1rem;
     border-radius: 8px;
     background-color: var(--MAIN_COLOR);
     transform: scale(0);
     transition: 250ms ease-in-out;
+    pointer-events: all;
 }
 #settings-edit-card.active { transform: scale(1); }
+#settings-edit-card div { width: 100%; }
+
+#close-edit-card { 
+    position: absolute;
+    top: 2rem;
+    right: 1rem;
+    padding: .25rem;
+}
+
+.edit-card-info { color: var(--FONT_DIM_COLOR) }
+
+.edit-submit-btn {
+    align-self: flex-end;
+    border-radius: 3px;
+    padding: .5rem 1rem;    
+    margin-top: -1rem;
+    background-color: var(--GREEN);
+    color: var(--FONT_COLOR);
+    transition: .17s ease;
+}
+.edit-submit-btn:hover { cursor: pointer; background-color: var(--DIM_GREEN); }
 
 
-/* LOGIN & SIGNUP PAGE */
+/* LOGIN & REGISTER PAGE */
 .login-page { width: 100%; height: 80%; }
 
 .login-window {
     background-color: var(--MAIN_COLOR);
-    color: var(--FONT_COLOR);
+    color: var(--FONT_RV_COLOR);
     border-radius: 8px;
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem .5rem 1.5rem;
     margin: 1rem;
     width: 480px;
 }
 
-.login-data { margin-top: 1rem; }
-
-.login-input {
-    border-radius: 8px;
-    background-color: var(--FONT_COLOR);
-    color: var(--BLACK);
-    padding: 2px .5rem;
-    height: 24px;
-}
+.login-title { text-align: center; margin-bottom: 1rem; }
+.login-redirect { margin-top: -.5rem; margin-bottom: 1rem; font-size: .875rem; }
 
 #login-submit {
     background-color: var(--GREEN);
     color: var(--FONT_COLOR);
     border-radius: 8px;
     width: 100%;
-    margin-top: 2rem;
     padding: .5rem;
-    font-size: 16px;
+    margin: 1rem 0;
     transition: .17s ease;
 }
-
 #login-submit:hover { cursor: pointer; background-color: var(--DIM_GREEN); }
-.login-redirect { margin-top: .5rem; font-size: 13px; }
 
 
 /* OVERLAY */

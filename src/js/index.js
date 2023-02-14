@@ -53,7 +53,7 @@ function overlay_close(overlay) {
 
 document.addEventListener("keyup", (e) => {
     if (e.key === "Escape") {
-        if (active[secnd_overlay].length) { overlay_close(secnd_overlay) }
+        if (active.secnd.length) { overlay_close(secnd_overlay) }
         else { overlay_close(main_overlay) }
     }
 })

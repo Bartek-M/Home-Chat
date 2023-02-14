@@ -3,20 +3,20 @@
 {% block content %}
 <div class="login-page all-center-container">
     <div class="login-window">
-        <div class="all-center-container"><h1>Welcome back!</h1> </div>
+        <h1 class="login-title">Welcome back!</h1>
 
         <form action="" method="POST">
-            <div class="login-data column-container">
-                <p>EMAIL</p>
-                <input class="login-input" name="email" maxlength=100 required />
+            <div class="column-container">
+                <p class="category-text">EMAIL</p>
+                <input class="input-field" name="email" maxlength=100 required />
             </div>
-            <div class="login-data column-container">
-                <p>PASSWORD</p>
-                <input class="login-input" type="password" name="passwd" maxlength=50 required />
+            <div class="column-container">
+                <p class="category-text">PASSWORD</p>
+                <input class="input-field" type="password" name="passwd" maxlength=50 required />
             </div>
             <p class="login-redirect"><a class="link" href="password-recovery">Forgot your password?</a></p>
 
-            <div class="login-center column-container"><input id="login-submit" type="submit" value="LOG IN" /></div>
+            <input id="login-submit" type="submit" value="LOG IN" />
             <p class="login-redirect">Need an account? <a class="link" href="register">Register</a></p>
         </form>
     </div>
