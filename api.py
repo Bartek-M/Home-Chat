@@ -6,8 +6,8 @@ api = Blueprint(__name__, "api") # Define api
 
 # API PAGES
 # CHANNELS
-@api.route("/channels/<channel_id>")
-@api.route("/channels/<channel_id>/<option>")
+@api.route("/channels/<channel_id>", methods=["GET", "PATCH"])
+@api.route("/channels/<channel_id>/<option>", methods=["GET", "PATCH"])
 def get_channel(channel_id, option=None):
     db = Database()
 
@@ -26,8 +26,8 @@ def get_channel(channel_id, option=None):
 
 
 # USERS
-@api.route("/users/<user_id>/")
-@api.route("/users/<user_id>/<option>")
+@api.route("/users/<user_id>/", methods=["GET", "PATCH"])
+@api.route("/users/<user_id>/<option>", methods=["GET", "PATCH"])
 def get_user(user_id, option=None):
     db = Database()
     user_id = user_id if user_id != "@me" else "4366136964471837146"
@@ -41,7 +41,11 @@ def get_user(user_id, option=None):
         case "friends":
             data = db.get_user_friends(user_id)
         case "settings":
-            data = db.get_entry(USER_SETTING_TABLE, user_id).__dict__
+            if request.method == "PATCH":
+                db.update_entry(USER_SETTING_TABLE, user_id, request.json["settings"])
+                data = {"message": "200 OK "}
+            else:
+                data = db.get_entry(USER_SETTING_TABLE, user_id).__dict__
         case _:
             data = {}
 

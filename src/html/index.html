@@ -79,7 +79,7 @@
             <hr class="separator">
 
             <a id="settings-logout" href="logout">Log Out</a>
-            <p class="category-text" id="settings-sidebar-info">ver. pre-e4c92c0</p>
+            <p class="category-text" id="settings-sidebar-info">ver. pre-84e3600</p>
         </nav>
     </div>
 
@@ -103,7 +103,7 @@
 {% block javascript %}
 <script>var user_id = "{{ user_id }}"</script>
 
+<script charset="utf-8" src="{{ url_for('static', filename='js/settings.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script charset="utf-8" src="{{ url_for('static', filename='js/chat.js') }}"></script>
-<script charset="utf-8" src="{{ url_for('static', filename='js/settings.js') }}"></script>
 {% endblock %}

@@ -1,20 +1,16 @@
 console.log("Hello from backend :)")
 
 // OBJECTS
-var me
-var me_settings
-
-// Set theme
-const theme = window.matchMedia("(prefers-color-scheme: dark)")
+// Set auto theme
+const prefered_theme = window.matchMedia("(prefers-color-scheme: dark)")
 
 function set_prefered_theme() {
-    if (theme.matches) { document.documentElement.setAttribute("data-theme", "dark") }
+    if (prefered_theme.matches) { document.documentElement.setAttribute("data-theme", "dark") }
     else { document.documentElement.setAttribute("data-theme", "light") }
 }
 
 set_prefered_theme()
-theme.addEventListener("change", () => set_prefered_theme())
-
+prefered_theme.addEventListener("change", () => { if (!settings || settings.theme == "auto" ) set_prefered_theme() })
 
 // Get os
 const os_list = {
@@ -38,6 +34,7 @@ const secnd_overlay = document.getElementById("overlay-secnd") // Secondary over
 
 document.querySelectorAll("[all-close]").forEach((element) => element.addEventListener("click", () => { overlay_close(main_overlay) })) // All closing elements
 document.querySelectorAll("[high-close]").forEach((element) => element.addEventListener("click", () => { overlay_close(secnd_overlay) })) // Secondary closing elements
+
 
 // Active elements
 var active = { main: [], secnd: [] }
@@ -110,19 +107,21 @@ const API_PAGES = {
     user_settings: (value) => `/api/users/${value}/settings/`
 }
 
-
-async function api_me() {
-    if (!me) { me = await api_get("user", "@me") }
-    return me
-}
-
-async function api_settings() {
-    if (!me_settings) { me_settings = await api_get("user_settings", "@me") }
-    return me_settings
-}
+async function api_me() { return await api_get("user", "@me") }
+async function api_settings() { return await api_get("user_settings", "@me") }
 
 async function api_get(page, id) {
     return await fetch(API_PAGES[page](id))
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
+
+async function api_send(page, id, data) {
+    return await fetch(API_PAGES[page](id), {
+        method: "PATCH",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(data)
+    })
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
 }
