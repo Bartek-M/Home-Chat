@@ -1,10 +1,18 @@
 // SETTINGS
 var current_page
 
+var current_theme
+var current_message_display
+
 const run = async () => {
-    await api_me();
-    document.getElementById("settings-sidebar-info").innerText += `\n${user_os}`
+    await api_me()
+    await api_settings()
+
+    current_theme = me_settings.theme
+    current_message_display = me_settings.message_display
+
     open_category()
+    document.getElementById("settings-sidebar-info").innerText += `\n${user_os}`
 }
 run()
 
@@ -12,19 +20,42 @@ run()
 const settings = document.getElementById("settings")
 const edit_card = document.getElementById("settings-edit-card")
 
-const open_settings_btn = document.getElementById("open-settings")
-const open_category_btns = document.querySelectorAll("[open-settings-category]")
-const settings_dropdown_btn = document.getElementById("settings-dropdown-btn")
-
-open_settings_btn.addEventListener("click", () => { overlay_open(main_overlay, settings) })
-open_category_btns.forEach(button => { button.addEventListener("click", () => open_category(button.id.replace("settings-open-", ""))) })
-settings_dropdown_btn.addEventListener("click", () => { document.getElementById("settings-dropdown").classList.toggle("active") })
+document.getElementById("open-settings").addEventListener("click", () => { overlay_open(main_overlay, settings); open_category() })
+document.querySelectorAll("[open-settings-category]").forEach(button => { button.addEventListener("click", () => open_category(button.id.replace("settings-open-", ""))) })
+document.getElementById("settings-dropdown-btn").addEventListener("click", () => { document.getElementById("settings-dropdown").classList.toggle("active") })
 
 
 // ACTIONS
 const ACTIONS = {
     copy_id: () => copy_text(me.id),
     delete_account: () => {} 
+}
+
+function theme_change(theme) {
+    if (theme == current_theme) { return }
+
+    if (theme == "auto") { set_prefered_theme() }
+    else { document.documentElement.setAttribute("data-theme", theme) }
+
+    document.getElementById(`select-theme-${theme}`).classList.add("active")
+    document.getElementById(`btn-theme-${theme}`).classList.add("active")
+
+    document.getElementById(`select-theme-${current_theme}`).classList.remove("active")
+    document.getElementById(`btn-theme-${current_theme}`).classList.remove("active")
+
+    current_theme = theme
+}
+
+function message_display_change(message_display) {
+    if (message_display == current_message_display) { return }
+
+    document.getElementById(`select-message-display-${message_display}`).classList.add("active")
+    document.getElementById(`btn-message-display-${message_display}`).classList.add("active")
+
+    document.getElementById(`select-message-display-${current_message_display}`).classList.remove("active")
+    document.getElementById(`btn-message-display-${current_message_display}`).classList.remove("active")
+
+    current_message_display = message_display
 }
 
 
@@ -114,6 +145,7 @@ const EDIT_WINDOWS = {
 function open_edit_window(edit_window) {
     edit_card.innerHTML = EDIT_WINDOWS[edit_window]()
     document.getElementById("close-edit-card").addEventListener("click", () => { overlay_close(secnd_overlay) })
+    document.querySelector("[edit-submit]")
 
     overlay_open(secnd_overlay, edit_card)
 }
@@ -164,7 +196,7 @@ const SETTINGS_PAGES = {
     <div class="spaced-container">
         <div class="column-container">
             <p class="category-text">ACCOUNT REMOVAL</p>
-            <p>Delete your account, this action can not be reverted!<p>
+            <p>Delete your account (This action can not be reverted!)<p>
         </div>
         <button settings-action class="settings-btn stng-warning-btn" id="settings-edit-delete_account">Delete Account</button>
     </div>
@@ -198,7 +230,7 @@ const SETTINGS_PAGES = {
     <div class="spaced-container">
         <div class="column-container">
             <p class="category-text">TOKEN REGENRATE</p>
-            <p>Token is the most secret thing; you can regenerate it if you need to<p>
+            <p>Token is the most secret thing<br>For safety reasons, you can regenerate it</p>
         </div>
         <button settings-edit class="settings-btn stng-warning-btn" id="settings-edit-regenerate-token">Regenerate</button>
     </div>
@@ -211,7 +243,36 @@ const SETTINGS_PAGES = {
     `,
 
     // APPEARANCE PAGE
-    appearance: () => `<h2 class="settings-title">Appearance</h2>`,
+    appearance: () => `
+    <h2 class="settings-title">Appearance</h2>
+    <div class="column-container">
+        <p class="category-text">THEME</p>
+        <button theme-btn class="settings-full-btn container" id="btn-theme-dark">
+            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-theme-dark"></div></div>
+            Dark
+        </button>
+        <button theme-btn class="settings-full-btn container" id="btn-theme-light">
+            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-theme-light"></div></div>
+            Light
+        </button>
+        <button theme-btn class="settings-full-btn container" id="btn-theme-auto">
+            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-theme-auto"></div></div>
+            Auto
+        </button>
+    </div>
+    <hr class="separator"/>
+    <div class="column-container">
+        <p class="category-text">MESSAGE DISPLAY</p>
+        <button message-display-btn class="settings-full-btn container" id="btn-message-display-standard">
+            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-message-display-standard"></div></div>
+            Standard
+        </button>
+        <button message-display-btn class="settings-full-btn container" id="btn-message-display-compact">
+            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-message-display-compact"></div></div>
+            Compact
+        </button>
+    </div>
+    `,
 
     // ADVANCED PAGE
     advanced: () => `<h2 class="settings-title">Advanced</h2>`,
@@ -222,14 +283,21 @@ function open_category(category = "account") {
 
     if (current_page) { document.getElementById(`settings-open-${current_page}`).style = "" }
     document.getElementById(`settings-open-${category}`).style.backgroundColor = "var(--BUTTON_HOVER)"
-    document.getElementById(`settings-open-${category}`).style.color = "var(--FONT_COLOR)"
 
     document.getElementById("settings-content").innerHTML = SETTINGS_PAGES[category]()
     current_page = category
 
-    const settings_action_btns = document.querySelectorAll("[settings-action]")
-    const settings_edit_btns = document.querySelectorAll("[settings-edit]")
+    document.querySelectorAll("[settings-action]").forEach(button => { button.addEventListener("click", () => ACTIONS[button.id.replace("settings-action-", "")]()) })  
+    document.querySelectorAll("[settings-edit]").forEach(button => { button.addEventListener("click", () => open_edit_window(button.id.replace("settings-edit-", ""))) })
 
-    settings_action_btns.forEach(button => { button.addEventListener("click", () => ACTIONS[button.id.replace("settings-action-", "")]()) })  
-    settings_edit_btns.forEach(button => { button.addEventListener("click", () => open_edit_window(button.id.replace("settings-edit-", ""))) })
+    if (category == "appearance") {
+        document.querySelectorAll("[theme-btn]").forEach(button => { button.addEventListener("click", () => theme_change(button.id.replace("btn-theme-", ""))) })
+        document.querySelectorAll("[message-display-btn]").forEach(button => { button.addEventListener("click", () => message_display_change(button.id.replace("btn-message-display-", ""))) })
+
+        document.getElementById(`select-theme-${current_theme}`).classList.add("active")
+        document.getElementById(`btn-theme-${current_theme}`).classList.add("active")
+
+        document.getElementById(`select-message-display-${current_message_display}`).classList.add("active")
+        document.getElementById(`btn-message-display-${current_message_display}`).classList.add("active")
+    }
 }

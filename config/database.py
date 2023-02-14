@@ -57,7 +57,7 @@ class Database:
                 user_id TEXT, friend_id TEXT
             )""",
             f"""{USER_SETTING_TABLE} (
-                id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, visibility TEXT, auth TEXT
+                id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, message_display TEXT, visibility TEXT, auth TEXT
             )""",
             f"""{USER_SECRET_TABLE} (
                 id TEXT UNIQUE, password TEXT, auth_code TEXT
@@ -100,13 +100,17 @@ class Database:
         """
         Get all channels which belongs to a certain user
         :param req_id: ID of user or channel you want to get
-        :return: List of UserChannel objects or []
+        :return: List of Channel objects or []
         """
-        self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id='{req_id}'")
-        
-        if fetched := self.cursor.fetchall():
-            return [UserChannel(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[3])]
 
+        self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id'{req_id}'")
+
+        if fetched := self.cursor.fetchall():
+            return sorted(
+                [self.get_entry((CHANNEL_TABLE, data[1]) if data[0] == req_id else (USER_TABLE, data[0])).__dict__ for data in fetched], 
+                key=lambda x: x.get("name")
+            )
+        
         return []
 
     def get_user_friends(self, req_id):
@@ -118,7 +122,10 @@ class Database:
         self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id='{req_id}' OR friend_id='{req_id}'")
 
         if fetched := self.cursor.fetchall():
-            return sorted([self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__ for friend in fetched], key=lambda x: x.get("name"))
+            return sorted(
+                [self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__ for friend in fetched], 
+                key=lambda x: x.get("name")
+            )
 
         return []
 

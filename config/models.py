@@ -91,11 +91,12 @@ class UserSettings:
     """
     Representation of user settings
     """
-    def __init__(self, id, email, phone="not set", theme="auto", visibility="public", auth="password"):
+    def __init__(self, id, email, phone="not set", theme="auto", message_display="standard", visibility="public", auth="password"):
         self.id = id
         self.email = email
         self.phone = phone # not set | user_phone_number
         self.theme = theme # auto | light | dark
+        self.message_display = message_display # standard | compact
         self.visibility = visibility # public | private
         self.auth = auth # password | 2fa
 
@@ -104,7 +105,7 @@ class UserSettings:
         Representation
         :return: (id, email, phone, theme, visibility, auth)
         """
-        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.visibility}', '{self.auth}')"
+        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.message_display}', '{self.visibility}', '{self.auth}')"
 
 
 class UserSecrets:

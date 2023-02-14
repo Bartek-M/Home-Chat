@@ -3,7 +3,7 @@
     --BACKGROUND_COLOR: #010409;
     --MAIN_COLOR: #161b22;
     --COLOR_3: #101216;
-    --COLOR_4: #202225;
+    --COLOR_4: #1c232c;
 
     --FONT_COLOR: #FFFFFF;
     --FONT_RV_COLOR: #FFFFFF;
@@ -14,9 +14,7 @@
     --GREEN: #00AB6B;
     --DIM_GREEN: #00925d;
 
-    --BORDER_COLOR: #1d1d1d;
-    --INPUT_COLOR: #252e3a;
-    
+    --BORDER_COLOR: #1d1d1d;    
     --SCROLLBAR: #4b4b4b; 
     --SCROLLBAR_DARKER: #272727;
 
@@ -25,33 +23,31 @@
     --RED_BUTTON: #ed4245;
 }
 
-@media (prefers-color-scheme : dark) {
-:root {
+[data-theme="dark"] {
     --BACKGROUND_COLOR: #010409;
     --MAIN_COLOR: #161b22;
     --COLOR_3: #13161b;
-    --COLOR_4: #202225;
+    --COLOR_4: #1c232c;
 
     --FONT_RV_COLOR: #FFFFFF;
     --FONT_DIM_COLOR: #8b8b8b;
     
     --BORDER_COLOR: #1d1d1d;
-    --INPUT_COLOR: #252e3a;
-}}
+    --BUTTON_HOVER: #3c3f45;
+}
 
-@media (prefers-color-scheme : light) {
-:root {
+[data-theme="light"] {
     --BACKGROUND_COLOR: #f6f8fa;
     --MAIN_COLOR: #ffffff;
     --COLOR_3: #e3e5e8;
-    --COLOR_4: #f2f3f5;
+    --COLOR_4: #f6f8fa;
 
     --FONT_RV_COLOR: #000000;
     --FONT_DIM_COLOR: #7a7a7a;
     
     --BORDER_COLOR: #d3d3d3;
-    --INPUT_COLOR: #f6f8fa;
-}}
+    --BUTTON_HOVER: #dbdee1;
+}
     
 
 html, body {
@@ -104,11 +100,11 @@ input { -webkit-appearance: none }
 .all-center-column-container { justify-content: center; align-items: center; }
 
 .input-field {
-    height: 24px;
+    height: 20px;
     margin-bottom: 1rem;
-    padding: 2px .5rem;
+    padding: 10px;
     border-radius: 3px;
-    background-color: var(--INPUT_COLOR);
+    background-color: var(--COLOR_4);
     color: var(--FONT_RV_COLOR);
 }
 
@@ -301,7 +297,7 @@ input { -webkit-appearance: none }
 }
 .settings-sidebar-wrapper::-webkit-scrollbar { display: none; }
 
-.sidebar-title { font-size: 1.75rem; }
+.sidebar-title a { color: var(--FONT_RV_COLOR); font-size: 1.75rem; }
 #settings-dropdown-btn { display: none; }
 #settings-dropdown-btn svg { fill: var(--FONT_COLOR) }
 
@@ -311,9 +307,9 @@ input { -webkit-appearance: none }
     gap: 0;
     padding: 60px 6px 60px 20px;
 }
-.settings-sidebar button, .settings-sidebar a, .settings-sidebar h2, .settings-sidebar p { padding: 6px 10px; } 
+.settings-sidebar button, #settings-logout, .settings-sidebar h2, .settings-sidebar p { padding: 6px 10px; } 
 
-.settings-sidebar button, .settings-sidebar a {
+.settings-sidebar button, #settings-logout {
     text-align: left;
     margin-bottom: 2px;
     border-radius: 3px;
@@ -321,7 +317,7 @@ input { -webkit-appearance: none }
     transition: .17s ease;
 }
 
-.settings-sidebar button:hover, .settings-sidebar a:hover { background-color: var(--BUTTON_HOVER); color: var(--FONT_COLOR)}
+.settings-sidebar button:hover, #settings-logout:hover { background-color: var(--BUTTON_HOVER) }
 
 /* content */
 .settings-page {
@@ -332,7 +328,7 @@ input { -webkit-appearance: none }
 }
 
 #settings-content {
-    padding: 60px 20px 60px 40px;
+    padding: 70px 20px 70px 40px;
     gap: 1.25rem;
     width: min(700px, 100%);
     height: max-content;
@@ -402,6 +398,27 @@ input { -webkit-appearance: none }
 .stng-edit-btn:hover { background-color: var(--BUTTON_HOVER); }
 .stng-warning-btn:hover { background-color: var(--RED_BUTTON); color: var(--FONT_COLOR) }
 .stng-action-btn:hover { background-color: var(--BLUE); color: var(--FONT_COLOR)}
+
+.settings-full-btn {
+    width: 100%;
+    padding: 10px; 
+    border-radius: 3px;
+    align-items: center;
+    background-color: var(--MAIN_COLOR);
+    transition: .17s ease; 
+}
+.settings-full-btn:hover, .settings-full-btn.active { background-color: var(--BUTTON_HOVER); }
+
+.select-indicator-wrapper {
+    height: 18px; 
+    width: 18px; 
+    border: 2px solid var(--FONT_DIM_COLOR);
+    border-radius: 50%;
+    transition: .17s ease; 
+}
+
+.select-indicator { height: 12px; width: 12px; border-radius: 50%; }
+.select-indicator.active { background-color: var(--FONT_DIM_COLOR); }
 
 .settings-avatar {
     width: 80px;
