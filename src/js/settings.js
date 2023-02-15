@@ -77,10 +77,10 @@ async function load_friends() {  }
 // EDIT WINDOWS
 const EDIT_WINDOWS = {
     username: () => `
-    <div class="all-center-column-container">
+    <div class="center-column-container">
         <h2>Change your username</h2>
         <p class="edit-card-info">Enter a new username and your existing password.</p>
-        <button class="all-center-container" id="close-edit-card">
+        <button class="center-container" id="close-edit-card">
             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
             </svg>
@@ -93,13 +93,13 @@ const EDIT_WINDOWS = {
         <p class="category-text">CURRENT PASSWORD</p>
         <input class="input-field" type="password" name="passwd" maxlength=50 required />
     </div>
-    <button edit-submit class="edit-submit-btn" id="submit-username">Done</button>
+    <button edit-submit class="edit-submit-btn submit-btn" id="submit-username">Done</button>
     `,
     email: () => `
-    <div class="all-center-column-container">
+    <div class="center-column-container">
         <h2>Change your email</h2>
         <p class="edit-card-info">Enter a new email and your existing password.</p>
-        <button class="all-center-container" id="close-edit-card">
+        <button class="center-container" id="close-edit-card">
             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
             </svg>
@@ -107,18 +107,18 @@ const EDIT_WINDOWS = {
     </div>
     <div class="column-container">
         <p class="category-text">EMAIL</p>
-        <input class="input-field" name="email" maxlength=100 required />
+        <input class="input-field" name="email" value=${settings.email} maxlength=100 required />
 
         <p class="category-text">CURRENT PASSWORD</p>
         <input class="input-field" type="password" name="passwd" maxlength=50 required />
     </div>
-    <button edit-submit class="edit-submit-btn" id="submit-email">Done</button>
+    <button edit-submit class="edit-submit-btn submit-btn" id="submit-email">Done</button>
     `,
     phone: () => `
-    <div class="all-center-column-container">
-        <h2>Change your phone number</h2>
+    <div class="center-column-container">
+        <h2>${(settings.phone == "not set") ? ("Add") : ("Change")} your phone number</h2>
         <p class="edit-card-info">Enter a new phone number and your existing password.</p>
-        <button class="all-center-container" id="close-edit-card">
+        <button class="center-container" id="close-edit-card">
             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
             </svg>
@@ -126,18 +126,18 @@ const EDIT_WINDOWS = {
     </div>
     <div class="column-container">
         <p class="category-text">PHONE NUMBER</p>
-        <input class="input-field" name="email" maxlength=100 required />
+        <input class="input-field" name="email" value="${(settings.phone == "not set") ? ("") : (settings.phone)}" maxlength=100 required />
 
         <p class="category-text">CURRENT PASSWORD</p>
         <input class="input-field" type="password" name="passwd" maxlength=50 required />
     </div>
-    <button edit-submit class="edit-submit-btn" id="submit-phone">Done</button>
+    <button edit-submit class="edit-submit-btn submit-btn" id="submit-phone">Done</button>
     `,
     password: () => `
-    <div class="all-center-column-container">
+    <div class="center-column-container">
         <h2>Update your password</h2>
         <p class="edit-card-info">Enter your current password and a new password.</p>
-        <button class="all-center-container" id="close-edit-card">
+        <button class="center-container" id="close-edit-card">
             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
             </svg>
@@ -153,7 +153,7 @@ const EDIT_WINDOWS = {
         <p class="category-text">CONFIRM NEW PASSWORD</p>
         <input class="input-field" type="password" name="confirm_passwd" maxlength=50 required />
     </div>
-    <button edit-submit class="edit-submit-btn" id="submit-password">Done</button>
+    <button edit-submit class="edit-submit-btn submit-btn" id="submit-password">Done</button>
     `
 }
 
@@ -172,7 +172,7 @@ const SETTINGS_PAGES = {
     account: () => `
     <h2 class="settings-title">Account</h2>
     <div class="settings-card column-container">
-        <div class="user-info all-center-container">
+        <div class="user-info center-container">
             <img class="settings-avatar" src="/api/photos/${me.avatar}.webp"/>
             <h1>${me.name}</h1>
         </div>
@@ -187,16 +187,18 @@ const SETTINGS_PAGES = {
             <div class="spaced-container">
                 <div class="column-container">
                     <p class="category-text">EMAIL</p>
-                    <p>NOT YET</p>
+                    <p>${settings.email}</p>
                 </div>
                 <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-email">Edit</button>
             </div>
             <div class="spaced-container">
                 <div class="column-container">
                     <p class="category-text">PHONE NUMBER</p>
-                    <p>NOT YET</p>
+                    <p>${(settings.phone == "not set") ? ("You haven't added a phone number yet.") : (settings.phone)}</p>
                 </div>
-                <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-phone">Edit</button>
+                <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-phone">
+                    ${(settings.phone == "not set") ? ("Add") : ("Edit")}
+                </button>
             </div>
         </div>
     </div>
@@ -263,15 +265,15 @@ const SETTINGS_PAGES = {
     <div class="column-container">
         <p class="category-text">THEME</p>
         <button theme-btn class="settings-full-btn container" id="btn-theme-dark">
-            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-theme-dark"></div></div>
+            <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-theme-dark"></div></div>
             Dark
         </button>
         <button theme-btn class="settings-full-btn container" id="btn-theme-light">
-            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-theme-light"></div></div>
+            <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-theme-light"></div></div>
             Light
         </button>
         <button theme-btn class="settings-full-btn container" id="btn-theme-auto">
-            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-theme-auto"></div></div>
+            <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-theme-auto"></div></div>
             Auto
         </button>
     </div>
@@ -279,11 +281,11 @@ const SETTINGS_PAGES = {
     <div class="column-container">
         <p class="category-text">MESSAGE DISPLAY</p>
         <button message-display-btn class="settings-full-btn container" id="btn-message-display-standard">
-            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-message-display-standard"></div></div>
+            <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-message-display-standard"></div></div>
             Standard
         </button>
         <button message-display-btn class="settings-full-btn container" id="btn-message-display-compact">
-            <div class="select-indicator-wrapper all-center-container"><div class="select-indicator" id="select-message-display-compact"></div></div>
+            <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-message-display-compact"></div></div>
             Compact
         </button>
     </div>

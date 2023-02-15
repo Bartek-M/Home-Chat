@@ -9,15 +9,11 @@
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
     <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icon.ico') }}" />
-
-    <script defer src="{{ url_for('static', filename='js/index.js') }}"></script>
-    {% block javascript %} {% endblock %}
-    <script>document.addEventListener('touchstart', () => {}); if (window.history.replaceState) { window.history.replaceState(null, null, window.location.href) };</script>
 </head>
 <body>
     {% with messages = get_flashed_messages(with_categories=true) %} 
     {% if messages %}
-    <div class="all-center-column-container" id="flash-box">
+    <div class="center-column-container" id="flash-box">
         {% for category, message in messages %}
             <div class="flash-message container">
                 {% if category == "error" %}
@@ -36,9 +32,15 @@
     {% endif %} 
     {% endwith %}
 
+    <div class="app-mount">
     {% block content %} {% endblock %}
-    
-    <div all-close class="overlay" id="overlay-main"></div>
-    <div high-close class="overlay" id="overlay-secnd"></div>  
+    </div>
+
+    <div all-close class="overlay absolute-container" id="overlay-main"></div>
+    <div high-close class="overlay absolute-container" id="overlay-secnd"></div>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    {% block javascript %} {% endblock %}
+    <script>document.addEventListener('touchstart', () => {}); if (window.history.replaceState) { window.history.replaceState(null, null, window.location.href) };</script>
 </body>
 </html>

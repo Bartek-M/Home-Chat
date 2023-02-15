@@ -32,7 +32,7 @@ function add_message(message) {
     } else {
         var content = `
         <li class="message-list-item repeated-message-list-item container" id="chat-messages-${channel_id}-${id}>">
-            <div class="message-hidden-time all-center-container">${format_time(time, "time")}</div>
+            <div class="message-hidden-time center-container">${format_time(time, "time")}</div>
             <div class="message-content">
                 <div class="message-text">${content}</div>
             </div>
@@ -62,11 +62,11 @@ async function open_channel(channel_id) {
 
     document.getElementsByClassName("main-view")[0].innerHTML = `
     <div class="channel-title spaced-container">
-        <div class="all-center-container">
+        <div class="center-container">
             <img class="channel-icon" src="/api/photos/123456789.webp"/>
             <p class="channel-name">${channel_id}</p>
         </div>
-        <button class="all-center-container" id="channel-settings">
+        <button class="center-container" id="channel-settings">
             <svg width="28" height="28" viewBox="0 0 16 16">
                 <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
             </svg>
@@ -78,7 +78,7 @@ async function open_channel(channel_id) {
     </div>
     <div class="writing-box container" id="message-form">
         <span class="scroller-container" id="message-inpt" contenteditable></span>
-        <input id="message-send" type="submit" value="SEND"/>
+        <input class="submit-btn" id="message-send" type="submit" value="SEND"/>
     </div>
 `
 
