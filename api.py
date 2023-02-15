@@ -5,6 +5,11 @@ api = Blueprint(__name__, "api") # Define api
 
 
 # API PAGES
+# CONNECTION
+@api.route("/connection/verify")
+def verify_connection():
+    return jsonify({"message": "200 OK"})
+
 # CHANNELS
 @api.route("/channels/<channel_id>", methods=["GET", "PATCH"])
 @api.route("/channels/<channel_id>/<option>", methods=["GET", "PATCH"])

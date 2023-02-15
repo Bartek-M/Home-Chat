@@ -10,7 +10,7 @@ function set_prefered_theme() {
 }
 
 set_prefered_theme()
-prefered_theme.addEventListener("change", () => { if (!settings || settings.theme == "auto" ) set_prefered_theme() })
+prefered_theme.addEventListener("change", () => { if (!settings || settings.theme == "auto") set_prefered_theme() })
 
 // Get os
 const os_list = {
@@ -98,6 +98,7 @@ async function copy_text(text) {
 
 // API FUNCTIONS
 const API_PAGES = {
+    connection_verify: (value) => `/api/connection/${value}`,
     channel: (value) => `/api/channels/${value}/`,
     channel_users: (value) => `/api/channels/${value}/users/`,
     channel_messages: (value) => `/api/channels/${value}/messages/`,

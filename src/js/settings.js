@@ -8,6 +8,14 @@ const run = (async () => {
 
     theme_change()
     document.getElementById("settings-sidebar-info").innerText += `\n${user_os}`
+
+    // HIDE LOADING SCREEN
+    setTimeout(() => {
+        const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")
+
+        loading_screen_wrapper.classList.add("deactive")
+        setTimeout(() => { loading_screen_wrapper.innerHTML = ""; loading_screen_wrapper.remove() }, 170)
+    }, 250)
 })()
 
 var current_page
@@ -63,88 +71,90 @@ async function message_display_change(message_display) {
     current_message_display = settings.message_display
 }
 
+async function load_friends() {  }
+
 
 // EDIT WINDOWS
 const EDIT_WINDOWS = {
     username: () => `
-<div class="all-center-column-container">
-    <h2>Change your username</h2>
-    <p class="edit-card-info">Enter a new username and your existing password.</p>
-    <button class="all-center-container" id="close-edit-card">
-        <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-        </svg>
-    </button>
-</div>
-<div class="column-container">
-    <p class="category-text">USERNAME</p>
-    <input class="input-field" name="username" value="${me.name}" maxlength=100 required />
+    <div class="all-center-column-container">
+        <h2>Change your username</h2>
+        <p class="edit-card-info">Enter a new username and your existing password.</p>
+        <button class="all-center-container" id="close-edit-card">
+            <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+            </svg>
+        </button>
+    </div>
+    <div class="column-container">
+        <p class="category-text">USERNAME</p>
+        <input class="input-field" name="username" value="${me.name}" maxlength=100 required />
 
-    <p class="category-text">CURRENT PASSWORD</p>
-    <input class="input-field" type="password" name="passwd" maxlength=50 required />
-</div>
-<button edit-submit class="edit-submit-btn" id="submit-username">Done</button>
-`,
+        <p class="category-text">CURRENT PASSWORD</p>
+        <input class="input-field" type="password" name="passwd" maxlength=50 required />
+    </div>
+    <button edit-submit class="edit-submit-btn" id="submit-username">Done</button>
+    `,
     email: () => `
-<div class="all-center-column-container">
-    <h2>Change your email</h2>
-    <p class="edit-card-info">Enter a new email and your existing password.</p>
-    <button class="all-center-container" id="close-edit-card">
-        <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-        </svg>
-    </button>
-</div>
-<div class="column-container">
-    <p class="category-text">EMAIL</p>
-    <input class="input-field" name="email" maxlength=100 required />
+    <div class="all-center-column-container">
+        <h2>Change your email</h2>
+        <p class="edit-card-info">Enter a new email and your existing password.</p>
+        <button class="all-center-container" id="close-edit-card">
+            <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+            </svg>
+        </button>
+    </div>
+    <div class="column-container">
+        <p class="category-text">EMAIL</p>
+        <input class="input-field" name="email" maxlength=100 required />
 
-    <p class="category-text">CURRENT PASSWORD</p>
-    <input class="input-field" type="password" name="passwd" maxlength=50 required />
-</div>
-<button edit-submit class="edit-submit-btn" id="submit-email">Done</button>
-`,
+        <p class="category-text">CURRENT PASSWORD</p>
+        <input class="input-field" type="password" name="passwd" maxlength=50 required />
+    </div>
+    <button edit-submit class="edit-submit-btn" id="submit-email">Done</button>
+    `,
     phone: () => `
-<div class="all-center-column-container">
-    <h2>Change your phone number</h2>
-    <p class="edit-card-info">Enter a new phone number and your existing password.</p>
-    <button class="all-center-container" id="close-edit-card">
-        <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-        </svg>
-    </button>
-</div>
-<div class="column-container">
-    <p class="category-text">PHONE NUMBER</p>
-    <input class="input-field" name="email" maxlength=100 required />
+    <div class="all-center-column-container">
+        <h2>Change your phone number</h2>
+        <p class="edit-card-info">Enter a new phone number and your existing password.</p>
+        <button class="all-center-container" id="close-edit-card">
+            <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+            </svg>
+        </button>
+    </div>
+    <div class="column-container">
+        <p class="category-text">PHONE NUMBER</p>
+        <input class="input-field" name="email" maxlength=100 required />
 
-    <p class="category-text">CURRENT PASSWORD</p>
-    <input class="input-field" type="password" name="passwd" maxlength=50 required />
-</div>
-<button edit-submit class="edit-submit-btn" id="submit-phone">Done</button>
-`,
+        <p class="category-text">CURRENT PASSWORD</p>
+        <input class="input-field" type="password" name="passwd" maxlength=50 required />
+    </div>
+    <button edit-submit class="edit-submit-btn" id="submit-phone">Done</button>
+    `,
     password: () => `
-<div class="all-center-column-container">
-    <h2>Update your password</h2>
-    <p class="edit-card-info">Enter your current password and a new password.</p>
-    <button class="all-center-container" id="close-edit-card">
-        <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-        </svg>
-    </button>
-</div>
-<div class="column-container">
-    <p class="category-text">CURRENT PASSWORD</p>
-    <input class="input-field" type="password" name="passwd" maxlength=50 required />
+    <div class="all-center-column-container">
+        <h2>Update your password</h2>
+        <p class="edit-card-info">Enter your current password and a new password.</p>
+        <button class="all-center-container" id="close-edit-card">
+            <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+            </svg>
+        </button>
+    </div>
+    <div class="column-container">
+        <p class="category-text">CURRENT PASSWORD</p>
+        <input class="input-field" type="password" name="passwd" maxlength=50 required />
 
-    <p class="category-text">NEW PASSWORD</p>
-    <input class="input-field" type="password" name="new_passwd" maxlength=50 required />
+        <p class="category-text">NEW PASSWORD</p>
+        <input class="input-field" type="password" name="new_passwd" maxlength=50 required />
 
-    <p class="category-text">CONFIRM NEW PASSWORD</p>
-    <input class="input-field" type="password" name="confirm_passwd" maxlength=50 required />
-</div>
-<button edit-submit class="edit-submit-btn" id="submit-password">Done</button>
-`
+        <p class="category-text">CONFIRM NEW PASSWORD</p>
+        <input class="input-field" type="password" name="confirm_passwd" maxlength=50 required />
+    </div>
+    <button edit-submit class="edit-submit-btn" id="submit-password">Done</button>
+    `
 }
 
 function open_edit_window(edit_window) {
