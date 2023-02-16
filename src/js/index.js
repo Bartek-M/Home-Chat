@@ -29,44 +29,57 @@ for (const os in os_list) { if (window.navigator.userAgent.indexOf(os) != -1) { 
 
 
 // OVERLAY
-const main_overlay = document.getElementById("overlay-main") // Main Overlay
-const secnd_overlay = document.getElementById("overlay-secnd") // Secondary overlay
+const overlay = document.getElementById("overlay") // Overlay
+document.querySelectorAll("[overlay-close]").forEach((element) => element.addEventListener("click", () => { overlay_close() })) // Overlay closing elements
+document.addEventListener("keyup", (e) => { if (e.key === "Escape") { if (settings_page && active.length == 0) { settings_page.classList.remove("active") }; overlay_close() } })
 
-document.querySelectorAll("[all-close]").forEach((element) => element.addEventListener("click", () => { overlay_close(main_overlay) })) // All closing elements
-document.querySelectorAll("[high-close]").forEach((element) => element.addEventListener("click", () => { overlay_close(secnd_overlay) })) // Secondary closing elements
+var active = [] // Active elements
 
-
-// Active elements
-var active = { main: [], secnd: [] }
-
-function overlay_open(overlay, element) {
-    overlay_close(overlay)
+function overlay_open(element) {
+    overlay_close()
 
     element.classList.add("active")
     overlay.classList.add("active")
 
-    if (overlay == main_overlay) { active.main.push(element) }
-    else { active.secnd.push(element) }
+    active.push(element)
 }
 
-function overlay_close(overlay) {
-    if (overlay == main_overlay) {
-        active.main.forEach(element => { element.classList.remove("active") })
-        active.main = []
-        overlay.classList.remove("active")
-    }
-
-    active.secnd.forEach(element => { element.classList.remove("active") })
-    active.secnd = []
-    secnd_overlay.classList.remove("active")
+function overlay_close() {
+    active.forEach(element => { element.classList.remove("active") })
+    active = []
+    overlay.classList.remove("active")
 }
 
-document.addEventListener("keyup", (e) => {
-    if (e.key === "Escape") {
-        if (active.secnd.length) { overlay_close(secnd_overlay) }
-        else { overlay_close(main_overlay) }
-    }
-})
+
+// API FUNCTIONS
+const API_PAGES = {
+    channel: (value) => `/api/channels/${value}/`,
+    channel_users: (value) => `/api/channels/${value}/users/`,
+    channel_messages: (value) => `/api/channels/${value}/messages/`,
+    user: (value) => `/api/users/${value}/`,
+    user_channels: (value) => `/api/users/${value}/channels/`,
+    user_friends: (value) => `/api/users/${value}/friends/`,
+    user_settings: (value) => `/api/users/${value}/settings/`
+}
+
+async function api_me() { return await api_get("user", user_id) }
+async function api_settings() { return await api_get("user_settings", user_id) }
+
+async function api_get(page, id) {
+    return await fetch(API_PAGES[page](id))
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
+
+async function api_send(page, id, data) {
+    return await fetch(API_PAGES[page](id), {
+        method: "PATCH",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(data)
+    })
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
 
 
 // GLOBAL FUNCTIONS
@@ -91,38 +104,36 @@ function smooth_scroll(id) {
     div.scrollBy(0, div.scrollHeight - div.clientHeight)
 }
 
+// Copy text
 async function copy_text(text) {
     await window.navigator.clipboard.writeText(text).catch(() => { })
 }
 
+// Flash message
+function flash_message(text, type = "info") {
+    if (type == "info") {
+        var icon = `
+        <svg width="20" height="20" fill="#3ba55c" viewBox="0 0 16 16">
+            <path stroke="#3ba55c" stroke-width="2" d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+        </svg>
+        `
+    } else if (type == "error") {
+        var icon = `
+        <svg width="16" height="16" fill="#c24246" viewBox="0 0 16 16">
+            <path stroke="#c24246" stroke-width="2" fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+        </svg>
+        `
+    }
 
-// API FUNCTIONS
-const API_PAGES = {
-    connection_verify: (value) => `/api/connection/${value}`,
-    channel: (value) => `/api/channels/${value}/`,
-    channel_users: (value) => `/api/channels/${value}/users/`,
-    channel_messages: (value) => `/api/channels/${value}/messages/`,
-    user: (value) => `/api/users/${value}/`,
-    user_channels: (value) => `/api/users/${value}/channels/`,
-    user_friends: (value) => `/api/users/${value}/friends/`,
-    user_settings: (value) => `/api/users/${value}/settings/`
-}
+    let id = text.toLowerCase().replaceAll(" ", "")
 
-async function api_me() { return await api_get("user", "@me") }
-async function api_settings() { return await api_get("user_settings", "@me") }
-
-async function api_get(page, id) {
-    return await fetch(API_PAGES[page](id))
-        .then(async (response) => { return await response.json() })
-        .then((data) => { return data })
-}
-
-async function api_send(page, id, data) {
-    return await fetch(API_PAGES[page](id), {
-        method: "PATCH",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify(data)
-    })
-        .then(async (response) => { return await response.json() })
-        .then((data) => { return data })
+    if (!document.getElementById(id)) {
+        document.getElementById("flash-box").innerHTML += `
+        <div class="flash-message container" id="${id}">
+            ${icon}
+            <p>${text}</p>
+        </div>
+        `
+        setTimeout(() => { document.getElementById(id).remove() }, 3000)
+    }
 }

@@ -25,7 +25,7 @@ def log_in():
         return redirect(url_for("views.home"))
 
     if request.method != "POST":
-        return render_template("login.html", theme=1)
+        return render_template("login.html")
 
     db = Database()
 
@@ -41,13 +41,13 @@ def log_in():
             return redirect(url_for("views.home"))
 
     flash("Invalid email or password!", "error")
-    return render_template("login.html", theme=1)
+    return render_template("login.html")
             
     
 @view.route("/register", methods=["POST", "GET"])
 def register():
     if request.method != "POST":
-        return render_template("register.html", theme=1)
+        return render_template("register.html")
     
     if "user" in session:
         session.pop("user", None)  
@@ -56,12 +56,16 @@ def register():
 
     if db.get_user(email := request.form.get("email")):
         flash("Email is already registered!", "error")
-        return render_template("register.html", theme=1)
+        return render_template("register.html")
+
+    if (tag := db.get_available_tag(username := request.form.get("usrname"))) is None:
+        flash("Too many users have this username, try another one!", "error")
+        return render_template("register.html")
 
     current_time = time.time() 
     id = Functions.create_id(current_time)
 
-    db.insert_entry(USER_TABLE, User(id, request.form.get("usrname"), "generic", current_time))
+    db.insert_entry(USER_TABLE, User(id, username, tag, "generic", current_time))
     db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
     db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Functions.hash_passwd(request.form.get("passwd"))))
 

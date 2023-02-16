@@ -24,15 +24,17 @@ var current_page
 const settings_page = document.getElementById("settings")
 const edit_card = document.getElementById("settings-edit-card")
 
-document.getElementById("open-settings").addEventListener("click", () => { overlay_open(main_overlay, settings_page); open_category() })
+document.getElementById("open-settings").addEventListener("click", () => { overlay_close(); settings_page.classList.add("active"); open_category() })
+document.getElementById("close-settings").addEventListener("click", () => { settings_page.classList.remove("active") })
+
 document.querySelectorAll("[open-settings-category]").forEach(button => { button.addEventListener("click", () => open_category(button.id.replace("settings-open-", ""))) })
 document.getElementById("settings-dropdown-btn").addEventListener("click", () => { document.getElementById("settings-dropdown").classList.toggle("active") })
 
 
 // ACTIONS
 const ACTIONS = {
-    copy_id: () => copy_text(me.id),
-    delete_account: () => { }
+    copy_id: () => { copy_text(me.id); flash_message("ID Copied") },
+    delete_account: () => { flash_message("not working", "error") }
 }
 
 async function theme_change(theme) {
@@ -51,7 +53,7 @@ async function theme_change(theme) {
     }
 
     if (theme != current_theme) {
-        await api_send("user_settings", "@me", { settings: `theme='${theme}'` })
+        await api_send("user_settings", me.id, { settings: `theme='${theme}'` })
         settings.theme = theme
         current_theme = settings.theme
     }
@@ -66,15 +68,20 @@ async function message_display_change(message_display) {
     document.getElementById(`select-message-display-${current_message_display}`).classList.remove("active")
     document.getElementById(`btn-message-display-${current_message_display}`).classList.remove("active")
 
-    await api_send("user_settings", "@me", { settings: `message_display='${message_display}'` })
+    await api_send("user_settings", me.id, { settings: `message_display='${message_display}'` })
     settings.message_display = message_display
     current_message_display = settings.message_display
 }
 
-async function load_friends() {  }
-
+async function load_friends() { }
 
 // EDIT WINDOWS
+const PLACEHOLDER = {
+    name: () => me.name,
+    email: () => settings.email,
+    phone: () => (settings.phone == "not set") ? ("") : (settings.phone)
+}
+
 const EDIT_WINDOWS = {
     username: () => `
     <div class="center-column-container">
@@ -88,12 +95,12 @@ const EDIT_WINDOWS = {
     </div>
     <div class="column-container">
         <p class="category-text">USERNAME</p>
-        <input class="input-field" name="username" value="${me.name}" maxlength=100 required />
+        <input class="input-field" name="name" value="${PLACEHOLDER["name"]()}" maxlength=100 required />
 
         <p class="category-text">CURRENT PASSWORD</p>
         <input class="input-field" type="password" name="passwd" maxlength=50 required />
     </div>
-    <button edit-submit class="edit-submit-btn submit-btn" id="submit-username">Done</button>
+    <button edit-submit class="edit-submit-btn submit-btn" id="submit-name">Done</button>
     `,
     email: () => `
     <div class="center-column-container">
@@ -107,7 +114,7 @@ const EDIT_WINDOWS = {
     </div>
     <div class="column-container">
         <p class="category-text">EMAIL</p>
-        <input class="input-field" name="email" value=${settings.email} maxlength=100 required />
+        <input class="input-field" name="email" value=${PLACEHOLDER["email"]()} maxlength=100 required />
 
         <p class="category-text">CURRENT PASSWORD</p>
         <input class="input-field" type="password" name="passwd" maxlength=50 required />
@@ -126,7 +133,7 @@ const EDIT_WINDOWS = {
     </div>
     <div class="column-container">
         <p class="category-text">PHONE NUMBER</p>
-        <input class="input-field" name="email" value="${(settings.phone == "not set") ? ("") : (settings.phone)}" maxlength=100 required />
+        <input class="input-field" name="phone" value="${PLACEHOLDER["phone"]()}" maxlength=100 required />
 
         <p class="category-text">CURRENT PASSWORD</p>
         <input class="input-field" type="password" name="passwd" maxlength=50 required />
@@ -159,11 +166,32 @@ const EDIT_WINDOWS = {
 
 function open_edit_window(edit_window) {
     edit_card.innerHTML = EDIT_WINDOWS[edit_window]()
-    document.getElementById("close-edit-card").addEventListener("click", () => { overlay_close(secnd_overlay) })
-    document.querySelector("[edit-submit]")
+    document.getElementById("close-edit-card").addEventListener("click", () => { overlay_close() })
+    document.querySelector("[edit-submit]").addEventListener("click", async () => {
+        let btn_id = document.querySelector("[edit-submit]").id.replace("submit-", "")
 
-    overlay_open(secnd_overlay, edit_card)
+        let data = document.getElementsByName(btn_id)[0].value
+        let password = document.getElementsByName("passwd")[0].value
+
+        if (data == PLACEHOLDER[btn_id]() || password == "") { return overlay_close() }
+
+        let response = await api_send("user", me.id, { password: password, settings: `${btn_id}='${data}'` })
+
+        if (response.message == "401 Unauthorized") { flash_message("Wrong password!", "error") }
+        else { 
+            if (me[btn_id]) { me[btn_id] = data }
+            else if (settings[btn_id]) { settings[btn_id] = data }
+
+            overlay_close(); 
+            open_category("refresh")
+            flash_message("Settings saved!") 
+        }
+    })
+
+    overlay_open(edit_card)
 }
+
+
 
 
 // PAGES
@@ -174,13 +202,13 @@ const SETTINGS_PAGES = {
     <div class="settings-card column-container">
         <div class="user-info center-container">
             <img class="settings-avatar" src="/api/photos/${me.avatar}.webp"/>
-            <h1>${me.name}</h1>
+            <h2>${me.name}<span class="user-tag">#${me.tag}</span></h2>
         </div>
         <div class="account-settings column-container">
             <div class="spaced-container">
                 <div class="column-container">
                     <p class="category-text">USERNAME</p>
-                    <p>${me.name}</p>
+                    <p>${me.name}<span class="user-tag">#${me.tag}</span></p>
                 </div>
                 <button settings-edit class="settings-btn stng-edit-btn" id="settings-edit-username">Edit</button>
             </div>
@@ -215,7 +243,7 @@ const SETTINGS_PAGES = {
             <p class="category-text">ACCOUNT REMOVAL</p>
             <p>Delete your account (This action can not be reverted!)<p>
         </div>
-        <button settings-action class="settings-btn stng-warning-btn" id="settings-edit-delete_account">Delete Account</button>
+        <button settings-action class="settings-btn stng-warning-btn" id="settings-action-delete_account">Delete Account</button>
     </div>
     `,
 
@@ -296,7 +324,8 @@ const SETTINGS_PAGES = {
 }
 
 function open_category(category = "account") {
-    if (category === current_page) { return }
+    if (category === current_page && category == "refresh") { return }
+    if (category == "refresh") { category = current_page }
 
     if (current_page) { document.getElementById(`settings-open-${current_page}`).style = "" }
     document.getElementById(`settings-open-${category}`).style.backgroundColor = "var(--BUTTON_HOVER)"

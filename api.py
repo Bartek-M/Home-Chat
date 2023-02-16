@@ -3,13 +3,18 @@ from config.database import *
 
 api = Blueprint(__name__, "api") # Define api
 
+# DATABASE DATA FROM TABLES
+TABLES = {
+    "name": USER_TABLE, 
+    "visibility": USER_TABLE,
+    "email": USER_SETTING_TABLE,
+    "phone": USER_SETTING_TABLE,
+    "password": USER_SECRET_TABLE,
+    "auth_code": USER_SECRET_TABLE
+}
+
 
 # API PAGES
-# CONNECTION
-@api.route("/connection/verify")
-def verify_connection():
-    return jsonify({"message": "200 OK"})
-
 # CHANNELS
 @api.route("/channels/<channel_id>", methods=["GET", "PATCH"])
 @api.route("/channels/<channel_id>/<option>", methods=["GET", "PATCH"])
@@ -35,24 +40,29 @@ def get_channel(channel_id, option=None):
 @api.route("/users/<user_id>/<option>", methods=["GET", "PATCH"])
 def get_user(user_id, option=None):
     db = Database()
-    user_id = user_id if user_id != "@me" else "4366136964471837146"
 
-    # Use proper option
-    match option:
-        case None:
-            data = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else {}
-        case "channels":
-            data = db.get_user_channels(user_id)
-        case "friends":
-            data = db.get_user_friends(user_id)
-        case "settings":
-            if request.method == "PATCH":
-                db.update_entry(USER_SETTING_TABLE, user_id, request.json["settings"])
+    if request.method == "PATCH":
+        match option:
+            case None:
+                secrets = db.get_entry(USER_SECRET_TABLE, user_id)
+                
+                if Functions.hash_passwd(request.json.get("password"), secrets.password.split("$")[0]) == secrets.password:
+                    settings = request.json.get("settings")
+                    #db.update_entry(TABLES[settings.split("=")[0]], user_id, f"tag='{}'")
+                    db.update_entry(TABLES[settings.split("=")[0]], user_id, settings)
+                    data = {"message": "200 OK "}
+                else:
+                    data = {"message": "401 Unauthorized"}                
+            case "settings":
+                db.update_entry(USER_SETTING_TABLE, user_id, request.json.get("settings"))
                 data = {"message": "200 OK "}
-            else:
-                data = db.get_entry(USER_SETTING_TABLE, user_id).__dict__
-        case _:
-            data = {}
+    else:
+        match option:
+            case None: data = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else {}
+            case "channels": data = db.get_user_channels(user_id)
+            case "friends": data = db.get_user_friends(user_id)
+            case "settings": data = db.get_entry(USER_SETTING_TABLE, user_id).__dict__
+            case _: data = {}
 
     db.close()
     return jsonify(data)

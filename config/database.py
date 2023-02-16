@@ -42,7 +42,7 @@ class Database:
         """
         queries = [ 
             f"""{USER_TABLE} (
-                id TEXT UNIQUE, name TEXT, avatar TEXT, create_time TEXT
+                id TEXT UNIQUE, name TEXT, tag TEXT, avatar TEXT, create_time TEXT, visibility TEXT
             )""",
             f"""{MESSAGE_TABLE} (
                 id TEXT UNIQUE, user_id TEXT, channel_id TEXT, content TEXT, create_time TEXT
@@ -57,7 +57,7 @@ class Database:
                 user_id TEXT, friend_id TEXT
             )""",
             f"""{USER_SETTING_TABLE} (
-                id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, message_display TEXT, visibility TEXT, auth TEXT
+                id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, message_display TEXT, auth TEXT
             )""",
             f"""{USER_SECRET_TABLE} (
                 id TEXT UNIQUE, password TEXT, auth_code TEXT
@@ -83,50 +83,54 @@ class Database:
 
         return None
 
-    def get_user(self, email):
+    def get_user(self, search, option="email"):
         """
-        Get specifc user via his email
-        :param email: User email
-        :return: User object
+        Get specifc user using his information
+        :param search: User information
+        :param option: Option you want to use ("email", "name")
+        :return: UserSettings or UserObject object
         """
-        self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email='{email}'")
+        if option == "email":
+            self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email='{search}'")
 
-        if fetched := self.cursor.fetchone():
-            return UserSettings(*fetched)
+            if fetched := self.cursor.fetchone():
+                return UserSettings(*fetched)
+        elif option == "name":
+            if len(username := search.split("#")) != 2: 
+                return None
+
+            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name='{username[0]}' AND tag='{username[1]}' AND visibilit='public'")
+
+            if fetched := self.cursor.fetchone():
+                return User(*fetched)
 
         return None
 
-    def get_user_channels(self, req_id):
+    def get_user_stuff(self, req_id, option):
         """
         Get all channels which belongs to a certain user
         :param req_id: ID of user or channel you want to get
+        :param option: Option you want to use ("channels", "friends")
         :return: List of Channel objects or []
         """
 
-        self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id'{req_id}'")
+        if option == "channels":
+            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id'{req_id}'")
 
-        if fetched := self.cursor.fetchall():
-            return sorted(
-                [self.get_entry((CHANNEL_TABLE, data[1]) if data[0] == req_id else (USER_TABLE, data[0])).__dict__ for data in fetched], 
-                key=lambda x: x.get("name")
-            )
+            if fetched := self.cursor.fetchall():
+                return sorted(
+                    [self.get_entry((CHANNEL_TABLE, data[1]) if data[0] == req_id else (USER_TABLE, data[0])).__dict__ for data in fetched], 
+                    key=lambda x: x.get("name")
+                )
+        elif option == "friends":
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id='{req_id}' OR friend_id='{req_id}'")
+
+            if fetched := self.cursor.fetchall():
+                return sorted(
+                    [self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__ for friend in fetched], 
+                    key=lambda x: x.get("name")
+                )
         
-        return []
-
-    def get_user_friends(self, req_id):
-        """
-        Get all user friends
-        :param req_id: ID of user you want to get friends from
-        :return: List of User objects or []
-        """
-        self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id='{req_id}' OR friend_id='{req_id}'")
-
-        if fetched := self.cursor.fetchall():
-            return sorted(
-                [self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__ for friend in fetched], 
-                key=lambda x: x.get("name")
-            )
-
         return []
 
     def get_channel_messages(self, req_id):
@@ -141,6 +145,20 @@ class Database:
             return [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]
 
         return []
+
+    def get_available_tag(self, name):
+        """
+        Get available tags for specific name
+        :param name: Name you want to check tags for
+        :return: Random available tag or None
+        """
+        self.cursor.execute(f"SELECT tag FROM {USER_TABLE} WHERE name='{name}'")
+        tag_range = set(range(1000, 10000))
+
+        if fetched := self.cursor.fetchall():
+            tag_range -= {int(tag[0]) for tag in fetched}
+
+        return random.choice(list(tag_range)) if tag_range else None
 
     def insert_entry(self, table, entry):
         """

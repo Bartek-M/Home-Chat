@@ -265,6 +265,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     z-index: 15;
     gap: 0;
     transform: scale(0);
+    transition: .17s ease; 
 }
 
 #settings.active { transform: scale(1); }
@@ -406,6 +407,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 
 /* settings account */
 .user-info { justify-content: left; gap: 1rem }
+.user-tag { color: var(--FONT_DIM_COLOR) }
 
 .account-settings {
     background-color: var(--COLOR_4);
@@ -425,6 +427,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     border-radius: .5rem;
     background-color: var(--MAIN_COLOR);
     transform: scale(0);
+    transition: .17s ease; 
     pointer-events: all;
 }
 #settings-edit-card.active { transform: scale(1); }
@@ -459,14 +462,23 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 
 
 /* OVERLAY */
-.overlay { opacity: 0; background-color: rgba(0, 0, 0, .8); transition: .17s ease; pointer-events: none; }
-.overlay.active { opacity: 1; pointer-events: all; }
-
-#overlay-main { z-index: 10; }
-#overlay-secnd { z-index: 20; }
+#overlay { 
+    z-index: 20; 
+    opacity: 0; 
+    background-color: rgba(0, 0, 0, .8);
+    transition: .17s ease; 
+    pointer-events: none; 
+}
+#overlay.active { opacity: 1; pointer-events: all; }
 
 /* LOADING SCREEN */
-#loading-screen-wrapper { z-index: 1000; opacity: 1; background-color: #010409; color: var(--FONT_COLOR); transition: .17s ease; }
+#loading-screen-wrapper { 
+    z-index: 1000;
+    opacity: 1; 
+    background-color: #010409; 
+    color: var(--FONT_COLOR); 
+    transition: .17s ease; 
+}
 #loading-screen-wrapper.deactive { opacity: 0; }
 
 #loading-screen { position: relative; gap: 2rem; }
@@ -476,22 +488,24 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 #flash-box {
     position: fixed;
     left: 50%;
-    top: -100px;
+    top: 0px;
     z-index: 100;
-    opacity: 0;
     margin-top: .5rem;
     transform: translate(-50%, 0);
-    transition: .17s ease; 
-    animation: top-slide 2s;
+    pointer-events: none;   
 }
 
 .flash-message {
+    position: absolute;
+    top: -100px;
+    opacity: 0;
     width: max-content;
-    background-color: var(--COLOR_4);
-    margin: 0;
     padding: 1rem;
+    background-color: var(--COLOR_4);
     border-color: transparent;
     border-radius: 50px;
+    transition: .17s ease; 
+    animation: top-slide 3s;
 }
 
 @keyframes top-slide {

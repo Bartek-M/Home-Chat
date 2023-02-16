@@ -11,33 +11,32 @@
     <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icon.ico') }}" />
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %} 
-    {% if messages %}
     <div class="center-column-container" id="flash-box">
-        {% for category, message in messages %}
-            <div class="flash-message container">
-                {% if category == "error" %}
-                <svg width="16" height="16" fill="#c24246" viewBox="0 0 16 16">
-                    <path stroke="#c24246" stroke-width="2" fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
-                </svg>
-                {% elif category == "info" %}
-                <svg width="20" height="20" fill="#3ba55c" viewBox="0 0 16 16">
-                    <path stroke="#3ba55c" stroke-width="2" d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
-                </svg>
-                {% endif %}
-                <p>{{message}}</p>
-            </div>
-        {% endfor %} 
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message container">
+                    {% if category == "error" %}
+                    <svg width="16" height="16" fill="#c24246" viewBox="0 0 16 16">
+                        <path stroke="#c24246" stroke-width="2" fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
+                    </svg>
+                    {% elif category == "info" %}
+                    <svg width="20" height="20" fill="#3ba55c" viewBox="0 0 16 16">
+                        <path stroke="#3ba55c" stroke-width="2" d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                    </svg>
+                    {% endif %}
+                    <p>{{message}}</p>
+                </div>
+            {% endfor %} 
+        {% endif %} 
+        {% endwith %}
     </div>
-    {% endif %} 
-    {% endwith %}
 
     <div class="app-mount">
     {% block content %} {% endblock %}
     </div>
 
-    <div all-close class="overlay absolute-container" id="overlay-main"></div>
-    <div high-close class="overlay absolute-container" id="overlay-secnd"></div>
+    <div overlay-close class="absolute-container" id="overlay"></div>
 
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     {% block javascript %} {% endblock %}

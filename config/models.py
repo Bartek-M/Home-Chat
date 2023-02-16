@@ -2,18 +2,20 @@ class User:
     """
     Representation of a user
     """
-    def __init__(self, id, name, avatar, create_time):
+    def __init__(self, id, name, tag, avatar, create_time, visibility="public"):
         self.id = id
         self.name = name
+        self.tag = tag
         self.avatar = avatar
         self.create_time = create_time 
+        self.visibility = visibility # public | private
 
     def __repr__(self):
         """
         Representation
-        :return: (id, name, avatar, creation_time)
+        :return: (id, name, tag, avatar, creation_time, visibility)
         """
-        return f"('{self.id}', '{self.name}', '{self.avatar}', '{self.create_time}')"
+        return f"('{self.id}', '{self.name}', '{self.tag}', '{self.avatar}', '{self.create_time}', '{self.visibility}')"
 
 
 class Message:
@@ -97,7 +99,6 @@ class UserSettings:
         self.phone = phone # not set | user_phone_number
         self.theme = theme # auto | light | dark
         self.message_display = message_display # standard | compact
-        self.visibility = visibility # public | private
         self.auth = auth # password | 2fa
 
     def __repr__(self):
@@ -105,7 +106,7 @@ class UserSettings:
         Representation
         :return: (id, email, phone, theme, visibility, auth)
         """
-        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.message_display}', '{self.visibility}', '{self.auth}')"
+        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.message_display}', '{self.auth}')"
 
 
 class UserSecrets:
