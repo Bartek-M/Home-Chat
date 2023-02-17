@@ -1,5 +1,4 @@
 console.log("Hello from backend :)")
-
 // OBJECTS
 // Set auto theme
 const prefered_theme = window.matchMedia("(prefers-color-scheme: dark)")
@@ -31,7 +30,7 @@ for (const os in os_list) { if (window.navigator.userAgent.indexOf(os) != -1) { 
 // OVERLAY
 const overlay = document.getElementById("overlay") // Overlay
 document.querySelectorAll("[overlay-close]").forEach((element) => element.addEventListener("click", () => { overlay_close() })) // Overlay closing elements
-document.addEventListener("keyup", (e) => { if (e.key === "Escape") { if (settings_page && active.length == 0) { settings_page.classList.remove("active") }; overlay_close() } })
+document.addEventListener("keyup", (e) => { if (e.key === "Escape") { overlay_close() } })
 
 var active = [] // Active elements
 
@@ -75,7 +74,7 @@ async function api_send(page, id, data) {
     return await fetch(API_PAGES[page](id), {
         method: "PATCH",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ token: 1234, ...data })
     })
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })

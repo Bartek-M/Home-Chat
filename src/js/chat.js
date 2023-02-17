@@ -14,32 +14,43 @@ function add_message(message) {
     var { id, channel_id, author, content, time } = message
     time = parseFloat(time)
 
-    var repeat = false
-    if (messages[channel_id] && messages[channel_id][0] == author.id && (time - messages[channel_id][1]) < 360) { repeat = true }
-
-    if (!repeat) {
+    if (settings.message_display == "compact") {
         var content = `
-        <li class="message-list-item container" id="chat-messages-${channel_id}-${id}>">
-            <img class="avatar" src="/api/photos/${author.avatar}.webp"/>
-            <div class="message-content">
-                <div class="message-info container">
-                    <p class="message-author">${author.name}</p>
-                    <p class="message-time">${format_time(time)}<p>
-                </div>
-                <div class="message-text">${content}</div>
-            </div>
-        </li>`
+        <li class="compact-msg container" id="chat-messages-${channel_id}-${id}">
+            <div class="compact-msg-time-info">${format_time(time, "time")}</div>
+            <div class="compact-msg-user-info">${author.name}</div>
+            <div class="compact-msg-text">${content}</div>
+        </li>
+        `
     } else {
-        var content = `
-        <li class="message-list-item repeated-message-list-item container" id="chat-messages-${channel_id}-${id}>">
-            <div class="message-hidden-time center-container">${format_time(time, "time")}</div>
-            <div class="message-content">
-                <div class="message-text">${content}</div>
-            </div>
-        </li>`
+        var repeat = false
+        if (messages[channel_id] && messages[channel_id][0] == author.id && (time - messages[channel_id][1]) < 360) { repeat = true }
+
+        if (!repeat) {
+            var content = `
+            <li class="message-list-item container" id="chat-messages-${channel_id}-${id}>">
+                <img class="avatar" src="/api/photos/${author.avatar}.webp"/>
+                <div class="message-content">
+                    <div class="message-info container">
+                        <p class="message-author">${author.name}</p>
+                        <p class="message-time">${format_time(time)}<p>
+                    </div>
+                    <div class="message-text">${content}</div>
+                </div>
+            </li>`
+        } else {
+            var content = `
+            <li class="message-list-item repeated-message-list-item container" id="chat-messages-${channel_id}-${id}>">
+                <div class="message-hidden-time center-container">${format_time(time, "time")}</div>
+                <div class="message-content">
+                    <div class="message-text">${content}</div>
+                </div>
+            </li>`
+        }
+
+        messages[channel_id] = [author.id, time]
     }
 
-    messages[channel_id] = [author.id, time]
     return content
 }
 

@@ -1,14 +1,17 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class User:
     """
     Representation of a user
     """
-    def __init__(self, id, name, tag, avatar, create_time, visibility="public"):
-        self.id = id
-        self.name = name
-        self.tag = tag
-        self.avatar = avatar
-        self.create_time = create_time 
-        self.visibility = visibility # public | private
+    id: str
+    name: str
+    tag: str
+    avatar: str
+    create_time: str
+    visibility: str = "public"
 
     def __repr__(self):
         """
@@ -18,17 +21,16 @@ class User:
         return f"('{self.id}', '{self.name}', '{self.tag}', '{self.avatar}', '{self.create_time}', '{self.visibility}')"
 
 
+@dataclass
 class Message:
     """
     Representation of a message
     """
-    def __init__(self, id, user_id, channel_id, content, create_time):
-        self.id = id
-        self.user_id = user_id
-        self.channel_id = channel_id
-
-        self.content = content
-        self.create_time = create_time
+    id: str
+    user_id: str
+    channel_id: str
+    content: str
+    create_time: str
 
     def __repr__(self):
         """
@@ -38,16 +40,16 @@ class Message:
         return f"('{self.id}', '{self.user_id}', '{self.channel_id}', '{self.content}', '{self.create_time}')"
 
 
+@dataclass
 class Channel:
     """
     Representation of a channel
     """
-    def __init__(self, id, name, icon, create_time, direct=""):
-        self.id = id
-        self.name = name
-        self.icon = icon
-        self.create_time = create_time
-        self.direct = direct
+    id: str
+    name: str
+    icon: str
+    create_time: str
+    direct: str = ""
 
     def __repr__(self):
         """
@@ -57,14 +59,14 @@ class Channel:
         return f"('{self.id}', '{self.name}', '{self.icon}', '{self.create_time}', '{self.direct}')"
 
 
+@dataclass
 class UserChannel:
     """
-    Representation of a user channels
+    Representation of user channels
     """
-    def __init__(self, user_id, channel_id, nick):
-        self.user_id = user_id
-        self.channel_id = channel_id
-        self.nick = nick
+    user_id: str
+    channel_id: str
+    nick: str
 
     def __repr__(self):
         """
@@ -73,13 +75,14 @@ class UserChannel:
         """
         return f"('{self.user_id}', '{self.channel_id}', '{self.nick}')"
 
+
+@dataclass
 class UserFriend:
     """
-    Representation of a user friend
+    Representation of user friends
     """
-    def __init__(self, user_id, friend_id):
-        self.user_id = user_id
-        self.friend_id = friend_id
+    user_id: str
+    friend_id: str
 
     def __repr__(self):
         """
@@ -89,17 +92,17 @@ class UserFriend:
         return f"('{self.user_id}', '{self.friend_id}')"
 
 
+@dataclass
 class UserSettings:
     """
     Representation of user settings
     """
-    def __init__(self, id, email, phone="not set", theme="auto", message_display="standard", visibility="public", auth="password"):
-        self.id = id
-        self.email = email
-        self.phone = phone # not set | user_phone_number
-        self.theme = theme # auto | light | dark
-        self.message_display = message_display # standard | compact
-        self.auth = auth # password | 2fa
+    id: str
+    email: str
+    phone: str = "not set" # not set | user_phone_number
+    theme: str = "auto" # auto | light | dark
+    message_display: str = "standard" # standard | compact
+    auth: str = "password" # password | 2fa
 
     def __repr__(self):
         """
@@ -109,14 +112,14 @@ class UserSettings:
         return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.message_display}', '{self.auth}')"
 
 
+@dataclass
 class UserSecrets:
     """
     Representation of user secrets
     """
-    def __init__(self, id, password, auth_code=None):
-        self.id = id
-        self.password = password
-        self.auth_code = auth_code
+    id: str
+    password: str
+    auth_code: str = None
 
     def __repr__(self):
         """
