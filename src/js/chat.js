@@ -56,7 +56,9 @@ function add_message(message) {
 
 // Display channel
 async function open_channel(channel_id) {
-    if (channel_id === opened) { return }
+    if ((!opened && channel_id === "refresh") || (channel_id === opened && channel_id !== "refresh")) return
+    if (channel_id === "refresh") channel_id = opened
+
     var message_list = await api_get("channel_messages", channel_id)
 
     if (opened) {
@@ -91,24 +93,26 @@ async function open_channel(channel_id) {
         <span class="scroller-container" id="message-inpt" contenteditable></span>
         <input class="submit-btn" id="message-send" type="submit" value="SEND"/>
     </div>
-`
+    `
 
-    let messages_list_items = ``
+    if (message_list.message !== "404 Not Found") {
+        let messages_list_items = ``
 
-    for (const message of message_list) {
-        if (fetched_users[message.user_id]) { message.author = fetched_users[message.user_id] }
-        else { message.author = await api_get("user", String(message.user_id)); fetched_users[message.user_id] = message.author }
+        for (const message of message_list) {
+            if (fetched_users[message.user_id]) { message.author = fetched_users[message.user_id] }
+            else { message.author = await api_get("user", String(message.user_id)); fetched_users[message.user_id] = message.author }
 
-        message.time = message.create_time
+            message.time = message.create_time
 
-        delete message.user_id
-        delete message.create_time
+            delete message.user_id
+            delete message.create_time
 
-        messages_list_items += add_message(message)
+            messages_list_items += add_message(message)
+        }
+
+        document.getElementById("messages-list").innerHTML += messages_list_items
+        smooth_scroll("chat-window")
     }
-
-    document.getElementById("messages-list").innerHTML += messages_list_items
-    smooth_scroll("chat-window")
 
     send_btn = document.getElementById("message-send")
     message_inpt = document.getElementById("message-inpt")

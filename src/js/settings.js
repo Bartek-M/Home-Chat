@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         await api_send("user_settings", me.id, { settings: `message_display='${message_display}'` })
         settings.message_display = message_display
-        settings.message_display = settings.message_display
+        open_channel("refresh")
     }
 
     async function load_friends() { }
