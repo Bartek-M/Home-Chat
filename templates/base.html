@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
-    <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icon.ico') }}" />
+    <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icons/icon.ico') }}" />
 </head>
 <body>
     <div class="center-column-container" id="flash-box">
@@ -32,14 +32,9 @@
         {% endwith %}
     </div>
 
-    <div class="app-mount">
-    {% block content %} {% endblock %}
-    </div>
+    <div id="appMount"></div>
 
-    <div class="absolute-container" id="overlay" onclick="overlay_close()"></div>
-    
-    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-    {% block javascript %} {% endblock %}
-    <script>document.addEventListener('touchstart', () => {}); if (window.history.replaceState) { window.history.replaceState(null, null, window.location.href) };</script>
+    <!-- <div class="absolute-container" id="overlay" onclick="overlay_close()"></div> -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

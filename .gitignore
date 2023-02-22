@@ -1,8 +1,17 @@
 # FOLDERS
-__pycache__/
 .vscode/
+__pycache__/
+node_modules/
+
 avatars/
-icons/
+channel_icons/
+
 
 # FILES
 db.sqlite
+
+package.json
+package-lock.json
+
+babel.config.json
+webpack.config.js

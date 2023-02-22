@@ -50,7 +50,7 @@
 }
     
 
-html, body, .app-mount {
+html, body, #appMount {
     background-color: var(--BACKGROUND_COLOR);
     color: var(--FONT_RV_COLOR);
     font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;

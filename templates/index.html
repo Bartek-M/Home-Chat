@@ -1,14 +1,7 @@
 {% extends "base.html" %} 
 
 {% block content %}
-<div class="center-container absolute-container" id="loading-screen-wrapper">
-    <div class="center-column-container" id="loading-screen">
-        <svg width="200px" height="200px" fill="#42c0fb" viewBox="0 0 16 16">
-            <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"/>
-        </svg>
-        <h1>Home Chat</h1>
-    </div>
-</div>
+
 
 <div class="home-page container">
     <!-- CHANNELS -->
@@ -84,7 +77,7 @@
             <hr class="separator">
 
             <a id="settings-logout" href="logout">Log Out</a>
-            <p class="category-text" id="settings-sidebar-info">ver. pre-8c07cab</p>
+            <p class="category-text" id="settings-sidebar-info">ver. pre-2f8b849</p>
         </nav>
     </div>
 
@@ -105,7 +98,9 @@
 {% endblock %}
 
 {% block javascript %}
-<script>var user_id = "{{ user_id }}"</script>
+<script>
+    var user_id = "{{ user_id }}"
+</script>
 
 <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
