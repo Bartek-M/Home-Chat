@@ -29,7 +29,6 @@ for (const os in os_list) { if (window.navigator.userAgent.indexOf(os) != -1) { 
 
 // OVERLAY
 const overlay = document.getElementById("overlay") // Overlay
-document.querySelectorAll("[overlay-close]").forEach((element) => element.addEventListener("click", () => { overlay_close() })) // Overlay closing elements
 document.addEventListener("keyup", (e) => { if (e.key === "Escape") { overlay_close() } })
 
 var active = [] // Active elements

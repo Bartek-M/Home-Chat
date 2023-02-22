@@ -1,3 +1,7 @@
+const settings_page = document.getElementById("settings")
+const open_settings = () => { overlay_close(); settings_page.classList.add("active"); open_category() }
+const close_settings = () => { overlay_close; settings_page.classList.remove("active") }
+
 document.addEventListener("DOMContentLoaded", async () => {
     globalThis.me = await api_me()
     globalThis.settings = await api_settings()
@@ -18,12 +22,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     var current_page
 
     // ELEMENTS
-    const settings_page = document.getElementById("settings")
     const edit_card = document.getElementById("settings-edit-card")
 
-    document.getElementById("open-settings").addEventListener("click", () => { overlay_close(); settings_page.classList.add("active"); open_category() })
-    document.getElementById("close-settings").addEventListener("click", () => { settings_page.classList.remove("active") })
-    document.addEventListener("keyup", (e) => { if (e.key === "Escape" && settings_page && active.length == 0) { settings_page.classList.remove("active") } })
+    document.addEventListener("keyup", (e) => { if (e.key === "Escape" && active.length == 0) { settings_page.classList.remove("active") } })
 
     document.querySelectorAll("[open-settings-category]").forEach(button => { button.addEventListener("click", () => open_category(button.id.replace("settings-open-", ""))) })
     document.getElementById("settings-dropdown-btn").addEventListener("click", () => { document.getElementById("settings-dropdown").classList.toggle("active") })
@@ -85,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="center-column-container">
             <h2>Change your username</h2>
             <p class="edit-card-info">Enter a new username and your existing password.</p>
-            <button class="center-container" id="close-edit-card">
+            <button class="card-close center-container" onclick="overlay_close()">
                 <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                 </svg>
@@ -104,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="center-column-container">
             <h2>Change your email</h2>
             <p class="edit-card-info">Enter a new email and your existing password.</p>
-            <button class="center-container" id="close-edit-card">
+            <button class="card-close center-container" onclick="overlay_close()">
                 <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                 </svg>
@@ -123,7 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="center-column-container">
             <h2>${(settings.phone == "not set") ? ("Add") : ("Change")} your phone number</h2>
             <p class="edit-card-info">Enter a new phone number and your existing password.</p>
-            <button class="center-container" id="close-edit-card">
+            <button class="card-close center-container" onclick="overlay_close()">
                 <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                 </svg>
@@ -142,7 +143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="center-column-container">
             <h2>Update your password</h2>
             <p class="edit-card-info">Enter your current password and a new password.</p>
-            <button class="center-container" id="close-edit-card">
+            <button class="card-close center-container" onclick="overlay_close()">
                 <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                 </svg>
@@ -164,7 +165,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function open_edit_window(edit_window) {
         edit_card.innerHTML = EDIT_WINDOWS[edit_window]()
-        document.getElementById("close-edit-card").addEventListener("click", () => { overlay_close() })
         document.querySelector("[edit-submit]").addEventListener("click", async () => {
             let btn_id = document.querySelector("[edit-submit]").id.replace("submit-", "")
 

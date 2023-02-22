@@ -1,4 +1,8 @@
+# FOLDERS
 __pycache__/
 .vscode/
-photos/
-database.db
+avatars/
+icons/
+
+# FILES
+db.sqlite

@@ -36,7 +36,7 @@
     {% block content %} {% endblock %}
     </div>
 
-    <div overlay-close class="absolute-container" id="overlay"></div>
+    <div class="absolute-container" id="overlay" onclick="overlay_close()"></div>
     
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     {% block javascript %} {% endblock %}

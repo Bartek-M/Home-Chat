@@ -1,7 +1,8 @@
 from flask import Blueprint, request, send_file, jsonify, redirect, url_for
-from config.database import *
+from .database import *
 
-api = Blueprint(__name__, "api") # Define api
+api = Blueprint("api", __name__) # Define api
+
 
 # DATABASE DATA FROM TABLES
 TABLES = {
@@ -96,7 +97,7 @@ def get_user(db, user_id, option=None):
 # PHOTOS
 @api.route("/photos/<photo_id>")
 def get_photo(photo_id):
-    return send_file(f"./config/photos/avatars/{photo_id}", mimetype=photo_id)
+    return send_file(f"./api/assets/avatars/{photo_id}", mimetype=photo_id)
 
 @api.route("/photos/upload")
 def upload_photo():

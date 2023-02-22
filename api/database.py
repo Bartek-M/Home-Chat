@@ -2,10 +2,10 @@ import sqlite3
 import hashlib
 import secrets
 import random
-from .models import User, Message, Channel, UserChannel, UserFriend, UserSettings, UserSecrets
+from .assets.models import User, Message, Channel, UserChannel, UserFriend, UserSettings, UserSecrets
 
 # GLOBAL VARIABLES
-FILE = "./config/database.db" # ./config/database.db | :memory:
+FILE = "./api/db.sqlite" # ./api/db.sqlite | :memory:
 
 USER_TABLE = "users"
 MESSAGE_TABLE = "messages"

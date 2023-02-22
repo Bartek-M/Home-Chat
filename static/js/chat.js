@@ -5,8 +5,7 @@ open_channel_btns.forEach(button => { button.addEventListener("click", () => ope
 // CHANNELS & MESSAGES
 var opened
 var messages
-var send_btn
-var message_inpt
+var chat_inpt
 
 
 // Add message
@@ -90,8 +89,10 @@ async function open_channel(channel_id) {
         <div class="scroller-spacer"></div>
     </div>
     <div class="writing-box container" id="message-form">
-        <span class="scroller-container" id="message-inpt" contenteditable></span>
-        <input class="submit-btn" id="message-send" type="submit" value="SEND"/>
+        <div class="chat-inpt-wrapper scroller-container">
+            <div id="chat-inpt" contenteditable></div>
+        </div>
+        <input class="submit-btn" onclick="send()" type="submit" value="SEND"/>
     </div>
     `
 
@@ -114,11 +115,8 @@ async function open_channel(channel_id) {
         smooth_scroll("chat-window")
     }
 
-    send_btn = document.getElementById("message-send")
-    message_inpt = document.getElementById("message-inpt")
-
-    send_btn.addEventListener("click", () => { send() })
-    message_inpt.addEventListener("keypress", (e) => { if (e.key === "Enter" & !e.shiftKey) { send(); e.preventDefault() } })
+    chat_inpt = document.getElementById("chat-inpt")
+    chat_inpt.addEventListener("keypress", (e) => { if (e.key === "Enter" & !e.shiftKey) { send(); e.preventDefault() } })
 }
 
 
@@ -134,8 +132,8 @@ socket.on("message recive", (data) => {
 
 // Send a message
 function send() {
-    let text = message_inpt.innerText.trim()
+    let text = chat_inpt.innerText.trim()
 
     if (text.length) { socket.emit("message send", { user_id: user_id, channel_id: opened, content: text }) }
-    message_inpt.innerText = ""
+    chat_inpt.innerText = ""
 }

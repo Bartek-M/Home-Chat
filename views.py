@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, request, session, flash
-from config.database import *
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from api.database import *
 import time
 
 view = Blueprint(__name__, "view") # Define views
