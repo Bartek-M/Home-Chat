@@ -28,6 +28,9 @@ def manage_database(func):
     
 
 # API PAGES
+# AUTH
+
+
 # CHANNELS
 @api.route("/channels/<channel_id>", methods=["GET", "PATCH"])
 @api.route("/channels/<channel_id>/<option>", methods=["GET", "PATCH"])

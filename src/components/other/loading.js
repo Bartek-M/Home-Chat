@@ -1,6 +1,7 @@
 import React from "react"
 
-export default function LoadingScreen() {
+// Loading screen
+export default function Loading() {
     return (
         <div class="center-container absolute-container" id="loading-screen-wrapper">
             <div class="center-column-container" id="loading-screen">

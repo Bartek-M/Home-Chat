@@ -15,7 +15,7 @@ def home():
 
     # usr = session.get("user")
 
-    return render_template("base.html")#, user_id=usr.get("id"))
+    return render_template("index.html")#, user_id=usr.get("id"))
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -25,7 +25,7 @@ def log_in():
         return redirect(url_for("views.home"))
 
     if request.method != "POST":
-        return render_template("login.html")
+        return render_template("index.html")
 
     db = Database()
 
@@ -41,13 +41,13 @@ def log_in():
             return redirect(url_for("views.home"))
 
     flash("Invalid email or password!", "error")
-    return render_template("login.html")
+    return render_template("index.html")
             
     
 @view.route("/register", methods=["POST", "GET"])
 def register():
     if request.method != "POST":
-        return render_template("register.html")
+        return render_template("index.html")
     
     if "user" in session:
         session.pop("user", None)  
@@ -56,11 +56,11 @@ def register():
 
     if db.get_user(email := request.form.get("email")):
         flash("Email is already registered!", "error")
-        return render_template("register.html")
+        return render_template("index.html")
 
     if (tag := db.get_available_tag(username := request.form.get("usrname"))) is None:
         flash("Too many users have this username, try another one!", "error")
-        return render_template("register.html")
+        return render_template("index.html")
 
     current_time = time.time() 
     id = Functions.create_id(current_time)
