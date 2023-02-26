@@ -1,5 +1,3 @@
-import React from "react"
-
 // Loading screen
 export default function Loading() {
     return (

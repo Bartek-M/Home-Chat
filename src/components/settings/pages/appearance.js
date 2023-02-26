@@ -1,33 +1,48 @@
-import React from "react";
+import { useContext } from "react"
+import { UserContext } from "../../../functions"
 
 export default function Appearance() {
+    const { user, setUser } = useContext(UserContext)
+
+    function set_theme(theme) {
+        if (theme === user.theme) return
+
+        document.documentElement.setAttribute("data-theme", theme)
+        setUser({...user, theme: theme})
+    }
+
+    function set_message_display(msg_display) {
+        if (msg_display === user.message_display) return
+        setUser({...user, message_display: msg_display})
+    }
+
     return (
         <>
-            <h2 class="settings-title">Appearance</h2>
-            <div class="column-container">
-                <p class="category-text">THEME</p>
-                <button theme-btn class="settings-full-btn container" id="btn-theme-dark">
-                    <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-theme-dark"></div></div>
+            <h2 className="settings-title">Appearance</h2>
+            <div className="column-container">
+                <p className="category-text">THEME</p>
+                <button className={`settings-full-btn container ${user.theme === "dark" ? "active" : ""}`} onClick={() => set_theme("dark")}>
+                    <div className="select-indicator-wrapper center-container"><div className={`select-indicator ${user.theme === "dark" ? "active" : ""}`}></div></div>
                     Dark
                 </button>
-                <button theme-btn class="settings-full-btn container" id="btn-theme-light">
-                    <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-theme-light"></div></div>
+                <button className={`settings-full-btn container ${user.theme === "light" ? "active" : ""}`} onClick={() => set_theme("light")}>
+                    <div className="select-indicator-wrapper center-container"><div className={`select-indicator ${user.theme === "light" ? "active" : ""}`}></div></div>
                     Light
                 </button>
-                <button theme-btn class="settings-full-btn container" id="btn-theme-auto">
-                    <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-theme-auto"></div></div>
+                <button className={`settings-full-btn container ${user.theme === "auto" ? "active" : ""}`} onClick={() => set_theme("auto")}>
+                    <div className="select-indicator-wrapper center-container"><div className={`select-indicator ${user.theme === "auto" ? "active" : ""}`}></div></div>
                     Auto
                 </button>
             </div>
-            <hr class="separator" />
-            <div class="column-container">
-                <p class="category-text">MESSAGE DISPLAY</p>
-                <button message-display-btn class="settings-full-btn container" id="btn-message-display-standard">
-                    <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-message-display-standard"></div></div>
+            <hr className="separator" />
+            <div className="column-container">
+                <p className="category-text">MESSAGE DISPLAY</p>
+                <button className={`settings-full-btn container ${user.message_display === "standard" ? "active" : ""}`} onClick={() => set_message_display("standard")}>
+                    <div className="select-indicator-wrapper center-container"><div className={`select-indicator ${user.message_display === "standard" ? "active" : ""}`}></div></div>
                     Standard
                 </button>
-                <button message-display-btn class="settings-full-btn container" id="btn-message-display-compact">
-                    <div class="select-indicator-wrapper center-container"><div class="select-indicator" id="select-message-display-compact"></div></div>
+                <button className={`settings-full-btn container ${user.message_display === "compact" ? "active" : ""}`} onClick={() => set_message_display("compact")}>
+                    <div className="select-indicator-wrapper center-container"><div className={`select-indicator ${user.message_display === "compact" ? "active" : ""}`}></div></div>
                     Compact
                 </button>
             </div>

@@ -320,6 +320,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     color: var(--FONT_RV_COLOR);
 }
 
+.settings-sidebar button.active, #settings-logout.active { background-color: var(--BUTTON_HOVER); }
 .settings-sidebar button:hover, #settings-logout:hover { background-color: var(--BUTTON_HOVER) }
 
 /* content */

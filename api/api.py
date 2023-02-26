@@ -29,6 +29,10 @@ def manage_database(func):
 
 # API PAGES
 # AUTH
+@api.route("/auth/<option>", methods=["POST"])
+@manage_database
+def auth(db, option):
+    return {"message": option}
 
 
 # CHANNELS
@@ -88,12 +92,13 @@ def get_user(db, user_id, option=None):
         case (None, "GET"): 
             data = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else None
         case ("channels", "GET"): 
-            data = db.get_user_channels(user_id)
+            data = db.get_user_stuff(user_id, "channels")
         case ("friends", "GET"): 
-            data = db.get_user_friends(user_id)
+            data = db.get_user_stuff(user_id, "friends")
         case ("settings", "GET"): 
             data = db.get_entry(USER_SETTING_TABLE, user_id).__dict__
 
+    print("GET USER:", data)
     return data
 
 

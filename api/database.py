@@ -115,7 +115,7 @@ class Database:
         """
 
         if option == "channels":
-            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id'{req_id}'")
+            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id='{req_id}'")
 
             if fetched := self.cursor.fetchall():
                 return sorted(

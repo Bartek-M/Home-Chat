@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO
 from api import *
 from views import view
@@ -52,6 +52,10 @@ def handle():
 @app.errorhandler(404)
 def page_not_found(_):
     return render_template("index.html"), 404
+
+@app.errorhandler(405)
+def method_not_allowed(_):
+    return jsonify({"message": "405 Method Not Allowed"}), 405
 
 
 if __name__ == "__main__":

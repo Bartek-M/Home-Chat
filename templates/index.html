@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
     <link rel="icon" type="icon/svg" href="{{ url_for('static', filename='icons/icon.ico') }}" />
+
     <title>Home Chat</title>
 </head>
 <body>
@@ -31,6 +33,9 @@
     </div>
     <div id="appMount"></div>
     <div class="absolute-container" id="overlay" onclick="overlay_close()"></div>
+    <script>
+        const user_id = "4371870843421725650"
+    </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
