@@ -289,7 +289,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     transition: .17s ease; 
 }
 
-#settings.active { transform: scale(1); }
+#settings.shown { transform: scale(1); }
 
 /* siderbar */
 .settings-sidebar-wrapper {

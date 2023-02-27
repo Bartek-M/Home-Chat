@@ -111,6 +111,20 @@ function flash_message(text, type = "info") {
 }
 
 
+// Overlay
+function overlay_open(element) {
+    overlay_close()
+
+    element.classList.add("active")
+    document.getElementById("overlay").classList.add("active")
+}
+
+function overlay_close() {
+    document.querySelectorAll(".active").forEach(element => { element.classList.remove("active") })
+    document.getElementById("overlay").classList.remove("active")
+}
+
+
 // EXPORTS
 export {
     UserContext,
@@ -121,5 +135,7 @@ export {
     format_time,
     smooth_scroll,
     copy_text,
-    flash_message
+    flash_message,
+    overlay_open,
+    overlay_close
 }
