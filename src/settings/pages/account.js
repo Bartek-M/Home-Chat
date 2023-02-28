@@ -29,7 +29,7 @@ export default function Account({ props }) {
                             <p className="category-text">PHONE NUMBER</p>
                             <p>{(user.phone == "not set") ? ("You haven't added a phone number yet.") : (user.phone)}</p>
                         </div>
-                        <button className="settings-btn stng-edit-btn">
+                        <button className="settings-btn stng-edit-btn" onClick={() => card("phone")}>
                             {(user.phone == "not set") ? ("Add") : ("Edit")}
                         </button>
                     </div>

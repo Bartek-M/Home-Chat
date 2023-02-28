@@ -1,14 +1,9 @@
 import { useState, useContext } from "react";
 import { UserContext, version, user_os, overlay_open, overlay_close } from "../functions"
 
-import Username from "./cards/username";
-import Email from "./cards/email";
-import Content from "./components/page_content";
+import PageContent from "./components/page_content";
+import CardContent from "./components/card_content";
 
-const cards = {
-    username: Username,
-    email: Email
-}
 
 export default function Settings() {
     const { user, setUser } = useContext(UserContext)
@@ -59,9 +54,9 @@ export default function Settings() {
 
                 <div className="settings-page scroller-container">
                     <div className="column-container" id="settings-content">
-                        <Content page={page} user={user} setUser={setUser} card={open_card} />
+                        <PageContent page={page} user={user} setUser={setUser} card={open_card} />
                     </div>
-                    <button onClick={() => { document.getElementById("settings").classList.remove("shown") }} className="center-container" id="close-settings">
+                    <button onClick={() => { overlay_close() }} className="center-container" id="close-settings">
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                             <path d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                         </svg>
@@ -70,11 +65,7 @@ export default function Settings() {
             </div>
             <div className="edit-card-wrapper center-container absolute-container">
                 <div className="center-column-container" id="settings-edit-card">
-                    {card ? cards[card]({
-                        user: user,
-                        setUser: setUser,
-                        close_card: close_card
-                    }) : ""}
+                    {card && (<CardContent card={card} user={user} setUser={setUser} close={close_card} />)}
                 </div>
             </div>
         </>

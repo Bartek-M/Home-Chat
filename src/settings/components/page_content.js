@@ -8,14 +8,15 @@ import Loading from "../../components/loading";
 
 
 // Settings content (page)
-export default function Content(props) {
+export default function PageContent(props) {
     const { page, user } = props
 
     if (!user) return (<Loading />)
 
-    if (page === "account") return (<Account props={props}/>)
     if (page === "security") return (<Security props={props}/>)
     if (page === "friends") return (<Friends props={props}/>)
     if (page === "appearance") return (<Appearance props={props}/>)
     if (page === "advanced") return (<Advanced props={props}/>)
+
+    return (<Account props={props}/>)
 } 
