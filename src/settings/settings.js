@@ -1,22 +1,9 @@
 import { useState, useContext } from "react";
-import { UserContext, version, user_os, overlay_open, overlay_close } from "../../functions"
+import { UserContext, version, user_os, overlay_open, overlay_close } from "../functions"
 
-import Account from "./pages/account";
-import Security from "./pages/security";
-import Friends from "./pages/friends";
-import Appearance from "./pages/appearance";
-import Advanced from "./pages/advanced";
-
-import Username from "./edit_cards/username";
-import Email from "./edit_cards/email";
-
-const pages = {
-    account: Account,
-    security: Security,
-    friends: Friends,
-    appearance: Appearance,
-    advanced: Advanced
-}
+import Username from "./cards/username";
+import Email from "./cards/email";
+import Content from "./components/page_content";
 
 const cards = {
     username: Username,
@@ -30,14 +17,7 @@ export default function Settings() {
     const [card, setCard] = useState(null)
 
     // Pages
-    function open_tab(new_page) {
-        if (new_page == page) return
-
-        document.getElementById(`${page}-btn`).classList.remove("active")
-        document.getElementById(`${new_page}-btn`).classList.add("active")
-
-        setPage(new_page)
-    }
+    function open_tab(new_page) { setPage(new_page) }
 
     // Cards
     function open_card(new_card) { overlay_open(document.getElementById("settings-edit-card")); setCard(new_card) }
@@ -58,14 +38,14 @@ export default function Settings() {
                         </div>
 
                         <p className="category-text">USER SETTINGS</p>
-                        <button className="active" id="account-btn" onClick={() => open_tab("account")}>Account</button>
-                        <button id="security-btn" onClick={() => open_tab("security")}>Security</button>
-                        <button id="friends-btn" onClick={() => open_tab("friends")}>Friends</button>
+                        <button className={page === "account" ? "active" : ""} onClick={() => open_tab("account")}>Account</button>
+                        <button className={page === "security" ? "active" : ""} onClick={() => open_tab("security")}>Security</button>
+                        <button className={page === "friends" ? "active" : ""} onClick={() => open_tab("friends")}>Friends</button>
                         <hr className="separator" />
 
                         <p className="category-text">APP SETTINGS</p>
-                        <button id="appearance-btn" onClick={() => open_tab("appearance")}>Appearance</button>
-                        <button id="advanced-btn" onClick={() => open_tab("advanced")}>Advanced</button>
+                        <button className={page === "appearance" ? "active" : ""} onClick={() => open_tab("appearance")}>Appearance</button>
+                        <button className={page === "advanced" ? "active" : ""} onClick={() => open_tab("advanced")}>Advanced</button>
                         <hr className="separator" />
 
                         <a id="settings-logout" href="logout">Log Out</a>
@@ -79,11 +59,7 @@ export default function Settings() {
 
                 <div className="settings-page scroller-container">
                     <div className="column-container" id="settings-content">
-                        {pages[page]({
-                            user: user, 
-                            setUser: setUser, 
-                            open_card: open_card
-                        })}
+                        <Content page={page} user={user} setUser={setUser} card={open_card} />
                     </div>
                     <button onClick={() => { document.getElementById("settings").classList.remove("shown") }} className="center-container" id="close-settings">
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
@@ -95,8 +71,8 @@ export default function Settings() {
             <div className="edit-card-wrapper center-container absolute-container">
                 <div className="center-column-container" id="settings-edit-card">
                     {card ? cards[card]({
-                        user: user, 
-                        setUser: setUser, 
+                        user: user,
+                        setUser: setUser,
                         close_card: close_card
                     }) : ""}
                 </div>

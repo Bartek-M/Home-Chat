@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { UserContext, api_get, overlay_close } from "./functions";
 
-import Home from "./components/home/home";
-import Login from "./components/account/login";
-import Register from "./components/account/register";
-import NotFound from "./components/error/not_found";
+import Home from "./home/home";
+import Login from "./account/login";
+import Register from "./account/register";
+import NotFound from "./error/not_found";
 
 // Rendering
 export default function App() {
@@ -48,5 +48,5 @@ root.render(
 )
 
 // Overlay
-document.addEventListener("keyup", (e) => { if (e.key === "Escape") { overlay_close() } })
+document.addEventListener("keyup", (e) => { if (e.key === "Escape") overlay_close() })
 document.getElementById("overlay").addEventListener("click", () => overlay_close())

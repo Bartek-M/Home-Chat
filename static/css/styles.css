@@ -494,16 +494,56 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 
 /* LOADING SCREEN */
 #loading-screen-wrapper { 
-    z-index: 1000;
     opacity: 1; 
     background-color: #010409; 
     color: var(--FONT_COLOR); 
-    transition: .17s ease; 
 }
-#loading-screen-wrapper.deactive { opacity: 0; }
 
 #loading-screen { position: relative; gap: 2rem; }
 #loading-screen h1 { text-align: center; font-weight: 700;}
+
+.loading-dots {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--FONT_COLOR);
+    animation: loading-dots 1s infinite linear alternate;
+    animation-delay: 0.5s;
+}
+.loading-dots::before, .loading-dots::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+}
+.loading-dots::before {
+    left: -15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--FONT_COLOR);
+    animation: loading-dots 1s infinite alternate;
+    animation-delay: 0s;
+}
+.loading-dots::after {
+    left: 15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--FONT_COLOR);
+    animation: loading-dots 1s infinite alternate;
+    animation-delay: 1s;
+}
+
+@keyframes loading-dots {
+  0% {
+    background-color: var(--FONT_COLOR);
+  }
+  50%, 100% {
+    background-color: var(--FONT_DIM_COLOR);
+  }
+}
 
 /* FLASH MESSAGE */
 #flash-box {

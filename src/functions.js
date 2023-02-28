@@ -1,7 +1,7 @@
 import React from "react"
 
 // App version
-const version = "e9dc8c5"
+const version = "9bc69ac"
 
 // User Data
 const UserContext = React.createContext(null)
@@ -128,9 +128,9 @@ function overlay_close() {
 // EXPORTS
 export {
     UserContext,
-    version, 
-    user_os, 
-    api_get, 
+    version,
+    user_os,
+    api_get,
     api_send,
     format_time,
     smooth_scroll,
