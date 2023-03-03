@@ -562,7 +562,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     opacity: 0;
     width: max-content;
     padding: 1rem;
-    background-color: var(--COLOR_4);
+    background-color: var(--MAIN_COLOR);
     border-color: transparent;
     border-radius: 50px;
     transition: .17s ease; 

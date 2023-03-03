@@ -1,9 +1,38 @@
-import { overlay_open } from "../functions";
+import { useState, useEffect, useMemo } from "react";
+
+import { UserContext, api_get } from "../api";
+import { overlay_open, app_theme, prefered_theme } from "../functions";
+
 import Settings from "../settings/settings";
 
 export default function Home() {
+    const [user, setUser] = useState(null)
+    const user_state = useMemo(() => ({ user, setUser }), [user, setUser])
+
+    // Get user
+    useEffect(() => {
+        if (user) return
+
+        const fetch_data = async () => { setUser(await api_get("user_settings", user_id)) }
+        fetch_data()
+    }, [])
+
+    // Set theme when it changes
+    useEffect(() => {
+        if (!user) return
+        app_theme(user.theme)
+
+        if (user.theme === "auto") {
+            let theme_match = window.matchMedia("(prefers-color-scheme: dark)")
+
+            theme_match.addEventListener("change", prefered_theme)
+            return () => { theme_match.removeEventListener("change", prefered_theme) }
+        }
+    }, [user])
+
+
     return (
-        <>
+        <UserContext.Provider value={user_state}>
             <div className="home-page container">
                 <nav className="main-sidebar spaced-column-container scroller-container">
                     <div className="main-sidebar-elements center-column-container">
@@ -38,6 +67,6 @@ export default function Home() {
                 </div>
             </div>
             <Settings />
-        </>
+        </UserContext.Provider>
     )
 }

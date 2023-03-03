@@ -96,9 +96,8 @@ def get_user(db, user_id, option=None):
         case ("friends", "GET"): 
             data = db.get_user_stuff(user_id, "friends")
         case ("settings", "GET"): 
-            data = db.get_entry(USER_SETTING_TABLE, user_id).__dict__
+            data = {**db.get_entry(USER_TABLE, user_id).__dict__, **db.get_entry(USER_SETTING_TABLE, user_id).__dict__}
 
-    print("GET USER:", data)
     return data
 
 

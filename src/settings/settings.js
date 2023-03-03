@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
-import { UserContext, version, user_os, overlay_open, overlay_close } from "../functions"
+import { UserContext } from "../api";
+import { version, user_os, overlay_open, overlay_close } from "../functions"
 
 import PageContent from "./components/page_content";
 import CardContent from "./components/card_content";
