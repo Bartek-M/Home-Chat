@@ -60,7 +60,7 @@ class Database:
                 id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, message_display TEXT, auth TEXT
             )""",
             f"""{USER_SECRET_TABLE} (
-                id TEXT UNIQUE, password TEXT, auth_code TEXT
+                id TEXT UNIQUE, password TEXT, token TEXT, auth_code TEXT
             )"""
         ]
 

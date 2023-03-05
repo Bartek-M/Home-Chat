@@ -8,6 +8,7 @@
     --FONT_COLOR: #FFFFFF;
     --FONT_RV_COLOR: #FFFFFF;
     --FONT_DIM_COLOR: #8b8b8b;    
+    --ERROR_FONT_COLOR: #e16e73;
 
     --BLACK: #000000;
     --BLUE: #008eb9;
@@ -107,7 +108,9 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 }
 
 .scroller-spacer { min-height: 30px;}
-.category-text { font-size: .75rem; color: var(--FONT_DIM_COLOR); }
+
+.category-text { font-weight: 700; font-size: .75rem; color: var(--FONT_DIM_COLOR); }
+.error-category-text { font-weight: 500; color: var(--ERROR_FONT_COLOR)}
 
 .input-field {
     height: 20px;

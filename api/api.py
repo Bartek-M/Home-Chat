@@ -1,10 +1,10 @@
-from flask import Blueprint, request, send_file, jsonify, redirect, url_for
+from flask import Blueprint, request, send_file, jsonify, redirect, url_for, abort
+import re
 from .database import *
 
 api = Blueprint("api", __name__) # Define api
 
-
-# DATABASE DATA FROM TABLES
+# CONSTANTS
 TABLES = {
     "name": USER_TABLE, 
     "visibility": USER_TABLE,
@@ -14,17 +14,29 @@ TABLES = {
     "auth_code": USER_SECRET_TABLE
 }
 
+EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
 # Manage database
 def manage_database(func):
     def wrapper(*args, **kwargs):
         db = Database()
-        response = func(db, *args, **kwargs)
+        data, code = func(db, *args, **kwargs)
         db.close()
 
-        return jsonify(response if response else {"message": "404 Not Found"})
+        if not data:
+            abort(404)
+
+        return jsonify(data), code   
     
     wrapper.__name__ = func.__name__
     return wrapper
+
+# Verify email
+def verify_email(email):
+    if re.fullmatch(EMAIL_REGEX, email):
+        return True
+
+    return False
     
 
 # API PAGES
@@ -32,7 +44,33 @@ def manage_database(func):
 @api.route("/auth/<option>", methods=["POST"])
 @manage_database
 def auth(db, option):
-    return {"message": option}
+    data, code = None, 404
+
+    match (option, request.method):
+        # POST
+        case ("login", "POST"):
+            if settings := db.get_user(request.json.get("email")):
+                secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
+
+                if Functions.hash_passwd(request.json.get("password"), secrets.password.split("$")[0]) == secrets.password:
+                    return {"token": "test1234"}, 200
+
+            return {
+                "message": "400 Invalid Form Body",
+                "errors": {
+                    "email": "Login or password is invalid.",
+                    "password": "Login or password is invalid."
+                }
+            }, 400
+        
+        case ("register", "POST"):
+            print("[EMAIL]", request.json.get("email"))
+            print("[USERNAME]", request.json.get("username"))
+            print("[PASSWORD]", request.json.get("password"))
+
+            data, code = {"massage": "200 OK"}, 200
+        
+    return (data, code)
 
 
 # CHANNELS
@@ -40,17 +78,17 @@ def auth(db, option):
 @api.route("/channels/<channel_id>/<option>", methods=["GET", "PATCH"])
 @manage_database
 def get_channel(db, channel_id, option=None):
-    data = None
+    data, code = None, 404
 
     match option:
         case None:
-            data = chnl.__dict__ if (chnl := db.get_entry(CHANNEL_TABLE, channel_id)) else {}
+            data, code = chnl.__dict__ if (chnl := db.get_entry(CHANNEL_TABLE, channel_id)) else {}, 200
         case "messages":
-            data = db.get_channel_messages(channel_id)
+            data, code = db.get_channel_messages(channel_id), 200
         case "users":
-            data = db.get_user_channels(channel_id)
+            data, code = db.get_user_channels(channel_id), 200
 
-    return data
+    return (data, code)
 
 
 # USERS
@@ -58,7 +96,7 @@ def get_channel(db, channel_id, option=None):
 @api.route("/users/<user_id>/<option>", methods=["GET", "PATCH"])
 @manage_database
 def get_user(db, user_id, option=None):
-    data = None 
+    data, code = None, 404
 
     match (option, request.method):
         # PATCH
@@ -67,38 +105,38 @@ def get_user(db, user_id, option=None):
             settings = request.json.get("settings")
 
             if not settings:
-                return {"message": "403	Forbidden"}
+                abort(403)
             
             if Functions.hash_passwd(request.json.get("password"), secrets.password.split("$")[0]) != secrets.password:
-                return {"message": "401 Unauthorized"}   
+                abort(401) 
 
             if settings.startswith("name"):
                 if (tag := db.get_available_tag(settings[6:-1])) is None:
-                    return {"message": "406 Not Acceptable", "flash_message": "Too many users have this username, try another one!"}
+                    return {"message": "406 Not Acceptable", "flash_message": "Too many users have this username, try another one!"}, 200
             
                 db.update_entry(TABLES[settings.split("=")[0]], user_id, f"tag='{tag}'")
 
             if settings.startswith("email") and (db.get_user(settings[7:-1])):
-                return {"message": "406 Not Acceptable", "flash_message": "Email is already registered!"}
+                return {"message": "406 Not Acceptable", "flash_message": "Email is already registered!"}, 200
 
             db.update_entry(TABLES[settings.split("=")[0]], user_id, settings)
-            data = {"message": "200 OK ", "data": db.get_entry(TABLES[settings.split("=")[0]], user_id)}
+            data, code = {"message": "200 OK ", "data": db.get_entry(TABLES[settings.split("=")[0]], user_id)}, 200
    
         case ("settings", "PATCH"):
             db.update_entry(USER_SETTING_TABLE, user_id, request.json.get("settings"))
-            data = {"message": "200 OK "}
+            data, code = {"message": "200 OK "}, 200
 
         # GET
         case (None, "GET"): 
-            data = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else None
+            data, code = usr.__dict__ if (usr := db.get_entry(USER_TABLE, user_id)) else None, 200
         case ("channels", "GET"): 
-            data = db.get_user_stuff(user_id, "channels")
+            data, code = db.get_user_stuff(user_id, "channels"), 200
         case ("friends", "GET"): 
-            data = db.get_user_stuff(user_id, "friends")
+            data, code = db.get_user_stuff(user_id, "friends"), 200
         case ("settings", "GET"): 
-            data = {**db.get_entry(USER_TABLE, user_id).__dict__, **db.get_entry(USER_SETTING_TABLE, user_id).__dict__}
+            data, code = {**db.get_entry(USER_TABLE, user_id).__dict__, **db.get_entry(USER_SETTING_TABLE, user_id).__dict__}, 200
 
-    return data
+    return (data, code)
 
 
 # PHOTOS

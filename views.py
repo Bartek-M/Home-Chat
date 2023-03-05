@@ -9,13 +9,7 @@ view = Blueprint(__name__, "view") # Define views
 @view.route("/")
 @view.route("/home")
 def home():
-    # if "user" not in session:
-    #     flash("Not logged in!", "error")
-    #     return redirect(url_for("views.log_in"))
-
-    # usr = session.get("user")
-
-    return render_template("index.html")#, user_id=usr.get("id"))
+    return render_template("index.html")
 
 
 @view.route("/login", methods=["POST", "GET"])
@@ -82,6 +76,3 @@ def log_out():
         flash("Logged out!", "info")
 
     return redirect(url_for("views.log_in"))
-
-
-# GENERAL FUNCTIONS

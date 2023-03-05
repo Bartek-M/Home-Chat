@@ -119,11 +119,12 @@ class UserSecrets:
     """
     id: str
     password: str
+    token: str
     auth_code: str = None
 
     def __repr__(self):
         """
         Representation
-        :return: (id, password, auth_code)
+        :return: (id, password, token, auth_code)
         """
-        return f"('{self.id}', '{self.password}', '{self.auth_code}')"
+        return f"('{self.id}', '{self.password}', '{self.token}', '{self.auth_code}')"

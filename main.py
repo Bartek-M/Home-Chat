@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO
 from api import *
 from views import view
@@ -19,7 +19,7 @@ app.register_blueprint(api, url_prefix="/api")
 socketio = SocketIO(app)
 
 
-# Handle socketio server
+# SOCKETS
 @socketio.on("message send")
 def handle(data):
     user_id, channel_id, content = data.values()
@@ -48,9 +48,20 @@ def handle():
     print("diconnect")
 
 
-# not found
+# ERRORS
+@app.errorhandler(401)
+def unauthorized(_):
+    return {"message": "401 Unauthorized"}, 401
+
+@app.errorhandler(401)
+def unauthorized(_):
+    return {"message": "403 Forbidden"}, 403
+
 @app.errorhandler(404)
 def page_not_found(_):
+    if request.path.startswith("/api"):
+        return jsonify({"message": "404 Not Found"}), 404
+
     return render_template("index.html"), 404
 
 @app.errorhandler(405)
