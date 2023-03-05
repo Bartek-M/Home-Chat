@@ -1,15 +1,28 @@
 import { useRef } from "react"
+import { useNavigate } from "react-router-dom"
 import { api_send } from "../api"
 
-function submit(email, username, password) {
+function submit(navigator, email, username, password) {
     api_send("auth_register", {
         email: email.value,
         username: username.value,
         password: password.value
-    }).then(res => console.log(res))
+    }).then(res => {
+        if (res.errors) {
+            if (res.errors.email) document.getElementById("email-error").innerText = `- ${res.errors.email}`
+            if (res.errors.username) document.getElementById("username-error").innerText = `- ${res.errors.username}`
+            if (res.errors.password) document.getElementById("password-error").innerText = `- ${res.errors.password}`
+
+            return  
+        }
+
+        navigator("/login")
+    })
 }
 
 export default function Register() {
+    const navigator = useNavigate()
+
     const email = useRef()
     const username = useRef()
     const password = useRef()
@@ -21,19 +34,19 @@ export default function Register() {
 
                 <form>
                     <div className="column-container">
-                        <p className="category-text">EMAIL</p>
+                        <p className="category-text">EMAIL <span className="error-category-text" id="email-error"></span></p>
                         <input className="input-field" type="email" ref={email} size="30" required />
                     </div>
                     <div className="column-container">
-                        <p className="category-text">USERNAME</p>
+                        <p className="category-text">USERNAME <span className="error-category-text" id="username-error"></span></p>
                         <input className="input-field" ref={username} size="30" required />
                     </div>
                     <div className="column-container">
-                        <p className="category-text">PASSWORD</p>
+                        <p className="category-text">PASSWORD <span className="error-category-text" id="password-error"></span></p>
                         <input className="input-field" type="password" ref={password} size="30" required />
                     </div>
 
-                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(), submit(email.current, username.current, password.current) }} value="CONTINUE" />
+                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(), submit(navigator, email.current, username.current, password.current) }} value="CONTINUE" />
                     <p className="login-redirect">Already have an account? <a className="link" href="login">Log In</a></p>
                 </form>
             </div>

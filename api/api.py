@@ -1,6 +1,7 @@
 from flask import Blueprint, request, send_file, jsonify, redirect, url_for, abort
-import re
 from .database import *
+import time
+import re
 
 api = Blueprint("api", __name__) # Define api
 
@@ -44,8 +45,6 @@ def verify_email(email):
 @api.route("/auth/<option>", methods=["POST"])
 @manage_database
 def auth(db, option):
-    data, code = None, 404
-
     match (option, request.method):
         # POST
         case ("login", "POST"):
@@ -53,7 +52,7 @@ def auth(db, option):
                 secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
 
                 if Functions.hash_passwd(request.json.get("password"), secrets.password.split("$")[0]) == secrets.password:
-                    return {"token": "test1234"}, 200
+                    return {"token": "test1234", "theme": settings.theme}, 200
 
             return {
                 "message": "400 Invalid Form Body",
@@ -64,13 +63,32 @@ def auth(db, option):
             }, 400
         
         case ("register", "POST"):
-            print("[EMAIL]", request.json.get("email"))
-            print("[USERNAME]", request.json.get("username"))
-            print("[PASSWORD]", request.json.get("password"))
+            email = request.json.get("email")
+            username = request.json.get("username")
+            password = request.json.get("password")
 
-            data, code = {"massage": "200 OK"}, 200
-        
-    return (data, code)
+            if not verify_email(email):
+                return {"message": "400 Invalid Form Body", "errors": {"email": "Invalid email form"}}, 400
+            
+            if db.get_user(email):
+                return {"message": "409 Conflict", "errors": {"email": "Email is already registered"}}, 409
+            
+            if (tag := db.get_available_tag(username)) is None:
+                return {"message": "409 Conflict", "errors": {"username": "Too many users have this username"}}, 409
+            
+            if len(password) < 8:
+                return {"message": "400 Invalid Form Body", "errors": {"password": "Password must have at least 8 characters"}}, 400
+            
+            current_time = time.time() 
+            id = Functions.create_id(current_time)
+
+            db.insert_entry(USER_TABLE, User(id, username, tag, "generic", current_time))
+            db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
+            db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Functions.hash_passwd(password), "test1234"))
+            
+            return {"message": "200 OK"}, 200
+            
+    return None, 404
 
 
 # CHANNELS

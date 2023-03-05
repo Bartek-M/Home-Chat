@@ -1,6 +1,5 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
-
 import { api_send } from "../api"
 
 function submit(navigator, email, password) {
