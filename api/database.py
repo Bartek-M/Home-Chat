@@ -142,7 +142,17 @@ class Database:
         self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id='{req_id}'")
 
         if fetched := self.cursor.fetchall():
-            return [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]
+            users = {}
+
+            for message in (messages := [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]):
+                if (user := users.get(message.user_id, None) is None):
+                    user = self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE id='{message.user_id}'").fetchone()
+                    users[message.user_id] = user
+
+                message.author = user
+                del message.user_id
+
+            return messages
 
         return []
 

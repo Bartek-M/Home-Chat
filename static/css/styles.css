@@ -497,10 +497,13 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 
 /* LOADING SCREEN */
 #loading-screen-wrapper { 
-    opacity: 1; 
+    z-index: 1000;
+    opacity: 1;
     background-color: #010409; 
     color: var(--FONT_COLOR); 
+    transition: .17s ease; 
 }
+#loading-screen-wrapper.deactive { opacity: 0; }
 
 #loading-screen { position: relative; gap: 2rem; }
 #loading-screen h1 { text-align: center; font-weight: 700;}

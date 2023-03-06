@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 
 import { UserContext, api_get } from "../api";
+import Loading from "../components/loading";
 import { overlay_open, app_theme, prefered_theme } from "../functions";
 
 import Settings from "../settings/settings";
@@ -13,8 +14,17 @@ export default function Home() {
     useEffect(() => {
         if (user) return
 
-        const fetch_data = async () => { setUser(await api_get("user_settings", user_id)) }
-        fetch_data()
+        const fetch_data = async () => setUser(await api_get("user_settings", user_id))
+
+        fetch_data().then(() => {
+            setTimeout(() => {
+                const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")
+                if (!loading_screen_wrapper) return
+
+                loading_screen_wrapper.classList.add("deactive")
+                setTimeout(() => { loading_screen_wrapper.innerHTML = null; loading_screen_wrapper.remove() }, 170)
+            }, 250)
+        })
     }, [])
 
     // Set theme when it changes
@@ -30,9 +40,11 @@ export default function Home() {
         }
     }, [user])
 
-
+    
+    // Render
     return (
         <UserContext.Provider value={user_state}>
+            <Loading />
             <div className="home-page container">
                 <nav className="main-sidebar spaced-column-container scroller-container">
                     <div className="main-sidebar-elements center-column-container">

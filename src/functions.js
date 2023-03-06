@@ -1,5 +1,5 @@
 // App version
-const version = "f53a463"
+const version = "434e315"
 
 // OS
 const os_list = {
@@ -35,16 +35,12 @@ function app_theme(theme) {
 // Convert EPOCH time to local
 function format_time(time, format = "full") {
     time = parseFloat(time)
+    let date = new Date(time * 1000)
 
-    if (format === "full") {
-        return new Date(time * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).replaceAll(",", "")
-    }
+    if (format === "full") { date = date.toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).replaceAll(",", "") }
+    if (format === "time") { date = date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) }
 
-    if (format === "time") {
-        return new Date(time * 1000).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
-    }
-
-    return undefined
+    return date
 }
 
 // Smooth scroll

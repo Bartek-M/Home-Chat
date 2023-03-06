@@ -52,7 +52,7 @@ def auth(db, option):
                 secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
 
                 if Functions.hash_passwd(request.json.get("password"), secrets.password.split("$")[0]) == secrets.password:
-                    return {"token": "test1234", "theme": settings.theme}, 200
+                    return {"message": "200 OK", "token": "test1234", "theme": settings.theme}, 200
 
             return {
                 "message": "400 Invalid Form Body",

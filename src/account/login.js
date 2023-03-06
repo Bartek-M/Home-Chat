@@ -8,15 +8,17 @@ function submit(navigator, email, password) {
         password: password.value
     }).then(res => {
         if (res.errors) {
-            if (res.errors.email) document.getElementById("email-error").innerText = `- ${res.errors.email}`
-            if (res.errors.password) document.getElementById("password-error").innerText = `- ${res.errors.password}`
+            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : null
+            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : null
 
-            return  
+            return
         }
 
-        // Store token
-        console.log(res.token)
-        navigator("/")
+        if (res.message === "200 OK") {
+            // Store token
+            console.log(res.token)
+            navigator("/")
+        }
     })
 }
 

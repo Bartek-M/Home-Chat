@@ -9,14 +9,16 @@ function submit(navigator, email, username, password) {
         password: password.value
     }).then(res => {
         if (res.errors) {
-            if (res.errors.email) document.getElementById("email-error").innerText = `- ${res.errors.email}`
-            if (res.errors.username) document.getElementById("username-error").innerText = `- ${res.errors.username}`
-            if (res.errors.password) document.getElementById("password-error").innerText = `- ${res.errors.password}`
+            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : null
+            document.getElementById("username-error").innerText = res.errors.username ? `- ${res.errors.username}` : null
+            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : null
 
-            return  
+            return
         }
 
-        navigator("/login")
+        if (res.message === "200 OK") {
+            navigator("/login")
+        }
     })
 }
 
