@@ -16,7 +16,6 @@ function submit(navigator, email, password) {
 
         if (res.message === "200 OK") {
             // Store token
-            console.log(res.token)
             navigator("/")
         }
     })

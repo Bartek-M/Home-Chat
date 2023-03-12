@@ -1,7 +1,8 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask
 from flask_socketio import SocketIO
-from api import *
+from errors import error
 from views import view
+from api import *
 import time
 
 # GLOBAL VARIABLES
@@ -11,10 +12,10 @@ PORT = 5000
 # INITIALIZE FLASK
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-app.secret_key = 'jkuQ/jM"?L5Vh]071iE{P9ziv?7xQUeeA8rFZ9*{' # Secret key for session
 
 app.register_blueprint(view, url_prefix="/")
 app.register_blueprint(api, url_prefix="/api")
+app.register_blueprint(error)
 
 socketio = SocketIO(app)
 
@@ -46,27 +47,6 @@ def handle():
 @socketio.on("disconnect")
 def handle():
     print("diconnect")
-
-
-# ERRORS
-@app.errorhandler(401)
-def unauthorized(_):
-    return {"message": "401 Unauthorized"}, 401
-
-@app.errorhandler(401)
-def unauthorized(_):
-    return {"message": "403 Forbidden"}, 403
-
-@app.errorhandler(404)
-def page_not_found(_):
-    if request.path.startswith("/api"):
-        return jsonify({"message": "404 Not Found"}), 404
-
-    return render_template("index.html"), 404
-
-@app.errorhandler(405)
-def method_not_allowed(_):
-    return jsonify({"message": "405 Method Not Allowed"}), 405
 
 
 if __name__ == "__main__":

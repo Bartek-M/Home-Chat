@@ -1,8 +1,6 @@
 import sqlite3
-import hashlib
-import secrets
 import random
-from .assets.models import User, Message, Channel, UserChannel, UserFriend, UserSettings, UserSecrets
+from .assets.models import *
 
 # GLOBAL VARIABLES
 FILE = "./api/db.sqlite" # ./api/db.sqlite | :memory:
@@ -60,7 +58,7 @@ class Database:
                 id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, message_display TEXT, auth TEXT
             )""",
             f"""{USER_SECRET_TABLE} (
-                id TEXT UNIQUE, password TEXT, token TEXT, auth_code TEXT
+                id TEXT UNIQUE, password TEXT, secret TEXT, auth_code TEXT
             )"""
         ]
 
@@ -225,24 +223,3 @@ class Database:
 
         return None
     # TEMP FUNCTION
-
-
-class Functions:
-    @staticmethod
-    def create_id(creation_time):
-        """
-        Create unique ID
-        :param creation_time: Epoch creation time
-        :return: Creation time(int)
-        """
-        return (int((creation_time - 1155909600) * 1000) << 23) + random.SystemRandom().getrandbits(22)
-
-    @staticmethod
-    def hash_passwd(passw, salt=secrets.token_hex(16)):
-        """
-        Hash user password
-        :param passw: User password
-        :param salt: Salt for additional encryption
-        :return: Secured password (str)
-        """
-        return f"{salt}${hashlib.sha256((salt + passw).encode()).hexdigest()}"

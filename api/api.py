@@ -1,58 +1,29 @@
-from flask import Blueprint, request, send_file, jsonify, redirect, url_for, abort
+from flask import Blueprint, request, send_file, redirect, url_for, abort
+from .funcs import Functions, Security, TABLES 
 from .database import *
+import secrets
 import time
-import re
 
 api = Blueprint("api", __name__) # Define api
 
-# CONSTANTS
-TABLES = {
-    "name": USER_TABLE, 
-    "visibility": USER_TABLE,
-    "email": USER_SETTING_TABLE,
-    "phone": USER_SETTING_TABLE,
-    "password": USER_SECRET_TABLE,
-    "auth_code": USER_SECRET_TABLE
-}
-
-EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-
-# Manage database
-def manage_database(func):
-    def wrapper(*args, **kwargs):
-        db = Database()
-        data, code = func(db, *args, **kwargs)
-        db.close()
-
-        if not data:
-            abort(404)
-
-        return jsonify(data), code   
-    
-    wrapper.__name__ = func.__name__
-    return wrapper
-
-# Verify email
-def verify_email(email):
-    if re.fullmatch(EMAIL_REGEX, email):
-        return True
-
-    return False
-    
 
 # API PAGES
 # AUTH
 @api.route("/auth/<option>", methods=["POST"])
-@manage_database
+@Functions.manage_database
 def auth(db, option):
     match (option, request.method):
         # POST
         case ("login", "POST"):
             if settings := db.get_user(request.json.get("email")):
-                secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
-
-                if Functions.hash_passwd(request.json.get("password"), secrets.password.split("$")[0]) == secrets.password:
-                    return {"message": "200 OK", "token": "test1234", "theme": settings.theme}, 200
+                user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
+                
+                if Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) == user_secrets.password:
+                    return {
+                        "message": "200 OK", 
+                        "token": Security.gen_token(user_secrets.id, user_secrets.secret), 
+                        "theme": settings.theme
+                    }, 200
 
             return {
                 "message": "400 Invalid Form Body",
@@ -67,7 +38,7 @@ def auth(db, option):
             username = request.json.get("username")
             password = request.json.get("password")
 
-            if not verify_email(email):
+            if not Functions.verify_email(email):
                 return {"message": "400 Invalid Form Body", "errors": {"email": "Invalid email form"}}, 400
             
             if db.get_user(email):
@@ -84,7 +55,7 @@ def auth(db, option):
 
             db.insert_entry(USER_TABLE, User(id, username, tag, "generic", current_time))
             db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
-            db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Functions.hash_passwd(password), "test1234"))
+            db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Security.hash_passwd(password), secrets.token_hex(32)))
             
             return {"message": "200 OK"}, 200
             
@@ -94,7 +65,7 @@ def auth(db, option):
 # CHANNELS
 @api.route("/channels/<channel_id>", methods=["GET", "PATCH"])
 @api.route("/channels/<channel_id>/<option>", methods=["GET", "PATCH"])
-@manage_database
+@Functions.manage_database
 def get_channel(db, channel_id, option=None):
     data, code = None, 404
 
@@ -112,20 +83,20 @@ def get_channel(db, channel_id, option=None):
 # USERS
 @api.route("/users/<user_id>/", methods=["GET", "PATCH"])
 @api.route("/users/<user_id>/<option>", methods=["GET", "PATCH"])
-@manage_database
+@Functions.manage_database
 def get_user(db, user_id, option=None):
     data, code = None, 404
 
     match (option, request.method):
         # PATCH
         case (None, "PATCH"):
-            secrets = db.get_entry(USER_SECRET_TABLE, user_id)
+            user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
             settings = request.json.get("settings")
 
             if not settings:
                 abort(403)
             
-            if Functions.hash_passwd(request.json.get("password"), secrets.password.split("$")[0]) != secrets.password:
+            if Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
                 abort(401) 
 
             if settings.startswith("name"):
@@ -169,13 +140,11 @@ def upload_photo():
 
 # TEMP DATABASE VIEW
 @api.route("/database")
-def database():
+@Functions.manage_database
+def database(db):
     tables = [USER_TABLE, MESSAGE_TABLE, CHANNEL_TABLE, USER_CHANNEL_TABLE, USER_FRIENDS_TABLE, USER_SETTING_TABLE, USER_SECRET_TABLE]
-    db = Database()
 
     for table in tables:
-        print(f"{table}:\n{db.get_all(table)}\n")
-
-    db.close()
+        print(f"{table}:\n{db.get_all(table)}\n")    
 
     return redirect(url_for("views.home"))
