@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_socketio import SocketIO
-from errors import error
 from views import view
 from api import *
 import time
@@ -15,7 +14,11 @@ app.url_map.strict_slashes = False
 
 app.register_blueprint(view, url_prefix="/")
 app.register_blueprint(api, url_prefix="/api")
-app.register_blueprint(error)
+
+app.register_blueprint(auth, url_prefix="/api/auth")
+app.register_blueprint(channels, url_prefix="/api/channels")
+app.register_blueprint(users, url_prefix="/api/users")
+app.register_blueprint(photos, url_prefix="/api/photos")
 
 socketio = SocketIO(app)
 
