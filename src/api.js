@@ -20,15 +20,20 @@ const api_pages = {
 }
 
 async function api_get(page, id) {
-    return await fetch(api_pages[page](id))
+    return await fetch(api_pages[page](id), {
+        headers: { "Authentication": "user_token" }
+    })
         .then((response) => { return response.json() })
         .then((data) => { return data })
 }
 
-async function api_send(page, data, id=null) {
+async function api_send(page, data, id = null) {
     return await fetch(api_pages[page](id), {
         method: id ? "PATCH" : "POST",
-        headers: { "Content-type": "application/json" },
+        headers: {
+            "Content-type": "application/json",
+            "Authentication": "user_token"
+        },
         body: JSON.stringify(data)
     })
         .then(async (response) => { return await response.json() })

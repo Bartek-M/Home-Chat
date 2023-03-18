@@ -1,4 +1,4 @@
-from flask import jsonify, abort
+from flask import jsonify, abort, request
 from base64 import b64encode, b64decode
 from .database import *
 import secrets
@@ -64,7 +64,7 @@ class Functions:
 
 class Security:
     @staticmethod
-    def hash_passwd(passw, salt=secrets.token_hex(16)):
+    def hash_passwd(passw: str, salt=secrets.token_hex(16)):
         """
         Hash user password
         :param passw: User password
@@ -87,10 +87,53 @@ class Security:
 
         return f"{id}.{now}.{hmac}"
     
-    def verify_token(token):
+    @staticmethod
+    def verify_token(db, token: str):
         """
         Verify specific token
         :param token: Token you want to verify
-        :return: "correct" / "expired" / "signature"
+        :return: "correct" / "expired" / "signature" / "invalid"
         """
-        return
+        if not token:
+            return "invalid"
+
+        if len(token := token.split(".")) != 3:
+            return "invalid"
+        
+        try:
+            id = b64decode(token[0].encode("UTF-8")).decode("UTF-8")
+            now = b64decode(token[1].encode("UTF-8")).decode("UTF-8")
+            hmac = token[2]
+        except:
+            return "invalid"
+        
+        if not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
+            return "invalid"
+        
+        if hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
+            return "signature"
+
+        return "correct"
+    
+    @staticmethod
+    def auth(func):
+        """
+        Authenticate user tokens decorator
+        :param func: Function to run
+        :return: Wrapper function
+        """
+        def wrapper(db, *args, **kwargs):
+            verify = Security.verify_token(db, request.headers.get("Authentication", None))
+            print(verify)
+
+            if verify == "correct":
+                return func(db, *args, **kwargs)
+            elif verify == "signature":
+                return ({"message": "403 Forbidden"}, 403)
+            elif verify == "invalid":
+                return ({"message": "401 Unauthorized"}, 403)
+            
+            return (None, None)
+        
+        wrapper.__name__ = func.__name__
+        return wrapper

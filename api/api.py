@@ -74,6 +74,7 @@ class Channels:
     
     @channels.route("/<channel_id>")
     @Functions.manage_database
+    @Security.auth
     def get_channel(db, channel_id):
         if (chnl := db.get_entry(CHANNEL_TABLE, channel_id)):
             return (chnl, 200)
@@ -82,6 +83,7 @@ class Channels:
         
     @channels.route("/<channel_id>/messages")
     @Functions.manage_database
+    @Security.auth
     def get_messages(db, channel_id):
         if (msgs := db.get_channel_messages(channel_id)):
             return (msgs, 200)
@@ -90,6 +92,7 @@ class Channels:
     
     @channels.route("/<channel_id>/users")
     @Functions.manage_database
+    @Security.auth
     def get_users(db, channel_id):
         if (users :=  db.get_user_channels(channel_id)):
             return (users, 200)
@@ -107,6 +110,7 @@ class Users:
     # GET
     @users.route("/<user_id>")
     @Functions.manage_database
+    @Security.auth
     def get_user(db, user_id):
         if (usr := db.get_entry(USER_TABLE, user_id)):
             return (usr, 200)
@@ -115,6 +119,7 @@ class Users:
     
     @users.route("/<user_id>/channels")
     @Functions.manage_database
+    @Security.auth
     def get_channels(db, user_id):
         if (chnls := db.get_user_stuff(user_id, "channels")):
             return (chnls, 200)
@@ -123,6 +128,7 @@ class Users:
 
     @users.route("/<user_id>/friends")
     @Functions.manage_database
+    @Security.auth
     def get_friends(db, user_id):
         if (frnds := db.get_user_stuff(user_id, "friends")):
             return (frnds, 200)
@@ -131,6 +137,7 @@ class Users:
 
     @users.route("/<user_id>/settings")
     @Functions.manage_database
+    @Security.auth
     def get_settings(db, user_id):
         if (stng := {**db.get_entry(USER_TABLE, user_id).__dict__, **db.get_entry(USER_SETTING_TABLE, user_id).__dict__}):
             return (stng, 200)
@@ -141,6 +148,7 @@ class Users:
     # PATCH
     @users.route("/<user_id>", methods=["PATCH"])
     @Functions.manage_database
+    @Security.auth
     def change_user(db, user_id):
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
         settings = request.json.get("settings")
@@ -165,6 +173,7 @@ class Users:
     
     @users.route("/<user_id>/settings", methods=["PATCH"])
     @Functions.manage_database
+    @Security.auth
     def change_settings(db, user_id):
         db.update_entry(USER_SETTING_TABLE, user_id, request.json.get("settings"))
         return ({"message": "200 OK "}, 200)
