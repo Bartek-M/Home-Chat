@@ -19,7 +19,7 @@ def register():
 
 @view.route("/logout")
 def log_out():
-    return redirect(url_for("views.log_in"))
+    return render_template("index.html")
 
 
 # ERRORS

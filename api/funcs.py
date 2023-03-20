@@ -50,7 +50,8 @@ class Functions:
         """
         def wrapper(*args, **kwargs):
             db = Database()
-            data, code = func(db, *args, **kwargs)
+            kwargs["db"] = db
+            data, code = func(*args, **kwargs)
             db.close()
 
             if not data:
@@ -95,25 +96,25 @@ class Security:
         :return: "correct" / "expired" / "signature" / "invalid"
         """
         if not token:
-            return "invalid"
+            return ("invalid", None)
 
         if len(token := token.split(".")) != 3:
-            return "invalid"
+            return ("invalid", None)
         
         try:
             id = b64decode(token[0].encode("UTF-8")).decode("UTF-8")
             now = b64decode(token[1].encode("UTF-8")).decode("UTF-8")
             hmac = token[2]
         except:
-            return "invalid"
+            return ("invalid", None)
         
         if not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
-            return "invalid"
+            return ("invalid", None)
         
         if hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
-            return "signature"
+            return ("signature", id)
 
-        return "correct"
+        return ("correct", id)
     
     @staticmethod
     def auth(func):
@@ -122,16 +123,16 @@ class Security:
         :param func: Function to run
         :return: Wrapper function
         """
-        def wrapper(db, *args, **kwargs):
-            verify = Security.verify_token(db, request.headers.get("Authentication", None))
-            print(verify)
+        def wrapper(*args, **kwargs):
+            verify_code, verify_id = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
 
-            if verify == "correct":
-                return func(db, *args, **kwargs)
-            elif verify == "signature":
+            if verify_code == "correct":
+                kwargs["user_id"] = verify_id
+                return func(*args, **kwargs)
+            elif verify_code == "signature":
                 return ({"message": "403 Forbidden"}, 403)
-            elif verify == "invalid":
-                return ({"message": "401 Unauthorized"}, 403)
+            elif verify_code == "invalid":
+                return ({"message": "401 Unauthorized"}, 401)
             
             return (None, None)
         

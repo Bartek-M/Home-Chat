@@ -16,7 +16,8 @@ function submit(navigator, email, password) {
 
         if (res.message === "200 OK") {
             // Store token
-            console.log(res.token)
+            console.log("TOKEN SET")
+            localStorage.setItem("token", res.token)
             navigator("/")
         }
     })

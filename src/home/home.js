@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom"
 
 import { UserContext, api_get } from "../api";
 import Loading from "../components/loading";
@@ -7,6 +8,8 @@ import { overlay_open, app_theme, prefered_theme } from "../functions";
 import Settings from "../settings/settings";
 
 export default function Home() {
+    const navigator = useNavigate()
+
     const [user, setUser] = useState(null)
     const user_state = useMemo(() => ({ user, setUser }), [user, setUser])
 
@@ -14,9 +17,13 @@ export default function Home() {
     useEffect(() => {
         if (user) return
 
-        const fetch_data = async () => setUser(await api_get("user_settings", user_id))
+        api_get("user_settings", "@me").then((usr) => {
+            if (usr.message === "401 Unauthorized") { return navigator("/login") }
+            if (usr.message === "403 Forbidden") { return navigator("/login") }
+            if (!usr.id) return
 
-        fetch_data().then(() => {
+            setUser(usr)
+
             setTimeout(() => {
                 const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")
                 if (!loading_screen_wrapper) return

@@ -21,7 +21,7 @@ const api_pages = {
 
 async function api_get(page, id) {
     return await fetch(api_pages[page](id), {
-        headers: { "Authentication": "user_token" }
+        headers: { "Authentication": localStorage.getItem("token") }
     })
         .then((response) => { return response.json() })
         .then((data) => { return data })
@@ -32,7 +32,7 @@ async function api_send(page, data, id = null) {
         method: id ? "PATCH" : "POST",
         headers: {
             "Content-type": "application/json",
-            "Authentication": "user_token"
+            "Authentication": localStorage.getItem("token")
         },
         body: JSON.stringify(data)
     })
