@@ -103,7 +103,7 @@ class Security:
         
         try:
             id = b64decode(token[0].encode("UTF-8")).decode("UTF-8")
-            now = b64decode(token[1].encode("UTF-8")).decode("UTF-8")
+            generated = b64decode(token[1].encode("UTF-8")).decode("UTF-8")
             hmac = token[2]
         except:
             return ("invalid", None)
@@ -113,6 +113,9 @@ class Security:
         
         if hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
             return ("signature", id)
+        
+        if int(time.time()) - int(generated) > 31_536_000: # Tokens are expired after one year (365 days); time in seconds
+            return ("expired", id)
 
         return ("correct", id)
     
@@ -129,6 +132,8 @@ class Security:
             if verify_code == "correct":
                 kwargs["user_id"] = verify_id
                 return func(*args, **kwargs)
+            elif verify_code == "expired":
+                return ({"message": "403 Forbidden"}, 403)
             elif verify_code == "signature":
                 return ({"message": "403 Forbidden"}, 403)
             elif verify_code == "invalid":

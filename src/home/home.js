@@ -23,6 +23,7 @@ export default function Home() {
             if (!usr.id) return
 
             setUser(usr)
+            if (localStorage.getItem("email") !== usr.email) localStorage.setItem("email", usr.email)
 
             setTimeout(() => {
                 const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")

@@ -7,7 +7,7 @@ export default function Logout() {
     const navigator = useNavigate()
 
     useEffect(() => {
-        localStorage.removeItem("token")
+        localStorage.clear()
         navigator("/login")
     })
 
