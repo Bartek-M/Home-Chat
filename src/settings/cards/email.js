@@ -1,5 +1,36 @@
+import { useRef } from "react"
+
+import { api_send } from "../../api"
+import { flash_message } from "../../functions"
+
+function update_email(user, setUser, email, password, close) {
+    if (!password.value || user.email === email.value) return
+
+    api_send("user", {
+        category: "email",
+        data: email.value,
+        password: password.value
+    }, "@me").then(res => {
+        if (res.errors) {
+            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : null
+            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : null
+
+            return
+        }
+
+        if (res.message === "200 OK") {
+            setUser({ ...user, email: email.value })
+            close()
+            flash_message("Email updated")
+        }
+    })
+}
+
 export default function Email({ props }) {
-    const { user, close } = props
+    const { user, setUser, close } = props
+
+    const email = useRef()
+    const password = useRef()
 
     return (
         <>
@@ -12,14 +43,16 @@ export default function Email({ props }) {
                     </svg>
                 </button>
             </div>
-            <div className="column-container">
-                <p className="category-text">EMAIL</p>
-                <input className="input-field" name="email" defaultValue={user.email} maxLength={100} required />
+            <form className="edit-card-form center-column-container">
+                <div className="column-container">
+                    <p className="category-text">EMAIL <span className="error-category-text" id="email-error"></span></p>
+                    <input className="input-field" type="email" ref={email} defaultValue={user.email} maxLength={50} required />
 
-                <p className="category-text">CURRENT PASSWORD</p>
-                <input className="input-field" type="password" name="passwd" maxLength={50} required />
-            </div>
-            <button className="edit-submit-btn submit-btn">Done</button>
+                    <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error"></span></p>
+                    <input className="input-field" type="password" ref={password} maxLength={50} required />
+                </div>
+                <input className="edit-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(user, setUser, email.current, password.current, close) }} value="Done" />
+            </form>
         </>
     )
 }

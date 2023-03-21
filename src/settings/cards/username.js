@@ -1,5 +1,36 @@
+import { useRef } from "react"
+
+import { api_send } from "../../api"
+import { flash_message } from "../../functions"
+
+function update_username(user, setUser, name, password, close) {
+    if (!password.value || user.name == name.value) return
+
+    api_send("user", {
+        category: "name",
+        data: name.value,
+        password: password.value
+    }, "@me").then(res => {
+        if (res.errors) {
+            document.getElementById("name-error").innerText = res.errors.name ? `- ${res.errors.name}` : null
+            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : null
+
+            return
+        }
+
+        if (res.message === "200 OK" && res.tag) {
+            setUser({ ...user, name: name.value, tag: res.tag })
+            close()
+            flash_message("Username updated")
+        }
+    })
+}
+
 export default function Username({ props }) {
-    const { user, close } = props
+    const { user, setUser, close } = props
+
+    const username = useRef()
+    const password = useRef()
 
     return (
         <>
@@ -12,14 +43,16 @@ export default function Username({ props }) {
                     </svg>
                 </button>
             </div>
-            <div className="column-container">
-                <p className="category-text">USERNAME</p>
-                <input className="input-field" name="name" defaultValue={user.name} maxLength={100} required />
+            <form className="edit-card-form center-column-container">
+                <div className="column-container">
+                    <p className="category-text">USERNAME <span className="error-category-text" id="name-error"></span></p>
+                    <input className="input-field" type="text" ref={username} defaultValue={user.name} maxLength={50} required />
 
-                <p className="category-text">CURRENT PASSWORD</p>
-                <input className="input-field" type="password" name="passwd" maxLength={50} required />
-            </div>
-            <button className="edit-submit-btn submit-btn">Done</button>
+                    <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error"></span></p>
+                    <input className="input-field" type="password" ref={password} maxLength={50} required />
+                </div>
+                <input className="edit-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_username(user, setUser, username.current, password.current, close) }} value="Done" />
+            </form>
         </>
     )
 }

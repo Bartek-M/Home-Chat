@@ -86,7 +86,7 @@ class Database:
         Get specifc user using his information
         :param search: User information
         :param option: Option you want to use ("email", "name")
-        :return: UserSettings or UserObject object
+        :return: UserSettings or User object
         """
         if option == "email":
             self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email=?", [search])
@@ -173,7 +173,7 @@ class Database:
         Insert entry into specific table
         :param table: Table you want to insert into 
         :param entry: Entry you want to insert
-        :return: True / False
+        :return: None
         """
         self.cursor.execute(f"INSERT INTO {table} VALUES ({entry.marks()})", list(entry.__dict__.values()))
         self.conn.commit()
@@ -185,7 +185,7 @@ class Database:
         :param req_id: ID of entry you want to update
         :param entry: Entry you want to update 
         :param data: Updated data you want to insert
-        :return: True / False
+        :return: None
         """
         self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
         self.conn.commit()

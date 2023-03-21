@@ -422,6 +422,13 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 .select-indicator { height: 12px; width: 12px; border-radius: 50%; }
 .select-indicator.active { background-color: var(--FONT_DIM_COLOR); }
 
+/* settings account */
+.avatar-wrapper {
+    width: 82px;
+    height: 82px;
+    position: relative;
+}
+
 .settings-avatar {
     width: 80px;
     height: 80px;
@@ -430,7 +437,22 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     user-select: none;
 }
 
-/* settings account */
+#avatar-file-btn { 
+    width: 82px;
+    height: 82px;
+    opacity: .9;
+    background-color: var(--BLACK);
+    object-fit: cover;
+    border-radius: 50%;
+    border-width: 0;
+    line-height: .75rem;
+    font-size: .625rem;
+    font-weight: 700;
+    transition: none;
+    transform: scale(0);
+ }
+ .avatar-wrapper:hover #avatar-file-btn { transform: scale(1); }
+
 .user-info { justify-content: left; gap: 1rem }
 .user-tag { color: var(--FONT_DIM_COLOR) }
 
@@ -474,6 +496,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 
 .edit-card-info { color: var(--FONT_DIM_COLOR) }
 .edit-submit-btn { align-self: flex-end; margin-top: -1rem; padding: .5rem 1rem }
+.edit-card-form { width: 100%; gap: 2rem}
 
 
 /* LOGIN & REGISTER PAGE */

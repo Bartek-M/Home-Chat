@@ -39,6 +39,7 @@ export default function Home() {
     useEffect(() => {
         if (!user) return
         app_theme(user.theme)
+        //overlay_open(document.getElementById("settings"))
 
         if (user.theme === "auto") {
             let theme_match = window.matchMedia("(prefers-color-scheme: dark)")

@@ -1,6 +1,8 @@
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
+
 import { api_send } from "../api"
+import { flash_message } from "../functions"
 
 function submit(navigator, email, password) {
     api_send("auth_login", {
@@ -18,6 +20,7 @@ function submit(navigator, email, password) {
             // Store token
             localStorage.setItem("token", res.token)
             navigator("/")
+            flash_message("Logged in!")
         }
     })
 }

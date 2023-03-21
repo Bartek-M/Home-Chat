@@ -6,7 +6,10 @@ export default function Account({ props }) {
             <h2 className="settings-title">Account</h2>
             <div className="settings-card column-container">
                 <div className="user-info center-container">
-                    <img className="settings-avatar" src={`/api/photos/${user.avatar}.webp`} />
+                    <div className="avatar-wrapper center-container">
+                        <img className="settings-avatar" src={`/api/photos/${user.avatar}.webp`} />
+                        <button className="center-container absolute-container" id="avatar-file-btn">CHANGE AVATAR</button>
+                    </div>
                     <h2>{user.name}<span className="user-tag">#{user.tag}</span></h2>
                 </div>
                 <div className="account-settings column-container">

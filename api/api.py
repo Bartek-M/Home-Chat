@@ -158,16 +158,18 @@ class Users:
         
         # Check if password is correct
         if Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
-            abort(403) 
+            return ({"message": "403 Forbidden", "errors": {"password": "Invalid password"}}, 403)
         
         # Change name
         if category == "name":
             # Get available tags
             if (tag := db.get_available_tag(data)) is None:
-                return ({"message": "406 Not Acceptable", "flash_message": "Too many users have this username, try another one!"}, 406)
+                return ({"message": "406 Not Acceptable", "errors": {"name": "Too many users have this username"}}, 406)
 
-            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+            db.update_entry(USER_TABLE, user_id, category, data)
             db.update_entry(USER_TABLE, user_id, "tag", tag)
+
+            return ({"message": "200 OK", "tag": tag}, 200)
 
         # Change email
         elif category == "email":
@@ -177,7 +179,7 @@ class Users:
             
             # Check if email is not already registered
             if db.get_user(data):
-                return ({"message": "406 Not Acceptable", "flash_message": "Email is already registered!"}, 406)
+                return ({"message": "406 Not Acceptable", "errors": {"email": "Email is already registered!"}}, 406)
 
             db.update_entry(USER_SETTING_TABLE, user_id, category, data)
 
@@ -191,7 +193,7 @@ class Users:
             # Check if password is secure
             pass
         
-        return ({"message": "200 OK "}, 200)
+        return ({"message": "200 OK"}, 200)
     
     @users.route("/<user_id>/settings", methods=["PATCH"])
     @Functions.manage_database
