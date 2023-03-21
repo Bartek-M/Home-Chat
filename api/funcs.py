@@ -7,15 +7,6 @@ import time
 import re
 
 # CONSTANTS
-TABLES = {
-    "name": USER_TABLE, 
-    "visibility": USER_TABLE,
-    "email": USER_SETTING_TABLE,
-    "phone": USER_SETTING_TABLE,
-    "password": USER_SECRET_TABLE,
-    "auth_code": USER_SECRET_TABLE
-}
-
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
 

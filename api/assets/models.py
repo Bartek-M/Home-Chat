@@ -13,12 +13,8 @@ class User:
     create_time: str
     visibility: int = 1 # 0 | 1
 
-    def __repr__(self):
-        """
-        Representation
-        :return: (id, name, tag, avatar, creation_time, visibility)
-        """
-        return f"('{self.id}', '{self.name}', '{self.tag}', '{self.avatar}', '{self.create_time}', '{self.visibility}')"
+    def marks(self):
+        return "?, ?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -32,12 +28,8 @@ class Message:
     content: str
     create_time: str
 
-    def __repr__(self):
-        """
-        Representation
-        :return: (id, user_id, channel_id, content, create_time)
-        """
-        return f"('{self.id}', '{self.user_id}', '{self.channel_id}', '{self.content}', '{self.create_time}')"
+    def marks(self):
+        return "?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -51,12 +43,8 @@ class Channel:
     create_time: str
     direct: int = 1
 
-    def __repr__(self):
-        """
-        Representation
-        :return: (id, name, create_time, direct)
-        """
-        return f"('{self.id}', '{self.name}', '{self.icon}', '{self.create_time}', '{self.direct}')"
+    def marks(self):
+        return "?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -68,12 +56,8 @@ class UserChannel:
     channel_id: str
     nick: str
 
-    def __repr__(self):
-        """
-        Representation
-        :return: (user_id, name, nick)
-        """
-        return f"('{self.user_id}', '{self.channel_id}', '{self.nick}')"
+    def marks(self):
+        return "?, ?, ?"
 
 
 @dataclass
@@ -84,13 +68,9 @@ class UserFriend:
     user_id: str
     friend_id: str
 
-    def __repr__(self):
-        """
-        Representation
-        :return: (user_id, friend_id)
-        """
-        return f"('{self.user_id}', '{self.friend_id}')"
-
+    def marks(self):
+        return "?, ?"
+    
 
 @dataclass
 class UserSettings:
@@ -104,12 +84,8 @@ class UserSettings:
     message_display: str = "standard" # standard | compact
     mfa_enabled: int = 0 # 0 | 1
 
-    def __repr__(self):
-        """
-        Representation
-        :return: (id, email, phone, theme, visibility, mfa_enabled)
-        """
-        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.message_display}', '{self.mfa_enabled}')"
+    def marks(self):
+        return "?, ?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -122,9 +98,5 @@ class UserSecrets:
     secret: str
     mfa_code: str = None
 
-    def __repr__(self):
-        """
-        Representation
-        :return: (id, password, secret, mfa_code)
-        """
-        return f"('{self.id}', '{self.password}', '{self.secret}', '{self.mfa_code}')"
+    def marks(self):
+        return "?, ?, ?, ?"

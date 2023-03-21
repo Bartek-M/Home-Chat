@@ -6,14 +6,14 @@ function set_theme(user, setUser, theme) {
     if (theme === user.theme) return
 
     setUser({ ...user, theme: theme })
-    api_send("user_settings", { settings: `theme='${theme}'` }, "@me").then(() => flash_message("Theme saved!")) // Send to API
+    api_send("user_settings", { category: "theme", data: theme }, "@me").then(() => flash_message("Theme saved!")) // Send to API
 }
 
 function set_message_display(user, setUser, msg_display) {
     if (msg_display === user.message_display) return
 
     setUser({ ...user, message_display: msg_display })
-    api_send("user_settings", { settings: `message_display='${msg_display}'` }, "@me").then(() => flash_message("Message display saved!")) // Send to API
+    api_send("user_settings", { category: "message_display", data: msg_display }, "@me").then(() => flash_message("Message display saved!")) // Send to API
 }
 
 // Render

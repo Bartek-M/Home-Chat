@@ -1,5 +1,5 @@
 from flask import Blueprint, request, send_file, redirect, url_for, abort
-from .funcs import Functions, Security, TABLES 
+from .funcs import Functions, Security 
 from .database import *
 import secrets
 import time
@@ -151,35 +151,77 @@ class Users:
     @Security.auth
     def change_user(db, user_id):
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
-        settings = request.json.get("settings")
 
-        if not settings:
-            abort(403)
-
-        if settings.startswith("visibility") or settings.startswith("avatar"):
-            db.update_entry(TABLES[settings.split("=")[0]], user_id, settings)
-            return ({"message": "200 OK "}, 200)
+        # Check if there's any data and category
+        if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
+            return ({"message": "400 Invalid Form Body", "errors": {"data": "No data or category provided", "category": "No data or category provided"}}, 400)
         
+        # Check if password is correct
         if Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
-            abort(401) 
-
-        if settings.startswith("name"):
-            if (tag := db.get_available_tag(settings[6:-1])) is None:
-                return ({"message": "406 Not Acceptable", "flash_message": "Too many users have this username, try another one!"}, 200)
+            abort(403) 
         
-            db.update_entry(TABLES[settings.split("=")[0]], user_id, f"tag='{tag}'")
+        # Change name
+        if category == "name":
+            # Get available tags
+            if (tag := db.get_available_tag(data)) is None:
+                return ({"message": "406 Not Acceptable", "flash_message": "Too many users have this username, try another one!"}, 406)
 
-        if settings.startswith("email") and (db.get_user(settings[7:-1])):
-            return ({"message": "406 Not Acceptable", "flash_message": "Email is already registered!"}, 200)
+            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+            db.update_entry(USER_TABLE, user_id, "tag", tag)
 
-        db.update_entry(TABLES[settings.split("=")[0]], user_id, settings)
+        # Change email
+        elif category == "email":
+            # Check email syntax
+            if not Functions.verify_email(data):
+                return ({"message": "400 Invalid Form Body", "errors": {"email": "Invalid email form"}}, 400)
+            
+            # Check if email is not already registered
+            if db.get_user(data):
+                return ({"message": "406 Not Acceptable", "flash_message": "Email is already registered!"}, 406)
+
+            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+
+        # Change phone
+        elif category == "phone":
+            # Check if phone number is correct
+            pass
+
+        # Change password
+        elif category == "password":
+            # Check if password is secure
+            pass
+        
         return ({"message": "200 OK "}, 200)
     
     @users.route("/<user_id>/settings", methods=["PATCH"])
     @Functions.manage_database
     @Security.auth
     def change_settings(db, user_id):
-        db.update_entry(USER_SETTING_TABLE, user_id, request.json.get("settings"))
+        # Check if there's any data and category
+        if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
+            return ({"message": "400 Invalid Form Body", "errors": {"data": "No data or category provided", "category": "No data or category provided"}}, 400)
+        
+        # Change theme
+        if category == "theme":
+            if data not in ["auto", "light", "dark"]:
+                return ({"message": "400 Invalid Form Body", "errors": {"theme": "Invalid theme provided"}}, 400)
+            
+            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+
+        # Change message display
+        elif category == "message_display":
+            if data not in ["standard", "compact"]:
+                return ({"message": "400 Invalid Form Body", "errors": {"message_display": "Invalid message_display provided"}}, 400)
+            
+            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+
+        # Change visibility
+        elif category == "visibility":
+            if data not in [0, 1]:
+                return ({"message": "400 Invalid Form Body", "errors": {"visibility": "Invalid visibility provided"}}, 400)
+            
+            db.update_entry(USER_TABLE, user_id, category, data)
+        
         return ({"message": "200 OK "}, 200)
 
 

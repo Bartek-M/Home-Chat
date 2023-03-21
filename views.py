@@ -27,7 +27,7 @@ def log_out():
 def unauthorized(_):
     return {"message": "401 Unauthorized"}, 401
 
-@view.app_errorhandler(401)
+@view.app_errorhandler(403)
 def unauthorized(_):
     return {"message": "403 Forbidden"}, 403
 

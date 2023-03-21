@@ -74,7 +74,7 @@ class Database:
         :param req_id: ID of entry you want to get
         :return: Desired config object or None
         """
-        self.cursor.execute(f"SELECT * FROM {table} WHERE id='{req_id}'")
+        self.cursor.execute(f"SELECT * FROM {table} WHERE id=?", [req_id])
 
         if fetched := self.cursor.fetchone():
             return CONFIG_OBJECTS[table](*fetched)
@@ -89,7 +89,7 @@ class Database:
         :return: UserSettings or UserObject object
         """
         if option == "email":
-            self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email='{search}'")
+            self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email=?", [search])
 
             if fetched := self.cursor.fetchone():
                 return UserSettings(*fetched)
@@ -97,7 +97,7 @@ class Database:
             if len(username := search.split("#")) != 2: 
                 return None
 
-            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name='{username[0]}' AND tag='{username[1]}' AND visibilit='public'")
+            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name=? AND tag=? AND visibilit='public'", [username[0], username[1]])
 
             if fetched := self.cursor.fetchone():
                 return User(*fetched)
@@ -113,7 +113,7 @@ class Database:
         """
 
         if option == "channels":
-            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id='{req_id}' OR channel_id='{req_id}'")
+            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? OR channel_id=?", [req_id, req_id])
 
             if fetched := self.cursor.fetchall():
                 return sorted(
@@ -121,7 +121,7 @@ class Database:
                     key=lambda x: x.get("name")
                 )
         elif option == "friends":
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id='{req_id}' OR friend_id='{req_id}'")
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
 
             if fetched := self.cursor.fetchall():
                 return sorted(
@@ -137,7 +137,7 @@ class Database:
         :param req_id: ID of channel you want to get messages from
         :return: List of Message objects or []
         """
-        self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id='{req_id}'")
+        self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
 
         if fetched := self.cursor.fetchall():
             users = {}
@@ -160,7 +160,7 @@ class Database:
         :param name: Name you want to check tags for
         :return: Random available tag or None
         """
-        self.cursor.execute(f"SELECT tag FROM {USER_TABLE} WHERE name='{name}'")
+        self.cursor.execute(f"SELECT tag FROM {USER_TABLE} WHERE name=?", [name])
         tag_range = set(range(1000, 10000))
 
         if fetched := self.cursor.fetchall():
@@ -173,21 +173,23 @@ class Database:
         Insert entry into specific table
         :param table: Table you want to insert into 
         :param entry: Entry you want to insert
-        :return: None
+        :return: True / False
         """
-        self.cursor.execute(f"INSERT INTO {table} VALUES {entry}")
+        self.cursor.execute(f"INSERT INTO {table} VALUES ({entry.marks()})", list(entry.__dict__.values()))
         self.conn.commit()
 
-    def update_entry(self, table, req_id, entry):
+    def update_entry(self, table, req_id, entry, data):
         """
         Update specific entry
         :param table: Table you want to update
         :param req_id: ID of entry you want to update
-        :param entry: Updated entry (eg. name='new_name')
-        :return: None
+        :param entry: Entry you want to update 
+        :param data: Updated data you want to insert
+        :return: True / False
         """
-        self.cursor.execute(f"UPDATE {table} SET {entry} WHERE id='{req_id}'")
+        self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
         self.conn.commit()
+
 
     def delete_entry(self, table, req_id):
         """
@@ -196,7 +198,7 @@ class Database:
         :param req_id: ID of entry you want to delete
         :return: None
         """
-        self.cursor.execute(f"DELETE FROM {table} WHERE id='{req_id}'")
+        self.cursor.execute(f"DELETE FROM {table} WHERE id=?", [req_id])
         self.conn.commit()
 
     def close(self):
@@ -221,5 +223,5 @@ class Database:
         if fetched := self.cursor.fetchall():
             return fetched
 
-        return None
+        return (None, None)
     # TEMP FUNCTION

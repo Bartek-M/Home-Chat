@@ -4,7 +4,7 @@ import { flash_message } from "../../functions"
 // Functions
 function set_visibility(user, setUser) {
     setUser({ ...user, visibility: user.visibility ? 0 : 1 })
-    api_send("user", { settings: `visibility='${user.visibility ? 0 : 1}'` }, "@me").then(() => flash_message("Visibility saved!")) // Send to api
+    api_send("user_settings", { category: "visibility", data: user.visibility ? 0 : 1 }, "@me").then(() => flash_message("Visibility saved!")) // Send to api
 }
 
 // Render

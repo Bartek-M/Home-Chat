@@ -442,10 +442,10 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 }
 
 /* settings security */
-#visibility-public { min-width: 78px; background-color: var(--GREEN);}
+#visibility-public { min-width: 78px; background-color: var(--GREEN); color: var(--FONT_COLOR);}
 #visibility-public:hover { background-color: var(--DIM_GREEN);}
 
-#visibility-private { min-width: 78px; background-color: var(--RED_BUTTON); }
+#visibility-private { min-width: 78px; background-color: var(--RED_BUTTON); color: var(--FONT_COLOR);}
 #visibility-private:hover { background-color: var(--RED_BUTTON_HOVER); }
 
 /* settings-popup-card */
