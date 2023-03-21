@@ -12,6 +12,9 @@ PORT = 5000
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+app.json.sort_keys = False
+app.json.compact = False
+
 app.register_blueprint(view, url_prefix="/")
 app.register_blueprint(api, url_prefix="/api")
 

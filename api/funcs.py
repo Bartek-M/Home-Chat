@@ -130,7 +130,9 @@ class Security:
             verify_code, verify_id = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
 
             if verify_code == "correct":
-                kwargs["user_id"] = verify_id
+                if kwargs["user_id"] == "@me":
+                    kwargs["user_id"] = verify_id
+                
                 return func(*args, **kwargs)
             elif verify_code == "expired":
                 return ({"message": "403 Forbidden"}, 403)

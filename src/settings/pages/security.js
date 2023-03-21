@@ -1,5 +1,15 @@
+import { api_send } from "../../api"
+import { flash_message } from "../../functions"
+
+// Functions
+function set_visibility(user, setUser) {
+    setUser({ ...user, visibility: user.visibility ? 0 : 1 })
+    api_send("user", { settings: `visibility='${user.visibility ? 0 : 1}'` }, "@me").then(() => flash_message("Visibility saved!")) // Send to api
+}
+
+// Render
 export default function Security({ props }) {
-    const { card } = props
+    const { user, setUser, card } = props
 
     return (
         <>
@@ -24,7 +34,9 @@ export default function Security({ props }) {
                     <p className="category-text">ACCOUNT VISIBILITY</p>
                     <p>Change your account visibility</p>
                 </div>
-                <button className="settings-btn stng-edit-btn">Edit</button>
+                <button className="settings-btn" id={user.visibility ? "visibility-public" : "visibility-private"} onClick={() => set_visibility(user, setUser)}>
+                    {user.visibility ? "Public" : "Private"}
+                </button>
             </div>
             <div className="spaced-container">
                 <div className="column-container">

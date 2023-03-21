@@ -22,6 +22,7 @@
     --BUTTON: #4F545C;
     --BUTTON_HOVER: #3c3f45;
     --RED_BUTTON: #ed4245;
+    --RED_BUTTON_HOVER: #cc3a3d;
 }
 
 [data-theme="dark"] {
@@ -439,6 +440,13 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     border-radius: .5rem;
     gap: 1.5rem;
 }
+
+/* settings security */
+#visibility-public { min-width: 78px; background-color: var(--GREEN);}
+#visibility-public:hover { background-color: var(--DIM_GREEN);}
+
+#visibility-private { min-width: 78px; background-color: var(--RED_BUTTON); }
+#visibility-private:hover { background-color: var(--RED_BUTTON_HOVER); }
 
 /* settings-popup-card */
 .edit-card-wrapper { z-index: 25; pointer-events: none; }

@@ -11,7 +11,7 @@ class User:
     tag: str
     avatar: str
     create_time: str
-    visibility: str = "public"
+    visibility: int = 1 # 0 | 1
 
     def __repr__(self):
         """
@@ -49,7 +49,7 @@ class Channel:
     name: str
     icon: str
     create_time: str
-    direct: str = ""
+    direct: int = 1
 
     def __repr__(self):
         """
@@ -102,14 +102,14 @@ class UserSettings:
     phone: str = "not set" # not set | user_phone_number
     theme: str = "auto" # auto | light | dark
     message_display: str = "standard" # standard | compact
-    auth: str = "password" # password | 2fa
+    mfa_enabled: int = 0 # 0 | 1
 
     def __repr__(self):
         """
         Representation
-        :return: (id, email, phone, theme, visibility, auth)
+        :return: (id, email, phone, theme, visibility, mfa_enabled)
         """
-        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.message_display}', '{self.auth}')"
+        return f"('{self.id}', '{self.email}', '{self.phone}', '{self.theme}', '{self.message_display}', '{self.mfa_enabled}')"
 
 
 @dataclass
@@ -120,11 +120,11 @@ class UserSecrets:
     id: str
     password: str
     secret: str
-    auth_code: str = None
+    mfa_code: str = None
 
     def __repr__(self):
         """
         Representation
-        :return: (id, password, secret, auth_code)
+        :return: (id, password, secret, mfa_code)
         """
-        return f"('{self.id}', '{self.password}', '{self.secret}', '{self.auth_code}')"
+        return f"('{self.id}', '{self.password}', '{self.secret}', '{self.mfa_code}')"

@@ -27,8 +27,8 @@ export default function Login() {
 
     const email = useRef()
     const password = useRef()
-    
-    const user_mail = localStorage.getItem("email")
+
+    const user_email = localStorage.getItem("email")
 
     return (
         <div className="login-page center-container">
@@ -38,7 +38,7 @@ export default function Login() {
                 <form>
                     <div className="column-container">
                         <p className="category-text">EMAIL <span className="error-category-text" id="email-error"></span></p>
-                        <input className="input-field" type="email" defaultValue={user_mail} ref={email} maxLength={100} required />
+                        <input className="input-field" type="email" defaultValue={user_email} ref={email} maxLength={100} required />
                     </div>
                     <div className="column-container">
                         <p className="category-text">PASSWORD <span className="error-category-text" id="password-error"></span></p>

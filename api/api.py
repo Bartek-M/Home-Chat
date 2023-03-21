@@ -155,6 +155,10 @@ class Users:
 
         if not settings:
             abort(403)
+
+        if settings.startswith("visibility") or settings.startswith("avatar"):
+            db.update_entry(TABLES[settings.split("=")[0]], user_id, settings)
+            return ({"message": "200 OK "}, 200)
         
         if Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
             abort(401) 
@@ -169,7 +173,7 @@ class Users:
             return ({"message": "406 Not Acceptable", "flash_message": "Email is already registered!"}, 200)
 
         db.update_entry(TABLES[settings.split("=")[0]], user_id, settings)
-        return ({"message": "200 OK ", "data": db.get_entry(TABLES[settings.split("=")[0]], user_id)}, 200)
+        return ({"message": "200 OK "}, 200)
     
     @users.route("/<user_id>/settings", methods=["PATCH"])
     @Functions.manage_database
