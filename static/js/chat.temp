@@ -28,7 +28,7 @@ function add_message(message) {
         if (!repeat) {
             var content = `
             <li class="message-list-item container" id="chat-messages-${channel_id}-${id}>">
-                <img class="avatar" src="/api/photos/${author.avatar}.webp"/>
+                <img class="avatar" src="/api/images/${author.avatar}.webp"/>
                 <div class="message-content">
                     <div class="message-info container">
                         <p class="message-author">${author.name}</p>
@@ -75,7 +75,7 @@ async function open_channel(channel_id) {
     document.getElementsByClassName("main-view")[0].innerHTML = `
     <div class="channel-title spaced-container">
         <div class="center-container">
-            <img class="channel-icon" src="/api/photos/123456789.webp"/>
+            <img class="channel-icon" src="/api/images/123456789.webp"/>
             <p class="channel-name">${channel_id}</p>
         </div>
         <button class="center-container" id="channel-settings">

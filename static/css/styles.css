@@ -67,6 +67,7 @@ html, body, #appMount {
 /* GLOBALS */
 * { 
     color: inherit;
+    text-rendering: optimizeLegibility;
     user-select: none; 
     -webkit-appearance: none; 
 }
@@ -427,6 +428,18 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     width: 82px;
     height: 82px;
     position: relative;
+    cursor: pointer;
+}
+
+.add-avatar-icon {
+    position: absolute;
+    top: .25rem;
+    right: .25rem;
+    padding: .25rem;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    background-color: var(--FONT_COLOR);
 }
 
 .settings-avatar {
@@ -437,21 +450,22 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     user-select: none;
 }
 
-#avatar-file-btn { 
+.change-icon { 
     width: 82px;
     height: 82px;
     opacity: .9;
+    text-align: center;
     background-color: var(--BLACK);
     object-fit: cover;
     border-radius: 50%;
-    border-width: 0;
     line-height: .75rem;
     font-size: .625rem;
     font-weight: 700;
     transition: none;
     transform: scale(0);
- }
- .avatar-wrapper:hover #avatar-file-btn { transform: scale(1); }
+}
+.avatar-wrapper:hover .change-icon { transform: scale(1); }
+.change-icon input { display: none; }
 
 .user-info { justify-content: left; gap: 1rem }
 .user-tag { color: var(--FONT_DIM_COLOR) }

@@ -7,6 +7,9 @@ import time
 import re
 
 # CONSTANTS
+AVATARS_FOLDER = "./api/assets/avatars/"
+ICONS_FOLDER = "./api/assets/channel_icons/"
+
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
 
@@ -121,7 +124,7 @@ class Security:
             verify_code, verify_id = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
 
             if verify_code == "correct":
-                if kwargs["user_id"] == "@me":
+                if kwargs.get("user_id") is None or kwargs.get("user_id") == "@me":
                     kwargs["user_id"] = verify_id
                 
                 return func(*args, **kwargs)

@@ -16,7 +16,9 @@ const api_pages = {
     user: (value) => `/api/users/${value}/`,
     user_channels: (value) => `/api/users/${value}/channels/`,
     user_friends: (value) => `/api/users/${value}/friends/`,
-    user_settings: (value) => `/api/users/${value}/settings/`
+    user_settings: (value) => `/api/users/${value}/settings/`,
+
+    avatar: () => `/api/images/avatar/`
 }
 
 async function api_get(page, id) {
@@ -40,9 +42,20 @@ async function api_send(page, data, id = null) {
         .then((data) => { return data })
 }
 
+async function api_file_upload(page, data) {
+    return await fetch(api_pages[page](), {
+        method: "POST",
+        headers: { "Authentication": localStorage.getItem("token") },
+        body: data
+    })
+        .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
+
 
 export {
     UserContext,
     api_get,
-    api_send
+    api_send,
+    api_file_upload
 }

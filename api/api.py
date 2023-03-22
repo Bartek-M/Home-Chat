@@ -1,8 +1,9 @@
-from flask import Blueprint, request, send_file, redirect, url_for, abort
-from .funcs import Functions, Security 
+from flask import Blueprint, request, send_file, redirect, url_for
+from .funcs import Functions, Security, AVATARS_FOLDER
 from .database import *
 import secrets
 import time
+import os
 
 api = Blueprint("api", __name__) # Define api
 
@@ -227,20 +228,37 @@ class Users:
         return ({"message": "200 OK "}, 200)
 
 
-class Photos:
+class Images:
     """
-    Photos api class
-    /api/photos
+    Images api class
+    /api/images
     """
-    photos = Blueprint("photos", __name__)
+    images = Blueprint("images", __name__)
 
-    @photos.route("/<photo_id>")
-    def get_photo(photo_id):
-        return send_file(f"./api/assets/avatars/{photo_id}", mimetype=photo_id)
+    @images.route("/<image_id>")
+    def get_image(image_id):
+        try:
+            return send_file(f"{AVATARS_FOLDER}{image_id}", mimetype=image_id)
+        except:
+            return send_file(f"{AVATARS_FOLDER}generic.webp", mimetype=image_id)
 
-    @photos.route("/upload")
-    def upload_photo():
-        return "File Uploaded"
+    @images.route("/avatar", methods=["POST"])
+    @Functions.manage_database
+    @Security.auth
+    def avatar(db, user_id):
+        if not (file := request.files.get("image")):
+            return ({"message": "400 Invalid Form Body", "errors": {"image": "No image provided"}}, 400)
+        
+        user_avatar = db.get_entry(USER_TABLE, user_id).avatar
+
+        if user_avatar != "generic" and os.path.isfile(f"{AVATARS_FOLDER}{user_avatar}.webp"): 
+            os.remove(f"{AVATARS_FOLDER}{user_avatar}.webp")
+        
+        file_name = f"{user_id}{secrets.token_hex(2)}"
+        file.save(f"{AVATARS_FOLDER}{file_name}.webp")
+        db.update_entry(USER_TABLE, user_id, "avatar", file_name)
+
+        return ({"message": "200 OK ", "image": file_name}, 200)
 
 
 # TEMP DATABASE VIEW

@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <h2 class="settings-title">Account</h2>
         <div class="settings-card column-container">
             <div class="user-info center-container">
-                <img class="settings-avatar" src="/api/photos/${me.avatar}.webp"/>
+                <img class="settings-avatar" src="/api/images/${me.avatar}.webp"/>
                 <h2>${me.name}<span class="user-tag">#${me.tag}</span></h2>
             </div>
             <div class="account-settings column-container">
