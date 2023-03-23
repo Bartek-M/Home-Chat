@@ -40,7 +40,7 @@ class Database:
         """
         queries = [ 
             f"""{USER_TABLE} (
-                id TEXT UNIQUE, name TEXT, tag TEXT, avatar TEXT, create_time TEXT, visibility INTEGER
+                id TEXT UNIQUE, name TEXT, tag TEXT, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER
             )""",
             f"""{MESSAGE_TABLE} (
                 id TEXT UNIQUE, user_id TEXT, channel_id TEXT, content TEXT, create_time TEXT
@@ -55,10 +55,10 @@ class Database:
                 user_id TEXT, friend_id TEXT
             )""",
             f"""{USER_SETTING_TABLE} (
-                id TEXT UNIQUE, email TEXT UNIQUE, phone TEXT, theme TEXT, message_display TEXT, mfa_enabled INTEGER
+                id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER
             )""",
             f"""{USER_SECRET_TABLE} (
-                id TEXT UNIQUE, password TEXT, secret TEXT, mfa_code TEXT
+                id TEXT UNIQUE, password TEXT, secret TEXT, verify_code TEXT, mfa_code TEXT
             )"""
         ]
 

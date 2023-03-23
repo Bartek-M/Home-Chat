@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom"
 
 import { UserContext, api_get } from "../api";
-import Loading from "../components/loading";
 import { overlay_open, app_theme, prefered_theme } from "../functions";
 
 import Settings from "../settings/settings";
+import Loading from "../components/loading";
 
 export default function Home() {
     const navigator = useNavigate()
@@ -39,7 +39,7 @@ export default function Home() {
     useEffect(() => {
         if (!user) return
         app_theme(user.theme)
-        //overlay_open(document.getElementById("settings"))
+        overlay_open(document.getElementById("settings"))
 
         if (user.theme === "auto") {
             let theme_match = window.matchMedia("(prefers-color-scheme: dark)")

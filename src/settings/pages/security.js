@@ -26,7 +26,7 @@ export default function Security({ props }) {
                     <p className="category-text">TWO FACTOR AUTHENTICATION</p>
                     <p>Good way to add an extra layer of security for your account</p>
                 </div>
-                <button className="settings-btn stng-edit-btn">Edit</button>
+                <button className="settings-btn stng-edit-btn" onClick={() => card("mfa")}>Edit</button>
             </div>
             <hr className="separator" />
             <div className="spaced-container">

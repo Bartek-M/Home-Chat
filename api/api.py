@@ -2,6 +2,7 @@ from flask import Blueprint, request, send_file, redirect, url_for
 from .funcs import Functions, Security, AVATARS_FOLDER
 from .database import *
 import secrets
+import smtplib
 import time
 import os
 
@@ -61,7 +62,7 @@ class Auth:
 
         db.insert_entry(USER_TABLE, User(id, username, tag, "generic", current_time))
         db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
-        db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Security.hash_passwd(password), secrets.token_hex(32)))
+        db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Security.hash_passwd(password), secrets.token_hex(32), Functions.send_verification(email, username)))
         
         return ({"message": "200 OK"}, 200)
 

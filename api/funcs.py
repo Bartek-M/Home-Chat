@@ -1,8 +1,12 @@
 from flask import jsonify, abort, request
 from base64 import b64encode, b64decode
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from .database import *
 import secrets
+import smtplib
 import hashlib
+import json
 import time
 import re
 
@@ -11,6 +15,9 @@ AVATARS_FOLDER = "./api/assets/avatars/"
 ICONS_FOLDER = "./api/assets/channel_icons/"
 
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+with open("./api/mail.json", "r") as f:   
+    EMAIL_CFG = json.load(f)
 
 
 class Functions:
@@ -34,6 +41,98 @@ class Functions:
             return True
 
         return False
+    
+    @staticmethod
+    def send_verification(email, name):
+        """
+        Send email with verification code to a specific user
+        :param email: User email
+        :param name: User name
+        :return: Verification code
+        """
+        verify_code = secrets.token_hex(3).upper()
+
+        # Generate message
+        message = MIMEMultipart("alternative")
+        message["Subject"] = f"Your Home Chat email verification code is {verify_code}"
+        message["From"] = EMAIL_CFG.get("email")
+        message["To"] = email
+
+        # Message body
+        text = f"""
+        Home Chat
+
+        Welcome, {name}!
+        Thank you for registering an account in Home Chat!<br />
+        Grab this code and log in to activate your account. You have one hour to do that - if you don't activate it, your account will be deleted.
+
+        Code: {verify_code}
+
+        Don't share this code with anyone.
+        If you didn't ask for this code please ignore this email.
+
+        Sent by Home Chat
+        """
+
+        html = f"""
+        <!DOCTYPE html>
+        <html style="font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+            <head>
+                <meta name="color-scheme" content="light only">
+                <meta name="supported-color-schemes" content="light only">
+            </head>
+            <body style="background-color: #f9f9f9;">
+                <h1 style="margin: 1rem auto; max-width: 640px; text-align: center;">
+                    <img style="width: 24px; height: 24px; vertical-align: auto;" src="https://lh3.googleusercontent.com/0Zt68QTrC7LU4BWIXWtuXTNOLbTxJD4CIriO7-9We0xM5XDCwTbFmvQuZfTID1dDc7_ym9Aokz80iNo9FVrXJEigy5D0WrnU4ijz2dUgXMw6NLpj4rpkMi03kpN6zgRF_plDJWsQqgMrGqKOqzbQM3bsBH0JeaBs2vhoRwTG74qDo3IGTbbMimRcOD4DNBWCuhZ8aE3uJhQzVZ2wbNPBLRSDMu9ahx4DTC_FnDHrGNPvupRo_awBhZizosqJ0JJ8xBJZkeSgUSkBZLD7kQmTLjfyQeqhvBHZbOJpPWAbZ-rhBl8WsvXBT6ERs4QwPyNDfA5ErNxegCf6q7y74K4DC1wbP-2luYx6VWy45uZXIB6ROqDEe3vO8VNhLKuX_V_o9is7bZRJ0ffqUmqh-Sl9jCv5jweBau8b0dCgWhxQV-zJ5YyIVFFW9v20LsGlcpQtS6RKp2om6LR5iZTGWPhFFB2G8cZ27ezSTeHwSu_84_LYDz6ZrMtUKXHNhUGKixQYE52O2UJu7y3Nzo8vdXnLEAxmPpw43rc2uVUJxhA074N0w63nSzBTa-uT5lUerK3vVUVMPHwmP7wJogwDWufWhrq_MnidfKnbuK3z9VZR3LJWQCpyr3ItobAESZD-S9rGVcubzFo6aWSBzw3mKcV2hrFbKcoz0Jx9yRTQMyVYXwg1iqp_ClBbSabDut7RETcnEeW7FZQaqCupAndwW2WBfnvutH27VK-OEqUM8inTzLrb8WLjUg5Y2vDTvDzwsrW_DMQgyPUCRtmKMKNXXhqeD76rtxaCi-h73wDXa4L3pcm4EflvpAZsLHVImdMFQb4mgIUSu8KX7GkTrhYyytaQNd3hO5CJ5-6kpUQpSMyK2wXDenfLjBqegAi_DAoReDDSjR879cIPgixVpvVWTCV3REDtcLxjQnKuBFlV6pVEH08=s845-no?authuser=0" />
+                    Home Chat
+                </h1>
+                <div style="margin: 0 auto; max-width: 640px; padding: 1rem 0; background-color: #FFFFFF;">
+                    <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Welcome, {name}!</h2>
+                    <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
+                        Thank you for registering an account in Home Chat!<br />
+                        Grab this code and log in to activate your account. You have one hour to do that - if you don't activate it, your account will be deleted.
+                    </p>
+                    
+                    <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center; font-weight: 700; background-color: #f2f3f4;">
+                        <h2 style="margin: 0">{verify_code}</h2>
+                    </div>
+
+                    <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
+                        Don't share this code with anyone.<br />
+                        If you didn't ask for this code please ignore this email.
+                    </p>
+
+                    <hr style="width: calc(100% - 2rem); border-color: #f9f9f9" />
+
+                    <p style="width: calc(100% - 2rem); margin: 1rem; font-size: .75rem; ">
+                        Sent by Home Chat
+                    </p>
+                </div>
+        </body>
+        </html>
+        """
+
+        message.attach(MIMEText(text, "plain"))
+        message.attach(MIMEText(html, "html"))
+
+        # Send an email
+        with smtplib.SMTP("smtp.gmail.com", 587) as s:
+            s.starttls()
+            s.login(EMAIL_CFG.get("email"), EMAIL_CFG.get("password"))
+            s.sendmail(EMAIL_CFG.get("email"), email, message.as_string())
+
+        return verify_code
+
+
+    @staticmethod
+    def delete_account(db, id, option="timout"):
+        """
+        Delete user account
+        :param db: Database connection
+        :param id: User id you want to delete
+        :param option: "timout" - user didn't verify email / "remove" - user removes his account
+        :return: None
+        """
     
     @staticmethod
     def manage_database(func):

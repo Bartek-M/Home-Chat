@@ -1,5 +1,5 @@
 // App version
-const version = "c0fe185"
+const version = "14afc2e"
 
 // OS
 const os_list = {

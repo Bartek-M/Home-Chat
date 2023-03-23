@@ -433,8 +433,8 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 
 .add-avatar-icon {
     position: absolute;
-    top: .25rem;
-    right: .25rem;
+    top: .1rem;
+    right: .1rem;
     padding: .25rem;
     border-radius: 50%;
     width: 16px;
@@ -453,9 +453,10 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 .change-icon { 
     width: 82px;
     height: 82px;
-    opacity: .9;
+    opacity: .8;
     text-align: center;
     background-color: var(--BLACK);
+    color: var(--FONT_COLOR);
     object-fit: cover;
     border-radius: 50%;
     line-height: .75rem;

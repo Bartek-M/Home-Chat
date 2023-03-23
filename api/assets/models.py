@@ -11,10 +11,11 @@ class User:
     tag: str
     avatar: str
     create_time: str
+    verified: int = 0 # 0 | 1
     visibility: int = 1 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -79,13 +80,12 @@ class UserSettings:
     """
     id: str
     email: str
-    phone: str = "not set" # not set | user_phone_number
     theme: str = "auto" # auto | light | dark
     message_display: str = "standard" # standard | compact
     mfa_enabled: int = 0 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -96,7 +96,8 @@ class UserSecrets:
     id: str
     password: str
     secret: str
+    verify_code: str
     mfa_code: str = None
 
     def marks(self):
-        return "?, ?, ?, ?"
+        return "?, ?, ?, ?, ?"

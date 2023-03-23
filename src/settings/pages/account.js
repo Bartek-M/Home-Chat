@@ -29,7 +29,7 @@ export default function Account({ props }) {
                     <div className="avatar-wrapper center-container" onClick={() => file_input.current.click()}>
                         <img className="settings-avatar" src={`/api/images/${user.avatar}.webp`} />
                         <div className="change-icon center-container absolute-container">
-                            CHANGE AVATAR
+                            CHANGE<br />AVATAR
                             <input ref={file_input} type="file" accept="image/*" onChange={() => change_avatar(file_input.current, user, setUser)} />
                         </div>
                         <div className="add-avatar-icon">
@@ -56,15 +56,6 @@ export default function Account({ props }) {
                         </div>
                         <button className="settings-btn stng-edit-btn" onClick={() => card("email")}>Edit</button>
                     </div>
-                    <div className="spaced-container">
-                        <div className="column-container">
-                            <p className="category-text">PHONE NUMBER</p>
-                            <p>{(user.phone == "not set") ? ("You haven't added a phone number yet.") : (user.phone)}</p>
-                        </div>
-                        <button className="settings-btn stng-edit-btn" onClick={() => card("phone")}>
-                            {(user.phone == "not set") ? ("Add") : ("Edit")}
-                        </button>
-                    </div>
                 </div>
             </div>
             <hr className="separator" />
@@ -80,7 +71,7 @@ export default function Account({ props }) {
                     <p className="category-text">ACCOUNT REMOVAL</p>
                     <p>Delete your account (This action can not be reverted!)</p>
                 </div>
-                <button className="settings-btn stng-warning-btn">Delete Account</button>
+                <button className="settings-btn stng-warning-btn" onClick={() => card("delete_account")}>Delete Account</button>
             </div>
         </>
     )
