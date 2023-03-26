@@ -1,6 +1,8 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
+
 import { api_send } from "../api"
+import { flash_message } from "../functions"
 
 function submit(navigator, email, username, password) {
     api_send("auth_register", {
@@ -9,16 +11,15 @@ function submit(navigator, email, username, password) {
         password: password.value
     }).then(res => {
         if (res.errors) {
-            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : null
-            document.getElementById("username-error").innerText = res.errors.username ? `- ${res.errors.username}` : null
-            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : null
+            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
+            document.getElementById("username-error").innerText = res.errors.username ? `- ${res.errors.username}` : "*"
+            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
 
             return
         }
 
-        if (res.message === "200 OK") {
-            navigator("/login")
-        }
+        if (res.message === "200 OK") return navigator("/login")
+        flash_message("Something went wrong!", "error")
     })
 }
 
@@ -36,15 +37,15 @@ export default function Register() {
 
                 <form>
                     <div className="column-container">
-                        <p className="category-text">EMAIL <span className="error-category-text" id="email-error"></span></p>
+                        <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
                         <input className="input-field" type="email" ref={email} size="30" required />
                     </div>
                     <div className="column-container">
-                        <p className="category-text">USERNAME <span className="error-category-text" id="username-error"></span></p>
+                        <p className="category-text">USERNAME <span className="error-category-text" id="username-error">*</span></p>
                         <input className="input-field" ref={username} size="30" required />
                     </div>
                     <div className="column-container">
-                        <p className="category-text">PASSWORD <span className="error-category-text" id="password-error"></span></p>
+                        <p className="category-text">PASSWORD <span className="error-category-text" id="password-error">*</span></p>
                         <input className="input-field" type="password" ref={password} size="30" required />
                     </div>
 

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom"
 
 import { UserContext, api_get } from "../api";
-import { overlay_open, app_theme, prefered_theme } from "../functions";
+import { overlay_open, app_theme, prefered_theme, flash_message } from "../functions";
 
 import Settings from "../settings/settings";
 import Loading from "../components/loading";
@@ -18,8 +18,8 @@ export default function Home() {
         if (user) return
 
         api_get("user_settings", "@me").then((usr) => {
-            if (usr.message === "401 Unauthorized") { return navigator("/login") }
-            if (usr.message === "403 Forbidden") { return navigator("/login") }
+            if (usr.message === "401 Unauthorized") { navigator("/login"); return flash_message("Not logged in!", "error") }
+            if (usr.message === "403 Forbidden") { navigator("/login"); return flash_message("Logged out!", "error") }
             if (!usr.id) return
 
             setUser(usr)

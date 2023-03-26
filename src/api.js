@@ -8,6 +8,7 @@ const UserContext = React.createContext(null)
 const api_pages = {
     auth_login: () => `api/auth/login`,
     auth_register: () => `api/auth/register`,
+    auth_verify: () => `api/auth/verify`,
 
     channel: (value) => `/api/channels/${value}/`,
     channel_users: (value) => `/api/channels/${value}/users/`,

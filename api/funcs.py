@@ -1,4 +1,4 @@
-from flask import jsonify, abort, request
+from flask import jsonify, request
 from base64 import b64encode, b64decode
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -18,6 +18,9 @@ EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
 with open("./api/mail.json", "r") as f:   
     EMAIL_CFG = json.load(f)
+
+VERIFY_ACCESS = "verify"
+MFA_ACCESS = "mfa"
 
 
 class Functions:
@@ -43,14 +46,121 @@ class Functions:
         return False
     
     @staticmethod
-    def send_verification(email, name):
+    def send_email(dest, message):
         """
-        Send email with verification code to a specific user
+        Send email to a specific address
+        :param dest: Destination email
+        :param message: Message you want to send
+        :return: None
+        """
+        # Send an email
+        with smtplib.SMTP("smtp.gmail.com", 587) as s:
+            s.starttls()
+            s.login(EMAIL_CFG.get("email"), EMAIL_CFG.get("password"))
+            s.sendmail(EMAIL_CFG.get("email"), dest, message.as_string())
+
+    @staticmethod
+    def delete_account(db, id, option="timout"):
+        """
+        Delete user account
+        :param db: Database connection
+        :param id: User id you want to delete
+        :param option: "timout" - user didn't verify email / "remove" - user removes his account
+        :return: None
+        """
+    
+
+class Security:
+    @staticmethod
+    def hash_passwd(passw: str, salt=secrets.token_hex(16)):
+        """
+        Hash user password
+        :param passw: User password
+        :param salt: Salt for additional encryption
+        :return: Secured password (str)
+        """
+        return f"{salt}${hashlib.sha256((salt + passw).encode()).hexdigest()}"
+    
+    @staticmethod
+    def gen_token(id: str, secret: str, ending: str = None):
+        """
+        Generate token for specific user
+        :param id: User ID
+        :param secret: User secret
+        :return: Secure access token
+        """
+        now = b64encode(str(int(time.time())).encode("UTF-8")).decode("UTF-8")
+
+        if ending:
+            id = b64encode(f"{id},{ending}".encode("UTF-8")).decode("UTF-8")
+            hmac = hashlib.sha256(f"{id}|{now}|{secret[:int(len(secret)/2)]}|temp-{ending}-access".encode("UTF-8")).hexdigest()
+        else:
+            id = b64encode(id.encode("UTF-8")).decode("UTF-8")
+            hmac = hashlib.sha256(f"{id}|{now}|{secret}".encode("UTF-8")).hexdigest()
+
+        return f"{id}.{now}.{hmac}"
+    
+    @staticmethod
+    def verify_token(db, token: str):
+        """
+        Verify specific token
+        :param token: Token you want to verify
+        :return: ("correct" / "expired" / "signature" / "invalid", id, option if any)
+        """
+        option = None
+
+        # Check if any token was passed
+        if not token:
+            return ("invalid", None, option)
+
+        # Ensure token has correct syntax
+        if len(token := token.split(".")) != 3:
+            return ("invalid", None, option)
+        
+        # Try base encoding
+        try:
+            id = b64decode(token[0].encode("UTF-8")).decode("UTF-8")
+            generated = b64decode(token[1].encode("UTF-8")).decode("UTF-8")
+            hmac = token[2]
+        except:
+            return ("invalid", None, option)
+        
+        # Check if there's any option
+        if "," in id:
+            sliced = id.split(",")
+            id = sliced[0]
+            option = sliced[1]
+
+        # Check if given user is found in db
+        if not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
+            return ("invalid", None, option)
+
+        # Check if signature mathes
+        if option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret[:int(len(user_secrets.secret)/2)]}|temp-{option}-access".encode("UTF-8")).hexdigest() != hmac:
+            return ("signature", id, option)
+        
+        if not option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
+            return ("signature", id, option)
+    
+        # Check if token is not expired
+        if option and int(time.time()) - int(generated) > 600: # Tickets are expired after 5 minutes; time in seconds
+            return ("expired", id, option)
+
+        if int(time.time()) - int(generated) > 31_536_000: # Tokens are expired after one year (365 days); time in seconds
+            return ("expired", id, option)
+
+        # Return - everything correct
+        return ("correct", id, option)
+    
+    @staticmethod
+    def send_verification(email, name, verify_code):
+        """
+        Generate and send email with verification code
         :param email: User email
         :param name: User name
-        :return: Verification code
+        :param verify_code: Verification code for a user
+        :return: None
         """
-        verify_code = secrets.token_hex(3).upper()
 
         # Generate message
         message = MIMEMultipart("alternative")
@@ -115,25 +225,11 @@ class Functions:
         message.attach(MIMEText(text, "plain"))
         message.attach(MIMEText(html, "html"))
 
-        # Send an email
-        with smtplib.SMTP("smtp.gmail.com", 587) as s:
-            s.starttls()
-            s.login(EMAIL_CFG.get("email"), EMAIL_CFG.get("password"))
-            s.sendmail(EMAIL_CFG.get("email"), email, message.as_string())
-
-        return verify_code
+        # Send EMAIL
+        Functions.send_email(email, message)
 
 
-    @staticmethod
-    def delete_account(db, id, option="timout"):
-        """
-        Delete user account
-        :param db: Database connection
-        :param id: User id you want to delete
-        :param option: "timout" - user didn't verify email / "remove" - user removes his account
-        :return: None
-        """
-    
+class Decorators:
     @staticmethod
     def manage_database(func):
         """
@@ -142,75 +238,21 @@ class Functions:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            db = Database()
-            kwargs["db"] = db
-            data, code = func(*args, **kwargs)
-            db.close()
+            start = time.time()
+
+            with Database() as db:
+                kwargs["db"] = db
+                data = func(*args, **kwargs)
+
+            print(time.time() - start)
 
             if not data:
-                abort(404)
+                data = {"message": "404 Not Found"}
 
-            return jsonify(data), code   
+            return jsonify(data)  
         
         wrapper.__name__ = func.__name__
         return wrapper
-    
-
-class Security:
-    @staticmethod
-    def hash_passwd(passw: str, salt=secrets.token_hex(16)):
-        """
-        Hash user password
-        :param passw: User password
-        :param salt: Salt for additional encryption
-        :return: Secured password (str)
-        """
-        return f"{salt}${hashlib.sha256((salt + passw).encode()).hexdigest()}"
-    
-    @staticmethod
-    def gen_token(id: str, secret: str):
-        """
-        Generate token for specific user
-        :param id: User ID
-        :param secret: User secret
-        :return: Secure access token
-        """
-        id = b64encode(id.encode("UTF-8")).decode("UTF-8")
-        now = b64encode(str(int(time.time())).encode("UTF-8")).decode("UTF-8")
-        hmac = hashlib.sha256(f"{id}|{now}|{secret}".encode("UTF-8")).hexdigest()
-
-        return f"{id}.{now}.{hmac}"
-    
-    @staticmethod
-    def verify_token(db, token: str):
-        """
-        Verify specific token
-        :param token: Token you want to verify
-        :return: "correct" / "expired" / "signature" / "invalid"
-        """
-        if not token:
-            return ("invalid", None)
-
-        if len(token := token.split(".")) != 3:
-            return ("invalid", None)
-        
-        try:
-            id = b64decode(token[0].encode("UTF-8")).decode("UTF-8")
-            generated = b64decode(token[1].encode("UTF-8")).decode("UTF-8")
-            hmac = token[2]
-        except:
-            return ("invalid", None)
-        
-        if not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
-            return ("invalid", None)
-        
-        if hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
-            return ("signature", id)
-        
-        if int(time.time()) - int(generated) > 31_536_000: # Tokens are expired after one year (365 days); time in seconds
-            return ("expired", id)
-
-        return ("correct", id)
     
     @staticmethod
     def auth(func):
@@ -220,21 +262,55 @@ class Security:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            verify_code, verify_id = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
+            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
 
+            if verify_option and verify_code == "correct":
+                return {"message": "403 Forbidden"}
+            
             if verify_code == "correct":
                 if kwargs.get("user_id") is None or kwargs.get("user_id") == "@me":
                     kwargs["user_id"] = verify_id
                 
                 return func(*args, **kwargs)
-            elif verify_code == "expired":
-                return ({"message": "403 Forbidden"}, 403)
-            elif verify_code == "signature":
-                return ({"message": "403 Forbidden"}, 403)
-            elif verify_code == "invalid":
-                return ({"message": "401 Unauthorized"}, 401)
             
-            return (None, None)
+            if verify_code == "expired" or verify_code == "signature":
+                return {"message": "403 Forbidden"}
+            
+            if verify_code == "invalid":
+                return {"message": "401 Unauthorized"}
+            
+            return None
+        
+        wrapper.__name__ = func.__name__
+        return wrapper
+    
+    @staticmethod
+    def ticket_auth(func):
+        """
+        Authenticate user ticets decorator
+        :param func: Funtion tu run
+        :return: Wrapper function
+        """
+        def wrapper(*args, **kwargs):
+            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket", None))
+
+            if not verify_option and verify_code == "correct":
+                return {"message": "403 Forbidden"}
+            
+            if verify_code == "correct":
+                kwargs["user_id"] = verify_id
+                kwargs["option"] = verify_option
+
+                return func(*args, **kwargs)
+            
+            if verify_code == "expired" or verify_code == "signature":
+                return {"message": "403 Forbidden"}
+            
+            if verify_code == "invalid":
+                return {"message": "401 Unauthorized"}
+ 
+            return None
+        
         
         wrapper.__name__ = func.__name__
         return wrapper
