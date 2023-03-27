@@ -3,7 +3,7 @@ export default function Password({ props }) {
 
     return (
         <>
-            <div className="center-column-container">
+            <div className="card-title-wrapper center-column-container">
                 <h2>Update your password</h2>
                 <p className="edit-card-info">Enter your current password and a new password.</p>
                 <button className="card-close center-container" onClick={close}>
@@ -14,15 +14,18 @@ export default function Password({ props }) {
             </div>
             <div className="column-container">
                 <p className="category-text">CURRENT PASSWORD</p>
-                <input className="input-field" type="password" name="passwd" maxLength={50} required />
+                <input className="input-field" type="password" maxLength={50} required />
 
                 <p className="category-text">NEW PASSWORD</p>
-                <input className="input-field" type="password" name="new_passwd" maxLength={50} required />
+                <input className="input-field" type="password" maxLength={50} required />
 
                 <p className="category-text">CONFIRM NEW PASSWORD</p>
-                <input className="input-field" type="password" name="confirm_passwd" maxLength={50} required />
+                <input className="input-field" type="password" maxLength={50} required />
             </div>
-            <button className="edit-submit-btn submit-btn">Done</button>
+            <div className="card-submit-wrapper">
+                <button className="card-cancel-btn" onClick={close}>Cancel</button>
+                <button className="card-submit-btn submit-btn">Done</button>
+            </div>
         </>
     )
 }

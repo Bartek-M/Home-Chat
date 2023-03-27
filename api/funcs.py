@@ -238,18 +238,14 @@ class Decorators:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            start = time.time()
-
             with Database() as db:
                 kwargs["db"] = db
-                data = func(*args, **kwargs)
-
-            print(time.time() - start)
+                data, code = func(*args, **kwargs)
 
             if not data:
-                data = {"message": "404 Not Found"}
+                data, code = {"message": "404 Not Found"}, 404
 
-            return jsonify(data)  
+            return jsonify(data), code
         
         wrapper.__name__ = func.__name__
         return wrapper
@@ -265,7 +261,7 @@ class Decorators:
             verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
 
             if verify_option and verify_code == "correct":
-                return {"message": "403 Forbidden"}
+                return ({"message": "403 Forbidden"}, 403)
             
             if verify_code == "correct":
                 if kwargs.get("user_id") is None or kwargs.get("user_id") == "@me":
@@ -274,12 +270,12 @@ class Decorators:
                 return func(*args, **kwargs)
             
             if verify_code == "expired" or verify_code == "signature":
-                return {"message": "403 Forbidden"}
+                return ({"message": "403 Forbidden"}, 403)
             
             if verify_code == "invalid":
-                return {"message": "401 Unauthorized"}
+                return ({"message": "401 Unauthorized"}, 401)
             
-            return None
+            return (None, None)
         
         wrapper.__name__ = func.__name__
         return wrapper
@@ -295,7 +291,7 @@ class Decorators:
             verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket", None))
 
             if not verify_option and verify_code == "correct":
-                return {"message": "403 Forbidden"}
+                return ({"message": "403 Forbidden"}, 403)
             
             if verify_code == "correct":
                 kwargs["user_id"] = verify_id
@@ -304,12 +300,12 @@ class Decorators:
                 return func(*args, **kwargs)
             
             if verify_code == "expired" or verify_code == "signature":
-                return {"message": "403 Forbidden"}
+                return ({"message": "403 Forbidden"}, 403)
             
             if verify_code == "invalid":
-                return {"message": "401 Unauthorized"}
+                return ({"message": "401 Unauthorized"}, 401)
  
-            return None
+            return (None, None)
         
         
         wrapper.__name__ = func.__name__

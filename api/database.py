@@ -29,13 +29,11 @@ class Database:
     Connect to database, write and read data
     """
     def __init__(self):
-        print("[DATABASE] - OPEN")
         self.conn = sqlite3.connect(FILE)
         self.cursor = self.conn.cursor()
         self._create_tables()
 
     def __enter__(self):
-        print("[DATABASE] - ENTER")
         return self
 
     def _create_tables(self):
@@ -211,7 +209,6 @@ class Database:
         Close database connection
         :return: None
         """
-        print("[DATABASE] - EXIT")
         self.conn.close()
 
 

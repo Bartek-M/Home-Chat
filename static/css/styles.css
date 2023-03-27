@@ -396,7 +396,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     min-height: 32px;
 }
 
-.stng-edit-btn { background-color: var(--BUTTON); color: var(--FONT_COLOR); min-width: 60px; }
+.stng-edit-btn { background-color: var(--BUTTON); color: var(--FONT_COLOR); min-width: 60px; max-width: fit-content; }
 .stng-warning-btn { border: 2px solid var(--RED_BUTTON); width: max-content; }
 .stng-action-btn { border: 2px solid var(--BLUE); width: max-content; }
 
@@ -489,9 +489,9 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 .edit-card-wrapper { z-index: 25; pointer-events: none; }
 
 #settings-edit-card { 
-    width: 450px;
-    gap: 2rem;
-    padding: 2rem 1rem 1rem 1rem;
+    min-width: 400px;
+    max-width: 430px;
+    padding: 1rem 1rem 1rem 1rem;
     margin: 1rem;
     border-radius: .5rem;
     background-color: var(--MAIN_COLOR);
@@ -502,16 +502,27 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 #settings-edit-card.overlay { transform: scale(1); }
 #settings-edit-card div { width: 100%; }
 
+.card-title-wrapper { margin-bottom: 1rem;}
+.small-card-field { margin-bottom: 0; }
+
 .card-close { 
     position: absolute;
-    top: 2rem;
+    top: 1rem;
     right: 1rem;
     padding: .25rem;
 }
 
 .edit-card-info { color: var(--FONT_DIM_COLOR) }
-.edit-submit-btn { align-self: flex-end; margin-top: -1rem; padding: .5rem 1rem }
-.edit-card-form { width: 100%; gap: 2rem}
+.card-header-text { font-size: .75rem; font-weight: 700; text-transform: uppercase}
+
+.card-submit-wrapper {
+    display: flex;
+    justify-content: right;
+    gap: 1rem;
+}
+
+.card-cancel-btn {height: 38px; }
+.card-submit-btn { padding: .25rem 1rem }
 
 
 /* LOGIN & REGISTER PAGE */

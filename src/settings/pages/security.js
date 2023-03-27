@@ -21,12 +21,10 @@ export default function Security({ props }) {
                 </div>
                 <button className="settings-btn stng-edit-btn" onClick={() => card("password")}>Edit</button>
             </div>
-            <div className="spaced-container">
-                <div className="column-container">
-                    <p className="category-text">TWO FACTOR AUTHENTICATION</p>
-                    <p>Good way to add an extra layer of security for your account</p>
-                </div>
-                <button className="settings-btn stng-edit-btn" onClick={() => card("mfa")}>Edit</button>
+            <div className="column-container">
+                <p className="category-text">TWO FACTOR AUTHENTICATION</p>
+                <p>Good way to add an extra layer of security for your account</p>
+                <button className="settings-btn stng-edit-btn" onClick={() => card("mfa")}>Setup</button>
             </div>
             <hr className="separator" />
             <div className="spaced-container">

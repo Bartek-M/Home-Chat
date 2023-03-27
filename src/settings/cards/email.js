@@ -12,8 +12,8 @@ function update_email(user, setUser, email, password, close) {
         password: password.value
     }, "@me").then(res => {
         if (res.errors) {
-            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : null
-            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : null
+            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
+            document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
 
             return
         }
@@ -34,7 +34,7 @@ export default function Email({ props }) {
 
     return (
         <>
-            <div className="center-column-container">
+            <div className="card-title-wrapper center-column-container">
                 <h2>Change your email</h2>
                 <p className="edit-card-info">Enter a new email and your existing password.</p>
                 <button className="card-close center-container" onClick={close}>
@@ -43,16 +43,17 @@ export default function Email({ props }) {
                     </svg>
                 </button>
             </div>
-            <form className="edit-card-form center-column-container">
-                <div className="column-container">
-                    <p className="category-text">EMAIL <span className="error-category-text" id="email-error"></span></p>
-                    <input className="input-field" type="email" ref={email} defaultValue={user.email} maxLength={50} required />
+            <div className="column-container">
+                <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
+                <input className="input-field" type="email" ref={email} defaultValue={user.email} maxLength={50} required />
 
-                    <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error"></span></p>
-                    <input className="input-field" type="password" ref={password} maxLength={50} required />
-                </div>
-                <input className="edit-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(user, setUser, email.current, password.current, close) }} value="Done" />
-            </form>
+                <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error">*</span></p>
+                <input className="input-field" type="password" ref={password} maxLength={50} required />
+            </div>
+            <div className="card-submit-wrapper">
+                <button className="card-cancel-btn" onClick={close}>Cancel</button>
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(user, setUser, email.current, password.current, close) }} value="Done" />
+            </div>
         </>
     )
 }
