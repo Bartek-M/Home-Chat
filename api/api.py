@@ -323,6 +323,12 @@ class Users:
             return ({"message": "200 OK"}, 200)
         
         if request.json.get("option") == "disable":
+            if not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
+                return ({"message": "400 Invalid Form Body", "errors": {"code": "Invalid two-factor code"}}, 400)
+            
+            db.update_entry(USER_SETTING_TABLE, user_id, "mfa_enabled", 0)
+            db.update_entry(USER_SECRET_TABLE, user_id, "mfa_code", None)
+
             return ({"message": "200 OK"}, 200)
         
         # Wrong option  

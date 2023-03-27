@@ -5,6 +5,8 @@ import { api_send } from "../api"
 import { flash_message } from "../functions"
 
 function submit(navigator, email, username, password) {
+    if (!email.value || !username.value || !password.value) return
+    
     api_send("auth_register", {
         email: email.value,
         username: username.value,

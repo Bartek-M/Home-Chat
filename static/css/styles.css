@@ -67,12 +67,13 @@ html, body, #appMount {
 /* GLOBALS */
 * { 
     color: inherit;
+    font-weight: 500;
     text-rendering: optimizeLegibility;
     user-select: none; 
     -webkit-appearance: none; 
 }
 
-h1, h2, h3, p { margin: 0; font-weight: 500;}
+h1, h2, h3, p { margin: 0; font-weight: 500; line-height: 1.375rem;}
 span, button, div, input, label, select, hr { outline: 0; border: 0 }
 li { list-style: none; }
 
@@ -81,6 +82,7 @@ button, input {
     background-color: transparent; 
     border: 0; 
     padding: 0; 
+    line-height: 1.375rem;
     transition: .17s ease; 
 }
 button:hover { cursor: pointer; }
@@ -95,7 +97,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 .spaced-container { gap: 1rem; justify-content: space-between; align-items: center; }
 .center-container { justify-content: center; align-items: center; }
 
-[class*="column"] { flex-direction: column; }
+[class*="column"] { gap: 0; flex-direction: column; }
 .spaced-column-container { gap: 1rem; justify-content: space-between; align-items: center; }
 .center-column-container { justify-content: center; align-items: center; }
 
@@ -127,7 +129,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     background-color: var(--GREEN); 
     color: var(--FONT_COLOR); 
     border-radius: .5rem; 
-    padding: .5rem; 
+    padding: .25rem 1rem; 
     line-height: 1.375rem;
 }
 .submit-btn:hover { cursor: pointer; background-color: var(--DIM_GREEN); }
@@ -316,7 +318,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     gap: 0;
     padding: 60px 6px 60px 20px;
 }
-.settings-sidebar button, #settings-logout, .settings-sidebar h2, .settings-sidebar p { padding: 6px 10px; } 
+.settings-sidebar button, #settings-logout, .settings-sidebar h2, .settings-sidebar p { padding: 4px 10px; } 
 
 .settings-sidebar button, #settings-logout {
     text-align: left;
@@ -385,6 +387,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 /* SETTINGS PAGES */
 .settings-card {
     padding: 1rem;
+    gap: 1rem;
     border-radius: .5rem;
     background-color: var(--COLOR_3);
 }
@@ -392,6 +395,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 .settings-btn {
     font-size: .875rem;
     padding: 2px 16px;
+    margin-top: .75rem;
     border-radius: .25rem;
     min-height: 32px;
 }
@@ -407,6 +411,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 .settings-full-btn {
     width: 100%;
     padding: 10px; 
+    margin-top: .5rem;
     border-radius: .25rem;
     align-items: center;
     background-color: var(--MAIN_COLOR);
@@ -475,7 +480,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     background-color: var(--COLOR_4);
     padding: 1rem;
     border-radius: .5rem;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 /* settings security */
@@ -493,6 +498,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     max-width: 430px;
     padding: 1rem 1rem 1rem 1rem;
     margin: 1rem;
+    gap: .5rem;
     border-radius: .5rem;
     background-color: var(--MAIN_COLOR);
     transform: scale(0);
@@ -521,8 +527,8 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     gap: 1rem;
 }
 
-.card-cancel-btn {height: 38px; }
-.card-submit-btn { padding: .25rem 1rem }
+.card-cancel-btn {height: 38px; font-size: 14px; font-weight: 500; }
+.card-submit-btn { padding: .25rem 1rem; font-size: 14px; font-weight: 500; }
 
 
 /* LOGIN & REGISTER PAGE */
@@ -573,7 +579,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 #loading-screen-wrapper.deactive { opacity: 0; }
 
 #loading-screen { position: relative; gap: 2rem; }
-#loading-screen h1 { text-align: center; font-weight: 700;}
+#loading-screen h1 { text-align: center; font-weight: 700; margin-bottom: 1rem;}
 
 .loading-dots {
     position: relative;

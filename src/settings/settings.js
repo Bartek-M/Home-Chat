@@ -9,7 +9,7 @@ import CardContent from "./components/card_content";
 export default function Settings() {
     const { user, setUser } = useContext(UserContext)
 
-    const [page, setPage] = useState("account")
+    const [page, setPage] = useState("security")
     const [card, setCard] = useState(null)
 
     // Pages

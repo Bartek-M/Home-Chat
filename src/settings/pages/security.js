@@ -19,12 +19,15 @@ export default function Security({ props }) {
                     <p className="category-text">PASSWORD</p>
                     <p>It's good to have a strong password everywhere</p>
                 </div>
-                <button className="settings-btn stng-edit-btn" onClick={() => card("password")}>Edit</button>
+                <button className="settings-btn stng-edit-btn" onClick={() => card("password")}>Change Password</button>
             </div>
+            <div className="spaced-container">
             <div className="column-container">
-                <p className="category-text">TWO FACTOR AUTHENTICATION</p>
-                <p>Good way to add an extra layer of security for your account</p>
-                <button className="settings-btn stng-edit-btn" onClick={() => card("mfa")}>Setup</button>
+                <p className="category-text">TWO-FACTOR AUTHENTICATION</p>
+                <p>Two-Factor authentication is a good way to add an extra layer of security for your Home Chat account to make sure that only you have the ability to log in.</p>
+                {user.mfa_enabled===0 && <button className="settings-btn stng-action-btn" onClick={() => card("mfa")}>Setup 2FA</button>}
+                {user.mfa_enabled===1 && <button className="settings-btn stng-warning-btn" onClick={() => card("mfa")}>Remove 2FA</button>}
+            </div>
             </div>
             <hr className="separator" />
             <div className="spaced-container">
@@ -36,11 +39,9 @@ export default function Security({ props }) {
                     {user.visibility ? "Public" : "Private"}
                 </button>
             </div>
-            <div className="spaced-container">
-                <div className="column-container">
-                    <p className="category-text">TOKEN REGENRATE</p>
-                    <p>Token is the most secret thing<br />For safety reasons, you can regenerate it</p>
-                </div>
+            <div className="column-container">
+                <p className="category-text">TOKEN REGENRATE</p>
+                <p>Token is the most secret thing, it can access every aspect of your account. If your token was stolen, you can regenerate it</p>
                 <button className="settings-btn stng-warning-btn">Regenerate</button>
             </div>
         </>

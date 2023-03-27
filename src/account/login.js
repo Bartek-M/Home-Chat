@@ -5,7 +5,7 @@ import { api_send } from "../api"
 import { flash_message } from "../functions"
 
 function submit(navigator, setCodePage, email, password) {
-    if (!email || !password) return
+    if (!email.value || !password.value) return
 
     api_send("auth_login", {
         email: email.value,
@@ -53,7 +53,6 @@ function verify(navigator, auth_code) {
         code: auth_code.value,
         ticket: localStorage.getItem("ticket"),
     }).then(res => {
-        console.log(res)
         // Code errors
         if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
 

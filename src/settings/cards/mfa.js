@@ -7,6 +7,8 @@ const qrcodes = require("qrcode")
 
 // Functions
 function next_page(setPassw, password) {
+    if (!password.value) return
+
     api_send("user_mfa", {
         password: password.value,
         option: "enable"
@@ -17,6 +19,8 @@ function next_page(setPassw, password) {
 }
 
 function submit_mfa(user, setUser, code, secret, password, close) {
+    if (!code.value) return
+
     api_send("user_mfa", {
         code: code.value,
         password: password,
@@ -35,6 +39,25 @@ function submit_mfa(user, setUser, code, secret, password, close) {
     })
 }
 
+function disable_mfa(user, setUser, code, close) {
+    if (!code.value) return
+
+    api_send("user_mfa", {
+        code: code.value,
+        option: "disable"
+    }, "@me").then(res => {
+        if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
+
+        if (res.message === "200 OK") {
+            setUser({ ...user, "mfa_enabled": 0 })
+            flash_message("MFA Disabled!")
+            return close()
+        }
+
+        return flash_message("Something went wrong!", "error")
+    })
+}
+
 // Render
 export default function MFA({ props }) {
     const { user, setUser, close } = props
@@ -43,6 +66,27 @@ export default function MFA({ props }) {
     const password = useRef()
     const code = useRef()
 
+
+    // Disable MFA
+    if (user.mfa_enabled) {
+        return (
+            <>
+                <div className="column-container">
+                    <h3>Disable Two-Factor Authentication</h3>
+                </div>
+                <div className="column-container">
+                    <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error">*</span></p>
+                    <input className="input-field small-card-field" ref={code} maxLength={10} required />
+                </div>
+                <div className="card-submit-wrapper">
+                    <button className="card-cancel-btn" onClick={close}>Cancel</button>
+                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); disable_mfa(user, setUser, code.current, close) }} value="Remove 2FA" />
+                </div>
+            </>
+        )
+    }
+
+    // Setup MFA
     if (passw) {
         const secret = speakeasy.generateSecret({ length: 10, name: user.email, issuer: "Home Chat" })
 
@@ -104,10 +148,11 @@ export default function MFA({ props }) {
         )
     }
 
+    // Enable MFA
     return (
         <>
             <div className="column-container">
-                <h3>Enable Two-Factor Auth</h3>
+                <h3>Enable Two-Factor Authentication</h3>
             </div>
             <div className="column-container">
                 <p className="category-text">PASSWORD <span className="error-category-text" id="password-error">*</span></p>
