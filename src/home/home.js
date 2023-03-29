@@ -39,7 +39,7 @@ export default function Home() {
     useEffect(() => {
         if (!user) return
         app_theme(user.theme)
-        overlay_open(document.getElementById("settings"))
+        //overlay_open(document.getElementById("settings"))
 
         if (user.theme === "auto") {
             let theme_match = window.matchMedia("(prefers-color-scheme: dark)")
@@ -84,7 +84,7 @@ export default function Home() {
                     <div className="main-view spaced-column-container">
                         <div className="not-found center-column-container">
                             <h2 className="not-found-error">404</h2>
-                            <h2>Open any channel and start chatting</h2>
+                            <h2 className="not-found-text">Open any channel and start chatting</h2>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import { useRef } from "react"
 import { api_file_upload } from "../../api"
+import { flash_message } from "../../functions"
 
 function change_avatar(file, user, setUser) {
     const user_file = file.files[0]
@@ -64,7 +65,10 @@ export default function Account({ props }) {
                     <p className="category-text">USER ID</p>
                     <p>{user.id}</p>
                 </div>
-                <button className="settings-btn stng-action-btn">Copy</button>
+                <button className="settings-btn stng-action-btn" onClick={() => { 
+                    try { navigator.clipboard.writeText(user.id) } catch { return flash_message("Something went wrong!", "error")}
+                    flash_message("ID Copied!") 
+                }}>Copy</button>
             </div>
             <div className="spaced-container">
                 <div className="column-container">

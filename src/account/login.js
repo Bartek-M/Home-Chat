@@ -28,14 +28,12 @@ function submit(navigator, setCodePage, email, password) {
 
             // MFA disabled + NON VERIFIED user + TICKET recived with no TOKEN
             if (!res.mfa && !res.verified && res.ticket) {
-                email.value = ""
                 localStorage.setItem("ticket", res.ticket)
                 return setCodePage("verify")
             }
 
             // MFA enabled + VERIFIED user + TICKET recived with no TOKEN
             if (res.mfa && res.verified && res.ticket) {
-                email.value = ""
                 localStorage.setItem("ticket", res.ticket)
                 return setCodePage("mfa")
             }
@@ -67,7 +65,6 @@ function verify(navigator, auth_code) {
 
             // MFA enabled + VERIFIED user + TICKET recived
             if (res.mfa + res.verified + res.token) {
-                auth_code.value = ""
                 localStorage.setItem("ticket", res.ticket)
                 return setCodePage("mfa")
             }
@@ -96,10 +93,10 @@ export default function Login() {
                 <div className="auth-window">
                     <h1 className="login-title">Two-factor authentication</h1>
 
-                    <form autoComplete="off">
+                    <form>
                         <div className="column-container">
-                            <p className="category-text">ENTER HOME CHAT AUTH CODE <span className="error-category-text" id="code-error">*</span></p>
-                            <input className="input-field" type="text" ref={auth_code} maxLength={10} required />
+                            <p className="category-text">ENTER HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
+                            <input className="input-field" type="text" ref={auth_code} key="mfa-inpt" maxLength={10} required />
                         </div>
                         <p className="login-redirect"><a className="link" href="recovery/mfa">Don't have any access to auth codes?</a></p>
 
@@ -118,10 +115,10 @@ export default function Login() {
                 <div className="auth-window">
                     <h1 className="login-title">Email verification</h1>
 
-                    <form autoComplete="off">
+                    <form>
                         <div className="column-container">
-                            <p className="category-text">ENTER CODE FROM YOUR EMAIL <span className="error-category-text" id="code-error">*</span></p>
-                            <input className="input-field" type="text" ref={auth_code} maxLength={10} required />
+                            <p className="category-text">ENTER CODE FROM YOUR EMAIL <span className="error-category-text" id="code-error" key="code-error">*</span></p>
+                            <input className="input-field" type="text" ref={auth_code} key="verify-inpt" maxLength={10} required />
                         </div>
 
                         <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(navigator, auth_code.current) }} value="LOG IN" />

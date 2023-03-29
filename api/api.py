@@ -105,7 +105,7 @@ class Auth:
             return ({"message": "401 Unauthorized"}, 401)
         
         if option == "verify":
-            if user_secrets.verify_code != code:
+            if user_secrets.verify_code.upper() != code.upper():
                 return ({"message": "400 Invalid Form Body", "errors": {"code": "Invalid code."}}, 400)
             
             db.update_entry(USER_TABLE, user_id, "verified", 1)
@@ -334,6 +334,32 @@ class Users:
         # Wrong option  
         return ({"message": "400 Invalid Form Body", "errors": {"option": "Invalid option"}}, 400)
 
+    @users.route("/<user_id>/delete", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def delete_account(db, user_id):
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
+
+        # Check if user is not an owner anywhere
+        if db.get_user_stuff(user_id, "owner_channels"):
+            return ({"message": "400 Invalid Form Body", "errors": {"channels": "You own some channels!"}}, 400)
+
+        # Check if password is correct
+        if request.json.get("password") and Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
+            return ({"message": "403 Forbidden", "errors": {"password": "Password doesn't match"}}, 403)
+        
+        # Check if mfa is correct
+        if db.get_entry(USER_SETTING_TABLE, user_id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
+            return ({"message": "400 Invalid Form Body", "errors": {"code": "Invalid two-factor code"}}, 400)
+        
+        db.delete_entry(USER_TABLE, user_id)
+        db.delete_entry(USER_SETTING_TABLE, user_id)
+        db.delete_entry(USER_SECRET_TABLE, user_id)
+        db.delete_entry(USER_FRIENDS_TABLE, user_id, "user_friends")
+        db.delete_entry(USER_CHANNEL_TABLE, user_id, "user_channels")
+
+        return ({"message": "200 OK"}, 200)
+
 
 class Images:
     """
@@ -377,5 +403,5 @@ def database(db):
     for table in tables:
         print(f"{table}:\n{db.get_all(table)}\n")    
 
-    return redirect(url_for("views.home"))
+    return ({"message": "200 OK"}, 200)
 # TEMP DATABASE VIEW

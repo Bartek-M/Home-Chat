@@ -24,7 +24,7 @@ class Message:
     Representation of a message
     """
     id: str
-    user_id: str
+    author: str
     channel_id: str
     content: str
     create_time: str
@@ -41,11 +41,12 @@ class Channel:
     id: str
     name: str
     icon: str
+    owner: str
     create_time: str
-    direct: int = 1
+    direct: int = 0 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -56,9 +57,10 @@ class UserChannel:
     user_id: str
     channel_id: str
     nick: str
+    position: str = None
 
     def marks(self):
-        return "?, ?, ?"
+        return "?, ?, ?, ?"
 
 
 @dataclass
@@ -68,9 +70,10 @@ class UserFriend:
     """
     user_id: str
     friend_id: str
+    accepted: str = "waiting" # waiting | accepted | not-accepted
 
     def marks(self):
-        return "?, ?"
+        return "?, ?, ?"
     
 
 @dataclass
@@ -97,7 +100,8 @@ class UserSecrets:
     password: str
     secret: str
     verify_code: str
+    sent_time: str = None
     mfa_code: str = None
 
     def marks(self):
-        return "?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?"

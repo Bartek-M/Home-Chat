@@ -14,6 +14,7 @@
     --BLUE: #008eb9;
     --GREEN: #00AB6B;
     --DIM_GREEN: #00925d;
+    --WARNING: #f0b132;
 
     --BORDER_COLOR: #1d1d1d;    
     --SCROLLBAR: #4b4b4b; 
@@ -511,6 +512,15 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 .card-title-wrapper { margin-bottom: 1rem;}
 .small-card-field { margin-bottom: 0; }
 
+.warning-wrapper { 
+    background-color: var(--WARNING); 
+    padding: .75rem .5rem; 
+    margin: .5rem 0;
+    border-radius: 5px; 
+    max-width: calc(100% - 1rem);
+    font-weight: 300;
+}
+
 .card-close { 
     position: absolute;
     top: 1rem;
@@ -553,7 +563,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     transition: .17s ease; 
 }
 
-.login-title { text-align: center; margin-bottom: 1rem; }
+.login-title { text-align: center; margin-bottom: 1rem; line-height: normal;}
 .login-redirect { margin-top: -.5rem; margin-bottom: 1rem; font-size: .875rem; }
 .login-submit { width: 100%; margin: 1rem 0; }
 
@@ -640,7 +650,7 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     top: -100px;
     opacity: 0;
     width: max-content;
-    padding: 1rem;
+    padding: .75rem 1rem;
     background-color: var(--MAIN_COLOR);
     border-color: transparent;
     border-radius: 50px;
@@ -654,14 +664,18 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 }
 
 /* NOT FOUND - 404 */
-.not-found { height: 70%; color: var(--FONT_DIM_COLOR)}
-.not-found h2 { text-align: center; }
+.not-found { height: 100%; color: var(--FONT_DIM_COLOR)}
 
 .not-found-error {
-    -webkit-text-stroke: 2px var(--FONT_DIM_COLOR);
     text-transform: uppercase;
     color: transparent;
     font-size: 7rem;
+    line-height: normal;
     letter-spacing: .8rem;
     font-weight: 700;
+    margin-bottom: .5rem;
+    text-align: center;
+    -webkit-text-stroke: 2px var(--FONT_DIM_COLOR);
 }
+
+.not-found-text { text-align: center; font-size: 1.25rem;}

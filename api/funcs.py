@@ -192,10 +192,7 @@ class Security:
                 <meta name="supported-color-schemes" content="light only">
             </head>
             <body style="background-color: #f9f9f9;">
-                <h1 style="margin: 1rem auto; max-width: 640px; text-align: center;">
-                    <img style="width: 24px; height: 24px; vertical-align: auto;" src="https://lh3.googleusercontent.com/0Zt68QTrC7LU4BWIXWtuXTNOLbTxJD4CIriO7-9We0xM5XDCwTbFmvQuZfTID1dDc7_ym9Aokz80iNo9FVrXJEigy5D0WrnU4ijz2dUgXMw6NLpj4rpkMi03kpN6zgRF_plDJWsQqgMrGqKOqzbQM3bsBH0JeaBs2vhoRwTG74qDo3IGTbbMimRcOD4DNBWCuhZ8aE3uJhQzVZ2wbNPBLRSDMu9ahx4DTC_FnDHrGNPvupRo_awBhZizosqJ0JJ8xBJZkeSgUSkBZLD7kQmTLjfyQeqhvBHZbOJpPWAbZ-rhBl8WsvXBT6ERs4QwPyNDfA5ErNxegCf6q7y74K4DC1wbP-2luYx6VWy45uZXIB6ROqDEe3vO8VNhLKuX_V_o9is7bZRJ0ffqUmqh-Sl9jCv5jweBau8b0dCgWhxQV-zJ5YyIVFFW9v20LsGlcpQtS6RKp2om6LR5iZTGWPhFFB2G8cZ27ezSTeHwSu_84_LYDz6ZrMtUKXHNhUGKixQYE52O2UJu7y3Nzo8vdXnLEAxmPpw43rc2uVUJxhA074N0w63nSzBTa-uT5lUerK3vVUVMPHwmP7wJogwDWufWhrq_MnidfKnbuK3z9VZR3LJWQCpyr3ItobAESZD-S9rGVcubzFo6aWSBzw3mKcV2hrFbKcoz0Jx9yRTQMyVYXwg1iqp_ClBbSabDut7RETcnEeW7FZQaqCupAndwW2WBfnvutH27VK-OEqUM8inTzLrb8WLjUg5Y2vDTvDzwsrW_DMQgyPUCRtmKMKNXXhqeD76rtxaCi-h73wDXa4L3pcm4EflvpAZsLHVImdMFQb4mgIUSu8KX7GkTrhYyytaQNd3hO5CJ5-6kpUQpSMyK2wXDenfLjBqegAi_DAoReDDSjR879cIPgixVpvVWTCV3REDtcLxjQnKuBFlV6pVEH08=s845-no?authuser=0" />
-                    Home Chat
-                </h1>
+                <h1 style="margin: 1rem auto; max-width: 640px; text-align: center;">Home Chat</h1>
                 <div style="margin: 0 auto; max-width: 640px; padding: 1rem 0; background-color: #FFFFFF;">
                     <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Welcome, {name}!</h2>
                     <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
@@ -264,8 +261,7 @@ class Decorators:
                 return ({"message": "403 Forbidden"}, 403)
             
             if verify_code == "correct":
-                if kwargs.get("user_id") is None or kwargs.get("user_id") == "@me":
-                    kwargs["user_id"] = verify_id
+                kwargs["user_id"] = verify_id
                 
                 return func(*args, **kwargs)
             

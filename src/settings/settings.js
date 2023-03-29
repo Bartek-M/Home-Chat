@@ -9,7 +9,7 @@ import CardContent from "./components/card_content";
 export default function Settings() {
     const { user, setUser } = useContext(UserContext)
 
-    const [page, setPage] = useState("security")
+    const [page, setPage] = useState("account")
     const [card, setCard] = useState(null)
 
     // Pages
@@ -65,9 +65,9 @@ export default function Settings() {
                 </div>
             </div>
             <div className="edit-card-wrapper center-container absolute-container">
-                <div className="center-column-container" id="settings-edit-card">
+                <form className="center-column-container" id="settings-edit-card">
                     {card && (<CardContent card={card} user={user} setUser={setUser} close={close_card} />)}
-                </div>
+                </form>
             </div>
         </>
     )

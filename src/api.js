@@ -18,7 +18,9 @@ const api_pages = {
     user_channels: (value) => `/api/users/${value}/channels/`,
     user_friends: (value) => `/api/users/${value}/friends/`,
     user_settings: (value) => `/api/users/${value}/settings/`,
+
     user_mfa: (value) => `/api/users/${value}/settings/mfa`,
+    user_delete: (value) => `api/users/${value}/delete`,
 
     avatar: () => `/api/images/avatar/`
 }

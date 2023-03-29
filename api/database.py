@@ -46,22 +46,22 @@ class Database:
                 id TEXT UNIQUE, name TEXT, tag TEXT, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER
             )""",
             f"""{MESSAGE_TABLE} (
-                id TEXT UNIQUE, user_id TEXT, channel_id TEXT, content TEXT, create_time TEXT
+                id TEXT UNIQUE, author TEXT, channel_id TEXT, content TEXT, create_time TEXT
             )""",
             f"""{CHANNEL_TABLE} (
-                id TEXT UNIQUE, name TEXT, icon TEXT, create_time TEXT, direct TEXT
+                id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct TEXT
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                user_id TEXT, channel_id TEXT UNIQUE, nick TEXT
+                user_id TEXT, channel_id TEXT UNIQUE, nick TEXT, position TEXT
             )""",
             f"""{USER_FRIENDS_TABLE} (
-                user_id TEXT, friend_id TEXT
+                user_id TEXT, friend_id TEXT, accepted TEXT
             )""",
             f"""{USER_SETTING_TABLE} (
                 id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER
             )""",
             f"""{USER_SECRET_TABLE} (
-                id TEXT UNIQUE, password TEXT, secret TEXT, verify_code TEXT, mfa_code TEXT
+                id TEXT UNIQUE, password TEXT, secret TEXT, verify_code TEXT, sent_time TEXT, mfa_code TEXT
             )"""
         ]
 
@@ -96,7 +96,8 @@ class Database:
 
             if fetched := self.cursor.fetchone():
                 return UserSettings(*fetched)
-        elif option == "name":
+        
+        if option == "name":
             if len(username := search.split("#")) != 2: 
                 return None
 
@@ -121,9 +122,16 @@ class Database:
             if fetched := self.cursor.fetchall():
                 return sorted(
                     [self.get_entry((CHANNEL_TABLE, data[1]) if data[0] == req_id else (USER_TABLE, data[0])).__dict__ for data in fetched], 
-                    key=lambda x: x.get("name")
+                    key=lambda x: x.get("position")
                 )
-        elif option == "friends":
+            
+        if option == "owner_channels":
+            self.cursor.execute(f"SELECT * FROM {CHANNEL_TABLE} WHERE owner=?", [req_id])
+
+            if fetched := self.cursor.fetchall():
+                return [Channel(*channel) for channel in fetched]
+                        
+        if option == "friends":
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
 
             if fetched := self.cursor.fetchall():
@@ -131,7 +139,7 @@ class Database:
                     [self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__ for friend in fetched], 
                     key=lambda x: x.get("name")
                 )
-        
+ 
         return []
 
     def get_channel_messages(self, req_id):
@@ -148,10 +156,9 @@ class Database:
             for message in (messages := [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]):
                 if (user := users.get(message.user_id, None) is None):
                     user = self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE id='{message.user_id}'").fetchone()
-                    users[message.user_id] = user
+                    users[message.author] = user
 
                 message.author = user
-                del message.user_id
 
             return messages
 
@@ -193,15 +200,23 @@ class Database:
         self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
         self.conn.commit()
 
-
-    def delete_entry(self, table, req_id):
+    def delete_entry(self, table, req_id, option=None):
         """
         Delete specific entry
         :param table: Table you want to delete in
         :param req_id: ID of entry you want to delete
+        :param option: Option you want to use
         :return: None
         """
-        self.cursor.execute(f"DELETE FROM {table} WHERE id=?", [req_id])
+        if option is None:
+            self.cursor.execute(f"DELETE FROM {table} WHERE id=?", [req_id])
+        
+        if option == "user_channels":
+            self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
+
+        if option == "user_friends":
+            self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
+
         self.conn.commit()
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -226,5 +241,5 @@ class Database:
         if fetched := self.cursor.fetchall():
             return fetched
 
-        return (None, None)
+        return None
     # TEMP FUNCTION

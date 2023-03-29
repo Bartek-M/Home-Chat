@@ -6,28 +6,22 @@ const speakeasy = require("speakeasy")
 const qrcodes = require("qrcode")
 
 // Functions
-function next_page(setPassw, password) {
-    if (!password.value) return
+function enable_mfa(user, setUser, password, setPassw, close, code, secret) {
+    if (!password || (code && !code.value)) return
 
     api_send("user_mfa", {
-        password: password.value,
-        option: "enable"
-    }, "@me").then(res => {
-        if (res.errors && !res.errors.password) return setPassw(password.value)
-        if (res.errors && res.errors.password) return document.getElementById("password-error").innerText = `- ${res.errors.password}`
-    })
-}
-
-function submit_mfa(user, setUser, code, secret, password, close) {
-    if (!code.value) return
-
-    api_send("user_mfa", {
-        code: code.value,
+        code: code ? code.value : null,
         password: password,
         secret: secret,
         option: "enable"
     }, "@me").then(res => {
-        if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
+        if (res.errors) {
+            if (!code) {
+                if (!res.errors.password) return setPassw(password)
+                if (res.errors.password) return document.getElementById("password-error").innerText = `- ${res.errors.password}`
+            }
+            return document.getElementById("code-error").innerText = res.errors.cod ? `- ${res.errors.code}` : "*"
+        }
 
         if (res.message === "200 OK") {
             setUser({ ...user, "mfa_enabled": 1 })
@@ -66,7 +60,6 @@ export default function MFA({ props }) {
     const password = useRef()
     const code = useRef()
 
-
     // Disable MFA
     if (user.mfa_enabled) {
         return (
@@ -75,11 +68,11 @@ export default function MFA({ props }) {
                     <h3>Disable Two-Factor Authentication</h3>
                 </div>
                 <div className="column-container">
-                    <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error">*</span></p>
-                    <input className="input-field small-card-field" ref={code} maxLength={10} required />
+                    <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
+                    <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
                 </div>
                 <div className="card-submit-wrapper">
-                    <button className="card-cancel-btn" onClick={close}>Cancel</button>
+                    <button className="card-cancel-btn" type="button" onClick={close}>Cancel</button>
                     <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); disable_mfa(user, setUser, code.current, close) }} value="Remove 2FA" />
                 </div>
             </>
@@ -102,7 +95,7 @@ export default function MFA({ props }) {
                 <div className="column-container">
                     <h3>Enable Two-Factor Auth</h3>
                     <p className="category-text">Make your account safer in 3 easy steps:</p>
-                    <button className="card-close center-container" onClick={close}>
+                    <button className="card-close center-container" type="button" onClick={close}>
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                             <path d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                         </svg>
@@ -136,11 +129,11 @@ export default function MFA({ props }) {
                         <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
                     </svg>
                     <div className="column-container">
-                        <h3 className="card-header-text">Log in with your code <span className="error-category-text" id="code-error">*</span></h3>
+                        <h3 className="card-header-text">Log in with your code <span className="error-category-text" id="code-error" key="code-error">*</span></h3>
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
-                            <input className="input-field small-card-field" ref={code} maxLength={10} required />
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_mfa(user, setUser, code.current, secret.base32, passw, close) }} value="Activate" />
+                            <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, passw, setPassw, close, code.current, secret.base32) }} value="Activate" />
                         </div>
                     </div>
                 </div>
@@ -159,8 +152,8 @@ export default function MFA({ props }) {
                 <input className="input-field small-card-field" type="password" ref={password} maxLength={50} required />
             </div>
             <div className="card-submit-wrapper">
-                <button className="card-cancel-btn" onClick={close}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); next_page(setPassw, password.current) }} value="Continue" />
+                <button className="card-cancel-btn" type="button" onClick={close}>Cancel</button>
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, password.current.value, setPassw, close) }} value="Continue" />
             </div>
         </>
     )
