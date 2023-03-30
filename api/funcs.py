@@ -2,25 +2,29 @@ from flask import jsonify, request
 from base64 import b64encode, b64decode
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
 from .database import *
 import secrets
 import smtplib
 import hashlib
-import json
 import time
 import re
+import os
 
 # CONSTANTS
+load_dotenv(dotenv_path="./api/.env")
+
 AVATARS_FOLDER = "./api/assets/avatars/"
 ICONS_FOLDER = "./api/assets/channel_icons/"
 
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-
-with open("./api/mail.json", "r") as f:   
-    EMAIL_CFG = json.load(f)
+EMAIL = os.getenv("EMAIL")
+PASSWORD = os.getenv("PASSWORD")
 
 VERIFY_ACCESS = "verify"
 MFA_ACCESS = "mfa"
+
+PEPPER = os.getenv("PEPPER")
 
 
 class Functions:
@@ -56,18 +60,8 @@ class Functions:
         # Send an email
         with smtplib.SMTP("smtp.gmail.com", 587) as s:
             s.starttls()
-            s.login(EMAIL_CFG.get("email"), EMAIL_CFG.get("password"))
-            s.sendmail(EMAIL_CFG.get("email"), dest, message.as_string())
-
-    @staticmethod
-    def delete_account(db, id, option="timout"):
-        """
-        Delete user account
-        :param db: Database connection
-        :param id: User id you want to delete
-        :param option: "timout" - user didn't verify email / "remove" - user removes his account
-        :return: None
-        """
+            s.login(EMAIL, PASSWORD)
+            s.sendmail(EMAIL, dest, message.as_string())
     
 
 class Security:
@@ -79,7 +73,7 @@ class Security:
         :param salt: Salt for additional encryption
         :return: Secured password (str)
         """
-        return f"{salt}${hashlib.sha256((salt + passw).encode()).hexdigest()}"
+        return f"{salt}${hashlib.sha256((salt + passw + PEPPER).encode()).hexdigest()}"
     
     @staticmethod
     def gen_token(id: str, secret: str, ending: str = None):
@@ -109,11 +103,8 @@ class Security:
         """
         option = None
 
-        # Check if any token was passed
         if not token:
             return ("invalid", None, option)
-
-        # Ensure token has correct syntax
         if len(token := token.split(".")) != 3:
             return ("invalid", None, option)
         
@@ -125,31 +116,24 @@ class Security:
         except:
             return ("invalid", None, option)
         
-        # Check if there's any option
         if "," in id:
             sliced = id.split(",")
             id = sliced[0]
             option = sliced[1]
 
-        # Check if given user is found in db
         if not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
             return ("invalid", None, option)
 
-        # Check if signature mathes
         if option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret[:int(len(user_secrets.secret)/2)]}|temp-{option}-access".encode("UTF-8")).hexdigest() != hmac:
             return ("signature", id, option)
-        
         if not option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
             return ("signature", id, option)
     
-        # Check if token is not expired
         if option and int(time.time()) - int(generated) > 600: # Tickets are expired after 5 minutes; time in seconds
             return ("expired", id, option)
-
         if int(time.time()) - int(generated) > 31_536_000: # Tokens are expired after one year (365 days); time in seconds
             return ("expired", id, option)
 
-        # Return - everything correct
         return ("correct", id, option)
     
     @staticmethod
@@ -165,7 +149,7 @@ class Security:
         # Generate message
         message = MIMEMultipart("alternative")
         message["Subject"] = f"Your Home Chat email verification code is {verify_code}"
-        message["From"] = EMAIL_CFG.get("email")
+        message["From"] = EMAIL
         message["To"] = email
 
         # Message body

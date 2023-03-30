@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, jsonify, request
 
-view = Blueprint(__name__, "view") # Define views
+view = Blueprint(__name__, "view")
 
 
 # PAGES

@@ -14,15 +14,16 @@ function update_email(user, setUser, email, password, close) {
         if (res.errors) {
             document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
             document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
-
             return
         }
 
         if (res.message === "200 OK") {
             setUser({ ...user, email: email.value })
             close()
-            flash_message("Email updated")
+            return flash_message("Email updated!")
         }
+
+        flash_message("Something went wrong!", "error")
     })
 }
 

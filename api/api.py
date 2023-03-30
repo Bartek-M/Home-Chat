@@ -26,7 +26,7 @@ class Auth:
             user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
             
             # Check password
-            if request.json.get("password") and Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) == user_secrets.password:
+            if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) == user_secrets.password:
                 # User not verified, has to pass a verification code
                 if db.get_entry(USER_TABLE, settings.id).verified == 0:
                     return ({
@@ -79,8 +79,8 @@ class Auth:
         if (tag := db.get_available_tag(username)) is None:
             return ({"message": "409 Conflict", "errors": {"username": "Too many users have this username"}}, 409)
         
-        if len(password) < 8:
-            return ({"message": "400 Invalid Form Body", "errors": {"password": "Password must have at least 8 characters"}}, 400)
+        if len(password) < 6:
+            return ({"message": "400 Invalid Form Body", "errors": {"password": "Password must have at least 6 characters"}}, 400)
         
         current_time = time.time() 
         id = Functions.create_id(current_time)
@@ -219,55 +219,51 @@ class Users:
     def change_user(db, user_id):
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
-        # Check if there's any data and category
         if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
             return ({"message": "400 Invalid Form Body", "errors": {"data": "No data or category", "category": "No data or category"}}, 400)
-        
-        # Check if password is correct
-        if request.json.get("password") and Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
+        if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
             return ({"message": "403 Forbidden", "errors": {"password": "Password doesn't match"}}, 403)
         
-        # Change name
         if category == "name":
-            # Get available tags
             if (tag := db.get_available_tag(data)) is None:
                 return ({"message": "406 Not Acceptable", "errors": {"name": "Too many users have this username"}}, 406)
 
-            db.update_entry(USER_TABLE, user_id, category, data)
+            db.update_entry(USER_TABLE, user_id, "name", data)
             db.update_entry(USER_TABLE, user_id, "tag", tag)
 
             return ({"message": "200 OK", "tag": tag}, 200)
 
-        # Change email
         if category == "email":
-            # Check email syntax
             if not Functions.verify_email(data):
                 return ({"message": "400 Invalid Form Body", "errors": {"email": "Invalid email form"}}, 400)
-            
-            # Check if email is not already registered
             if db.get_user(data):
                 return ({"message": "406 Not Acceptable", "errors": {"email": "Email is already registered!"}}, 406)
 
-            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+            db.update_entry(USER_SETTING_TABLE, user_id, "email", data)
 
-        # Change password
         if category == "password":
-            # Check if password is secure
+            if len(data) < 6:
+                return ({"message": "400 Invalid Form Body", "errors": {"new_password": "Password must have at least 6 characters"}}, 400)
+            if data == password:
+                return ({"message": "400 Invalid Form Body", "errors": {"new_password": "Password must not be the same"}}, 400)
+            
+            if db.get_entry(USER_SETTING_TABLE, user_id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
+                return ({"message": "400 Invalid Form Body", "errors": {"code": "Invalid two-factor code"}}, 400)
+            
+            db.update_entry(USER_SECRET_TABLE, user_id, "password", Security.hash_passwd(data))
+            db.update_entry(USER_SECRET_TABLE, user_id, "secret", secrets.token_hex(32))
 
-            return ({"message": "200 OK"}, 200)
-        
-        # Wrong option  
+            return ({"message": "200 OK", "token": Security.gen_token(user_secrets.id, user_secrets.secret)}, 200)
+ 
         return ({"message": "400 Invalid Form Body", "errors": {"category": "Invalid category"}}, 400)
     
     @users.route("/<user_id>/settings", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
     def change_settings(db, user_id):
-        # Check if there's any data and category
         if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
             return ({"message": "400 Invalid Form Body", "errors": {"data": "No data or category", "category": "No data or category"}}, 400)
-        
-        # Change theme
+
         if category == "theme":
             if data not in ["auto", "light", "dark"]:
                 return ({"message": "400 Invalid Form Body", "errors": {"theme": "Invalid theme"}}, 400)
@@ -275,7 +271,6 @@ class Users:
             db.update_entry(USER_SETTING_TABLE, user_id, category, data)
             return ({"message": "200 OK"}, 200)
 
-        # Change message display
         if category == "message_display":
             if data not in ["standard", "compact"]:
                 return ({"message": "400 Invalid Form Body", "errors": {"message_display": "Invalid message_display"}}, 400)
@@ -283,15 +278,13 @@ class Users:
             db.update_entry(USER_SETTING_TABLE, user_id, category, data)
             return ({"message": "200 OK"}, 200)
 
-        # Change visibility
         if category == "visibility":
             if data not in [0, 1]:
                 return ({"message": "400 Invalid Form Body", "errors": {"visibility": "Invalid visibility"}}, 400)
             
             db.update_entry(USER_TABLE, user_id, category, data)
             return ({"message": "200 OK"}, 200)
-        
-        # Wrong option  
+
         return ({"message": "400 Invalid Form Body", "errors": {"category": "Invalid category"}}, 400)
     
     @users.route("/<user_id>/settings/mfa", methods=["PATCH"])
@@ -299,11 +292,9 @@ class Users:
     @Decorators.auth
     def setup_mfa(db, user_id):
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
-        
-        # Setup MFA
+
         if request.json.get("option") == "enable":
-            # Check if password is correct
-            if request.json.get("password") and Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
+            if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
                 return ({"message": "403 Forbidden", "errors": {"password": "Password doesn't match"}}, 403)
             
             # Check if there's a valid secret
@@ -313,7 +304,6 @@ class Users:
             except:
                 return ({"message": "400 Invalid Form Body", "errors": {"secret": "Invalid two-factor secret"}}, 400)
 
-            # Check if code matches
             if not pyotp.TOTP(secret).verify((request.json.get("code"))):
                 return ({"message": "400 Invalid Form Body", "errors": {"code": "Invalid two-factor code"}}, 400)
             
@@ -340,15 +330,12 @@ class Users:
     def delete_account(db, user_id):
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
-        # Check if user is not an owner anywhere
         if db.get_user_stuff(user_id, "owner_channels"):
             return ({"message": "400 Invalid Form Body", "errors": {"channels": "You own some channels!"}}, 400)
 
-        # Check if password is correct
-        if request.json.get("password") and Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
+        if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
             return ({"message": "403 Forbidden", "errors": {"password": "Password doesn't match"}}, 403)
-        
-        # Check if mfa is correct
+
         if db.get_entry(USER_SETTING_TABLE, user_id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
             return ({"message": "400 Invalid Form Body", "errors": {"code": "Invalid two-factor code"}}, 400)
         

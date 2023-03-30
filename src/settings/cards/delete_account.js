@@ -24,7 +24,7 @@ function submit_delete(navigator, user, password, setPage, code) {
             return flash_message("Removed your account!")
         }
 
-        return flash_message("Something went wrong!", "error")
+        flash_message("Something went wrong!", "error")
     })
 }
 

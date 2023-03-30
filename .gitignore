@@ -19,4 +19,4 @@ webpack.config.js
 main.js
 main.js.LICENSE.txt
 
-mail.json
+.env
