@@ -5,7 +5,7 @@ import { api_send } from "../../api";
 import { flash_message } from "../../functions";
 
 // Functions
-function submit_delete(navigator, user, password, setPassw, code) {
+function submit_delete(navigator, user, password, setPage, code) {
     if (!password || (code && !code.value)) return
 
     api_send("user_delete", {
@@ -13,7 +13,7 @@ function submit_delete(navigator, user, password, setPassw, code) {
         code: code ? code.value : null
     }, "@me").then(res => {
         if (res.errors) {
-            if (!code && user.mfa_enabled && !res.errors.password) { return setPassw(password) }
+            if (!code && user.mfa_enabled && !res.errors.password) { return setPage("mfa") }
             if (!code && res.errors.password) return document.getElementById("password-error").innerText = `- ${res.errors.password}`
             if (code && res.errors.code) return document.getElementById("code-error").innerText = `- ${res.errors.code}`
         }
@@ -31,15 +31,15 @@ function submit_delete(navigator, user, password, setPassw, code) {
 export default function DeleteAccount({ props }) {
     const { user, close } = props
 
-    const [passw, setPassw] = useState(null)
+    const [page, setPage] = useState(null)
     const navigator = useNavigate()
 
     const password = useRef()
     const code = useRef()
 
-    if (passw) {
+    if (page) {
         return (
-            <>
+            <form className="settings-edit-card center-column-container">
                 <div className="column-container">
                     <h3>Delete Account</h3>
                 </div>
@@ -48,15 +48,15 @@ export default function DeleteAccount({ props }) {
                     <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
                 </div>
                 <div className="card-submit-wrapper">
-                    <button className="card-cancel-btn" type="button" onClick={close}>Cancel</button>
-                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_delete(user, passw, setPassw, code.current) }} value="Delete Account" />
+                    <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
+                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_delete(user, password.current.value, setPage, code.current) }} value="Delete Account" />
                 </div>
-            </>
+            </form>
         )
     }
 
     return (
-        <>
+        <form className="settings-edit-card center-column-container">
             <div className="column-container">
                 <h3>Delete Account</h3>
                 <div className="warning-wrapper">Are you sure that you want to delete your account? This will immediately log out of your account and you will not be able to log in again.</div>
@@ -66,9 +66,9 @@ export default function DeleteAccount({ props }) {
                 <input className="input-field small-card-field" type="password" ref={password} maxLength={50} required />
             </div>
             <div className="card-submit-wrapper">
-                <button className="card-cancel-btn" type="button" onClick={close}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_delete(navigator, user, password.current.value, setPassw) }} value={user.mfa_enabled ? "Continue" : "Delete Account"} />
+                <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_delete(navigator, user, password.current.value, setPage) }} value={user.mfa_enabled ? "Continue" : "Delete Account"} />
             </div>
-        </>
+        </form>
     )
 }

@@ -1,27 +1,33 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../api";
-import { version, user_os, overlay_open, overlay_close } from "../functions"
+import { version, user_os } from "../functions"
 
 import PageContent from "./components/page_content";
 import CardContent from "./components/card_content";
 
 
-export default function Settings() {
+export default function Settings(props) {
+    const { setSettings } = props
     const { user, setUser } = useContext(UserContext)
 
     const [page, setPage] = useState("account")
     const [card, setCard] = useState(null)
 
-    // Pages
-    function open_tab(new_page) { setPage(new_page) }
+    // Add event listener
+    const close_settings = (e) => { 
+        if (e.key !== "Escape") return 
+        if (!card) setSettings(false) 
+        if (card) setCard(null)
+    }
 
-    // Cards
-    function open_card(new_card) { overlay_open(document.getElementById("settings-edit-card")); setCard(new_card) }
-    function close_card() { overlay_close(); setCard(null) }
+    useEffect(() => {
+        document.addEventListener("keyup", close_settings )
+        return () => { document.removeEventListener("keyup", close_settings) }
+    }, [card])
 
     return (
         <>
-            <div className="absolute-container" id="settings">
+            <div className="settings absolute-container">
                 <div className="settings-sidebar-wrapper scroller-container" id="settings-dropdown">
                     <nav className="settings-sidebar column-container">
                         <div className="spaced-container">
@@ -34,14 +40,14 @@ export default function Settings() {
                         </div>
 
                         <p className="category-text">USER SETTINGS</p>
-                        <button className={page === "account" ? "active" : ""} onClick={() => open_tab("account")}>Account</button>
-                        <button className={page === "security" ? "active" : ""} onClick={() => open_tab("security")}>Security</button>
-                        <button className={page === "friends" ? "active" : ""} onClick={() => open_tab("friends")}>Friends</button>
+                        <button className={page === "account" ? "active" : ""} onClick={() => setPage("account")}>Account</button>
+                        <button className={page === "security" ? "active" : ""} onClick={() => setPage("security")}>Security</button>
+                        <button className={page === "friends" ? "active" : ""} onClick={() => setPage("friends")}>Friends</button>
                         <hr className="separator" />
 
                         <p className="category-text">APP SETTINGS</p>
-                        <button className={page === "appearance" ? "active" : ""} onClick={() => open_tab("appearance")}>Appearance</button>
-                        <button className={page === "advanced" ? "active" : ""} onClick={() => open_tab("advanced")}>Advanced</button>
+                        <button className={page === "appearance" ? "active" : ""} onClick={() => setPage("appearance")}>Appearance</button>
+                        <button className={page === "advanced" ? "active" : ""} onClick={() => setPage("advanced")}>Advanced</button>
                         <hr className="separator" />
 
                         <a id="settings-logout" href="logout">Log Out</a>
@@ -55,20 +61,21 @@ export default function Settings() {
 
                 <div className="settings-page scroller-container">
                     <div className="column-container" id="settings-content">
-                        <PageContent page={page} user={user} setUser={setUser} card={open_card} />
+                        <PageContent page={page} user={user} setUser={setUser} card={setCard} />
                     </div>
-                    <button onClick={() => { overlay_close() }} className="center-container" id="close-settings">
+                    <button onClick={() => { setSettings(false) }} className="center-container" id="close-settings">
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                             <path d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                         </svg>
                     </button>
                 </div>
             </div>
-            <div className="edit-card-wrapper center-container absolute-container">
-                <form className="center-column-container" id="settings-edit-card">
-                    {card && (<CardContent card={card} user={user} setUser={setUser} close={close_card} />)}
-                </form>
-            </div>
+            {card && (
+                <div className="edit-card-wrapper center-container absolute-container">
+                    <div className="absolute-container" id="edit-card-overlay"></div>
+                    <CardContent card={card} user={user} setUser={setUser} close={setCard} />
+                </div>
+            )}
         </>
     )
 }

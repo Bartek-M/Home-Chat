@@ -1,7 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { overlay_close } from "./functions";
 
 import Home from "./home/home";
 import Login from "./account/login";
@@ -24,7 +23,6 @@ export default function App() {
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
-            <div className="absolute-container" id="overlay"></div>
         </>
     )
 }
@@ -35,9 +33,3 @@ root.render(
         <App />
     </React.StrictMode>
 )
-
-// Overlay
-document.addEventListener("DOMContentLoaded", () => {
-    document.addEventListener("keyup", (e) => { if (e.key === "Escape") overlay_close() })
-    document.getElementById("overlay").addEventListener("click", () => overlay_close())
-})

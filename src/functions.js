@@ -85,22 +85,6 @@ function flash_message(text, type = "info") {
 }
 
 
-// Overlay
-function overlay_open(element) {
-    element.classList.add("overlay")
-    if (element.id !== "settings") document.getElementById("overlay").classList.add("overlay")
-}
-
-function overlay_close() {
-    let elements = document.querySelectorAll(".overlay")
-
-    elements.forEach(element => {
-        if (elements.length !== 1 && element.id === "settings") return
-        element.classList.remove("overlay")
-    })
-}
-
-
 // EXPORTS
 export {
     version,
@@ -110,7 +94,5 @@ export {
     format_time,
     smooth_scroll,
     copy_text,
-    flash_message,
-    overlay_open,
-    overlay_close
+    flash_message
 }

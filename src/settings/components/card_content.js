@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import Loading from "../../components/loading";
+
 import Username from "../cards/username";
 import Email from "../cards/email";
 import DeleteAccount from "../cards/delete_account";
@@ -5,12 +8,18 @@ import DeleteAccount from "../cards/delete_account";
 import Password from "../cards/password";
 import MFA from "../cards/mfa";
 
-import Loading from "../../components/loading";
-
 
 // Card content (edit card)
 export default function CardContent(props) {
-    const { card, user } = props
+    const { card, user, close } = props
+
+    // Add event listeners
+    useEffect(() => {
+        let card_overlay = document.getElementById("edit-card-overlay")
+        
+        card_overlay.addEventListener("click", close)
+        return () => { card_overlay.removeEventListener("click", close) }
+    }, [])
 
     if (!user) return (<Loading />)
 

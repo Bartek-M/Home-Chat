@@ -141,6 +141,10 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 ::-webkit-scrollbar-thumb:hover { cursor: pointer; background-color: var(--SCROLLBAR_DARKER) }
 ::-webkit-scrollbar-button { height: 2.5px }
 
+@keyframes show {
+    0% { scale: 0 }
+    100% { scale: 1 }
+}
 
 /* HOME PAGE */
 .home-page { width: 100%; height: 100%; gap: 0}
@@ -287,17 +291,14 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 }
 
 /* SETTINGS PAGE */
-#settings {
+.settings {
     display: flex; 
     justify-content: center;
     background-color: inherit;
     z-index: 15;
     gap: 0;
-    transform: scale(0);
-    transition: .17s ease; 
+    animation: show .17s;
 }
-
-#settings.overlay { transform: scale(1); }
 
 /* siderbar */
 .settings-sidebar-wrapper {
@@ -492,9 +493,11 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
 #visibility-private:hover { background-color: var(--RED_BUTTON_HOVER); }
 
 /* settings-popup-card */
-.edit-card-wrapper { z-index: 25; pointer-events: none; }
+.edit-card-wrapper { z-index: 25; }
+#edit-card-overlay { background-color: rgba(0, 0, 0, .8); transition: .17s ease;  }
 
-#settings-edit-card { 
+.settings-edit-card { 
+    position: relative;
     min-width: 400px;
     max-width: 430px;
     padding: 1rem 1rem 1rem 1rem;
@@ -502,12 +505,10 @@ a { color: var(--FONT_COLOR); transition: .17s ease; text-decoration: none; }
     gap: .5rem;
     border-radius: .5rem;
     background-color: var(--MAIN_COLOR);
-    transform: scale(0);
-    transition: .17s ease; 
-    pointer-events: all;
+    animation: show .17s;
 }
-#settings-edit-card.overlay { transform: scale(1); }
-#settings-edit-card div { width: 100%; }
+
+.settings-edit-card div { width: 100%; }
 
 .card-title-wrapper { margin-bottom: 1rem;}
 .small-card-field { margin-bottom: 0; }

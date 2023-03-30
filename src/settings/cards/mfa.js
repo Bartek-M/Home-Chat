@@ -6,7 +6,7 @@ const speakeasy = require("speakeasy")
 const qrcodes = require("qrcode")
 
 // Functions
-function enable_mfa(user, setUser, password, setPassw, close, code, secret) {
+function enable_mfa(user, setUser, password, setPage, close, code, secret) {
     if (!password || (code && !code.value)) return
 
     api_send("user_mfa", {
@@ -17,10 +17,10 @@ function enable_mfa(user, setUser, password, setPassw, close, code, secret) {
     }, "@me").then(res => {
         if (res.errors) {
             if (!code) {
-                if (!res.errors.password) return setPassw(password)
+                if (!res.errors.password) return setPage("mfa-page")
                 if (res.errors.password) return document.getElementById("password-error").innerText = `- ${res.errors.password}`
             }
-            return document.getElementById("code-error").innerText = res.errors.cod ? `- ${res.errors.code}` : "*"
+            return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
         }
 
         if (res.message === "200 OK") {
@@ -55,7 +55,7 @@ function disable_mfa(user, setUser, code, close) {
 // Render
 export default function MFA({ props }) {
     const { user, setUser, close } = props
-    const [passw, setPassw] = useState(null)
+    const [page, setPage] = useState(null)
 
     const password = useRef()
     const code = useRef()
@@ -63,7 +63,7 @@ export default function MFA({ props }) {
     // Disable MFA
     if (user.mfa_enabled) {
         return (
-            <>
+            <form className="settings-edit-card center-column-container">
                 <div className="column-container">
                     <h3>Disable Two-Factor Authentication</h3>
                 </div>
@@ -72,30 +72,33 @@ export default function MFA({ props }) {
                     <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
                 </div>
                 <div className="card-submit-wrapper">
-                    <button className="card-cancel-btn" type="button" onClick={close}>Cancel</button>
+                    <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                     <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); disable_mfa(user, setUser, code.current, close) }} value="Remove 2FA" />
                 </div>
-            </>
+            </form>
         )
     }
 
     // Setup MFA
-    if (passw) {
+    if (page) {
         const secret = speakeasy.generateSecret({ length: 10, name: user.email, issuer: "Home Chat" })
+        const passw = password.current.value
 
         var secret_code = ""
         var qr_code = ""
 
         secret.otpauth_url = `${secret.otpauth_url}&issuer=Home%20Chat`
+        console.log(secret.otpauth_url)
         qrcodes.toDataURL(secret.otpauth_url, (e, data_url) => { qr_code = data_url })
+        //url = `otpauth://totp/bmroczkowski%40icloud.com?secret=${secret_code}&issuer=Home%20Chat`
         for (let i = 0; i < secret.base32.length; i++) { if (i % 4 === 0 && i != 0) { secret_code += "-" }; secret_code += secret.base32[i] }
 
         return (
-            <>
+            <form className="settings-edit-card center-column-container">
                 <div className="column-container">
                     <h3>Enable Two-Factor Auth</h3>
                     <p className="category-text">Make your account safer in 3 easy steps:</p>
-                    <button className="card-close center-container" type="button" onClick={close}>
+                    <button className="card-close center-container" type="button" onClick={() => close()}>
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                             <path d="M9.41423 7.99943L15.7384 1.67529L14.3242 0.261078L8.00001 6.58522L1.67587 0.261078L0.261658 1.67529L6.5858 7.99943L0.261658 14.3236L1.67587 15.7378L8.00001 9.41365L14.3242 15.7378L15.7384 14.3236L9.41423 7.99943Z"></path>
                         </svg>
@@ -133,17 +136,17 @@ export default function MFA({ props }) {
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
                             <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, passw, setPassw, close, code.current, secret.base32) }} value="Activate" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, passw, setPage, close, code.current, secret.base32) }} value="Activate" />
                         </div>
                     </div>
                 </div>
-            </>
+            </form>
         )
     }
 
     // Enable MFA
     return (
-        <>
+        <form className="settings-edit-card center-column-container">
             <div className="column-container">
                 <h3>Enable Two-Factor Authentication</h3>
             </div>
@@ -152,9 +155,9 @@ export default function MFA({ props }) {
                 <input className="input-field small-card-field" type="password" ref={password} maxLength={50} required />
             </div>
             <div className="card-submit-wrapper">
-                <button className="card-cancel-btn" type="button" onClick={close}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, password.current.value, setPassw, close) }} value="Continue" />
+                <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, password.current.value, setPage, close) }} value="Continue" />
             </div>
-        </>
+        </form>
     )
 }
