@@ -1,15 +1,17 @@
-from flask import jsonify, request
-from base64 import b64encode, b64decode
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from dotenv import load_dotenv
-from .database import *
+import os
+import re
+import time
 import secrets
 import smtplib
 import hashlib
-import time
-import re
-import os
+from base64 import b64encode, b64decode
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+from flask import jsonify, request
+from dotenv import load_dotenv
+
+from .database import *
 
 # CONSTANTS
 load_dotenv(dotenv_path="./api/.env")

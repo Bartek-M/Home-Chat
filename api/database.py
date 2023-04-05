@@ -1,5 +1,6 @@
-import sqlite3
 import random
+import sqlite3
+
 from .assets.models import *
 
 # GLOBAL VARIABLES

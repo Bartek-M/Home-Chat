@@ -1,12 +1,15 @@
-from flask import Blueprint, request, send_file, redirect, url_for
-from .funcs import AVATARS_FOLDER, VERIFY_ACCESS, MFA_ACCESS
-from .funcs import Functions, Security, Decorators 
-from multiprocessing import Process
-from .database import *
 import secrets
-import pyotp
 import time
 import os
+
+import pyotp
+from flask import Blueprint, request, send_file
+from multiprocessing import Process
+
+from .funcs import AVATARS_FOLDER, VERIFY_ACCESS, MFA_ACCESS
+from .funcs import Functions, Security, Decorators 
+from .database import *
+
 
 api = Blueprint("api", __name__) # Define api
 

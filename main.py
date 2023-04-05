@@ -1,8 +1,10 @@
+import time
+
 from flask import Flask
 from flask_socketio import SocketIO
+
 from views import view
 from api import *
-import time
 
 # GLOBAL VARIABLES
 ADDR = "127.0.0.1" # 192.168.0.194 | 127.0.0.1
