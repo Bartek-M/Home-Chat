@@ -1,5 +1,5 @@
 // App version
-const version = "b5acd89"
+const version = "bf25908"
 
 // OS
 const os_list = {
@@ -84,6 +84,24 @@ function flash_message(text, type = "info") {
     }
 }
 
+// Generate 16 letter secret code
+const base32_alph = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+
+function gen_secret() {
+    let secret = ""
+    let formated = ""
+
+    for (let i = 0; i < 16; i++) { 
+        let char = base32_alph[Math.floor(Math.random() * base32_alph.length)]
+        if (i % 4 === 0 && i != 0) formated += "-" 
+
+        secret += char
+        formated += char
+    }
+
+    return [secret, formated]
+}
+
 
 // EXPORTS
 export {
@@ -94,5 +112,6 @@ export {
     format_time,
     smooth_scroll,
     copy_text,
-    flash_message
+    flash_message,
+    gen_secret
 }

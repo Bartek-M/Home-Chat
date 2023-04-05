@@ -73,8 +73,8 @@ class Database:
     def get_entry(self, table, req_id):
         """
         Get specific entry
-        :param table: Table you want to look at
-        :param req_id: ID of entry you want to get
+        :param table: Table to look at
+        :param req_id: ID of entry to get
         :return: Desired config object or None
         """
         self.cursor.execute(f"SELECT * FROM {table} WHERE id=?", [req_id])
@@ -88,7 +88,7 @@ class Database:
         """
         Get specifc user using his information
         :param search: User information
-        :param option: Option you want to use ("email", "name")
+        :param option: Option to use ("email", "name")
         :return: UserSettings or User object
         """
         if option == "email":
@@ -111,11 +111,17 @@ class Database:
     def get_user_stuff(self, req_id, option):
         """
         Get all channels which belongs to a certain user
-        :param req_id: ID of user or channel you want to get
-        :param option: Option you want to use ("channels", "friends")
+        :param req_id: ID of user or channel to get
+        :param option: Option to use ("channels", "friends")
         :return: List of Channel objects or []
         """
 
+        if option == "owner_channels":
+            self.cursor.execute(f"SELECT * FROM {CHANNEL_TABLE} WHERE owner=?", [req_id])
+
+            if fetched := self.cursor.fetchall():
+                return [Channel(*channel) for channel in fetched]
+                
         if option == "channels":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? OR channel_id=?", [req_id, req_id])
 
@@ -124,12 +130,6 @@ class Database:
                     [self.get_entry((CHANNEL_TABLE, data[1]) if data[0] == req_id else (USER_TABLE, data[0])).__dict__ for data in fetched], 
                     key=lambda x: x.get("position")
                 )
-            
-        if option == "owner_channels":
-            self.cursor.execute(f"SELECT * FROM {CHANNEL_TABLE} WHERE owner=?", [req_id])
-
-            if fetched := self.cursor.fetchall():
-                return [Channel(*channel) for channel in fetched]
                         
         if option == "friends":
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
@@ -145,7 +145,7 @@ class Database:
     def get_channel_messages(self, req_id):
         """
         Get all messages in current channel
-        :param req_id: ID of channel you want to get messages from
+        :param req_id: ID of channel to get messages from
         :return: List of Message objects or []
         """
         self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
@@ -167,7 +167,7 @@ class Database:
     def get_available_tag(self, name):
         """
         Get available tags for specific name
-        :param name: Name you want to check tags for
+        :param name: Name to check tags for
         :return: Random available tag or None
         """
         self.cursor.execute(f"SELECT tag FROM {USER_TABLE} WHERE name=?", [name])
@@ -181,8 +181,8 @@ class Database:
     def insert_entry(self, table, entry):
         """
         Insert entry into specific table
-        :param table: Table you want to insert into 
-        :param entry: Entry you want to insert
+        :param table: Table to insert into 
+        :param entry: Entry to insert
         :return: None
         """
         self.cursor.execute(f"INSERT INTO {table} VALUES ({entry.marks()})", list(entry.__dict__.values()))
@@ -191,10 +191,10 @@ class Database:
     def update_entry(self, table, req_id, entry, data):
         """
         Update specific entry
-        :param table: Table you want to update
-        :param req_id: ID of entry you want to update
-        :param entry: Entry you want to update 
-        :param data: Updated data you want to insert
+        :param table: Table to update
+        :param req_id: ID of entry to update
+        :param entry: Entry to update 
+        :param data: Updated data to insert
         :return: None
         """
         self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
@@ -203,9 +203,9 @@ class Database:
     def delete_entry(self, table, req_id, option=None):
         """
         Delete specific entry
-        :param table: Table you want to delete in
-        :param req_id: ID of entry you want to delete
-        :param option: Option you want to use
+        :param table: Table to delete in
+        :param req_id: ID of entry to delete
+        :param option: Option to use
         :return: None
         """
         if option is None:
@@ -233,7 +233,7 @@ class Database:
         TEMP FUNC
 
         Get all entries in specific table
-        :param table: Table you want to check
+        :param table: Table to check
         :return: List data or None
         """
         self.cursor.execute(f"SELECT * FROM {table}")

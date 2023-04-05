@@ -1,24 +1,26 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom"
 
-import { UserContext, api_get } from "../api";
+import { api_get } from "../api";
 import { app_theme, prefered_theme, flash_message } from "../functions";
 
 import Settings from "../settings/settings";
 import Loading from "../components/loading";
 
 export default function Home() {
-    const [settings, setSettings] = useState()
+    const [settings, setSettings] = useState(false)
     const navigator = useNavigate()
 
     const [user, setUser] = useState(null)
-    const user_state = useMemo(() => ({ user, setUser }), [user, setUser])
+
+    const [friends, setFriends] = useState(null)
+    const [channels, setChannels] = useState(null)
 
     // Get user
     useEffect(() => {
         if (user) return
 
-        api_get("user_settings", "@me").then((usr) => {
+        api_get("user_settings", "@me").then(usr => {
             if (usr.message === "401 Unauthorized") { navigator("/login"); return flash_message("Not logged in!", "error") }
             if (usr.message === "403 Forbidden") { navigator("/login"); return flash_message("Logged out!", "error") }
             if (!usr.id) return
@@ -33,6 +35,14 @@ export default function Home() {
                 loading_screen_wrapper.classList.add("deactive")
                 setTimeout(() => { loading_screen_wrapper.innerHTML = null; loading_screen_wrapper.remove() }, 170)
             }, 250)
+        })
+
+        api_get("user_channels", "@me").then(channels => {
+            console.log(channels)
+        })
+
+        api_get("user_friends", "@me").then(friends => {
+            console.log(friends)
         })
     }, [])
 
@@ -52,7 +62,7 @@ export default function Home() {
 
     // Render
     return (
-        <UserContext.Provider value={user_state}>
+        <>
             <Loading />
             {user && <>
                 <div className="home-page container">
@@ -88,8 +98,8 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                {settings && (<Settings setSettings={setSettings}/>)}
+                {settings && (<Settings user={user} setUser={setUser} friends={friends} setFriends={setFriends} setSettings={setSettings} />)}
             </>}
-        </UserContext.Provider>
+        </>
     )
 }

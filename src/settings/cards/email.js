@@ -1,9 +1,10 @@
 import { useRef } from "react"
+import { useNavigate } from "react-router-dom"
 
 import { api_send } from "../../api"
 import { flash_message } from "../../functions"
 
-function update_email(user, setUser, email, password, close) {
+function update_email(navigator, user, email, password) {
     if (!password.value || user.email === email.value) return
 
     api_send("user", {
@@ -18,8 +19,7 @@ function update_email(user, setUser, email, password, close) {
         }
 
         if (res.message === "200 OK") {
-            setUser({ ...user, email: email.value })
-            close()
+            
             return flash_message("Email updated!")
         }
 
@@ -28,7 +28,8 @@ function update_email(user, setUser, email, password, close) {
 }
 
 export default function Email({ props }) {
-    const { user, setUser, close } = props
+    const { user, close } = props
+    const navigator = useNavigate()
 
     const email = useRef()
     const password = useRef()
@@ -37,6 +38,7 @@ export default function Email({ props }) {
         <form className="settings-edit-card center-column-container">
             <div className="card-title-wrapper center-column-container">
                 <h2>Change your email</h2>
+                <div className="warning-wrapper">Are you sure that you want to delete your account? This will immediately log out of your account and you will not be able to log in again.</div>
                 <p className="edit-card-info">Enter a new email and your existing password.</p>
                 <button className="card-close center-container" type="button" onClick={() => close()}>
                     <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
@@ -53,7 +55,7 @@ export default function Email({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(user, setUser, email.current, password.current, close) }} value="Done" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(navigator, user, email.current, password.current) }} value="Done" />
             </div>
         </form>
     )

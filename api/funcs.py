@@ -54,14 +54,39 @@ class Functions:
         """
         Send email to a specific address
         :param dest: Destination email
-        :param message: Message you want to send
+        :param message: Message to send
         :return: None
         """
-        # Send an email
         with smtplib.SMTP("smtp.gmail.com", 587) as s:
             s.starttls()
             s.login(EMAIL, PASSWORD)
             s.sendmail(EMAIL, dest, message.as_string())
+
+    @staticmethod
+    def match_code(code):
+        """
+        Match code to a specific message
+        :param code: Code for a specific message
+        :return: Matched message or None
+        """
+        match code:
+            # Successful responses 
+            case 200: return "200 OK"
+            case 201: return "201 Created"
+            case 204: return "204 No Content"
+
+            # Client error responses
+            case 400: return "400 Invalid Body Form"
+            case 401: return "401 Unauthorized"
+            case 403: return "403 Forbidden"
+            case 404: return "404 Not Found"
+            case 405: return "405 Method Not Allowed"
+            case 406: return "406 Not Acceptable"
+            case 409: return "409 Conflict"
+            case 413: return "413 Payload Too Large"
+            case 429: return "429 Too Many Requests"            
+            
+        return None
     
 
 class Security:
@@ -98,7 +123,7 @@ class Security:
     def verify_token(db, token: str):
         """
         Verify specific token
-        :param token: Token you want to verify
+        :param token: Token to verify
         :return: ("correct" / "expired" / "signature" / "invalid", id, option if any)
         """
         option = None
@@ -142,17 +167,14 @@ class Security:
         Generate and send email with verification code
         :param email: User email
         :param name: User name
-        :param verify_code: Verification code for a user
+        :param verify_code: User verification code
         :return: None
         """
-
-        # Generate message
         message = MIMEMultipart("alternative")
         message["Subject"] = f"Your Home Chat email verification code is {verify_code}"
         message["From"] = EMAIL
         message["To"] = email
 
-        # Message body
         text = f"""
         Home Chat
 
@@ -206,7 +228,6 @@ class Security:
         message.attach(MIMEText(text, "plain"))
         message.attach(MIMEText(html, "html"))
 
-        # Send EMAIL
         Functions.send_email(email, message)
 
 
@@ -221,10 +242,12 @@ class Decorators:
         def wrapper(*args, **kwargs):
             with Database() as db:
                 kwargs["db"] = db
-                data, code = func(*args, **kwargs)
+                resp = func(*args, **kwargs)
+            
+            data, code = resp if isinstance(resp, tuple) else ({}, resp)
 
-            if not data:
-                data, code = {"message": "404 Not Found"}, 404
+            if message := Functions.match_code(code):
+                data["message"] = message
 
             return jsonify(data), code
         
@@ -242,20 +265,19 @@ class Decorators:
             verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
 
             if verify_option and verify_code == "correct":
-                return ({"message": "403 Forbidden"}, 403)
+                return 403
             
             if verify_code == "correct":
                 kwargs["user_id"] = verify_id
-                
                 return func(*args, **kwargs)
             
             if verify_code == "expired" or verify_code == "signature":
-                return ({"message": "403 Forbidden"}, 403)
+                return 403
             
             if verify_code == "invalid":
-                return ({"message": "401 Unauthorized"}, 401)
+                return 401
             
-            return (None, None)
+            return None
         
         wrapper.__name__ = func.__name__
         return wrapper
@@ -271,7 +293,7 @@ class Decorators:
             verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket", None))
 
             if not verify_option and verify_code == "correct":
-                return ({"message": "403 Forbidden"}, 403)
+                return 403
             
             if verify_code == "correct":
                 kwargs["user_id"] = verify_id
@@ -280,12 +302,12 @@ class Decorators:
                 return func(*args, **kwargs)
             
             if verify_code == "expired" or verify_code == "signature":
-                return ({"message": "403 Forbidden"}, 403)
+                return 403
             
             if verify_code == "invalid":
-                return ({"message": "401 Unauthorized"}, 401)
+                return 401
  
-            return (None, None)
+            return None
         
         
         wrapper.__name__ = func.__name__

@@ -1,9 +1,3 @@
-import React from "react"
-
-// User Data
-const UserContext = React.createContext(null)
-
-
 // API
 const api_pages = {
     auth_login: () => `api/auth/login`,
@@ -58,7 +52,6 @@ async function api_file_upload(page, data) {
 
 
 export {
-    UserContext,
     api_get,
     api_send,
     api_file_upload

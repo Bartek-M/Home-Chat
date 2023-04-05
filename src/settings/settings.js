@@ -1,5 +1,4 @@
-import { useState, useContext, useEffect } from "react";
-import { UserContext } from "../api";
+import { useState, useEffect } from "react";
 import { version, user_os } from "../functions"
 
 import PageContent from "./components/page_content";
@@ -7,21 +6,20 @@ import CardContent from "./components/card_content";
 
 
 export default function Settings(props) {
-    const { setSettings } = props
-    const { user, setUser } = useContext(UserContext)
+    const { user, setUser, friends, setFriends, setSettings } = props
 
-    const [page, setPage] = useState("account")
+    const [page, setPage] = useState("friends")
     const [card, setCard] = useState(null)
 
     // Add event listener
-    const close_settings = (e) => { 
-        if (e.key !== "Escape") return 
-        if (!card) setSettings(false) 
+    const close_settings = (e) => {
+        if (e.key !== "Escape") return
+        if (!card) setSettings(false)
         if (card) setCard(null)
     }
 
     useEffect(() => {
-        document.addEventListener("keyup", close_settings )
+        document.addEventListener("keyup", close_settings)
         return () => { document.removeEventListener("keyup", close_settings) }
     }, [card])
 
@@ -61,7 +59,7 @@ export default function Settings(props) {
 
                 <div className="settings-page scroller-container">
                     <div className="column-container" id="settings-content">
-                        <PageContent page={page} user={user} setUser={setUser} card={setCard} />
+                        <PageContent page={page} user={user} setUser={setUser} friends={friends} setFriends={setFriends} card={setCard} />
                     </div>
                     <button onClick={() => { setSettings(false) }} className="center-container" id="close-settings">
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">

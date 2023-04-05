@@ -1,8 +1,7 @@
 import { useRef, useState } from "react";
 import { api_send } from "../../api";
-import { flash_message } from "../../functions";
+import { flash_message, gen_secret } from "../../functions";
 
-const speakeasy = require("speakeasy")
 const qrcodes = require("qrcode")
 
 // Functions
@@ -81,17 +80,15 @@ export default function MFA({ props }) {
 
     // Setup MFA
     if (page) {
-        const secret = speakeasy.generateSecret({ length: 10, name: user.email, issuer: "Home Chat" })
+        const generated = gen_secret()
         const passw = password.current.value
 
-        var secret_code = ""
-        var qr_code = ""
+        const secret = generated[0]
+        const formated_code = generated[1]
 
-        secret.otpauth_url = `${secret.otpauth_url}&issuer=Home%20Chat`
-        console.log(secret.otpauth_url)
-        qrcodes.toDataURL(secret.otpauth_url, (e, data_url) => { qr_code = data_url })
-        //url = `otpauth://totp/bmroczkowski%40icloud.com?secret=${secret_code}&issuer=Home%20Chat`
-        for (let i = 0; i < secret.base32.length; i++) { if (i % 4 === 0 && i != 0) { secret_code += "-" }; secret_code += secret.base32[i] }
+        var qr_code = ""
+        const url = `otpauth://totp/${encodeURIComponent(user.email)}?secret=${secret}&issuer=Home%20Chat`
+        qrcodes.toDataURL(url, (e, data_url) => { qr_code = data_url })
 
         return (
             <form className="settings-edit-card center-column-container">
@@ -121,7 +118,7 @@ export default function MFA({ props }) {
                         </div>
                         <div className="column-container">
                             <h3 className="card-header-text">2FA key (manual entry)</h3>
-                            <p className="category-text">{secret_code}</p>
+                            <p className="category-text">{formated_code}</p>
                         </div>
                     </div>
                 </div>
@@ -136,7 +133,7 @@ export default function MFA({ props }) {
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
                             <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, passw, setPage, close, code.current, secret.base32) }} value="Activate" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, passw, setPage, close, code.current, secret) }} value="Activate" />
                         </div>
                     </div>
                 </div>
