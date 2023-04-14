@@ -1,14 +1,14 @@
-import Account from "../pages/account";
-import Security from "../pages/security";
-import Friends from "../pages/friends";
-import Appearance from "../pages/appearance";
-import Advanced from "../pages/advanced";
+import Account from "../account";
+import Security from "../security";
+import Friends from "../friends";
+import Appearance from "../appearance";
+import Advanced from "../advanced";
 
 import Loading from "../../components/loading";
 
 
 // Settings content (page)
-export default function PageContent(props) {
+export default function Page(props) {
     const { page, user } = props
 
     if (!user) return (<Loading />)

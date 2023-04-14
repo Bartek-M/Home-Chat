@@ -1,16 +1,15 @@
 import { useEffect } from "react";
 import Loading from "../../components/loading";
 
-import Username from "../cards/username";
-import Email from "../cards/email";
-import DeleteAccount from "../cards/delete_account";
+import Username from "../account/cards/username";
+import Email from "../account/cards/email";
+import DeleteAccount from "../account/cards/delete_account";
 
-import Password from "../cards/password";
-import MFA from "../cards/mfa";
-
+import Password from "../security/cards/password";
+import MFA from "../security/cards/mfa";
 
 // Card content (edit card)
-export default function CardContent(props) {
+export default function Card(props) {
     const { card, user, close } = props
 
     // Add event listeners

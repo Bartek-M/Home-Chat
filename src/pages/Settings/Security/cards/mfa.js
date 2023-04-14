@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import { api_send } from "../../api";
-import { flash_message, gen_secret } from "../../functions";
+
+import { api_send } from "../../../api";
+import { flash_message, gen_secret } from "../../../functions";
 
 const qrcodes = require("qrcode")
 

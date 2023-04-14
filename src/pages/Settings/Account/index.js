@@ -1,4 +1,5 @@
 import { useRef } from "react"
+
 import { api_file_upload } from "../../api"
 import { flash_message } from "../../functions"
 
@@ -48,14 +49,14 @@ export default function Account({ props }) {
                             <p className="category-text">USERNAME</p>
                             <p>{user.name}<span className="user-tag">#{user.tag}</span></p>
                         </div>
-                        <button className="settings-btn stng-edit-btn" onClick={() => card("username")}>Edit</button>
+                        <button className="edit-settings-btn" onClick={() => card("username")}>Edit</button>
                     </div>
                     <div className="spaced-container">
                         <div className="column-container">
                             <p className="category-text">EMAIL</p>
                             <p>{user.email}</p>
                         </div>
-                        <button className="settings-btn stng-edit-btn" onClick={() => card("email")}>Edit</button>
+                        <button className="edit-settings-btn" onClick={() => card("email")}>Edit</button>
                     </div>
                 </div>
             </div>
@@ -65,7 +66,7 @@ export default function Account({ props }) {
                     <p className="category-text">USER ID</p>
                     <p>{user.id}</p>
                 </div>
-                <button className="settings-btn stng-action-btn" onClick={() => { 
+                <button className="action-settings-btn " onClick={() => { 
                     try { navigator.clipboard.writeText(user.id) } catch { return flash_message("Something went wrong!", "error")}
                     flash_message("ID Copied!") 
                 }}>Copy</button>
@@ -75,7 +76,7 @@ export default function Account({ props }) {
                     <p className="category-text">ACCOUNT REMOVAL</p>
                     <p>Delete your account (This action can not be reverted!)</p>
                 </div>
-                <button className="settings-btn stng-warning-btn" onClick={() => card("delete_account")}>Delete Account</button>
+                <button className="warning-settings-btn" onClick={() => card("delete_account")}>Delete Account</button>
             </div>
         </>
     )

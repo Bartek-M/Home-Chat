@@ -13,9 +13,6 @@ db.sqlite
 package.json
 package-lock.json
 
-babel.config.json
-webpack.config.js
-
 main.js
 main.js.LICENSE.txt
 

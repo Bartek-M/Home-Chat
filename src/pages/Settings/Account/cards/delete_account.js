@@ -1,8 +1,8 @@
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../../api";
-import { flash_message } from "../../functions";
+import { api_send } from "../../../api";
+import { flash_message } from "../../../functions";
 
 // Functions
 function submit_delete(navigator, user, password, setPage, code) {

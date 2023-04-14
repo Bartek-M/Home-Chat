@@ -5,8 +5,9 @@ import os
 import pyotp
 from flask import Blueprint, request, send_file
 from multiprocessing import Process
+from PIL import Image
 
-from .funcs import AVATARS_FOLDER, VERIFY_ACCESS, MFA_ACCESS
+from .funcs import AVATARS_FOLDER, VERIFY_ACCESS, MFA_ACCESS, IMAGE_SIZE
 from .funcs import Functions, Security, Decorators 
 from .database import *
 
@@ -28,7 +29,6 @@ class Auth:
         if settings := db.get_user(request.json.get("email")):
             user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
             
-            # Check password
             if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) == user_secrets.password:
                 # User not verified, has to pass a verification code
                 if db.get_entry(USER_TABLE, settings.id).verified == 0:
@@ -197,6 +197,28 @@ class Users:
         return None
     
 
+    # POST
+    @users.route("/search", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def search_users(db, user_id):
+        if not (username := request.json.get("username")) or len((tag := request.json.get("tag"))) != 4:
+            return ({
+                "errors": {
+                    "username": "Username or tag is invalid",
+                    "tag": "Username or tag is invalid."
+                }
+            }, 400)
+        
+        if not (user := db.get_user(f"{username}#{tag}", "name")):
+            return 404
+    
+        friend = db.get_user_stuff([user_id, user.id], "friend")
+        friend_accepted = friend.accepted if friend else None
+
+        return ({"user": {**user.__dict__, "accepted": friend_accepted}}, 200)
+        
+
     # PATCH
     @users.route("/<user_id>", methods=["PATCH"])
     @Decorators.manage_database
@@ -308,6 +330,14 @@ class Users:
         
         # Wrong option  
         return ({"errors": {"option": "Invalid option"}}, 400)
+    
+    @users.route("/<user_id>/settings/friends", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def manage_friends(db, user_id):
+        print(request.json.get("friend"))
+        print(request.json.get("action"))
+        return 200
 
     @users.route("/<user_id>/delete", methods=["PATCH"])
     @Decorators.manage_database
@@ -347,6 +377,7 @@ class Images:
         except:
             return send_file(f"{AVATARS_FOLDER}generic.webp", mimetype=image_id)
 
+
     @images.route("/avatar", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
@@ -354,13 +385,28 @@ class Images:
         if not (file := request.files.get("image")):
             return ({"errors": {"image": "No image"}}, 400)
         
+        try:
+            img = Image.open(file)
+        except:
+            return ({"errors": {"image": "Invalid image format"}}, 400)
+
+        width, height = img.size
+
+        if width > height:
+            left_right = int(((height - width) * -1) / 2)
+            img = img.crop((left_right, 0, width-left_right, height))
+        else:
+            top_bottom = int(((width - height) * -1) / 2)
+            img = img.crop((0, top_bottom, width, height - top_bottom))
+        
+        img = img.resize(IMAGE_SIZE)
         user_avatar = db.get_entry(USER_TABLE, user_id).avatar
 
         if user_avatar != "generic" and os.path.isfile(f"{AVATARS_FOLDER}{user_avatar}.webp"): 
             os.remove(f"{AVATARS_FOLDER}{user_avatar}.webp")
         
         file_name = f"{user_id}{secrets.token_hex(2)}"
-        file.save(f"{AVATARS_FOLDER}{file_name}.webp")
+        img.save(f"{AVATARS_FOLDER}{file_name}.webp")
         db.update_entry(USER_TABLE, user_id, "avatar", file_name)
 
         return ({"image": file_name}, 200)

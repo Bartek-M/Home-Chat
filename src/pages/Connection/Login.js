@@ -1,8 +1,8 @@
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../api"
-import { flash_message } from "../functions"
+// import { api_send } from "../api"
+// import { flash_message } from "../functions"
 
 function submit(navigator, setCodePage, email, password) {
     if (!email.value || !password.value) return
@@ -76,7 +76,7 @@ function verify(navigator, auth_code) {
     })
 }
 
-export default function Login() {
+export function Login() {
     const [codePage, setCodePage] = useState(null)
     const navigator = useNavigate()
 

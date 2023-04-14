@@ -1,7 +1,7 @@
 import { useState, useRef } from "react"
 
-import { api_send } from "../../api"
-import { flash_message } from "../../functions"
+import { api_send } from "../../../api"
+import { flash_message } from "../../../functions"
 
 // Function
 function update_password(user, password, new_password, confirm_password, close, setPage, code) {

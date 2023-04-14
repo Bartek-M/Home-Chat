@@ -1,8 +1,8 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../../api"
-import { flash_message } from "../../functions"
+import { api_send } from "../../../api"
+import { flash_message } from "../../../functions"
 
 function update_email(navigator, user, email, password) {
     if (!password.value || user.email === email.value) return

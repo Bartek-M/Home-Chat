@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { version, user_os } from "../functions"
 
-import PageContent from "./components/page_content";
-import CardContent from "./components/card_content";
-
+import Page from "./components/page";
+import Card from "./components/card";
 
 export default function Settings(props) {
     const { user, setUser, friends, setFriends, setSettings } = props
@@ -59,7 +58,7 @@ export default function Settings(props) {
 
                 <div className="settings-page scroller-container">
                     <div className="column-container" id="settings-content">
-                        <PageContent page={page} user={user} setUser={setUser} friends={friends} setFriends={setFriends} card={setCard} />
+                        <Page page={page} user={user} setUser={setUser} friends={friends} setFriends={setFriends} card={setCard} />
                     </div>
                     <button onClick={() => { setSettings(false) }} className="center-container" id="close-settings">
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
@@ -71,7 +70,7 @@ export default function Settings(props) {
             {card && (
                 <div className="edit-card-wrapper center-container absolute-container">
                     <div className="absolute-container" id="edit-card-overlay"></div>
-                    <CardContent card={card} user={user} setUser={setUser} close={setCard} />
+                    <Card card={card} user={user} setUser={setUser} close={setCard} />
                 </div>
             )}
         </>

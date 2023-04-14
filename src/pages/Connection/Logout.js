@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-import Loading from "../components/loading"
+import Loading from "../../components/loading"
 
-export default function Logout() {
+export function Logout() {
     const navigator = useNavigate()
 
     useEffect(() => {

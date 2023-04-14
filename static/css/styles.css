@@ -174,7 +174,6 @@ input {
 }
 
 button:hover { cursor: pointer; }
-button:hover svg { fill: var(--BLUE) }
 
 a { 
     color: var(--FONT_COLOR); 
@@ -222,8 +221,16 @@ a {
 .absolute-container { 
     position: absolute; 
     top: 0;
-    left: 0; right: 0; bottom: 0;}
-.scroller-container { position: relative; overflow-y: scroll; overflow-x: hidden } 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+}
+
+.scroller-container { 
+    position: relative; 
+    overflow-y: scroll; 
+    overflow-x: hidden 
+} 
 
 /* separators */
 .separator { 
@@ -237,7 +244,7 @@ a {
 
 /* category text */
 .category-text { 
-    margin-bottom: .25rem;
+    margin-bottom: 0.25rem;
     font-weight: 700; 
     font-size: 0.75rem; 
     color: var(--FONT_DIM_COLOR); 
@@ -246,6 +253,13 @@ a {
 .error-category-text { 
     font-weight: 500; 
     color: var(--ERROR_FONT_COLOR)
+}
+
+.extended-category-text {
+    margin: 0 0 0.5rem 0.625rem;
+    font-weight: 700; 
+    font-size: 0.75rem; 
+    color: var(--FONT_DIM_COLOR); 
 }
 
 /* inputs */
@@ -296,7 +310,7 @@ a {
     background-color: var(--MAIN_COLOR);
 }
 .main-sidebar::-webkit-scrollbar { display: none; }
-.main-sidebar-elements { width: 100%; }
+.main-sidebar-elements { width: 100%; gap: 0.5rem }
 
 .main-sidebar-item { pointer-events: none; }
 .main-sidebar-item:hover .main-sidebar-pill { height: 20px; }
@@ -508,6 +522,7 @@ a {
     border-radius: 50%;
 }
 #close-settings:hover { border-color: var(--BLUE); }
+#close-settings:hover svg { fill: var(--BLUE) }
 
 /* responsive settings */
 @media screen and (max-width: 700px) {
@@ -533,6 +548,7 @@ a {
     .settings-page::-webkit-scrollbar { display: none; }
 
     #settings-dropdown-btn { display: flex; }
+    #settomgs-dropdown-btn:hover svg { fill: var(--BLUE) }
     #settings-content { padding: 20px 1rem; }
 }
 
@@ -544,21 +560,34 @@ a {
     background-color: var(--COLOR_3);
 }
 
-.settings-btn {
+[class*="settings-btn"] {
     font-size: 0.875rem;
     padding: 2px 16px;
     margin-top: 0.75rem;
     border-radius: 4px;
-    min-height: 32px;
+    min-height: 32px
 }
 
-.stng-edit-btn { background-color: var(--BUTTON); color: var(--FONT_COLOR); min-width: 60px; max-width: fit-content; }
-.stng-warning-btn { border: 2px solid var(--RED_BUTTON); width: max-content; }
-.stng-action-btn { border: 2px solid var(--BLUE); width: max-content; }
+.edit-settings-btn { 
+    background-color: var(--BUTTON); 
+    color: var(--FONT_COLOR);
+    min-width: 60px; 
+    max-width: fit-content
+}
 
-.stng-edit-btn:hover { background-color: var(--BUTTON_HOVER); }
-.stng-warning-btn:hover { background-color: var(--RED_BUTTON); color: var(--FONT_COLOR) }
-.stng-action-btn:hover { background-color: var(--BLUE); color: var(--FONT_COLOR)}
+.warning-settings-btn { 
+    border: 2px solid var(--RED_BUTTON); 
+    width: max-content
+}
+
+.action-settings-btn { 
+    border: 2px solid var(--BLUE); 
+    width: max-content
+}
+
+.edit-settings-btn:hover { background-color: var(--BUTTON_HOVER); }
+.warning-settings-btn:hover { background-color: var(--RED_BUTTON); color: var(--FONT_COLOR) }
+.action-settings-btn:hover { background-color: var(--BLUE); color: var(--FONT_COLOR)}
 
 .settings-full-btn {
     width: 100%;
@@ -640,21 +669,55 @@ a {
 }
 
 /* settings security */
-#visibility-public { min-width: 78px; background-color: var(--GREEN); color: var(--FONT_COLOR);}
+#visibility-public { 
+    min-width: 78px;
+    background-color: var(--GREEN); 
+    color: var(--FONT_COLOR);
+}
 #visibility-public:hover { background-color: var(--DIM_GREEN);}
 
-#visibility-private { min-width: 78px; background-color: var(--RED_BUTTON); color: var(--FONT_COLOR);}
+#visibility-private { 
+    min-width: 78px; 
+    background-color: var(--RED_BUTTON);
+    color: var(--FONT_COLOR);}
 #visibility-private:hover { background-color: var(--RED_BUTTON_HOVER); }
 
 /* settings friends */
-.friend-list-wrapper {
-    gap: 0.5rem;
+.friend-card { 
+    padding: 0.625rem 0;
+    margin: 0 0.625rem;
+    border-top: 1px solid var(--BUTTON_HOVER);
+    animation: show 0.17s;
 }
 
-.friend-card {
+.friend-card:hover { 
+    padding: 0.625rem;
+    margin: 0;
+    background-color: var(--BUTTON_HOVER); 
+    border-color: transparent;
     border-radius: 8px;
+    cursor: pointer; 
+}
+.friend-card:hover+.friend-card { border-color: transparent; }
+
+.friend-icon {
+    height: 32px;
+    width: 32px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+[class*="friend-btn"] {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     background-color: var(--MAIN_COLOR);
 }
+
+.message-friend-btn:hover svg { fill: var(--BLUE) }
+.add-friend-btn:hover svg { fill: var(--GREEN); }
+.confirm-friend-btn:hover svg { fill: var(--WARNING); }
+.remove-friend-btn:hover svg { fill: var(--RED_BUTTON); }
 
 
 /* [EDIT CARD] */

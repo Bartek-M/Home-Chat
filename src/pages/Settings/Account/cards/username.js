@@ -1,7 +1,7 @@
 import { useRef } from "react"
 
-import { api_send } from "../../api"
-import { flash_message } from "../../functions"
+import { api_send } from "../../../api"
+import { flash_message } from "../../../functions"
 
 function update_username(user, setUser, name, password, close) {
     if (!password.value || user.name == name.value) return

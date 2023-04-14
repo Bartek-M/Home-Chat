@@ -9,11 +9,13 @@ const api_pages = {
     channel_messages: (value) => `/api/channels/${value}/messages/`,
 
     user: (value) => `/api/users/${value}/`,
+    user_search: () => `/api/users/search/`,
     user_channels: (value) => `/api/users/${value}/channels/`,
     user_friends: (value) => `/api/users/${value}/friends/`,
     user_settings: (value) => `/api/users/${value}/settings/`,
 
     user_mfa: (value) => `/api/users/${value}/settings/mfa`,
+    user_manage_friend: (value) => `/api/users/${value}/settings/friends`,
     user_delete: (value) => `api/users/${value}/delete`,
 
     avatar: () => `/api/images/avatar/`

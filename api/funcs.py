@@ -18,6 +18,7 @@ load_dotenv(dotenv_path="./api/.env")
 
 AVATARS_FOLDER = "./api/assets/avatars/"
 ICONS_FOLDER = "./api/assets/channel_icons/"
+IMAGE_SIZE = (256, 256)
 
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 EMAIL = os.getenv("EMAIL")

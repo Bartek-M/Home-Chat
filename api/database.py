@@ -56,7 +56,7 @@ class Database:
                 user_id TEXT, channel_id TEXT UNIQUE, nick TEXT, position TEXT
             )""",
             f"""{USER_FRIENDS_TABLE} (
-                user_id TEXT, friend_id TEXT, accepted TEXT
+                user_id TEXT, friend_id TEXT, accepted TEXT 
             )""",
             f"""{USER_SETTING_TABLE} (
                 id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER
@@ -101,12 +101,12 @@ class Database:
         if option == "name":
             if len(username := search.split("#")) != 2: 
                 return None
-
-            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name=? AND tag=? AND visibilit='public'", [username[0], username[1]])
+            
+            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name=? AND tag=? AND visibility=1", [username[0], username[1]])
 
             if fetched := self.cursor.fetchone():
                 return User(*fetched)
-
+            
         return None
 
     def get_user_stuff(self, req_id, option):
@@ -133,13 +133,35 @@ class Database:
                 )
                         
         if option == "friends":
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
+            friends = {}
 
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=? AND accepted='waiting'", [req_id, req_id])
             if fetched := self.cursor.fetchall():
-                return sorted(
-                    [self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__ for friend in fetched], 
+                friends["pending"] = sorted(
+                    [
+                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2]} 
+                        for friend in fetched 
+                    ], 
                     key=lambda x: x.get("name")
                 )
+
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=? AND accepted!='waiting'", [req_id, req_id])
+            if fetched := self.cursor.fetchall():
+                friends["accepted"] = sorted(
+                    [
+                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2]} 
+                        for friend in fetched 
+                    ], 
+                    key=lambda x: x.get("name")
+                )
+            
+            return friends
+        
+        if option == "friend":
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND (user_id=? OR friend_id=?)", [*req_id, *req_id])
+
+            if fetched := self.cursor.fetchone():
+                return {**(self.get_entry(USER_TABLE, fetched[0] if fetched[0] != req_id else fetched[1]).__dict__), "accepted": fetched[2]} 
  
         return []
 

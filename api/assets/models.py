@@ -70,7 +70,7 @@ class UserFriend:
     """
     user_id: str
     friend_id: str
-    accepted: str = "waiting" # waiting | accepted | not-accepted
+    accepted: str = "waiting" # waiting | accepted_time
 
     def marks(self):
         return "?, ?, ?"

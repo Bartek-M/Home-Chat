@@ -1,0 +1,14 @@
+{
+    "version": "b9a6964",
+    "os_list": {
+        "Windows NT 10.0": "Windows 10",
+        "Windows NT 6.2": "Windows 8",
+        "Windows NT 6.1": "Windows 7",
+        "Windows NT 6.0": "Windows Vista",
+        "Windows NT 5.1": "Windows XP",
+        "Windows NT 5.0": "Windows 2000",
+        "Mac": "Mac / iOS",
+        "X11": "UNIX",
+        "Linux": "Linux"
+    }
+}
