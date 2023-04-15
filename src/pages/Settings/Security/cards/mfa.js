@@ -1,7 +1,5 @@
 import { useRef, useState } from "react";
-
-import { api_send } from "../../../api";
-import { flash_message, gen_secret } from "../../../functions";
+import { api_send, flash_message, gen_secret } from "../../../../utils";
 
 const qrcodes = require("qrcode")
 
@@ -53,7 +51,7 @@ function disable_mfa(user, setUser, code, close) {
 }
 
 // Render
-export default function MFA({ props }) {
+export function MFA({ props }) {
     const { user, setUser, close } = props
     const [page, setPage] = useState(null)
 

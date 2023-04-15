@@ -1,5 +1,4 @@
-// Loading screen
-export default function Loading() {
+export function Loading() {
     return (
         <div className="center-container absolute-container" id="loading-screen-wrapper">
             <div className="center-column-container" id="loading-screen">

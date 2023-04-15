@@ -1,7 +1,5 @@
 import { useState, useRef } from "react"
-
-import { api_send } from "../../../api"
-import { flash_message } from "../../../functions"
+import { api_send, flash_message } from "../../../../utils";
 
 // Function
 function update_password(user, password, new_password, confirm_password, close, setPage, code) {
@@ -41,7 +39,7 @@ function update_password(user, password, new_password, confirm_password, close, 
     })
 }
 
-export default function Password({ props }) {
+export function Password({ props }) {
     const { user, close } = props
     const [page, setPage] = useState(null)
 

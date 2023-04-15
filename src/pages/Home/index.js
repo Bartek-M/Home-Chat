@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom"
 
-import { api_get } from "../api";
-import { app_theme, prefered_theme, flash_message } from "../functions";
+import { api_get, app_theme, prefered_theme, flash_message } from "../../utils/";
 
-import Settings from "../settings/settings";
-import Loading from "../components/loading";
+import Settings from "../Settings/";
+import { Loading } from "../../components/"
 
 export default function Home() {
     const [settings, setSettings] = useState(false)
@@ -33,7 +32,11 @@ export default function Home() {
                 if (!loading_screen_wrapper) return
 
                 loading_screen_wrapper.classList.add("deactive")
-                setTimeout(() => { loading_screen_wrapper.innerHTML = null; loading_screen_wrapper.remove() }, 170)
+                setTimeout(() => { 
+                    if (!loading_screen_wrapper) return
+                    loading_screen_wrapper.innerHTML = null; 
+                    loading_screen_wrapper.remove() 
+                }, 170)
             }, 250)
         })
 

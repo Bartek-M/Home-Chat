@@ -1,8 +1,7 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../../../api"
-import { flash_message } from "../../../functions"
+import { api_send, flash_message } from "../../../../utils"
 
 function update_email(navigator, user, email, password) {
     if (!password.value || user.email === email.value) return
@@ -27,7 +26,7 @@ function update_email(navigator, user, email, password) {
     })
 }
 
-export default function Email({ props }) {
+export function Email({ props }) {
     const { user, close } = props
     const navigator = useNavigate()
 

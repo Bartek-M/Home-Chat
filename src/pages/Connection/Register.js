@@ -1,8 +1,7 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-// import { api_send } from "../api"
-// import { flash_message } from "../functions"
+import { api_send, flash_message } from "../../utils/"
 
 function submit(navigator, email, username, password) {
     if (!email.value || !username.value || !password.value) return

@@ -1,7 +1,9 @@
 import { useRef } from "react"
+import { api_file_upload, flash_message } from "../../../utils"
 
-import { api_file_upload } from "../../api"
-import { flash_message } from "../../functions"
+export { Email } from "./cards/email"
+export { Username } from "./cards/username"
+export { DeleteAccount } from "./cards/delete_account"
 
 function change_avatar(file, user, setUser) {
     const user_file = file.files[0]

@@ -1,8 +1,7 @@
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../../../api";
-import { flash_message } from "../../../functions";
+import { api_send, flash_message } from "../../../../utils"
 
 // Functions
 function submit_delete(navigator, user, password, setPage, code) {
@@ -28,7 +27,7 @@ function submit_delete(navigator, user, password, setPage, code) {
     })
 }
 
-export default function DeleteAccount({ props }) {
+export function DeleteAccount({ props }) {
     const { user, close } = props
 
     const [page, setPage] = useState(null)

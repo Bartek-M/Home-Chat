@@ -1,5 +1,4 @@
-import { api_send } from "../../api"
-import { flash_message } from "../../functions"
+import { api_send, flash_message } from "../../../utils"
 
 // Functions
 function set_theme(user, setUser, theme) {

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { version, user_os } from "../functions"
+import { version, user_os } from "../../utils/"
 
-import Page from "./components/page";
-import Card from "./components/card";
+import Page from "./content_page"
+import Card from "./content_card";
 
 export default function Settings(props) {
     const { user, setUser, friends, setFriends, setSettings } = props
 
-    const [page, setPage] = useState("friends")
+    const [page, setPage] = useState("account")
     const [card, setCard] = useState(null)
 
     // Add event listener

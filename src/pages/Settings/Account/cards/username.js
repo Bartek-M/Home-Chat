@@ -1,7 +1,5 @@
 import { useRef } from "react"
-
-import { api_send } from "../../../api"
-import { flash_message } from "../../../functions"
+import { api_send, flash_message } from "../../../../utils"
 
 function update_username(user, setUser, name, password, close) {
     if (!password.value || user.name == name.value) return
@@ -26,7 +24,7 @@ function update_username(user, setUser, name, password, close) {
     })
 }
 
-export default function Username({ props }) {
+export function Username({ props }) {
     const { user, setUser, close } = props
 
     const username = useRef()

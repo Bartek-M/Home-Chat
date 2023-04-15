@@ -1,11 +1,10 @@
-import Account from "../account";
-import Security from "../security";
-import Friends from "../friends";
-import Appearance from "../appearance";
-import Advanced from "../advanced";
+import Account from "./Account/"
+import Security from "./Security/"
+import Friends from "./Friends"
+import Appearance from "./Appearance/"
+import Advanced from "./Advanced/"
 
-import Loading from "../../components/loading";
-
+import { Loading } from "../../components/"
 
 // Settings content (page)
 export default function Page(props) {

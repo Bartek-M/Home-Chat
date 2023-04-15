@@ -1,7 +1,7 @@
 // Generate 16 letter secret code
 const base32_alph = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
-function gen_secret() {
+export function gen_secret() {
     let secret = ""
     let formated = ""
 
@@ -17,7 +17,7 @@ function gen_secret() {
 }
 
 // Convert EPOCH time to local
-function format_time(time, format = "full") {
+export function format_time(time, format = "full") {
     time = parseFloat(time)
     let date = new Date(time * 1000)
 

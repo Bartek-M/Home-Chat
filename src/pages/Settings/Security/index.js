@@ -1,5 +1,7 @@
-import { api_send } from "../../api"
-import { flash_message } from "../../functions"
+import { api_send, flash_message } from "../../../utils"
+
+export { MFA } from "./cards/mfa"
+export { Password } from "./cards/password"
 
 // Functions
 function set_visibility(user, setUser) {

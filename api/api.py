@@ -83,9 +83,10 @@ class Auth:
         
         current_time = time.time() 
         id = Functions.create_id(current_time)
-        verify_code = secrets.token_hex(3).upper()
+        verify_code = "123456"
+        # verify_code = secrets.token_hex(3).upper()
 
-        Process(target=Security.send_verification, args=(email, username, verify_code)).start()
+        # Process(target=Security.send_verification, args=(email, username, verify_code)).start()
 
         db.insert_entry(USER_TABLE, User(id, username, tag, "generic", current_time))
         db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))

@@ -1,7 +1,5 @@
 import { useRef, useState } from "react"
-
-import { api_send } from "../../api"
-import { flash_message, format_time } from "../../functions"
+import { api_send, flash_message, format_time } from "../../../utils"
 
 function search_user(username, setSearchUser) {
     if (!username.value) return

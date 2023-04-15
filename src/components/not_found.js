@@ -1,4 +1,4 @@
-export default function NotFound() {
+export function NotFound() {
     return (
         <div className="not-found center-column-container">
             <h2 className="not-found-error">404</h2>
