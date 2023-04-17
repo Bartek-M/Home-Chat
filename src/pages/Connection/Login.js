@@ -9,7 +9,7 @@ function submit(navigator, setCodePage, email, password) {
     api_send("auth_login", {
         email: email.value,
         password: password.value
-    }).then(res => {
+    }, "POST").then(res => {
         // Some errors about email or password
         if (res.errors) {
             document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
@@ -49,7 +49,7 @@ function verify(navigator, auth_code) {
     api_send("auth_verify", {
         code: auth_code.value,
         ticket: localStorage.getItem("ticket"),
-    }).then(res => {
+    }, "POST").then(res => {
         // Code errors
         if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
 
@@ -95,7 +95,7 @@ export function Login() {
                     <form>
                         <div className="column-container">
                             <p className="category-text">ENTER HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                            <input className="input-field" type="text" ref={auth_code} key="mfa-inpt" maxLength={10} required />
+                            <input className="input-field" autoFocus type="text" ref={auth_code} key="mfa-inpt" maxLength={10} required />
                         </div>
                         <p className="login-redirect"><a className="link" href="recovery/mfa">Don't have any access to auth codes?</a></p>
 
@@ -117,7 +117,7 @@ export function Login() {
                     <form>
                         <div className="column-container">
                             <p className="category-text">ENTER CODE FROM YOUR EMAIL <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                            <input className="input-field" type="text" ref={auth_code} key="verify-inpt" maxLength={10} required />
+                            <input className="input-field" autoFocus type="text" ref={auth_code} key="verify-inpt" maxLength={10} required />
                         </div>
 
                         <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(navigator, auth_code.current) }} value="LOG IN" />
@@ -137,7 +137,7 @@ export function Login() {
                 <form>
                     <div className="column-container">
                         <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
-                        <input className="input-field" type="email" defaultValue={user_email} ref={email} maxLength={100} required />
+                        <input className="input-field" autoFocus type="email" defaultValue={user_email} ref={email} maxLength={100} required />
                     </div>
                     <div className="column-container">
                         <p className="category-text">PASSWORD <span className="error-category-text" id="password-error">*</span></p>

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-import Home from "./pages/Home/";
+import { Home } from "./pages/Home/";
 import { Login, Logout, Register } from "./pages/Connection/"
 import { NotFound } from "./components/";
 

@@ -10,7 +10,7 @@ function update_email(navigator, user, email, password) {
         category: "email",
         data: email.value,
         password: password.value
-    }, "@me").then(res => {
+    }, "PATCH", "@me").then(res => {
         if (res.errors) {
             document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
             document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
@@ -27,7 +27,9 @@ function update_email(navigator, user, email, password) {
 }
 
 export function Email({ props }) {
-    const { user, close } = props
+    const { close } = props
+    const [user, setUser] = useUser()
+
     const navigator = useNavigate()
 
     const email = useRef()
@@ -47,7 +49,7 @@ export function Email({ props }) {
             </div>
             <div className="column-container">
                 <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
-                <input className="input-field" type="email" ref={email} defaultValue={user.email} maxLength={50} required />
+                <input className="input-field" autoFocus type="email" ref={email} defaultValue={user.email} maxLength={50} required />
 
                 <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error">*</span></p>
                 <input className="input-field" type="password" ref={password} maxLength={50} required />

@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
+import { useUser } from "../../../../context"
 import { api_send, flash_message } from "../../../../utils"
 
 // Functions
@@ -10,7 +11,7 @@ function submit_delete(navigator, user, password, setPage, code) {
     api_send("user_delete", {
         password: password,
         code: code ? code.value : null
-    }, "@me").then(res => {
+    }, "DELETE", "@me").then(res => {
         if (res.errors) {
             if (!code && user.mfa_enabled && !res.errors.password) { return setPage("mfa") }
             if (!code && res.errors.password) return document.getElementById("password-error").innerText = `- ${res.errors.password}`
@@ -28,10 +29,11 @@ function submit_delete(navigator, user, password, setPage, code) {
 }
 
 export function DeleteAccount({ props }) {
-    const { user, close } = props
-
-    const [page, setPage] = useState(null)
+    const { close } = props
     const navigator = useNavigate()
+
+    const [user, setUser] = useUser() 
+    const [page, setPage] = useState(null)
 
     const password = useRef()
     const code = useRef()
@@ -44,7 +46,7 @@ export function DeleteAccount({ props }) {
                 </div>
                 <div className="column-container">
                     <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                    <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
+                    <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
                 </div>
                 <div className="card-submit-wrapper">
                     <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
@@ -62,7 +64,7 @@ export function DeleteAccount({ props }) {
             </div>
             <div className="column-container">
                 <p className="category-text">PASSWORD <span className="error-category-text" id="password-error">*</span></p>
-                <input className="input-field small-card-field" type="password" ref={password} maxLength={50} required />
+                <input className="input-field small-card-field" autoFocus type="password" ref={password} maxLength={50} required />
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>

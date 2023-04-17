@@ -204,12 +204,7 @@ class Users:
     @Decorators.auth
     def search_users(db, user_id):
         if not (username := request.json.get("username")) or len((tag := request.json.get("tag"))) != 4:
-            return ({
-                "errors": {
-                    "username": "Username or tag is invalid",
-                    "tag": "Username or tag is invalid."
-                }
-            }, 400)
+            return ({"errors": {"username": "Username or tag is invalid."}}, 400)
         
         if not (user := db.get_user(f"{username}#{tag}", "name")):
             return 404
@@ -218,7 +213,23 @@ class Users:
         friend_accepted = friend.accepted if friend else None
 
         return ({"user": {**user.__dict__, "accepted": friend_accepted}}, 200)
+    
+    @users.route("/<user_id>/friends/add", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def add_friend(db, user_id):
+        if not (friend_id := request.json.get("friend")):
+            return ({"errors": {"friend": "No friend"}}, 400)
+
+        if friend_id == user_id: 
+            return ({"errors": {"friend": "Invalid friend"}}, 406)
         
+        if not db.get_entry(USER_TABLE, friend_id):
+            return ({"errors": {"friend": "User does not exist"}}, 400)
+        
+        db.insert_entry(USER_FRIENDS_TABLE, UserFriend(user_id, friend_id))
+        return 200
+
 
     # PATCH
     @users.route("/<user_id>", methods=["PATCH"])
@@ -311,7 +322,7 @@ class Users:
                 pyotp.TOTP(secret).now()
             except:
                 return ({"errors": {"secret": "Invalid two-factor secret"}}, 400)
-
+            
             if not pyotp.TOTP(secret).verify((request.json.get("code"))):
                 return ({"errors": {"code": "Invalid two-factor code"}}, 400)
             
@@ -332,15 +343,31 @@ class Users:
         # Wrong option  
         return ({"errors": {"option": "Invalid option"}}, 400)
     
-    @users.route("/<user_id>/settings/friends", methods=["PATCH"])
+    @users.route("/<user_id>/friends/confirm", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
-    def manage_friends(db, user_id):
-        print(request.json.get("friend"))
-        print(request.json.get("action"))
-        return 200
+    def confirm_friend(db, user_id):
+        if not (friend_id := request.json.get("friend")):
+            return ({"errors": {"friend": "No friend"}}, 400)
 
-    @users.route("/<user_id>/delete", methods=["PATCH"])
+        if friend_id == user_id: 
+            return ({"errors": {"friend": "Invalid friend"}}, 406)
+        
+        if not db.get_entry(USER_TABLE, friend_id):
+            return ({"errors": {"friend": "User does not exist"}}, 400)
+
+        if not (friend := db.get_user_stuff([user_id, friend_id], "friend")):
+            return ({"errors": {"friend": "No friend connection"}}, 400)
+        
+        if friend.accepted != "waiting":
+            return ({"errors": {"friend": "Already confirmed"}}, 406)
+        
+        db.update_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "accepted", time.time(), "friend")
+        return 200
+    
+    
+    # DELETE
+    @users.route("/<user_id>/delete", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
     def delete_account(db, user_id):
@@ -361,6 +388,26 @@ class Users:
         db.delete_entry(USER_FRIENDS_TABLE, user_id, "user_friends")
         db.delete_entry(USER_CHANNEL_TABLE, user_id, "user_channels")
 
+        return 200
+    
+    @users.route("/<user_id>/friends/remove", methods=["DELETE"])
+    @users.route("/<user_id>/friends/decline", methods=["DELETE"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def remove_friend(db, user_id):
+        if not (friend_id := request.json.get("friend")):
+            return ({"errors": {"friend": "No friend"}}, 400)
+
+        if friend_id == user_id: 
+            return ({"errors": {"friend": "Invalid friend"}}, 406)
+        
+        if not db.get_entry(USER_TABLE, friend_id):
+            return ({"errors": {"friend": "User does not exist"}}, 400)
+
+        if not db.get_user_stuff([user_id, friend_id], "friend"):
+            return ({"errors": {"friend": "No friend connection"}}, 400)
+        
+        db.delete_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "user_friend")
         return 200
 
 

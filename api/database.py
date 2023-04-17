@@ -211,7 +211,7 @@ class Database:
         self.cursor.execute(f"INSERT INTO {table} VALUES ({entry.marks()})", list(entry.__dict__.values()))
         self.conn.commit()
 
-    def update_entry(self, table, req_id, entry, data):
+    def update_entry(self, table, req_id, entry, data, option=None):
         """
         Update specific entry
         :param table: Table to update
@@ -220,7 +220,12 @@ class Database:
         :param data: Updated data to insert
         :return: None
         """
-        self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
+        if option is None:
+            self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
+        
+        if option == "friend":
+            self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE (user_id=? OR friend_id=?) AND (user_id=? OR friend_id=?)", [data, *req_id, *req_id])
+        
         self.conn.commit()
 
     def delete_entry(self, table, req_id, option=None):
@@ -233,12 +238,20 @@ class Database:
         """
         if option is None:
             self.cursor.execute(f"DELETE FROM {table} WHERE id=?", [req_id])
+
+        if option == "channel":
+            self.cursor.execute(f"DELETE FROM {CHANNEL_TABLE} WHERE id=?", [req_id])
+            self.cursor.execute(f"DELETE FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
+            self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE channel_id=?", [req_id])
         
         if option == "user_channels":
             self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
 
         if option == "user_friends":
             self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
+
+        if option == "user_friend":
+            self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND (user_id=? OR friend_id=?)", [*req_id, *req_id])
 
         self.conn.commit()
 

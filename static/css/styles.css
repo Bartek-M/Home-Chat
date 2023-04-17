@@ -683,11 +683,23 @@ a {
 #visibility-private:hover { background-color: var(--RED_BUTTON_HOVER); }
 
 /* settings friends */
+.friend-search-wrapper {
+    height: 20px;
+    margin-bottom: 1rem;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: var(--MAIN_COLOR);
+    color: var(--FONT_RV_COLOR);
+}
+
+.friend-search-input {
+    width: 100%;
+}
+
 .friend-card { 
     padding: 0.625rem 0;
     margin: 0 0.625rem;
     border-top: 1px solid var(--BUTTON_HOVER);
-    animation: show 0.17s;
 }
 
 .friend-card:hover { 

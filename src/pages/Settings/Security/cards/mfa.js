@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
+
+import { useUser } from "../../../../context";
 import { api_send, flash_message, gen_secret } from "../../../../utils";
 
 const qrcodes = require("qrcode")
 
 // Functions
-function enable_mfa(user, setUser, password, setPage, close, code, secret) {
+function enable_mfa(setUser, password, setPage, close, code, secret) {
     if (!password || (code && !code.value)) return
 
     api_send("user_mfa", {
@@ -12,7 +14,7 @@ function enable_mfa(user, setUser, password, setPage, close, code, secret) {
         password: password,
         secret: secret,
         option: "enable"
-    }, "@me").then(res => {
+    }, "PATCH", "@me").then(res => {
         if (res.errors) {
             if (!code) {
                 if (!res.errors.password) return setPage("mfa-page")
@@ -22,7 +24,7 @@ function enable_mfa(user, setUser, password, setPage, close, code, secret) {
         }
 
         if (res.message === "200 OK") {
-            setUser({ ...user, "mfa_enabled": 1 })
+            setUser((current_user) => { return { ...current_user, "mfa_enabled": 1 } })
             flash_message("MFA Enabled!")
             return close()
         }
@@ -31,17 +33,17 @@ function enable_mfa(user, setUser, password, setPage, close, code, secret) {
     })
 }
 
-function disable_mfa(user, setUser, code, close) {
+function disable_mfa(setUser, code, close) {
     if (!code.value) return
 
     api_send("user_mfa", {
         code: code.value,
         option: "disable"
-    }, "@me").then(res => {
+    }, "PATCH", "@me").then(res => {
         if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
 
         if (res.message === "200 OK") {
-            setUser({ ...user, "mfa_enabled": 0 })
+            setUser((current_user) => { return { ...current_user, "mfa_enabled": 0 } })
             flash_message("MFA Disabled!")
             return close()
         }
@@ -52,7 +54,9 @@ function disable_mfa(user, setUser, code, close) {
 
 // Render
 export function MFA({ props }) {
-    const { user, setUser, close } = props
+    const { close } = props
+
+    const [user, setUser] = useUser()
     const [page, setPage] = useState(null)
 
     const password = useRef()
@@ -67,11 +71,11 @@ export function MFA({ props }) {
                 </div>
                 <div className="column-container">
                     <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                    <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
+                    <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
                 </div>
                 <div className="card-submit-wrapper">
                     <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); disable_mfa(user, setUser, code.current, close) }} value="Remove 2FA" />
+                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); disable_mfa(setUser, code.current, close) }} value="Remove 2FA" />
                 </div>
             </form>
         )
@@ -131,8 +135,8 @@ export function MFA({ props }) {
                         <h3 className="card-header-text">Log in with your code <span className="error-category-text" id="code-error" key="code-error">*</span></h3>
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
-                            <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, passw, setPage, close, code.current, secret) }} value="Activate" />
+                            <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(setUser, passw, setPage, close, code.current, secret) }} value="Activate" />
                         </div>
                     </div>
                 </div>
@@ -148,11 +152,11 @@ export function MFA({ props }) {
             </div>
             <div className="column-container">
                 <p className="category-text">PASSWORD <span className="error-category-text" id="password-error">*</span></p>
-                <input className="input-field small-card-field" type="password" ref={password} maxLength={50} required />
+                <input className="input-field small-card-field" autoFocus type="password" ref={password} maxLength={50} required />
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(user, setUser, password.current.value, setPage, close) }} value="Continue" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(setUser, password.current.value, setPage, close) }} value="Continue" />
             </div>
         </form>
     )

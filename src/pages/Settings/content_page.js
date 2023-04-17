@@ -1,14 +1,16 @@
-import Account from "./Account/"
-import Security from "./Security/"
-import Friends from "./Friends"
-import Appearance from "./Appearance/"
-import Advanced from "./Advanced/"
+import { Account } from "./Account/"
+import { Security } from "./Security/"
+import { Friends } from "./Friends"
+import { Appearance } from "./Appearance/"
+import { Advanced } from "./Advanced/"
 
 import { Loading } from "../../components/"
+import { useUser } from "../../context"
 
 // Settings content (page)
 export default function Page(props) {
-    const { page, user } = props
+    const { page } = props
+    const [user, _] = useUser()
 
     if (!user) return (<Loading />)
 

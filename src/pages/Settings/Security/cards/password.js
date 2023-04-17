@@ -1,4 +1,6 @@
 import { useState, useRef } from "react"
+
+import { useUser } from "../../../../context";
 import { api_send, flash_message } from "../../../../utils";
 
 // Function
@@ -18,7 +20,7 @@ function update_password(user, password, new_password, confirm_password, close, 
         data: new_password.value,
         password: password.value,
         code: code ? code.value : null
-    }, "@me").then(res => {
+    }, "PATCH", "@me").then(res => {
         if (res.errors) {
             if (!code && user.mfa_enabled && !res.errors.password && !res.errors.new_password) { return setPage("mfa") }
             if (!code && (!res.errors.password || !res.errors.new_password)) {
@@ -40,7 +42,9 @@ function update_password(user, password, new_password, confirm_password, close, 
 }
 
 export function Password({ props }) {
-    const { user, close } = props
+    const { close } = props
+
+    const [user, setUser] = useUser()
     const [page, setPage] = useState(null)
 
     const password = useRef()
@@ -61,7 +65,7 @@ export function Password({ props }) {
                 </div>
                 <div className="column-container">
                     <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                    <input className="input-field small-card-field" ref={code} key="mfa-inpt" maxLength={10} required />
+                    <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
                 </div>
                 <div className="card-submit-wrapper">
                     <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
@@ -84,7 +88,7 @@ export function Password({ props }) {
             </div>
             <div className="column-container">
                 <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="curr-passw-error">*</span></p>
-                <input className="input-field" type="password" ref={password} maxLength={50} required />
+                <input className="input-field" autoFocus type="password" ref={password} maxLength={50} required />
 
                 <p className="category-text">NEW PASSWORD <span className="error-category-text" id="new-passw-error">*</span></p>
                 <input className="input-field" type="password" ref={new_password} maxLength={50} required />

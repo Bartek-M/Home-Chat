@@ -10,7 +10,7 @@ function submit(navigator, email, username, password) {
         email: email.value,
         username: username.value,
         password: password.value
-    }).then(res => {
+    }, "POST").then(res => {
         if (res.errors) {
             document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
             document.getElementById("username-error").innerText = res.errors.username ? `- ${res.errors.username}` : "*"
@@ -39,7 +39,7 @@ export function Register() {
                 <form>
                     <div className="column-container">
                         <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
-                        <input className="input-field" type="email" ref={email} size="30" required />
+                        <input className="input-field" autoFocus type="email" ref={email} size="30" required />
                     </div>
                     <div className="column-container">
                         <p className="category-text">USERNAME <span className="error-category-text" id="username-error">*</span></p>

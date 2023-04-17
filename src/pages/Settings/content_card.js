@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+
+import { useUser } from "../../context"
 import { Loading } from "../../components";
 
 import { Email, Username, DeleteAccount } from "./Account/";
@@ -6,7 +8,8 @@ import { Password, MFA } from "./Security";
 
 // Card content (edit card)
 export default function Card(props) {
-    const { card, user, close } = props
+    const { card, close } = props
+    const [user, _] = useUser()
 
     // Add event listeners
     useEffect(() => {

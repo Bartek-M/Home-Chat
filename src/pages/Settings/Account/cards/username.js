@@ -1,4 +1,6 @@
 import { useRef } from "react"
+
+import { useUser } from "../../../../context"
 import { api_send, flash_message } from "../../../../utils"
 
 function update_username(user, setUser, name, password, close) {
@@ -8,7 +10,7 @@ function update_username(user, setUser, name, password, close) {
         category: "name",
         data: name.value,
         password: password.value
-    }, "@me").then(res => {
+    }, "PATCH", "@me").then(res => {
         if (res.errors) {
             document.getElementById("name-error").innerText = res.errors.name ? `- ${res.errors.name}` : "*"
             document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
@@ -17,15 +19,18 @@ function update_username(user, setUser, name, password, close) {
         }
 
         if (res.message === "200 OK" && res.tag) {
-            setUser({ ...user, name: name.value, tag: res.tag })
+            setUser((current_user) => { return { ...current_user, name: name.value, tag: res.tag } })
             close()
-            flash_message("Username updated")
+            return flash_message("Username updated")
         }
+
+        flash_message("Something went wrong!", "error")
     })
 }
 
 export function Username({ props }) {
-    const { user, setUser, close } = props
+    const { close } = props
+    const [user, setUser] = useUser()
 
     const username = useRef()
     const password = useRef()
@@ -43,7 +48,7 @@ export function Username({ props }) {
             </div>
             <div className="column-container">
                 <p className="category-text">USERNAME <span className="error-category-text" id="name-error"></span></p>
-                <input className="input-field" type="text" ref={username} defaultValue={user.name} maxLength={50} required />
+                <input className="input-field" autoFocus type="text" ref={username} defaultValue={user.name} maxLength={50} required />
 
                 <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error"></span></p>
                 <input className="input-field" type="password" ref={password} maxLength={50} required />
