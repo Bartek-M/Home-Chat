@@ -135,21 +135,21 @@ class Database:
         if option == "friends":
             friends = {}
 
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=? AND accepted='waiting'", [req_id, req_id])
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted='waiting'", [req_id, req_id])
             if fetched := self.cursor.fetchall():
                 friends["pending"] = sorted(
                     [
-                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2]} 
+                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
                     key=lambda x: x.get("name")
                 )
 
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=? AND accepted!='waiting'", [req_id, req_id])
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted!='waiting'", [req_id, req_id])
             if fetched := self.cursor.fetchall():
                 friends["accepted"] = sorted(
                     [
-                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2]} 
+                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
                     key=lambda x: x.get("name")
@@ -158,11 +158,11 @@ class Database:
             return friends
         
         if option == "friend":
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND (user_id=? OR friend_id=?)", [*req_id, *req_id])
+            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [*req_id, *req_id])
 
             if fetched := self.cursor.fetchone():
-                return {**(self.get_entry(USER_TABLE, fetched[0] if fetched[0] != req_id else fetched[1]).__dict__), "accepted": fetched[2]} 
- 
+                return {**(self.get_entry(USER_TABLE, fetched[0] if fetched[0] != req_id[0] else fetched[1]).__dict__), "accepted": fetched[2], "inviting": fetched[0]}
+                         
         return []
 
     def get_channel_messages(self, req_id):
@@ -224,7 +224,7 @@ class Database:
             self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
         
         if option == "friend":
-            self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE (user_id=? OR friend_id=?) AND (user_id=? OR friend_id=?)", [data, *req_id, *req_id])
+            self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [data, *req_id, *req_id])
         
         self.conn.commit()
 
@@ -251,7 +251,7 @@ class Database:
             self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
 
         if option == "user_friend":
-            self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND (user_id=? OR friend_id=?)", [*req_id, *req_id])
+            self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [*req_id, *req_id])
 
         self.conn.commit()
 

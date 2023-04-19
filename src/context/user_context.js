@@ -14,13 +14,13 @@ export function UserProvider({ children }) {
     useEffect(() => {
         if (user) return
 
-        api_get("user_settings", "@me").then(usr => {
-            if (usr.message === "401 Unauthorized") { navigator("/login"); return flash_message("Not logged in!", "error") }
-            if (usr.message === "403 Forbidden") { navigator("/login"); return flash_message("Logged out!", "error") }
-            if (!usr.id) return
+        api_get("user_settings", "@me").then(res => {
+            if (res.message === "401 Unauthorized") { navigator("/login"); return flash_message("Not logged in!", "error") }
+            if (res.message === "403 Forbidden") { navigator("/login"); return flash_message("Logged out!", "error") }
+            if (!res.user || !res.user.id) return
 
-            setUser(usr)
-            if (localStorage.getItem("email") !== usr.email) localStorage.setItem("email", usr.email)
+            setUser(res.user)
+            if (localStorage.getItem("email") !== res.user.email) localStorage.setItem("email", res.user.email)
 
             setTimeout(() => {
                 const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")

@@ -1,26 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { UserProvider } from "../../context";
-import { api_get, app_theme, prefered_theme, flash_message } from "../../utils/";
-
 import { Settings } from "../Settings/";
 
 export function Home() {
-    const [settings, setSettings] = useState(true)
-
-    const [friends, setFriends] = useState(null)
-    const [channels, setChannels] = useState(null)
-
-    // Get user
-    useEffect(() => {
-        api_get("user_channels", "@me").then(channels => {
-            console.log(channels)
-        })
-
-        api_get("user_friends", "@me").then(friends => {
-            console.log(friends)
-        })
-    }, [])
+    const [settings, setSettings] = useState(false)
 
     return (
         <UserProvider>
@@ -57,7 +41,7 @@ export function Home() {
                     </div>
                 </div>
             </div>
-            {settings && (<Settings friends={friends} setFriends={setFriends} setSettings={setSettings} />)}
+            {settings && (<Settings setSettings={setSettings} />)}
         </UserProvider>
     )
 }

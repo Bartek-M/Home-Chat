@@ -2,6 +2,7 @@ import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { api_send, flash_message } from "../../../../utils"
+import { useUser } from "../../../../context"
 
 function update_email(navigator, user, email, password) {
     if (!password.value || user.email === email.value) return
@@ -28,7 +29,7 @@ function update_email(navigator, user, email, password) {
 
 export function Email({ props }) {
     const { close } = props
-    const [user, setUser] = useUser()
+    const [user, _] = useUser()
 
     const navigator = useNavigate()
 

@@ -14,9 +14,10 @@ export default function Card(props) {
     // Add event listeners
     useEffect(() => {
         let card_overlay = document.getElementById("edit-card-overlay")
-        
-        card_overlay.addEventListener("click", close)
-        return () => { card_overlay.removeEventListener("click", close) }
+        let close_card = () => close()
+
+        card_overlay.addEventListener("click", close_card)
+        return () => { card_overlay.removeEventListener("click", close_card) }
     }, [])
 
     if (!user) return (<Loading />)

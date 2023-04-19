@@ -186,14 +186,14 @@ class Users:
     @Decorators.manage_database
     @Decorators.auth
     def get_friends(db, user_id):
-        return ({"user_friends:": db.get_user_stuff(user_id, "friends")}, 200)
+        return ({"user_friends": db.get_user_stuff(user_id, "friends")}, 200)
 
     @users.route("/<user_id>/settings")
     @Decorators.manage_database
     @Decorators.auth
     def get_settings(db, user_id):
         if (stng := {**db.get_entry(USER_TABLE, user_id).__dict__, **db.get_entry(USER_SETTING_TABLE, user_id).__dict__}):
-            return (stng, 200)
+            return ({"user": {**stng}}, 200)
         
         return None
     
@@ -207,12 +207,18 @@ class Users:
             return ({"errors": {"username": "Username or tag is invalid."}}, 400)
         
         if not (user := db.get_user(f"{username}#{tag}", "name")):
-            return 404
+            return ({"errors": {"username": "User does not exist."}}, 400)
+        
+        if user.id == user_id:
+            return ({"errors": {"username": "User is a client user."}}, 406)
     
         friend = db.get_user_stuff([user_id, user.id], "friend")
-        friend_accepted = friend.accepted if friend else None
+        friend_accepted = friend.get("accepted") if friend else None
+        friend_invited = friend.get("inviting") if friend else None
 
-        return ({"user": {**user.__dict__, "accepted": friend_accepted}}, 200)
+        print(user_id, friend_invited)
+
+        return ({"user": {**user.__dict__, "accepted": friend_accepted, "inviting": friend_invited}}, 200)
     
     @users.route("/<user_id>/friends/add", methods=["POST"])
     @Decorators.manage_database
@@ -359,11 +365,14 @@ class Users:
         if not (friend := db.get_user_stuff([user_id, friend_id], "friend")):
             return ({"errors": {"friend": "No friend connection"}}, 400)
         
-        if friend.accepted != "waiting":
+        if friend.get("inviting") == user_id:
+            return ({"errors": {"friend": "Inviting user can't confirm an invite"}}, 406)
+        
+        if friend.get("accepted") != "waiting":
             return ({"errors": {"friend": "Already confirmed"}}, 406)
         
-        db.update_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "accepted", time.time(), "friend")
-        return 200
+        db.update_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "accepted", current_time := time.time(), "friend")
+        return ({"time": current_time}, 200)
     
     
     # DELETE

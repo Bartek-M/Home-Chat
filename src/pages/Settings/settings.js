@@ -4,10 +4,8 @@ import { version, user_os } from "../../utils/"
 import Page from "./content_page"
 import Card from "./content_card";
 
-export function Settings(props) {
-    const { friends, setFriends, setSettings } = props
-
-    const [page, setPage] = useState("friends")
+export function Settings({ setSettings }) {
+    const [page, setPage] = useState("account")
     const [card, setCard] = useState(null)
 
     // Add event listener
@@ -58,7 +56,7 @@ export function Settings(props) {
 
                 <div className="settings-page scroller-container">
                     <div className="column-container" id="settings-content">
-                        <Page page={page} friends={friends} setFriends={setFriends} card={setCard} />
+                        <Page page={page} card={setCard} />
                     </div>
                     <button onClick={() => { setSettings(false) }} className="center-container" id="close-settings">
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
