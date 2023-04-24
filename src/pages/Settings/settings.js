@@ -2,20 +2,19 @@ import { useState, useEffect } from "react";
 import { version, user_os } from "../../utils/"
 
 import Page from "./content_page"
-import Card from "./content_card";
+import { Card } from "../../components/";
 
 export function Settings({ setSettings }) {
     const [page, setPage] = useState("account")
     const [card, setCard] = useState(null)
 
-    // Add event listener
-    const close_settings = (e) => {
-        if (e.key !== "Escape") return
-        if (!card) setSettings(false)
-        if (card) setCard(null)
-    }
-
     useEffect(() => {
+        const close_settings = (e) => {
+            if (e.key !== "Escape") return
+            if (!card) setSettings(false)
+            if (card) setCard(null)
+        }
+        
         document.addEventListener("keyup", close_settings)
         return () => { document.removeEventListener("keyup", close_settings) }
     }, [card])
@@ -51,6 +50,7 @@ export function Settings({ setSettings }) {
                             <br />
                             {user_os}
                         </p>
+                        <div className="scroller-spacer"></div>
                     </nav>
                 </div>
 

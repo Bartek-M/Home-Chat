@@ -1,13 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { UserProvider } from "../../context";
+import { FriendsProvider, UserProvider } from "../../context";
+import { Card } from "../../components";
 import { Settings } from "../Settings/";
 
 export function Home() {
     const [settings, setSettings] = useState(false)
+    const [card, setCard] = useState(null)
+
+    useEffect(() => {
+        const close_card = (e) => { 
+            if (e.key !== "Escape") return
+            setCard(null)
+        }
+
+        document.addEventListener("keyup", close_card)
+        return () => { document.removeEventListener("keyup", close_card) }
+    }, [card])
 
     return (
         <UserProvider>
+        <FriendsProvider>
             <div className="home-page container">
                 <nav className="main-sidebar spaced-column-container scroller-container">
                     <div className="main-sidebar-elements center-column-container">
@@ -16,7 +29,7 @@ export function Home() {
                         <hr className="separator" />
                         <li className="main-sidebar-item center-container">
                             <div className="main-sidebar-pill" id="channel-pill-addchannel"></div>
-                            <button className="main-sidebar-icon center-container" onClick={() => { console.log("Open channel creator") }}>
+                            <button className="main-sidebar-icon center-container" onClick={() => { setCard("channel_creator") }}>
                                 <svg width="32" height="32" viewBox="0 0 16 16">
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>
@@ -34,14 +47,20 @@ export function Home() {
                     </div>
                 </nav>
 
-                <div className="main-view spaced-column-container">
-                    <div className="not-found center-column-container">
-                        <h2 className="not-found-error">404</h2>
-                        <h2 className="not-found-text">Open any channel and start chatting</h2>
-                    </div>
+                <div className="main-view center-container">
+                    <svg className="homechat-icon" width="92px" height="92px" fill="var(--COLOR_3)" viewBox="0 0 16 16">
+                        <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"/>
+                    </svg>
                 </div>
             </div>
+            {card && (
+                <div className="edit-card-wrapper center-container absolute-container">
+                    <div className="absolute-container" id="edit-card-overlay"></div>
+                    <Card card={card} close={setCard} />
+                </div>
+            )}
             {settings && (<Settings setSettings={setSettings} />)}
+        </FriendsProvider>
         </UserProvider>
     )
 }

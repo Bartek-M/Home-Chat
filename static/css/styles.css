@@ -19,6 +19,7 @@ Version: dev-b9a6964
 
 3. HOME PAGE - home page elements
     | home sidebar
+    | channel creator
     | channel info
     | chat
     | sending messages
@@ -66,7 +67,7 @@ Version: dev-b9a6964
 | DIM_GREEN [#00925d] - used for hover effect on buttons
 | WARNING [#f0b132] - used for warning container
 
-| TOOLTIP_COLOR [#111214 / #
+| TOOLTIP_COLOR [#111214 / #fff] - used for tooltips
 | BORDER_COLOR [#1d1d1d / #d3d3d3] - used for thin borders
 | SCROLLBAR [#4b4b4b] - used for scrollbar thumb
 | SCROLLBAR_DARKER [#272727] - used for scrollbar hover effect
@@ -306,6 +307,11 @@ a {
     gap: 0
 }
 
+.homechat-icon:hover {
+    fill: #42c0fb;
+    transition: 0.17s ease; 
+}
+
 /* home sidebar */
 .main-sidebar {
     width: 64px;
@@ -342,6 +348,28 @@ a {
 .main-sidebar-icon svg { fill: var(--BLUE); transition: unset;}
 .main-sidebar-icon:hover svg { fill: var(--FONT_COLOR) }
 .main-sidebar-icon:hover { border-radius: 10px; background-color: var(--BLUE);}
+
+/* channel creator */
+.creator-tabs-wrapper {
+    margin-bottom: 1rem;
+}
+
+.switch-btn {
+    width: 50%;
+    background-color: var(--COLOR_3);
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.switch-btn:hover, .switch-btn.active { background-color: var(--BLUE); color: var(--FONT_COLOR) }
+
+.small-card {
+    max-width: calc(100% - 1.5rem)
+}
+
+.friends-wrapper {
+    max-height: 180px;
+}
 
 /* channel info */
 .main-view {
@@ -540,7 +568,7 @@ a {
         flex: unset;
         width: 100%; 
         justify-content: left;
-        max-height: 40px; 
+        max-height: 46px; 
         overflow: hidden; 
     }
 
@@ -700,6 +728,11 @@ a {
     width: 100%;
 }
 
+.small-search {
+    max-width: calc(100% - 1rem);
+    background-color: var(--COLOR_3);
+}
+
 .friend-card { 
     padding: 0.625rem 0;
     margin: 0 0.625rem;
@@ -731,7 +764,7 @@ a {
     background-color: var(--MAIN_COLOR);
 }
 
-[class*="friend-btn"]:hover .tooltip-text {
+[class*="friend-btn"]:hover .tooltip-top {
     visibility: visible;
 }
 
@@ -743,13 +776,14 @@ a {
 /* [EDIT CARD] */
 /* card wrapper */
 .edit-card-wrapper { z-index: 25; }
-#edit-card-overlay { background-color: rgba(0, 0, 0, 0.8); transition: 0.17s ease;  }
+#edit-card-overlay { background-color: rgba(0, 0, 0, 0.7); transition: 0.17s ease;  }
 
 /* card content */
 .settings-edit-card { 
     position: relative;
-    min-width: 400px;
-    max-width: 430px;
+    min-width: 320px;
+    width: 430px;
+    max-width: 460px;
     padding: 1rem 1rem 1rem 1rem;
     margin: 1rem;
     gap: 0.5rem;
@@ -881,10 +915,10 @@ a {
 
 
 /* [TOOLTIP ] */
-.tooltip-text {
+[class*="tooltip"] {
     position: absolute;
-    bottom: 125%;
     z-index: 1;
+    min-width: fit-content;
     padding: 0.25rem 0.5rem;
     border-radius: 5px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
@@ -894,15 +928,28 @@ a {
     visibility: hidden;
 }
 
-.tooltip-text::after {
+.tooltip-top { bottom: 125% }
+.tooltip-right { left: 115% }
+
+[class*="tooltip"]::after {
     content: "";
     position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: var(--TOOLTIP_COLOR) transparent transparent transparent;
+}
+
+.tooltip-top::after { 
+    top: 100%; 
+    left: 50%; 
+    margin-left: -5px;
+    border-color: var(--TOOLTIP_COLOR) transparent transparent transparent
+}
+
+.tooltip-right::after { 
+    top: 50%; 
+    right: 100%; 
+    margin-top: -5px; 
+    border-color: transparent var(--TOOLTIP_COLOR) transparent transparent
 }
 
 

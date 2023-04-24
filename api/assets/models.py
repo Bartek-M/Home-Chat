@@ -27,6 +27,7 @@ class Message:
     author: str
     channel_id: str
     content: str
+    # system: int = 0 # 0 | 1
     create_time: str
 
     def marks(self):

@@ -66,7 +66,7 @@ export function Friends() {
                                 <div className="center-container">
                                     {!searchUser.accepted && (
                                         <button className="add-friend-btn center-container" onClick={() => add_friend(user.id, searchUser, setFriends)}>
-                                            <div className="tooltip-text">Add</div>
+                                            <div className="tooltip-top">Add</div>
                                             <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                 <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -76,13 +76,13 @@ export function Friends() {
                                     {(searchUser.accepted && searchUser.accepted !== "waiting") && (
                                         <>
                                             <button className="message-friend-btn center-container">
-                                                <div className="tooltip-text">Message</div>
+                                                <div className="tooltip-top">Message</div>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                                                 </svg>
                                             </button>
                                             <button className="remove-friend-btn center-container" onClick={() => remove_friend(searchUser.id, setFriends)}>
-                                                <div className="tooltip-text">Remove</div>
+                                                <div className="tooltip-top">Remove</div>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                     <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -94,7 +94,7 @@ export function Friends() {
                                         <>
                                             {searchUser.inviting !== user.id &&
                                                 <button className="add-friend-btn center-container" onClick={() => confirm_friend(searchUser, setFriends)}>
-                                                    <div className="tooltip-text">Confirm</div>
+                                                    <div className="tooltip-top">Confirm</div>
                                                     <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                         <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                         <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -102,7 +102,7 @@ export function Friends() {
                                                 </button>
                                             }
                                             <button className="remove-friend-btn center-container" onClick={() => decline_friend(searchUser.id, setFriends)}>
-                                                <div className="tooltip-text">Decline</div>
+                                                <div className="tooltip-top">Decline</div>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                     <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -121,7 +121,7 @@ export function Friends() {
             <div className="column-container">
                 <p className="extended-category-text">PENDING REQUESTS</p>
                 {friends.pending.map(friend =>
-                    <div className="friend-card spaced-container" key={friend.id}>
+                    <div className="friend-card spaced-container" key={`pending-${friend.id}`}>
                         <div className="center-container">
                             <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                             <div className="column-container">
@@ -131,7 +131,7 @@ export function Friends() {
                         <div className="center-container">
                             {friend.inviting !== user.id &&
                                 <button className="add-friend-btn center-container" onClick={() => confirm_friend(friend, setFriends)}>
-                                    <div className="tooltip-text">Confirm</div>
+                                    <div className="tooltip-top">Confirm</div>
                                     <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                         <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                         <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -139,7 +139,7 @@ export function Friends() {
                                 </button>
                             }
                             <button className="remove-friend-btn center-container" onClick={() => decline_friend(friend.id, setFriends)}>
-                                <div className="tooltip-text">Decline</div>
+                                <div className="tooltip-top">Decline</div>
                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                     <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -156,7 +156,7 @@ export function Friends() {
                 <div className="column-container">
                     <p className="extended-category-text">ALL FRIENDS</p>
                     {friends.accepted.map(friend => 
-                            <div className="friend-card spaced-container" key={friend.id}>
+                            <div className="friend-card spaced-container" key={`accepted-${friend.id}`}>
                                 <div className="center-container">
                                     <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                     <div className="column-container">
@@ -166,13 +166,13 @@ export function Friends() {
                                 </div>
                                 <div className="center-container">
                                     <button className="message-friend-btn center-container">
-                                        <div className="tooltip-text">Message</div>
+                                        <div className="tooltip-top">Message</div>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                                         </svg>
                                     </button>
                                     <button className="remove-friend-btn center-container" onClick={() => remove_friend(friend.id, setFriends)}>
-                                        <div className="tooltip-text">Remove</div>
+                                        <div className="tooltip-top">Remove</div>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                             <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
