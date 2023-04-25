@@ -19,13 +19,8 @@ export function ChannelsProvider({ children }) {
     })
 
     return (
-        <>
-            <Loading />
-            {channels && <>
-                <ChannelContext.Provider value={[channels, setChannels]}>
-                    {children}
-                </ChannelContext.Provider>
-            </>}
-        </>
+        <ChannelContext.Provider value={[channels, setChannels]}>
+            {children}
+        </ChannelContext.Provider>
     )
 }

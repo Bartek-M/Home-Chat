@@ -1,12 +1,15 @@
 // API
 const api_pages = {
-    auth_login: () => `api/auth/login/`,
-    auth_register: () => `api/auth/register/`,
-    auth_verify: () => `api/auth/verify/`,
+    auth_login: () => `/api/auth/login/`,
+    auth_register: () => `/api/auth/register/`,
+    auth_verify: () => `/api/auth/verify/`,
 
     channel: (value) => `/api/channels/${value}/`,
     channel_users: (value) => `/api/channels/${value}/users/`,
     channel_messages: (value) => `/api/channels/${value}/messages/`,
+
+    channel_open: () => `/api/channels/open/`,
+    channel_create: () => `/api/channels/create/`,
 
     user: (value) => `/api/users/${value}/`,
     user_search: () => `/api/users/search/`,
@@ -14,13 +17,13 @@ const api_pages = {
     user_settings: (value) => `/api/users/${value}/settings/`,
     
     user_mfa: (value) => `/api/users/${value}/settings/mfa/`,
-    user_delete: (value) => `api/users/${value}/delete/`,
+    user_delete: (value) => `/api/users/${value}/delete/`,
     
     user_friends: (value) => `/api/users/${value}/friends/`,
-    add_friend: (value) => `/api/users/${value}/friends/add`,
-    remove_friend: (value) => `/api/users/${value}/friends/remove`,
-    confirm_friend: (value) => `/api/users/${value}/friends/confirm`,
-    decline_friend: (value) => `/api/users/${value}/friends/decline`, 
+    add_friend: (value) => `/api/users/${value}/friends/add/`,
+    remove_friend: (value) => `/api/users/${value}/friends/remove/`,
+    confirm_friend: (value) => `/api/users/${value}/friends/confirm/`,
+    decline_friend: (value) => `/api/users/${value}/friends/decline/`, 
 
     avatar: () => `/api/images/avatar/`
 }

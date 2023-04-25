@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { FriendsProvider, UserProvider } from "../../context";
+import { UserProvider, FriendsProvider, ChannelsProvider } from "../../context";
 import { Card } from "../../components";
 import { Settings } from "../Settings/";
 
@@ -21,6 +21,7 @@ export function Home() {
     return (
         <UserProvider>
         <FriendsProvider>
+        <ChannelsProvider>
             <div className="home-page container">
                 <nav className="main-sidebar spaced-column-container scroller-container">
                     <div className="main-sidebar-elements center-column-container">
@@ -60,6 +61,7 @@ export function Home() {
                 </div>
             )}
             {settings && (<Settings setSettings={setSettings} />)}
+        </ChannelsProvider>
         </FriendsProvider>
         </UserProvider>
     )

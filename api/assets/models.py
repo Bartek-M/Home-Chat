@@ -27,11 +27,11 @@ class Message:
     author: str
     channel_id: str
     content: str
-    # system: int = 0 # 0 | 1
     create_time: str
+    system: int = 0 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -57,11 +57,12 @@ class UserChannel:
     """
     user_id: str
     channel_id: str
-    nick: str
+    nick: str = None
     position: str = None
+    direct: int = 0 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?"
+        return "?, ?, ?, ?, ?"
 
 
 @dataclass

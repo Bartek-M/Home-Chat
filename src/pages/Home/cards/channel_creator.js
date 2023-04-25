@@ -1,7 +1,18 @@
-import { useState, useMemo   } from "react"
+import { useState, useMemo  } from "react"
 
-import { useFriends } from "../../../context"
-import { format_time } from "../../../utils"
+import { useFriends, useChannels } from "../../../context"
+import { api_send, flash_message, format_time } from "../../../utils"
+
+function open_channel(user_id) {
+    if (!user_id) return
+
+    api_send("channel_open", { friend: user_id }, "POST").then(res => {
+        console.log(res)
+
+        if (res.message == "200 OK" && res.channel) return flash_message("Created a channel")
+        flash_message("Something went wrong!", "error")
+    })
+}
 
 export function ChannelCreator({ props }) {
     const { close } = props
@@ -51,7 +62,7 @@ export function ChannelCreator({ props }) {
                             </div>    
                             <div className="friends-wrapper column-container scroller-container">                  
                                 {filteredItems.map(friend => (
-                                    <div className="small-card friend-card spaced-container" key={`filtered-${friend.id}`}>
+                                    <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={() => open_channel(friend.id)}>
                                         <div className="center-container">
                                             <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                             <div className="column-container">
@@ -59,11 +70,6 @@ export function ChannelCreator({ props }) {
                                                 <p className="message-time">From: {format_time(friend.accepted, "date")}</p>
                                             </div>
                                         </div>
-                                        <button className="message-friend-btn center-container">
-                                            <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
-                                                <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
-                                            </svg>
-                                        </button>
                                     </div>
                                 ))}
                                 <div className="scroller-spacer"></div>

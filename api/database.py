@@ -47,13 +47,13 @@ class Database:
                 id TEXT UNIQUE, name TEXT, tag TEXT, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER
             )""",
             f"""{MESSAGE_TABLE} (
-                id TEXT UNIQUE, author TEXT, channel_id TEXT, content TEXT, create_time TEXT
+                id TEXT UNIQUE, author TEXT, channel_id TEXT, content TEXT, create_time TEXT, system INTEGER
             )""",
             f"""{CHANNEL_TABLE} (
-                id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct TEXT
+                id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct INTEGER
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                user_id TEXT, channel_id TEXT UNIQUE, nick TEXT, position TEXT
+                user_id TEXT, channel_id TEXT, nick TEXT, position TEXT, direct INTEGER
             )""",
             f"""{USER_FRIENDS_TABLE} (
                 user_id TEXT, friend_id TEXT, accepted TEXT 
@@ -108,15 +108,53 @@ class Database:
                 return User(*fetched)
             
         return None
+    
+    def get_channel_stuff(self, req_id, option):
+        """
+        Get specific information about the channel 
+        :param req_id: ID to check for
+        :param option: Option to use ("users", "messages")
+        :return: List of User, Message objects or []
+        """
+        if option == "users":
+            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE channel_id=?", [req_id])
 
+            if fetched := self.cursor.fetchall():
+                return sorted(
+                    [self.get_entry(USER_TABLE, data[0]).__dict__ for data in fetched],
+                    key=lambda x: f"{x[1]}#{x[2]}"
+                )
+
+        if option == "mesages":
+            self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
+
+            if fetched := self.cursor.fetchall():
+                users = {}
+
+                for message in (messages := [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]):
+                    if (user := users.get(message.user_id, None) is None):
+                        user = self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE id='{message.user_id}'").fetchone()
+                        users[message.author] = user
+
+                    message.author = user
+
+                return messages
+            
+        if option == "dm_friend":
+            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
+
+            if fetched := self.cursor.fetchone():
+                return UserChannel(*fetched)
+
+        return []
+    
     def get_user_stuff(self, req_id, option):
         """
-        Get all channels which belongs to a certain user
-        :param req_id: ID of user or channel to get
-        :param option: Option to use ("channels", "friends")
+        Get specific information about the user
+        :param req_id: ID to check for
+        :param option: Option to use ("owner_channels", "channels", "friends", "friend")
         :return: List of Channel objects or []
         """
-
         if option == "owner_channels":
             self.cursor.execute(f"SELECT * FROM {CHANNEL_TABLE} WHERE owner=?", [req_id])
 
@@ -124,14 +162,22 @@ class Database:
                 return [Channel(*channel) for channel in fetched]
                 
         if option == "channels":
-            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? OR channel_id=?", [req_id, req_id])
+            self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():
-                return sorted(
-                    [self.get_entry((CHANNEL_TABLE, data[1]) if data[0] == req_id else (USER_TABLE, data[0])).__dict__ for data in fetched], 
-                    key=lambda x: x.get("position")
-                )
-                        
+                channels = []
+
+                for data in sorted(fetched, key=lambda x: x[3]):
+                    channel = self.get_entry(CHANNEL_TABLE, data[1])
+                    
+                    if channel.direct == 1 and (friend := self.get_entry(USER_TABLE, channel.id.replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel.id], "dm_friend")):
+                        channel.name = friend_channel.nick if friend_channel.nick else friend.name 
+                        channel.icon = friend.avatar
+
+                    channels.append(channel)
+
+                return channels
+                                    
         if option == "friends":
             friends = {}
 
@@ -142,7 +188,7 @@ class Database:
                         {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
-                    key=lambda x: x.get("name")
+                    key=lambda x: f"{x.get('name')}#{x.get('tag')}"
                 )
 
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted!='waiting'", [req_id, req_id])
@@ -152,7 +198,7 @@ class Database:
                         {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
-                    key=lambda x: x.get("name")
+                    key=lambda x: f"{x.get('name')}#{x.get('tag')}"
                 )
             
             return friends
@@ -163,29 +209,7 @@ class Database:
             if fetched := self.cursor.fetchone():
                 return {**(self.get_entry(USER_TABLE, fetched[0] if fetched[0] != req_id[0] else fetched[1]).__dict__), "accepted": fetched[2], "inviting": fetched[0]}
                          
-        return []
-
-    def get_channel_messages(self, req_id):
-        """
-        Get all messages in current channel
-        :param req_id: ID of channel to get messages from
-        :return: List of Message objects or []
-        """
-        self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
-
-        if fetched := self.cursor.fetchall():
-            users = {}
-
-            for message in (messages := [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]):
-                if (user := users.get(message.user_id, None) is None):
-                    user = self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE id='{message.user_id}'").fetchone()
-                    users[message.author] = user
-
-                message.author = user
-
-            return messages
-
-        return []
+        return []    
 
     def get_available_tag(self, name):
         """

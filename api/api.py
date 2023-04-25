@@ -12,7 +12,7 @@ from .funcs import Functions, Security, Decorators
 from .database import *
 
 
-api = Blueprint("api", __name__) # Define api
+api = Blueprint("api", __name__)
 
 
 # API PAGES
@@ -137,6 +137,7 @@ class Channels:
     """
     channels = Blueprint("channels", __name__)
     
+    # GET
     @channels.route("/<channel_id>")
     @Decorators.manage_database
     @Decorators.auth
@@ -150,13 +151,53 @@ class Channels:
     @Decorators.manage_database
     @Decorators.auth
     def get_messages(db, channel_id):
-        return ({"channel_messages": db.get_channel_messages(channel_id)}, 200)
+        return ({"channel_messages": db.get_channel_stuff(channel_id, "messages")}, 200)
         
     @channels.route("/<channel_id>/users")
     @Decorators.manage_database
-    @Decorators.auth
+    @Decorators.auth 
     def get_users(db, channel_id):
-        return ({"channel_users": db.get_user_channels(channel_id)}, 200)
+        return ({"channel_users": db.get_channel_stuff(channel_id, "users")}, 200)
+    
+    # POST
+    @channels.route("/open", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def open_direct(db, user_id):
+        if not (friend_id := request.json.get("friend")):
+            return ({"errors": {"friend": "Friend is invalid"}}, 400)
+        
+        if not (friend := db.get_entry(USER_TABLE, friend_id)):
+            return ({"errors": {"friend": "User does not exist"}}, 400)
+        
+        id = f"{min(user_id, friend_id)}-{max(user_id, friend_id)}"
+
+        if saved_channel := db.get_entry(CHANNEL_TABLE, id):
+            return ({"channel": saved_channel}, 200)
+        
+        creation_time = str(time.time())
+        channel = Channel(id, "-", "-", "-", creation_time, 1)
+
+        db.insert_entry(CHANNEL_TABLE, channel)
+        db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, id))
+        db.insert_entry(USER_CHANNEL_TABLE, UserChannel(friend_id, id))
+
+        channel.name = friend.name
+        channel.icon = friend.avatar
+
+        return ({"channel": channel}, 200)
+
+    @channels.route("/create", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def create_group(db):
+        return 200
+
+    # DELETE
+    @channels.route("/delete/<channel_id>")
+    @Decorators.manage_database
+    def delete_channels(db, channel_id):
+        db.delete_entry(None, channel_id, "channel")
 
 
 class Users:
@@ -215,8 +256,6 @@ class Users:
         friend = db.get_user_stuff([user_id, user.id], "friend")
         friend_accepted = friend.get("accepted") if friend else None
         friend_invited = friend.get("inviting") if friend else None
-
-        print(user_id, friend_invited)
 
         return ({"user": {**user.__dict__, "accepted": friend_accepted, "inviting": friend_invited}}, 200)
     
