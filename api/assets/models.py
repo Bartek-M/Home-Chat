@@ -57,8 +57,8 @@ class UserChannel:
     """
     user_id: str
     channel_id: str
+    pos_time: str
     nick: str = None
-    position: str = None
     direct: int = 0 # 0 | 1
 
     def marks(self):

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-
 import { UserProvider, FriendsProvider, ChannelsProvider } from "../../context";
+
+import { ChannelList } from "./channels/channel_list";
 import { Card } from "../../components";
 import { Settings } from "../Settings/";
 
@@ -25,6 +26,7 @@ export function Home() {
             <div className="home-page container">
                 <nav className="main-sidebar spaced-column-container scroller-container">
                     <div className="main-sidebar-elements center-column-container">
+                        <ChannelList />
                     </div>
                     <div className="main-sidebar-elements center-column-container">
                         <hr className="separator" />

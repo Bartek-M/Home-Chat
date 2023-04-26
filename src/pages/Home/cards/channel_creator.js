@@ -1,25 +1,15 @@
 import { useState, useMemo  } from "react"
 
 import { useFriends, useChannels } from "../../../context"
-import { api_send, flash_message, format_time } from "../../../utils"
-
-function open_channel(user_id) {
-    if (!user_id) return
-
-    api_send("channel_open", { friend: user_id }, "POST").then(res => {
-        console.log(res)
-
-        if (res.message == "200 OK" && res.channel) return flash_message("Created a channel")
-        flash_message("Something went wrong!", "error")
-    })
-}
+import { open_channel, format_time } from "../../../utils"
 
 export function ChannelCreator({ props }) {
     const { close } = props
     const [page, setPage] = useState("direct")
 
     const [query, setQuery] = useState("")
-    const [friends, _] = useFriends()
+    const [friends, setFriends] = useFriends()
+    const [channels, setChannels] = useChannels()
 
     const filteredItems = useMemo(() => {
         if (!friends || !friends.accepted) return
@@ -62,7 +52,7 @@ export function ChannelCreator({ props }) {
                             </div>    
                             <div className="friends-wrapper column-container scroller-container">                  
                                 {filteredItems.map(friend => (
-                                    <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={() => open_channel(friend.id)}>
+                                    <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={() => open_channel(friend.id, setChannels, close)}>
                                         <div className="center-container">
                                             <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                             <div className="column-container">

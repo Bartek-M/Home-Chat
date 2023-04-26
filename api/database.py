@@ -53,7 +53,7 @@ class Database:
                 id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct INTEGER
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                user_id TEXT, channel_id TEXT, nick TEXT, position TEXT, direct INTEGER
+                user_id TEXT, channel_id TEXT, pos_time TEXT, nick TEXT, direct INTEGER
             )""",
             f"""{USER_FRIENDS_TABLE} (
                 user_id TEXT, friend_id TEXT, accepted TEXT 
@@ -167,7 +167,7 @@ class Database:
             if fetched := self.cursor.fetchall():
                 channels = []
 
-                for data in sorted(fetched, key=lambda x: x[3]):
+                for data in sorted(fetched, key=lambda x: x[2], reverse=True):
                     channel = self.get_entry(CHANNEL_TABLE, data[1])
                     
                     if channel.direct == 1 and (friend := self.get_entry(USER_TABLE, channel.id.replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel.id], "dm_friend")):
@@ -177,6 +177,8 @@ class Database:
                     channels.append(channel)
 
                 return channels
+            
+            print(req_id, fetched)
                                     
         if option == "friends":
             friends = {}

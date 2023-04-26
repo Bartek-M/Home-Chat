@@ -1,3 +1,4 @@
+import { api_send, flash_message } from "./"
 export const { os_list, version } = require("../data/config.json")
 
 // Set user_os
@@ -27,4 +28,24 @@ export function smooth_scroll(id) {
 // Copy text
 export async function copy_text(text) {
     await window.navigator.clipboard.writeText(text).catch(() => { })
+}
+
+// Open DM channel
+export function open_channel(friend_id, setChannels, close) {
+    if (!friend_id) return
+
+    api_send("channel_open", { friend: friend_id }, "POST").then(res => {
+        if (res.errors && res.errors.friend) return flash_message(res.errors.friend)
+
+        if (res.message == "200 OK") {
+            setChannels(channels => {
+                if (!channels.some(({id}) => id === res.channel.id)) channels.push(res.channel)
+                return channels
+            })
+
+            return close()
+        }
+
+        flash_message("Something went wrong!", "error")
+    })
 }

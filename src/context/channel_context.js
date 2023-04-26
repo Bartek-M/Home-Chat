@@ -13,7 +13,7 @@ export function ChannelsProvider({ children }) {
         api_get("user_channels", "@me").then(res => {
             if (res.message !== "200 OK") return flash_message("Couldn't load channels!", "error")
             if (res.user_channels === undefined) return
-
+            
             setChannels(res.user_channels ? res.user_channels : [])
         })
     })

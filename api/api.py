@@ -7,7 +7,7 @@ from flask import Blueprint, request, send_file
 from multiprocessing import Process
 from PIL import Image
 
-from .funcs import AVATARS_FOLDER, VERIFY_ACCESS, MFA_ACCESS, IMAGE_SIZE
+from .funcs import AVATARS_FOLDER, ICONS_FOLDER, VERIFY_ACCESS, MFA_ACCESS, IMAGE_SIZE
 from .funcs import Functions, Security, Decorators 
 from .database import *
 
@@ -26,7 +26,7 @@ class Auth:
     @auth.route("/login", methods=["POST"])
     @Decorators.manage_database
     def login(db):
-        if settings := db.get_user(request.json.get("email")):
+        if settings := db.get_user(request.json.get("email").lower()):
             user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
             
             if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) == user_secrets.password:
@@ -70,9 +70,9 @@ class Auth:
         password = request.json.get("password")
 
         if not Functions.verify_email(email):
-            return ({"errors": {"email": "Invalid email form"}}, 400)
+            return ({"errors": {"email": "Invalid email syntax"}}, 400)
         
-        if db.get_user(email):
+        if db.get_user(email.lower()):
             return ({"errors": {"email": "Email is already registered"}}, 409)
         
         if (tag := db.get_available_tag(username)) is None:
@@ -167,23 +167,21 @@ class Channels:
         if not (friend_id := request.json.get("friend")):
             return ({"errors": {"friend": "Friend is invalid"}}, 400)
         
-        if not (friend := db.get_entry(USER_TABLE, friend_id)):
-            return ({"errors": {"friend": "User does not exist"}}, 400)
+        if not (friend := db.get_user_stuff([user_id, friend_id], "friend")):
+            return ({"errors": {"friend": "No friend connection"}}, 400)
         
         id = f"{min(user_id, friend_id)}-{max(user_id, friend_id)}"
 
-        if saved_channel := db.get_entry(CHANNEL_TABLE, id):
-            return ({"channel": saved_channel}, 200)
-        
-        creation_time = str(time.time())
-        channel = Channel(id, "-", "-", "-", creation_time, 1)
+        if not (channel := db.get_entry(CHANNEL_TABLE, id)):
+            creation_time = str(time.time())
+            channel = Channel(id, "-", "-", "-", creation_time, 1)
 
-        db.insert_entry(CHANNEL_TABLE, channel)
-        db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, id))
-        db.insert_entry(USER_CHANNEL_TABLE, UserChannel(friend_id, id))
+            db.insert_entry(CHANNEL_TABLE, channel)
+            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, id, creation_time))
+            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(friend_id, id, creation_time))
 
-        channel.name = friend.name
-        channel.icon = friend.avatar
+        channel.name = friend.get("name")
+        channel.icon = friend.get("avatar")
 
         return ({"channel": channel}, 200)
 
@@ -472,6 +470,13 @@ class Images:
             return send_file(f"{AVATARS_FOLDER}{image_id}", mimetype=image_id)
         except:
             return send_file(f"{AVATARS_FOLDER}generic.webp", mimetype=image_id)
+
+    @images.route("/channels/<image_id>")
+    def get_channel_image(image_id):
+        try:
+            return send_file(f"{ICONS_FOLDER}{image_id}", mimetype=image_id)
+        except:
+            return send_file(f"{ICONS_FOLDER}generic.webp", mimetype=image_id)
 
 
     @images.route("/avatar", methods=["POST"])
