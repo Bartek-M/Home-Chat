@@ -350,9 +350,7 @@ a {
 .main-sidebar-icon:hover { border-radius: 10px; background-color: var(--BLUE);}
 
 /* channel creator */
-.creator-tabs-wrapper {
-    margin-bottom: 1rem;
-}
+.creator-tabs-wrapper { margin-bottom: 1rem; }
 
 .switch-btn {
     width: 50%;
@@ -363,13 +361,26 @@ a {
 
 .switch-btn:hover, .switch-btn.active { background-color: var(--BLUE); color: var(--FONT_COLOR) }
 
-.small-card {
-    max-width: calc(100% - 1.5rem)
+.small-card { max-width: calc(100% - 1.5rem) }
+.friends-wrapper { max-height: 180px; }
+
+.added-users-wrapper { align-items: center; margin: 0.5rem 0  } 
+
+.user-icon-wrapper {
+    position: relative;
+    max-width: 20px;
+    margin-bottom: 4px;
 }
 
-.friends-wrapper {
-    max-height: 180px;
+.added-user-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 50%;
 }
+
+.user-icon-wrapper:hover .tooltip-top{ visibility: visible; }
+.user-icon-wrapper:hover .added-user-icon { opacity: 0.8; }
 
 /* channel info */
 .main-view {
@@ -648,6 +659,7 @@ a {
 /* settings account */
 .avatar-wrapper {
     width: 82px;
+    max-width: 82px;
     height: 82px;
     position: relative;
     cursor: pointer;
@@ -659,6 +671,7 @@ a {
     right: 0.1rem;
     padding: 0.25rem;
     border-radius: 50%;
+    max-width: 16px;
     width: 16px;
     height: 16px;
     background-color: var(--FONT_COLOR);
