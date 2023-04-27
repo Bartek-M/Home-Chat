@@ -59,10 +59,11 @@ class UserChannel:
     channel_id: str
     pos_time: str
     nick: str = None
+    admin: int = 0 # 0 | 1
     direct: int = 0 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?"
 
 
 @dataclass

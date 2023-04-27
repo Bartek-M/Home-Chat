@@ -127,7 +127,7 @@ class Security:
         """
         Verify specific token
         :param token: Token to verify
-        :return: ("correct" / "expired" / "signature" / "invalid", id, option if any)
+        :return: ("correct" / "expired" / "signature" / "invalid" - id or option if any)
         """
         option = None
 
@@ -293,7 +293,7 @@ class Decorators:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket", None))
+            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket"))
 
             if not verify_option and verify_code == "correct":
                 return 403

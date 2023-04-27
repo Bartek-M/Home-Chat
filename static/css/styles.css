@@ -931,7 +931,7 @@ a {
 [class*="tooltip"] {
     position: absolute;
     z-index: 1;
-    min-width: fit-content;
+    min-width: max-content;
     padding: 0.25rem 0.5rem;
     border-radius: 5px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);

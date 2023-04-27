@@ -12,6 +12,8 @@ function change_avatar(file, setUser) {
 
     api_file("avatar", form_data)
         .then(res => {
+            if (res.errors && res.errors.image) return flash_message(res.errors.image, "error")
+
             if (res.message === "200 OK" && res.image) {
                 setUser((current_user) => { return { ...current_user, avatar: res.image } }) 
                 return flash_message("Avatar updated!")

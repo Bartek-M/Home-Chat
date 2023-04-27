@@ -53,7 +53,7 @@ class Database:
                 id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct INTEGER
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                user_id TEXT, channel_id TEXT, pos_time TEXT, nick TEXT, direct INTEGER
+                user_id TEXT, channel_id TEXT, pos_time TEXT, nick TEXT, admin INTEGER, direct INTEGER
             )""",
             f"""{USER_FRIENDS_TABLE} (
                 user_id TEXT, friend_id TEXT, accepted TEXT 
@@ -122,25 +122,29 @@ class Database:
             if fetched := self.cursor.fetchall():
                 return sorted(
                     [self.get_entry(USER_TABLE, data[0]).__dict__ for data in fetched],
-                    key=lambda x: f"{x[1]}#{x[2]}"
+                    key=lambda x: f"{x.get('name')}#{x.get('tag')}"
                 )
 
         if option == "mesages":
             self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():
+                messages = []
                 users = {}
 
-                for message in (messages := [Message(*entry).__dict__ for entry in sorted(fetched, key=lambda x: x[4])]):
-                    if (user := users.get(message.user_id, None) is None):
+                for data in sorted(fetched, key=lambda x: x[4]):
+                    message = Message(*data)
+
+                    if (user := users.get(message.user_id)) is None:
                         user = self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE id='{message.user_id}'").fetchone()
                         users[message.author] = user
 
                     message.author = user
+                    messages.append(message)
 
                 return messages
             
-        if option == "dm_friend":
+        if option == "user_channel":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
 
             if fetched := self.cursor.fetchone():
@@ -170,10 +174,13 @@ class Database:
                 for data in sorted(fetched, key=lambda x: x[2], reverse=True):
                     channel = self.get_entry(CHANNEL_TABLE, data[1])
                     
-                    if channel.direct == 1 and (friend := self.get_entry(USER_TABLE, channel.id.replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel.id], "dm_friend")):
+                    if channel.direct == 1 and (friend := self.get_entry(USER_TABLE, channel.id.replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel.id], "user_channel")):
                         channel.name = friend_channel.nick if friend_channel.nick else friend.name 
                         channel.icon = friend.avatar
 
+                    if channel.direct == 0:
+                        channel.users = self.get_channel_stuff(channel.id, "users")
+                    
                     channels.append(channel)
 
                 return channels

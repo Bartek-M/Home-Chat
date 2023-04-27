@@ -169,6 +169,9 @@ class Channels:
         
         if not (friend := db.get_user_stuff([user_id, friend_id], "friend")):
             return ({"errors": {"friend": "No friend connection"}}, 400)
+
+        if friend.get("accepted") == "waiting":
+            return ({"errors": {"friend": "Friend invite is still pending"}}, 406)
         
         id = f"{min(user_id, friend_id)}-{max(user_id, friend_id)}"
 
@@ -177,8 +180,8 @@ class Channels:
             channel = Channel(id, "-", "-", "-", creation_time, 1)
 
             db.insert_entry(CHANNEL_TABLE, channel)
-            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, id, creation_time))
-            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(friend_id, id, creation_time))
+            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, id, creation_time, None, 1, 1))
+            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(friend_id, id, creation_time, None, 1, 1))
 
         channel.name = friend.get("name")
         channel.icon = friend.get("avatar")
@@ -188,8 +191,29 @@ class Channels:
     @channels.route("/create", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
-    def create_group(db):
-        return 200
+    def create_group(db, user_id):
+        if not (name := request.json.get("name")):
+            return ({"errors": {"name": "Name is invalid"}}, 400)
+        
+        if not (users := request.json.get("users")):
+            return ({"errors": {"users": "Users are invalid"}}, 400)
+        
+        if len(users) > 100:
+            return ({"errors": {"users": "Too many users"}}, 406)
+        
+        creation_time = time.time()
+        channel = Channel(Functions.create_id(creation_time), name, "generic", user_id, creation_time)
+        
+        db.insert_entry(CHANNEL_TABLE, channel)
+        db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, channel.id, creation_time))
+        
+        for member_id in users:
+            if not (user := db.get_entry(USER_TABLE, member_id)):
+                continue
+            
+            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user.id, channel.id, creation_time))
+
+        return ({"channel": channel}, 200)
 
     # DELETE
     @channels.route("/delete/<channel_id>")
@@ -510,6 +534,48 @@ class Images:
         img.save(f"{AVATARS_FOLDER}{file_name}.webp")
         db.update_entry(USER_TABLE, user_id, "avatar", file_name)
 
+        return ({"image": file_name}, 200)
+
+    @images.route("/icon/<channel_id>", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def icon(db, user_id, channel_id):
+        if not (file := request.files.get("image")):
+            return ({"errors": {"image": "No image"}}, 400)
+        
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+        
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channels")):
+            return ({"errors": {"channel": "You are not a member of this channel"}}, 403)
+        
+        if user_channel.admin != 1 and channel.owner != user_id:
+            return ({"errors": {"channel": "You are not admin or owner of this channel"}}, 403)
+        
+        try:
+            img = Image.open(file)
+        except:
+            return ({"errors": {"image": "Invalid image format"}}, 400)
+
+        width, height = img.size
+
+        if width > height:
+            left_right = int(((height - width) * -1) / 2)
+            img = img.crop((left_right, 0, width-left_right, height))
+        else:
+            top_bottom = int(((width - height) * -1) / 2)
+            img = img.crop((0, top_bottom, width, height - top_bottom))
+        
+        img = img.resize(IMAGE_SIZE)
+        channel_icon = db.get_entry(CHANNEL_TABLE, channel_id).icon
+
+        if channel_icon != "generic" and os.path.isfile(f"{ICONS_FOLDER}{channel_icon}.webp"): 
+            os.remove(f"{ICONS_FOLDER}{channel_icon}.webp")
+        
+        file_name = f"{channel_id}{secrets.token_hex(2)}"
+        img.save(f"{ICONS_FOLDER}{file_name}.webp")
+        db.update_entry(CHANNEL_TABLE, channel_id, "icon", file_name)
+    
         return ({"image": file_name}, 200)
 
 

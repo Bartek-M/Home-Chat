@@ -1,7 +1,38 @@
 import { useState, useMemo, useRef  } from "react"
 
 import { useUser, useFriends, useChannels } from "../../../context"
-import { open_channel, format_time } from "../../../utils"
+import { api_send, open_channel, format_time, flash_message } from "../../../utils"
+
+// Functions 
+function set_image(file, icon) {
+    const user_file = file.files[0]
+    if (!user_file) return
+
+    icon.src = URL.createObjectURL(user_file)
+}
+
+function create_channel(name, users, icon, setChannels, close) {
+    if (!name.value || !users || !icon) return
+
+    api_send("channel_create", {
+        name: name.value,
+        users: users
+    }, "POST").then(res => {
+        console.log(res)
+        
+        if (res.message == "200 OK") {
+            setChannels(channels => {
+                if (!channels.some(({id}) => id === res.channel.id)) channels.push(res.channel)
+                return channels
+            })
+
+            return close()
+        }
+
+        flash_message("Something went wrong!", "error")
+    })
+    // if (!icon.src.includes("/api/images/channels/generic.webp")) console.log(icon.src)
+}
 
 export function ChannelCreator({ props }) {
     const { close } = props
@@ -15,6 +46,8 @@ export function ChannelCreator({ props }) {
     const [channels, setChannels] = useChannels()
 
     const file_input = useRef()
+    const channel_name = useRef()
+    const channel_icon = useRef()
 
     const filteredItems = useMemo(() => {
         if (!friends || !friends.accepted) return
@@ -52,10 +85,10 @@ export function ChannelCreator({ props }) {
                     ? <div className="column-container">
                         <div className="spaced-container">
                             <div className="avatar-wrapper center-container" onClick={() => file_input.current.click()}>
-                                <img className="settings-avatar" src={`/api/images/channels/generic.webp`} />
+                                <img className="settings-avatar" ref={channel_icon} src={"/api/images/channels/generic.webp"} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} />
                                 <div className="change-icon center-container absolute-container">
                                     CHANGE<br />ICON
-                                    <input ref={file_input} type="file" accept="image/*" onChange={() => null} />
+                                    <input ref={file_input} type="file" accept="image/*" onChange={() => set_image(file_input.current, channel_icon.current)} />
                                 </div>
                                 <div className="add-avatar-icon">
                                     <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
@@ -66,7 +99,7 @@ export function ChannelCreator({ props }) {
                             </div>
                             <div className="column-container">
                                 <p className="category-text">GROUP NAME <span className="error-category-name" id="code-error">*</span></p>
-                                <input className="input-field small-card-field" autoFocus spellCheck={false} defaultValue="Untitled" maxLength={50} required />
+                                <input className="input-field small-card-field" autoFocus spellCheck={false} defaultValue="Untitled" ref={channel_name} maxLength={50} required />
                             </div>
                         </div>
                         <div className="added-users-wrapper container">
@@ -113,7 +146,7 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="card-submit-wrapper">
                             <button className="card-cancel-btn" onClick={() => close()}>Cancel</button>
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={() => null} value="Create" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={() => create_channel(channel_name.current, selected, channel_icon.current, setChannels, close)} value="Create" />
                         </div>
                     </div>
                     : <div className="column-container">
