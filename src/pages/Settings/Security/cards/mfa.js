@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 
 import { useUser } from "../../../../context";
+import { MFA } from "../../../../components"
 import { api_send, flash_message, gen_secret } from "../../../../utils";
 
 const qrcodes = require("qrcode")
@@ -53,7 +54,7 @@ function disable_mfa(setUser, code, close) {
 }
 
 // Render
-export function MFA({ props }) {
+export function MFASetup({ props }) {
     const { close } = props
 
     const [user, setUser] = useUser()
@@ -63,23 +64,7 @@ export function MFA({ props }) {
     const code = useRef()
 
     // Disable MFA
-    if (user.mfa_enabled) {
-        return (
-            <form className="settings-edit-card center-column-container">
-                <div className="column-container">
-                    <h3>Disable Two-Factor Authentication</h3>
-                </div>
-                <div className="column-container">
-                    <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                    <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
-                </div>
-                <div className="card-submit-wrapper">
-                    <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); disable_mfa(setUser, code.current, close) }} value="Remove 2FA" />
-                </div>
-            </form>
-        )
-    }
+    if (user.mfa_enabled) return <MFA title="Disable Two-Factor Authentication" submit_text="Remove 2FA" submit_function={disable_mfa} close={close} />
 
     // Setup MFA
     if (page) {

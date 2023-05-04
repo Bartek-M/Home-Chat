@@ -25,7 +25,8 @@ const api_pages = {
     confirm_friend: (value) => `/api/users/${value}/friends/confirm/`,
     decline_friend: (value) => `/api/users/${value}/friends/decline/`, 
 
-    avatar: () => `/api/images/avatar/`
+    avatar: () => `/api/images/avatar/`,
+    icon: (value) => `/api/images/icon/${value}/`
 }
 
 export async function api_get(page, id) {
@@ -49,8 +50,8 @@ export async function api_send(page, data, method, id=null) {
         .then((data) => { return data })
 }
 
-export async function api_file(page, data) {
-    return await fetch(api_pages[page](), {
+export async function api_file(page, data, id=null) {
+    return await fetch(api_pages[page](id), {
         method: "POST",
         headers: { "Authentication": localStorage.getItem("token") },
         body: data

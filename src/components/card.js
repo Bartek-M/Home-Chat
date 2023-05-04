@@ -4,7 +4,7 @@ import { useUser } from "../context"
 import { Loading } from ".";
 
 import { Email, Username, DeleteAccount } from "../pages/Settings/Account";
-import { Password, MFA } from "../pages/Settings/Security"; 
+import { Password, MFASetup } from "../pages/Settings/Security"; 
 import { ChannelCreator, ChannelSettings } from "../pages/Home/";
 
 // Card content (edit card)
@@ -30,7 +30,7 @@ export function Card(props) {
 
     // Security Page
     if (card === "password") return (<Password props={props} />)
-    if (card === "mfa") return (<MFA props={props} />)
+    if (card === "mfa") return (<MFASetup props={props} />)
 
     // Channels managing
     if (card === "channel_creator") return (<ChannelCreator props={props}/>)

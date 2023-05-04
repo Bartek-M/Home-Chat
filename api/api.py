@@ -202,7 +202,7 @@ class Channels:
             return ({"errors": {"users": "Too many users"}}, 406)
         
         creation_time = time.time()
-        channel = Channel(Functions.create_id(creation_time), name, "generic", user_id, creation_time)
+        channel = Channel(str(Functions.create_id(creation_time)), name, "generic", user_id, creation_time)
         
         db.insert_entry(CHANNEL_TABLE, channel)
         db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, channel.id, creation_time))
@@ -220,6 +220,7 @@ class Channels:
     @Decorators.manage_database
     def delete_channels(db, channel_id):
         db.delete_entry(None, channel_id, "channel")
+        return 200
 
 
 class Users:
@@ -539,14 +540,14 @@ class Images:
     @images.route("/icon/<channel_id>", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
-    def icon(db, user_id, channel_id):
+    def icon(db, user_id, channel_id):    
         if not (file := request.files.get("image")):
             return ({"errors": {"image": "No image"}}, 400)
         
         if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
         
-        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channels")):
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You are not a member of this channel"}}, 403)
         
         if user_channel.admin != 1 and channel.owner != user_id:

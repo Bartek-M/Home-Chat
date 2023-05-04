@@ -1,23 +1,29 @@
 import { useState, useRef } from "react"
 
 import { useUser } from "../../../../context";
+import { MFA } from "../../../../components"
 import { api_send, flash_message } from "../../../../utils";
-
+ 
 // Function
-function update_password(user, password, new_password, confirm_password, close, setPage, code) {
-    if (!password.value || !new_password.value || !confirm_password.value || (code && !code.value)) return
+function update_password({user, password, data, close, setPage, code}) {
+    if (data.length !== 2) return
+    if (!data[0] || !data[1]) return
+
+    var new_passw = data[1]
+    var confirm_passw = data[1]
+    if (!password.value || !new_passw.value || !confirm_passw.value || (code && !code.value)) return
 
     if (!code) {
-        if (new_password.value !== confirm_password.value) return document.getElementById("conf-passw-error").innerText = "Passwords don't match!"
+        if (new_passw.value !== confirm_passw.value) return document.getElementById("conf-passw-error").innerText = "Passwords don't match!"
         document.getElementById("conf-passw-error").innerText = "*"
 
-        if (new_password.value.lenght < 6) return document.getElementById("new-passw-error").innerText = "Must be 6 or more in length"
+        if (new_passw.value.length < 6) return document.getElementById("new-passw-error").innerText = "Must be 6 or more in length"
         document.getElementById("new-passw-error").innerText = "*"
     }
 
     api_send("user", {
         category: "password",
-        data: new_password.value,
+        data: new_passw.value,
         password: password.value,
         code: code ? code.value : null
     }, "PATCH", "@me").then(res => {
@@ -44,35 +50,19 @@ function update_password(user, password, new_password, confirm_password, close, 
 export function Password({ props }) {
     const { close } = props
 
-    const [user, setUser] = useUser()
+    const [user, ] = useUser()
     const [page, setPage] = useState(null)
 
     const password = useRef()
     const new_password = useRef()
     const confirm_password = useRef()
 
-    const code = useRef()
-
     if (page) {
         const passw = password.current
         const new_passw = new_password.current
         const confirm_passw = confirm_password.current
 
-        return (
-            <form className="settings-edit-card center-column-container">
-                <div className="column-container">
-                    <h3>Update your password</h3>
-                </div>
-                <div className="column-container">
-                    <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                    <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
-                </div>
-                <div className="card-submit-wrapper">
-                    <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_password(user, passw, new_passw, confirm_passw, close, setPage, code.current) }} value="Update Password" />
-                </div>
-            </form>
-        )
+        return <MFA title="Update your password" submit_text="Update Password" submit_function={update_password} setPage={setPage} password={passw} data={[new_passw, confirm_passw]} close={close} />
     }
 
     return (
@@ -98,7 +88,7 @@ export function Password({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_password(user, password.current, new_password.current, confirm_password.current, close, setPage) }} value={user.mfa_enabled ? "Continue" : "Update Password"} />
+                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_password({ user: user, password: password.current, data: [new_password.current, confirm_password.current], setPage: setPage, close: close}) }} value={user.mfa_enabled ? "Continue" : "Update Password"} />
             </div>
         </form>
     )

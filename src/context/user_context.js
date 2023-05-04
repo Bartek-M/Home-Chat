@@ -49,13 +49,13 @@ export function UserProvider({ children }) {
     }, [user])
 
     return (
-        <>
+        <div id="home-view">
             <Loading />
-            {user && <>
+            {user && 
                 <UserContext.Provider value={[user, setUser]}>
                     {children}
                 </UserContext.Provider>
-            </>}
-        </>
+            }
+        </div>
     )
 }

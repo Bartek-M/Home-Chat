@@ -1,4 +1,4 @@
-import { api_send, flash_message } from "./"
+import { api_file, api_send, flash_message } from "./"
 export const { os_list, version } = require("../data/config.json")
 
 // Set user_os
@@ -39,7 +39,7 @@ export function open_channel(friend_id, setChannels, close) {
 
         if (res.message == "200 OK") {
             setChannels(channels => {
-                if (!channels.some(({id}) => id === res.channel.id)) channels.push(res.channel)
+                if (!channels.some(({ id }) => id === res.channel.id)) return [res.channel, ...channels]
                 return channels
             })
 

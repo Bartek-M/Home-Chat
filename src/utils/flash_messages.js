@@ -21,6 +21,9 @@ export function flash_message(text, type = "info") {
             </div>
         `
 
-        setTimeout(() => document.getElementById(id).remove(), 3000)
+        setTimeout(() => {
+            if (!document.getElementById(id)) return
+            document.getElementById(id).remove()
+        }, 3000)
     }
 }

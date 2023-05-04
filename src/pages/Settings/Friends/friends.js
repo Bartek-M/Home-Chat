@@ -38,7 +38,7 @@ export function Friends() {
             <form className="column-container" onSubmit={(e) => { e.preventDefault(); search_user(user_search.current, setSearchUser) }}>
                 <p className="category-text">SEARCH <span className="error-category-text" id="search-error"></span></p>
                 <div className="friend-search-wrapper spaced-container">
-                    <input className="friend-search-input" autoFocus ref={user_search} onChange={(e) => {
+                    <input className="friend-search-input" ref={user_search} onChange={(e) => {
                         document.getElementById("search-error").innerText = null
                         if (!searchUser || e.target.value === `${searchUser.name}#${searchUser.tag}`) return
                         setSearchUser(null)

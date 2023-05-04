@@ -9,8 +9,8 @@ export function add_friend(user_id, friend, setFriends) {
             friend.accepted = "waiting"
             friend.inviting = user_id
             setFriends(current_friends => { 
-                current_friends.pending ? current_friends.pending.push(friend) : current_friends.pending = [friend]
-                return { ...current_friends } 
+                if (current_friends.pending) return [friend, ...current_friends]
+                return { ...current_friends, pending: friend } 
             })
             return flash_message("Sent a friend request!")
         }
@@ -26,8 +26,8 @@ export function remove_friend(friend_id, setFriends) {
         if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") { 
             setFriends(current_friends => {
-                let accepted = current_friends.accepted ? current_friends.accepted.filter(filter_friend => filter_friend.id != friend_id) : []
-                return { ...current_friends, accepted: accepted }
+                if (!confirm_friend.accepted) return current_friends
+                return { ...current_friends, accepted: current_friends.accepted.filter(filter_friend => filter_friend.id != friend_id) }
             })
             return flash_message("Removed a friend!")
         }
@@ -43,11 +43,11 @@ export function confirm_friend(friend, setFriends) {
         if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK" && res.time) {
             friend.accepted = res.time
-            setFriends(current_friends => { 
-                current_friends.accepted ? current_friends.accepted.push(friend) : current_friends.accepted = [friend]
-                let pending = current_friends.pending ? current_friends.pending.filter(filter_friend => filter_friend.id != friend.id) : []
-                
-                return { pending: pending, accepted: current_friends.accepted } 
+            setFriends(current_friends => {                 
+                return { 
+                    pending: current_friends.pending ? current_friends.pending.filter(filter_friend => filter_friend.id != friend.id) : [], 
+                    accepted: current_friends.accepted ? [friend, ...current_friends.accepted] : [friend] 
+                } 
             })
             return flash_message("Confirmed friend request!")
         }
@@ -63,8 +63,8 @@ export function decline_friend(friend_id, setFriends) {
         if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") { 
             setFriends(current_friends => {
-                let pending = current_friends.pending ? current_friends.pending.filter(filter_friend => filter_friend.id != friend_id) : []
-                return { ...current_friends, pending: pending }
+                if (!current_friends.pending) return current_friends
+                return { ...current_friends, pending: current_friends.pending.filter(filter_friend => filter_friend.id != friend_id) }
             })
             return flash_message("Declined friend request!")
         }

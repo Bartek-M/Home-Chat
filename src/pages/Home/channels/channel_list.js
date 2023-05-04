@@ -2,7 +2,7 @@ import { useChannels } from "../../../context"
 
 export function ChannelList() {
     const [channels, setChannels] = useChannels()
-
+    
     return (
         <>
             {channels && channels.map(channel => (

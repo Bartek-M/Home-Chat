@@ -6,14 +6,12 @@ node_modules/
 avatars/
 channel_icons/
 
+js/
 
 # FILES
 db.sqlite
 
 package.json
 package-lock.json
-
-main.js
-main.js.LICENSE.txt
 
 .env
