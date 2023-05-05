@@ -46,6 +46,13 @@ export function confirm_friend(friend, setFriends) {
         if (res.message === "200 OK" && res.time) {
             friend.accepted = res.time
             setFriends(current_friends => {
+                if (current_friends.accepted && current_friends.accepted.some(({ id }) => id === friend.id)) {
+                    return {
+                        pending: current_friends.pending ? current_friends.pending.filter(filter_friend => filter_friend.id != friend.id) : [],
+                        accepted: current_friends.accepted ? current_friends.accepted : []
+                    }
+                }
+
                 return {
                     pending: current_friends.pending ? current_friends.pending.filter(filter_friend => filter_friend.id != friend.id) : [],
                     accepted: current_friends.accepted ? [friend, ...current_friends.accepted] : [friend]

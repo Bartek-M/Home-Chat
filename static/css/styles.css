@@ -326,6 +326,11 @@ a {
 .main-sidebar-item { pointer-events: none; }
 .main-sidebar-item:hover .main-sidebar-pill { height: 20px; }
 
+.main-sidebar-item.active .main-sidebar-icon { border-radius: 10px; }
+.main-sidebar-item.active .main-sidebar-pill { height: 40px; }
+.main-sidebar-item.active .sidebar-settings-icon { background-color: var(--BLUE) }
+.main-sidebar-item.active .sidebar-settings-icon svg { fill: var(--FONT_COLOR) }
+
 .main-sidebar-pill { 
     position: absolute;
     left: 0;
@@ -343,6 +348,7 @@ a {
     object-fit: cover;
     border-radius: 50%;
     background-color: var(--COLOR_3);
+    cursor: pointer;
     pointer-events: auto;
 }
 

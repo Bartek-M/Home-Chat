@@ -1,18 +1,29 @@
 import { useChannels } from "../../../context"
 
+function open_channel(channel_id, active, setChannels) {
+    if (active) return
+
+    setChannels(channels => {
+        return channels.filter(channel => {
+            if (channel.active) channel.active = false
+            if (channel.id === channel_id) channel.active = true
+
+            return channel
+        })
+    })
+}
+
 export function ChannelList() {
     const [channels, setChannels] = useChannels()
-    
+
     return (
-        <>
+        <div className="main-sidebar-elements center-column-container">
             {channels && channels.map(channel => (
-                <li className="main-sidebar-item center-container" key={`channel-${channel.id}`}>
+                <li className={`main-sidebar-item center-container ${channel.active ? "active" : ""}`} key={`channel-${channel.id}`} onClick={() => open_channel(channel.id, channel.active, setChannels)}>
                     <div className="main-sidebar-pill"></div>
-                    <button>
-                        <img className="main-sidebar-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
-                    </button>
+                    <img className="main-sidebar-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
                 </li>
             ))}
-        </>
+        </div>
     )
 }
