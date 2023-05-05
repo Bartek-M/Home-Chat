@@ -346,9 +346,11 @@ a {
     pointer-events: auto;
 }
 
-.main-sidebar-icon svg { fill: var(--BLUE); transition: unset;}
-.main-sidebar-icon:hover svg { fill: var(--FONT_COLOR) }
-.main-sidebar-icon:hover { border-radius: 10px; background-color: var(--BLUE);}
+.main-sidebar-icon:hover { border-radius: 10px }
+
+.sidebar-settings-icon svg { fill: var(--BLUE); transition: unset }
+.sidebar-settings-icon:hover svg { fill: var(--FONT_COLOR) }
+.sidebar-settings-icon:hover { background-color: var(--BLUE) }
 
 /* channel creator */
 .creator-tabs-wrapper { margin-bottom: 1rem; }

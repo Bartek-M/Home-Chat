@@ -295,6 +295,9 @@ class Users:
         if not db.get_entry(USER_TABLE, friend_id):
             return ({"errors": {"friend": "User does not exist"}}, 400)
         
+        if db.get_user_stuff([user_id, friend_id], "friend"):
+            return ({"errors": {"friend": "Already added"}}, 400)
+        
         db.insert_entry(USER_FRIENDS_TABLE, UserFriend(user_id, friend_id))
         return 200
 
