@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
-import { useFriends, useUser } from "../../../context"
+import { useChannels, useFriends, useUser } from "../../../context"
 
-import { api_send, flash_message, format_time } from "../../../utils"
+import { api_send, flash_message, format_time, open_channel } from "../../../utils"
 import { add_friend, remove_friend, confirm_friend, decline_friend } from "./"
 
 function search_user(username, setSearchUser) {
@@ -21,12 +21,9 @@ function search_user(username, setSearchUser) {
     })
 }
 
-function open_chat(friend) {
-    console.log(friend)
-}
-
 export function Friends() {
-    const [user, _] = useUser()
+    const [user,] = useUser()
+    const [, setChannels] = useChannels()
     const [friends, setFriends] = useFriends()
 
     const [searchUser, setSearchUser] = useState(null)
@@ -53,7 +50,10 @@ export function Friends() {
                 {searchUser && (
                     <>
                         <div className="column-container">
-                            <div className="friend-card spaced-container">
+                            <div className="friend-card spaced-container" onClick={() => { 
+                                if (!searchUser.accepted || searchUser.accepted === "waiting") return
+                                open_channel(searchUser.id, setChannels, close) 
+                            } }>
                                 <div className="center-container">
                                     <img className="friend-icon" src={`/api/images/${searchUser.avatar}.webp`} />
                                     <div className="column-container">
@@ -75,7 +75,7 @@ export function Friends() {
                                     )}
                                     {(searchUser.accepted && searchUser.accepted !== "waiting") && (
                                         <>
-                                            <button className="message-friend-btn center-container">
+                                            <button className="message-friend-btn center-container" onClick={() => open_channel(searchUser.id, setChannels, close)}>
                                                 <div className="tooltip-top">Message</div>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
@@ -156,7 +156,7 @@ export function Friends() {
                 <div className="column-container">
                     <p className="extended-category-text">ALL FRIENDS</p>
                     {friends.accepted.map(friend => 
-                            <div className="friend-card spaced-container" key={`accepted-${friend.id}`}>
+                            <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={() => open_channel(friend.id, setChannels, close)}>
                                 <div className="center-container">
                                     <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                     <div className="column-container">
@@ -165,7 +165,7 @@ export function Friends() {
                                     </div>
                                 </div>
                                 <div className="center-container">
-                                    <button className="message-friend-btn center-container">
+                                    <button className="message-friend-btn center-container" onClick={() => open_channel(friend.id, setChannels, close)}>
                                         <div className="tooltip-top">Message</div>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
