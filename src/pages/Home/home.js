@@ -6,20 +6,20 @@ import { Settings } from "../Settings/";
 
 import { ChannelList, ChannelView } from "./";
 
-
 export function Home() {
     const [settings, setSettings] = useState(false)
     const [card, setCard] = useState(null)
 
     useEffect(() => {
-        const close_card = (e) => {
+        const close_settings = (e) => {
             if (e.key !== "Escape") return
-            setCard(null)
+            if (!card && settings) setSettings(false)
+            if (card) setCard(null)
         }
-
-        document.addEventListener("keyup", close_card)
-        return () => { document.removeEventListener("keyup", close_card) }
-    }, [card])
+        
+        document.addEventListener("keyup", close_settings)
+        return () => { document.removeEventListener("keyup", close_settings) }
+    }, [settings, card])
 
     return (
         <UserProvider>
@@ -30,7 +30,7 @@ export function Home() {
                             <ChannelList />                        
                             <div className="main-sidebar-elements center-column-container">
                                 <hr className="separator" />
-                                <li className={`main-sidebar-item center-container ${card ? "active" : ""}`}>
+                                <li className={`main-sidebar-item center-container ${card === "channel_creator" ? "active" : ""}`}>
                                     <div className="main-sidebar-pill" id="channel-pill-addchannel"></div>
                                     <button className="main-sidebar-icon sidebar-settings-icon center-container" onClick={() => { setCard("channel_creator") }}>
                                         <svg width="32" height="32" viewBox="0 0 16 16">
@@ -49,7 +49,7 @@ export function Home() {
                                 </li>
                             </div>
                         </nav>
-                        <ChannelView />
+                        <ChannelView setCard={setCard} />
                     </div>
                     {card && (
                         <div className="edit-card-wrapper center-container absolute-container">
@@ -57,7 +57,7 @@ export function Home() {
                             <Card card={card} close={setCard} />
                         </div>
                     )}
-                    {settings && (<Settings setSettings={setSettings} />)}
+                    {settings && (<Settings setSettings={setSettings} setCard={setCard}/>)}
                 </ChannelsProvider>
             </FriendsProvider>
         </UserProvider>

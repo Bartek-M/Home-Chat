@@ -1,12 +1,12 @@
 import { useChannels } from "../../../context"
 
 function open_channel(channel_id, active, setChannels) {
-    if (active) return
+    // if (active) return
 
     setChannels(channels => {
         return channels.filter(channel => {
             if (channel.active) channel.active = false
-            if (channel.id === channel_id) channel.active = true
+            else if (channel.id === channel_id) channel.active = true
 
             return channel
         })

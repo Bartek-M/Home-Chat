@@ -1,23 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { version, user_os } from "../../utils/"
 
 import Page from "./content_page"
 import { Card } from "../../components/";
 
-export function Settings({ setSettings }) {
+export function Settings({ setSettings, setCard }) {
     const [page, setPage] = useState("account")
-    const [card, setCard] = useState(null)
-
-    useEffect(() => {
-        const close_settings = (e) => {
-            if (e.key !== "Escape") return
-            if (!card) setSettings(false)
-            if (card) setCard(null)
-        }
-        
-        document.addEventListener("keyup", close_settings)
-        return () => { document.removeEventListener("keyup", close_settings) }
-    }, [card])
 
     return (
         <>
@@ -65,12 +53,6 @@ export function Settings({ setSettings }) {
                     </button>
                 </div>
             </div>
-            {card && (
-                <div className="edit-card-wrapper center-container absolute-container">
-                    <div className="absolute-container" id="edit-card-overlay"></div>
-                    <Card card={card} close={setCard} />
-                </div>
-            )}
         </>
     )
 }
