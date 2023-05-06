@@ -172,21 +172,20 @@ class Database:
                 channels = []
 
                 for data in sorted(fetched, key=lambda x: x[2], reverse=True):
-                    channel = self.get_entry(CHANNEL_TABLE, data[1])
-                    
-                    if channel.direct == 1 and (friend := self.get_entry(USER_TABLE, channel.id.replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel.id], "user_channel")):
-                        channel.name = friend_channel.nick if friend_channel.nick else friend.name 
-                        channel.icon = friend.avatar
+                    channel = self.get_entry(CHANNEL_TABLE, data[1]).__dict__
 
-                    if channel.direct == 0:
-                        channel.users = self.get_channel_stuff(channel.id, "users")
+                    if not channel:
+                        continue
                     
+                    if channel["direct"] == 1 and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
+                        channel["name"] = friend_channel.nick if friend_channel.nick else friend.name 
+                        channel["icon"] = friend.avatar
+
+                    channel["users"] = self.get_channel_stuff(channel["id"], "users")
                     channels.append(channel)
 
                 return channels
-            
-            print(req_id, fetched)
-                                    
+                                                
         if option == "friends":
             friends = {}
 
