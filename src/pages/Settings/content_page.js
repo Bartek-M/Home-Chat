@@ -2,7 +2,7 @@ import { Account } from "./Account/"
 import { Security } from "./Security/"
 import { Friends } from "./Friends"
 import { Appearance } from "./Appearance/"
-import { Advanced } from "./Advanced/"
+import { Notifications } from "./Notifications"
 
 import { Loading } from "../../components/"
 import { useUser } from "../../context"
@@ -17,7 +17,7 @@ export default function Page(props) {
     if (page === "security") return (<Security props={props}/>)
     if (page === "friends") return (<Friends props={props}/>)
     if (page === "appearance") return (<Appearance props={props}/>)
-    if (page === "advanced") return (<Advanced props={props}/>)
+    if (page === "notifications") return (<Notifications props={props}/>)
 
     return (<Account props={props}/>)
 } 

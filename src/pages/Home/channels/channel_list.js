@@ -19,9 +19,11 @@ export function ChannelList() {
     return (
         <div className="main-sidebar-elements center-column-container">
             {channels && channels.map(channel => (
-                <li className={`main-sidebar-item center-container ${channel.active ? "active" : ""}`} key={`channel-${channel.id}`} onClick={() => open_channel(channel.id, channel.active, setChannels)}>
+                <li className={`main-sidebar-item center-container ${channel.active ? "active" : ""}`} key={`channel-${channel.id}`} >
                     <div className="main-sidebar-pill"></div>
-                    <img className="main-sidebar-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
+                    <button className="center-container" onClick={() => open_channel(channel.id, channel.active, setChannels)}>
+                        <img className="main-sidebar-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
+                    </button>
                 </li>
             ))}
         </div>

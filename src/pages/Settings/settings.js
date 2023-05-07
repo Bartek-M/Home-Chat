@@ -2,7 +2,6 @@ import { useState } from "react";
 import { version, user_os } from "../../utils/"
 
 import Page from "./content_page"
-import { Card } from "../../components/";
 
 export function Settings({ setSettings, setCard }) {
     const [page, setPage] = useState("account")
@@ -29,7 +28,7 @@ export function Settings({ setSettings, setCard }) {
 
                         <p className="category-text">APP SETTINGS</p>
                         <button className={page === "appearance" ? "active" : ""} onClick={() => setPage("appearance")}>Appearance</button>
-                        <button className={page === "advanced" ? "active" : ""} onClick={() => setPage("advanced")}>Advanced</button>
+                        <button className={page === "notifications" ? "active" : ""} onClick={() => setPage("notifications")}>Notifications</button>
                         <hr className="separator" />
 
                         <a id="settings-logout" href="logout">Log Out</a>
