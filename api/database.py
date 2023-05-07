@@ -53,7 +53,7 @@ class Database:
                 id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct INTEGER
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                user_id TEXT, channel_id TEXT, pos_time TEXT, nick TEXT, admin INTEGER, direct INTEGER
+                user_id TEXT, channel_id TEXT, join_time TEXT, nick TEXT, admin INTEGER, direct INTEGER
             )""",
             f"""{USER_FRIENDS_TABLE} (
                 user_id TEXT, friend_id TEXT, accepted TEXT 
@@ -144,6 +144,12 @@ class Database:
 
                 return messages
             
+        if option == "last_message":
+            self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? ORDER BY id DESC", [req_id])
+
+            if fetched := self.cursor.fetchone():
+                return Message(*fetched)
+            
         if option == "user_channel":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
 
@@ -171,7 +177,7 @@ class Database:
             if fetched := self.cursor.fetchall():
                 channels = []
 
-                for data in sorted(fetched, key=lambda x: x[2], reverse=True):
+                for data in sorted(fetched, key=lambda x: last if (last := self.get_channel_stuff(x[1], "last_message")) else x[2], reverse=True):
                     channel = self.get_entry(CHANNEL_TABLE, data[1]).__dict__
 
                     if not channel:

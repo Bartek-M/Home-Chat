@@ -1,96 +1,20 @@
 import os
-import re
 import time
-import secrets
-import smtplib
 import hashlib
+import secrets
 from base64 import b64encode, b64decode
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from flask import jsonify, request
+from ..database import *
+from .functions import Functions
+
 from dotenv import load_dotenv
-
-from .database import *
-
-# CONSTANTS
 load_dotenv(dotenv_path="./api/.env")
 
-AVATARS_FOLDER = "./api/assets/avatars/"
-ICONS_FOLDER = "./api/assets/channel_icons/"
-IMAGE_SIZE = (256, 256)
-
-EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 EMAIL = os.getenv("EMAIL")
-PASSWORD = os.getenv("PASSWORD")
-
-VERIFY_ACCESS = "verify"
-MFA_ACCESS = "mfa"
-
 PEPPER = os.getenv("PEPPER")
 
-
-class Functions:
-    @staticmethod
-    def create_id(creation_time):
-        """
-        Create unique ID
-        :param creation_time: Epoch creation time
-        :return: Creation time(int)
-        """
-        return (int((creation_time - 1155909600) * 1000) << 23) + random.SystemRandom().getrandbits(22)
-    
-    @staticmethod
-    def verify_email(email):
-        """
-        Verify user email
-        :param email: Email to verify
-        :return: True if correct, False if incorrect
-        """
-        if re.fullmatch(EMAIL_REGEX, email):
-            return True
-
-        return False
-    
-    @staticmethod
-    def send_email(dest, message):
-        """
-        Send email to a specific address
-        :param dest: Destination email
-        :param message: Message to send
-        :return: None
-        """
-        with smtplib.SMTP("smtp.gmail.com", 587) as s:
-            s.starttls()
-            s.login(EMAIL, PASSWORD)
-            s.sendmail(EMAIL, dest, message.as_string())
-
-    @staticmethod
-    def match_code(code):
-        """
-        Match code to a specific message
-        :param code: Code for a specific message
-        :return: Matched message or None
-        """
-        match code:
-            # Successful responses 
-            case 200: return "200 OK"
-            case 201: return "201 Created"
-            case 204: return "204 No Content"
-
-            # Client error responses
-            case 400: return "400 Invalid Body Form"
-            case 401: return "401 Unauthorized"
-            case 403: return "403 Forbidden"
-            case 404: return "404 Not Found"
-            case 405: return "405 Method Not Allowed"
-            case 406: return "406 Not Acceptable"
-            case 409: return "409 Conflict"
-            case 413: return "413 Payload Too Large"
-            case 429: return "429 Too Many Requests"            
-            
-        return None
-    
 
 class Security:
     @staticmethod
@@ -232,86 +156,3 @@ class Security:
         message.attach(MIMEText(html, "html"))
 
         Functions.send_email(email, message)
-
-
-class Decorators:
-    @staticmethod
-    def manage_database(func):
-        """
-        Manage database decorator
-        :param func: Function to run
-        :return: Wrapper function
-        """
-        def wrapper(*args, **kwargs):
-            with Database() as db:
-                kwargs["db"] = db
-                resp = func(*args, **kwargs)
-            
-            data, code = resp if isinstance(resp, tuple) else ({}, resp)
-
-            if message := Functions.match_code(code):
-                data["message"] = message
-
-            return jsonify(data), code
-        
-        wrapper.__name__ = func.__name__
-        return wrapper
-    
-    @staticmethod
-    def auth(func):
-        """
-        Authenticate user tokens decorator
-        :param func: Function to run
-        :return: Wrapper function
-        """
-        def wrapper(*args, **kwargs):
-            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
-
-            if verify_option and verify_code == "correct":
-                return 403
-            
-            if verify_code == "correct":
-                kwargs["user_id"] = verify_id
-                return func(*args, **kwargs)
-            
-            if verify_code == "expired" or verify_code == "signature":
-                return 403
-            
-            if verify_code == "invalid":
-                return 401
-            
-            return None
-        
-        wrapper.__name__ = func.__name__
-        return wrapper
-    
-    @staticmethod
-    def ticket_auth(func):
-        """
-        Authenticate user ticets decorator
-        :param func: Funtion tu run
-        :return: Wrapper function
-        """
-        def wrapper(*args, **kwargs):
-            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket"))
-
-            if not verify_option and verify_code == "correct":
-                return 403
-            
-            if verify_code == "correct":
-                kwargs["user_id"] = verify_id
-                kwargs["option"] = verify_option
-
-                return func(*args, **kwargs)
-            
-            if verify_code == "expired" or verify_code == "signature":
-                return 403
-            
-            if verify_code == "invalid":
-                return 401
- 
-            return None
-        
-        
-        wrapper.__name__ = func.__name__
-        return wrapper

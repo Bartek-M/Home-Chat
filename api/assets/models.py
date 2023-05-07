@@ -57,7 +57,7 @@ class UserChannel:
     """
     user_id: str
     channel_id: str
-    pos_time: str
+    join_time: str
     nick: str = None
     admin: int = 0 # 0 | 1
     direct: int = 0 # 0 | 1
