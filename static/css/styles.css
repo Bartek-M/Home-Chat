@@ -235,8 +235,8 @@ a {
 
 .scroller-container { 
     position: relative; 
-    overflow-y: scroll; 
-    overflow-x: hidden 
+    /* overflow-y: scroll; 
+    overflow-x: hidden  */
 } 
 
 /* separators */
@@ -326,6 +326,7 @@ a {
 
 .main-sidebar-item { pointer-events: none; }
 .main-sidebar-item:hover .main-sidebar-pill { height: 20px; }
+.main-sidebar-item:hover .tooltip-right { visibility: visible; }
 
 .main-sidebar-item.active .main-sidebar-icon { border-radius: 10px; }
 .main-sidebar-item.active .main-sidebar-pill { height: 40px; }
@@ -598,7 +599,7 @@ a {
         flex: unset;
         width: 100%; 
         justify-content: left;
-        max-height: 46px; 
+        max-height: 40px; 
         overflow: hidden; 
     }
 
@@ -951,17 +952,23 @@ a {
     position: absolute;
     z-index: 1;
     min-width: max-content;
-    padding: 0.25rem 0.5rem;
     border-radius: 5px;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    box-shadow: 0 0 8px var(--BORDER_COLOR);
     background-color: var(--TOOLTIP_COLOR);
-    font-size: 14px;
     text-align: center;
     visibility: hidden;
 }
 
-.tooltip-top { bottom: 125% }
-.tooltip-right { left: 115% }
+.tooltip-top { 
+    bottom: 125%; 
+    font-size: 14px; 
+    padding: 0.25rem 0.5rem;
+}
+
+.tooltip-right { 
+    left: 115%;
+    padding: 0.5rem 0.75rem;
+}
 
 [class*="tooltip"]::after {
     content: "";
@@ -992,7 +999,6 @@ a {
     top: 0px;
     z-index: 100;
     margin-top: 0.5rem;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     transform: translate(-50%, 0);
     pointer-events: none;   
 }
@@ -1003,9 +1009,10 @@ a {
     opacity: 0;
     width: max-content;
     padding: 0.75rem 1rem;
-    background-color: var(--MAIN_COLOR);
+    background-color: var(--TOOLTIP_COLOR);
     border-color: transparent;
     border-radius: 50px;
+    box-shadow: 0 0 8px var(--BORDER_COLOR);
     transition: 0.17s ease; 
     animation: top-slide 3s;
 }
