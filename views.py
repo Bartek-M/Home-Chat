@@ -9,6 +9,11 @@ view = Blueprint(__name__, "view")
 def home():
     return render_template("index.html")
 
+@view.route("/channels/<channel_id>")
+def channel(channel_id):
+    return render_template("index.html")
+
+
 @view.route("/login")
 def log_in():
     return render_template("index.html")

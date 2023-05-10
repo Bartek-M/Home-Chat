@@ -235,8 +235,7 @@ a {
 
 .scroller-container { 
     position: relative; 
-    /* overflow-y: scroll; 
-    overflow-x: hidden  */
+    overflow: hidden scroll;
 } 
 
 /* separators */
@@ -317,14 +316,18 @@ a {
 /* home sidebar */
 .main-sidebar {
     width: 64px;
-    min-height: 200px;
     padding: 0.75rem 0;
     background-color: var(--MAIN_COLOR);
+    overflow-y: auto;
 }
 .main-sidebar::-webkit-scrollbar { display: none; }
-.main-sidebar-elements { width: 100%; gap: 0.75rem }
 
-.main-sidebar-item { pointer-events: none; }
+.main-sidebar-elements { 
+    width: 100%; 
+    gap: 0.75rem;
+}
+
+.main-sidebar-item { pointer-events: none;  }
 .main-sidebar-item:hover .main-sidebar-pill { height: 20px; }
 .main-sidebar-item:hover .tooltip-right { visibility: visible; }
 

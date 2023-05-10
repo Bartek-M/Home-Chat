@@ -23,7 +23,7 @@ export function ChannelView({ setCard }) {
                             <img className="channel-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
                             <p className="channel-name">{channel.name}</p>
                         </div>
-                        <button className="center-container" id="channel-settings" onClick={() => setCard("channel_settings")}>
+                        <button className="center-container" id="channel-settings" onClick={() => null}>
                             <svg width="28" height="28" viewBox="0 0 16 16">
                                 <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                             </svg>
