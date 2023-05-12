@@ -5,7 +5,7 @@ import { api_send, flash_message, format_time, open_channel } from "../../../uti
 import { add_friend, remove_friend, confirm_friend, decline_friend } from "./"
 
 function search_user(username, setSearchUser) {
-    if (!username.value) return 
+    if (!username.value) return
 
     var username = username.value.split("#")
     if (username.length != 2) return
@@ -21,7 +21,9 @@ function search_user(username, setSearchUser) {
     })
 }
 
-export function Friends() {
+export function Friends({ props }) {
+    const { card, setSettings } = props
+
     const [user,] = useUser()
     const [, setChannels] = useChannels()
     const [friends, setFriends] = useFriends()
@@ -50,15 +52,15 @@ export function Friends() {
                 {searchUser && (
                     <>
                         <div className="column-container">
-                            <div className="friend-card spaced-container" onClick={() => { 
+                            <div className="friend-card spaced-container" onClick={() => {
                                 if (!searchUser.accepted || searchUser.accepted === "waiting") return
-                                open_channel(searchUser.id, setChannels, close) 
-                            } }>
+                                open_channel(searchUser.id, setChannels, card, setSettings)
+                            }}>
                                 <div className="center-container">
                                     <img className="friend-icon" src={`/api/images/${searchUser.avatar}.webp`} />
                                     <div className="column-container">
                                         <p>{searchUser.name}<span className="user-tag">#{searchUser.tag}</span></p>
-                                        {searchUser.accepted && searchUser.accepted !== "waiting" && 
+                                        {searchUser.accepted && searchUser.accepted !== "waiting" &&
                                             <p className="message-time">{format_time(searchUser.accepted, "date")}</p>
                                         }
                                     </div>
@@ -75,7 +77,7 @@ export function Friends() {
                                     )}
                                     {(searchUser.accepted && searchUser.accepted !== "waiting") && (
                                         <>
-                                            <button className="message-friend-btn center-container" onClick={() => open_channel(searchUser.id, setChannels, close)}>
+                                            <button className="message-friend-btn center-container" onClick={() => open_channel(searchUser.id, setChannels, card, setSettings)}>
                                                 <div className="tooltip-top">Message</div>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
@@ -117,46 +119,46 @@ export function Friends() {
                     </>
                 )}
             </form>
-            {(friends && friends.pending && friends.pending.length) ? 
-            <div className="column-container">
-                <p className="extended-category-text">PENDING REQUESTS</p>
-                {friends.pending.map(friend =>
-                    <div className="friend-card spaced-container" key={`pending-${friend.id}`}>
-                        <div className="center-container">
-                            <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
-                            <div className="column-container">
-                                <p>{friend.name}<span className="user-tag">#{friend.tag}</span></p>
+            {(friends && friends.pending && friends.pending.length) ?
+                <div className="column-container">
+                    <p className="extended-category-text">PENDING REQUESTS</p>
+                    {friends.pending.map(friend =>
+                        <div className="friend-card spaced-container" key={`pending-${friend.id}`}>
+                            <div className="center-container">
+                                <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                <div className="column-container">
+                                    <p>{friend.name}<span className="user-tag">#{friend.tag}</span></p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="center-container">
-                            {friend.inviting !== user.id &&
-                                <button className="add-friend-btn center-container" onClick={() => confirm_friend(friend, setFriends)}>
-                                    <div className="tooltip-top">Confirm</div>
+                            <div className="center-container">
+                                {friend.inviting !== user.id &&
+                                    <button className="add-friend-btn center-container" onClick={() => confirm_friend(friend, setFriends)}>
+                                        <div className="tooltip-top">Confirm</div>
+                                        <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
+                                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                            <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
+                                        </svg>
+                                    </button>
+                                }
+                                <button className="remove-friend-btn center-container" onClick={() => decline_friend(friend.id, setFriends)}>
+                                    <div className="tooltip-top">Decline</div>
                                     <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
-                                        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                         <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
                                     </svg>
                                 </button>
-                            }
-                            <button className="remove-friend-btn center-container" onClick={() => decline_friend(friend.id, setFriends)}>
-                                <div className="tooltip-top">Decline</div>
-                                <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
-                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                    <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
-                                </svg>
-                            </button>
+                            </div>
                         </div>
-                    </div>
-                )}
-                <hr className="separator" />
-            </div> : null
+                    )}
+                    <hr className="separator" />
+                </div> : null
             }
             {(friends && friends.accepted && friends.accepted.length) ?
-            <>
-                <div className="column-container">
-                    <p className="extended-category-text">ALL FRIENDS</p>
-                    {friends.accepted.map(friend => 
-                            <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={() => open_channel(friend.id, setChannels, close)}>
+                <>
+                    <div className="column-container">
+                        <p className="extended-category-text">ALL FRIENDS</p>
+                        {friends.accepted.map(friend =>
+                            <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={() => open_channel(friend.id, setChannels, card, setSettings)}>
                                 <div className="center-container">
                                     <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                     <div className="column-container">
@@ -165,7 +167,7 @@ export function Friends() {
                                     </div>
                                 </div>
                                 <div className="center-container">
-                                    <button className="message-friend-btn center-container" onClick={() => open_channel(friend.id, setChannels, close)}>
+                                    <button className="message-friend-btn center-container" onClick={() => open_channel(friend.id, setChannels, card, setSettings)}>
                                         <div className="tooltip-top">Message</div>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
@@ -181,9 +183,9 @@ export function Friends() {
                                 </div>
                             </div>
                         )
-                    }              
-                </div> 
-           </> : null}
+                        }
+                    </div>
+                </> : null}
         </>
     )
 }

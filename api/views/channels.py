@@ -77,8 +77,8 @@ class Channels:
         if len(users) > 100:
             return ({"errors": {"users": "Too many users"}}, 406)
         
-        creation_time = time.time()
-        channel = Channel(str(Functions.create_id(creation_time)), name, "generic", user_id, creation_time)
+        creation_time = str(time.time())
+        channel = Channel(str(Functions.create_id(float(creation_time))), name, "generic", user_id, creation_time)
         
         db.insert_entry(CHANNEL_TABLE, channel)
         db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, channel.id, creation_time, None, 1))

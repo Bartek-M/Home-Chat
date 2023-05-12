@@ -31,19 +31,28 @@ export async function copy_text(text) {
 }
 
 // Open DM channel
-export function open_channel(friend_id, setChannels, close) {
+export function open_channel(friend_id, setChannels, close, setSettings) {
     if (!friend_id) return
 
     api_send("channel_open", { friend: friend_id }, "POST").then(res => {
         if (res.errors && res.errors.friend) return flash_message(res.errors.friend)
 
-        if (res.message == "200 OK") {
+        if (res.message == "200 OK" && res.channel) {
             setChannels(channels => {
-                if (!channels.some(({ id }) => id === res.channel.id)) return [res.channel, ...channels]
-                return channels
+                if (!channels.some(({ id }) => id === res.channel.id)) channels.unshift(res.channel)
+
+                return channels.filter(channel => {
+                    if (channel.active) channel.active = false
+                    if (channel.id === res.channel.id) channel.active = true
+
+                    return channel
+                })
             })
 
-            return close()
+            close()
+            if (setSettings) setSettings(false)
+
+            return window.history.replaceState(null, "", `/channels/${res.channel.id}`)
         }
 
         flash_message("Something went wrong!", "error")

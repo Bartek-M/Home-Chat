@@ -13,8 +13,17 @@ function set_image(file, icon) {
 
 function set_channels(setChannels, channel, icon = null) {
     setChannels(channels => {
-        if (!channels.some(({ id }) => id === channel.id)) return [icon ? { ...channel, icon: icon } : channel, ...channels]
-        return channels
+        if (channels.some(({ id }) => id === channel.id)) return channels
+        channels.unshift(channel)
+
+        return channels.filter(fltr_channel => {
+            if (fltr_channel.active) fltr_channel.active = false
+
+            if (fltr_channel.id === channel.id) fltr_channel.active = true
+            if (icon && fltr_channel.id === channel.id) fltr_channel.icon = icon
+
+            return fltr_channel
+        })
     })
 }
 
@@ -52,6 +61,7 @@ function create_channel(name, users, icon, img_file, setChannels, close) {
                 })
             } else set_channels(setChannels, res.channel)
 
+            window.history.replaceState(null, "", `/channels/${res.channel.id}`)
             return close()
         }
 

@@ -43,7 +43,7 @@ export function Settings({ setSettings, setCard }) {
 
                 <div className="settings-page scroller-container">
                     <div className="column-container" id="settings-content">
-                        <Page page={page} card={setCard} />
+                        <Page page={page} card={setCard} setSettings={setSettings}/>
                     </div>
                     <button onClick={() => { setSettings(false) }} className="center-container" id="close-settings">
                         <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
