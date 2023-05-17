@@ -31,7 +31,7 @@ export function Settings({ setSettings, setCard }) {
                         <button className={page === "notifications" ? "active" : ""} onClick={() => setPage("notifications")}>Notifications</button>
                         <hr className="separator" />
 
-                        <a id="settings-logout" href="logout">Log Out</a>
+                        <a id="settings-logout" href="/logout">Log Out</a>
                         <p className="category-text">
                             ver. pre-{version}
                             <br />

@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_socketio import SocketIO
 
 from api import *
 from views import view
@@ -23,22 +22,6 @@ app.register_blueprint(channels, url_prefix="/api/channels")
 app.register_blueprint(users, url_prefix="/api/users")
 app.register_blueprint(images, url_prefix="/api/images")
 
-socketio = SocketIO(app)
-
-
-# SOCKETS
-@socketio.on("message send")
-def handle(data):
-    socketio.emit("message recive", "test")
-
-@socketio.on("connect")
-def handle():
-    print("connect")
-
-@socketio.on("disconnect")
-def handle():
-    print("diconnect")
-
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host=ADDR, port=PORT)
+    app.run(debug=True, host=ADDR, port=PORT)

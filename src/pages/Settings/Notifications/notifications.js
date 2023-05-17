@@ -2,7 +2,7 @@ export function Notifications() {
     return (
         <>
             <h2 className="settings-title">Notifications</h2>
-            <div className="spaced-container">
+            {/* <div className="spaced-container">
                 <div className="column-container">
                     <p className="category-text">Enable Unread Message Badge</p>
                     <p>It's good to have a strong password everywhere</p>
@@ -26,7 +26,7 @@ export function Notifications() {
                 <button className="settings-btn" id={user.visibility ? "visibility-public" : "visibility-private"} onClick={() => set_visibility(user, setUser)}>
                     {user.visibility ? "Public" : "Private"}
                 </button>
-            </div>
+            </div> */}
         </>
     )
 }

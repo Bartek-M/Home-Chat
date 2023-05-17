@@ -20,7 +20,7 @@ export function ChannelList() {
     const [channels, setChannels] = useChannels()
 
     return (
-        <div className="main-sidebar-elements center-column-container">
+        <>
             {channels && channels.map(channel => (
                 <li className={`main-sidebar-item center-container ${channel.active ? "active" : ""}`} key={`channel-${channel.id}`} >
                     <div className="main-sidebar-pill"></div>
@@ -29,6 +29,6 @@ export function ChannelList() {
                     </button>
                 </li>
             ))}
-        </div>
+        </>
     )
 }
