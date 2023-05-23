@@ -2,6 +2,7 @@ import { useState, useMemo, useRef } from "react"
 
 import { useUser, useFriends, useChannels } from "../../../context"
 import { api_send, api_file, open_channel, format_time, flash_message } from "../../../utils"
+import { Tooltip } from "../../../components"
 
 // Functions 
 function set_image(file, icon) {
@@ -139,20 +140,24 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="added-users-wrapper container">
                             <p className="category-text">USERS: </p>
-                            <button className="user-icon-wrapper center-container">
-                                <div className="tooltip-top">{`${user.name}#${user.tag}`}</div>
-                                <img className="added-user-icon" src={`/api/images/${user.avatar}.webp`} />
-                            </button>
-                            <>
-                                {selectedItems.map(friend => (
-                                    <button className="user-icon-wrapper center-container" key={`selected-${friend.id}`} onClick={() =>
-                                        setSelected(current => { return current.filter(frnd => frnd != friend.id) })
-                                    }>
-                                        <div className="tooltip-top">{`${friend.name}#${friend.tag}`}</div>
-                                        <img className="added-user-icon" src={`/api/images/${friend.avatar}.webp`} />
+                            <div className="added-users-list container">
+                                <Tooltip text={`${user.name}#${user.tag}`} type="top">
+                                    <button className="user-icon-wrapper center-container">
+                                        <img className="added-user-icon" src={`/api/images/${user.avatar}.webp`} />
                                     </button>
-                                ))}
-                            </>
+                                </Tooltip>
+                                <>
+                                    {selectedItems.map(friend => (
+                                        <Tooltip text={`${friend.name}#${friend.tag}`} type="top" key={`selected-${friend.id}`}>
+                                            <button className="user-icon-wrapper center-container" key={`selected-${friend.id}`} onClick={() =>
+                                                setSelected(current => { return current.filter(frnd => frnd != friend.id) })
+                                            }>
+                                                <img className="added-user-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                            </button>
+                                        </Tooltip>
+                                    ))}
+                                </>
+                            </div>
                         </div>
                         <div className="column-container">
                             <p className="category-text">SEARCH</p>
