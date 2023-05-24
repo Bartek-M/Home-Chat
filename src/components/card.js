@@ -5,7 +5,7 @@ import { Loading } from ".";
 
 import { Email, Username, DeleteAccount } from "../pages/Settings/Account";
 import { Password, MFASetup } from "../pages/Settings/Security"; 
-import { ChannelCreator, ChannelSettings } from "../pages/Home/";
+import { ChannelCreator } from "../pages/Home/";
 
 // Card content (edit card)
 export function Card(props) {
@@ -34,5 +34,4 @@ export function Card(props) {
 
     // Channels managing
     if (card === "channel_creator") return (<ChannelCreator props={props}/>)
-    if (card === "channel_settings") return (<ChannelSettings props={props} />)
 } 

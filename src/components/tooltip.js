@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, Fragment } from "react"
+import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 
 export function Tooltip({ text, type, children }) {

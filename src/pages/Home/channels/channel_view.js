@@ -1,8 +1,14 @@
-import { useMemo } from "react"
+import { useMemo, useRef, useState } from "react"
 import { useChannels } from "../../../context"
+
+import { ChannelMenu } from "../"
+import { createPortal } from "react-dom"
 
 export function ChannelView({ setCard }) {
     const [channels,] = useChannels()
+
+    const ref = useRef()
+    const [menu, setMenu] = useState({ show: false, x: 0, y: 0 })
 
     const channel = useMemo(() => {
         if (!channels) return null
@@ -23,11 +29,14 @@ export function ChannelView({ setCard }) {
                             <img className="channel-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
                             <p className="channel-name">{channel.name}</p>
                         </div>
-                        <button className="center-container" id="channel-settings" onClick={() => null}>
-                            <svg width="28" height="28" viewBox="0 0 16 16">
-                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-                            </svg>
-                        </button>
+                        <div className="channel-settings-wraper">
+                            <button className="channel-settings center-container" ref={ref} onClick={(e) => setMenu({ show: true, x: e.target.offsetLeft, y: e.target.offsetTop })}>
+                                <svg width="28" height="28" viewBox="0 0 16 16">
+                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                                </svg>
+                            </button>
+                            {menu.show && createPortal(<ChannelMenu element={ref} x={menu.x} y={menu.y} close={() => setMenu({ show: false, x: 0, y: 0 })} />, document.getElementsByClassName("layer")[0])}
+                        </div>
                     </div>
                     <div className="column-container scroller-container" id="chat-window">
                         <div id="messages-list"></div>
