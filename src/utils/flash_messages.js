@@ -14,7 +14,9 @@ export function flash_message(text, type = "info") {
     let id = text.toLowerCase().replaceAll(" ", "")
 
     if (!document.getElementById(id)) {
-        document.getElementById("flash-box").innerHTML += `
+        if (!document.getElementsByClassName("layer")[0]) return
+
+        document.getElementsByClassName("layer")[0].innerHTML += `
             <div class="flash-message center-container" id=${id}>
                 ${type === "error" ? error_icon : info_icon}
                 <p>${text}</p>

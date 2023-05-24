@@ -39,7 +39,7 @@ export function Tooltip({ text, type, children }) {
     return (
         <div ref={ref}>
             {children}
-            {createPortal(tooltip, document.getElementsByClassName("layer")[0])}
+            {document.getElementsByClassName("layer")[0] ? createPortal(tooltip, document.getElementsByClassName("layer")[0]) : null}
         </div>
     )
 }

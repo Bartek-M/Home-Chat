@@ -3,7 +3,7 @@
 
 Project: Home Chat
 Author: Bartosz Mroczkowski
-Version: dev-6248ab6
+Version: dev-96ee16a
 
 
 [Table of Contents]
@@ -102,7 +102,7 @@ Version: dev-6248ab6
     --WARNING: #f0b132;
 
     --TOOLTIP_COLOR: #1e1f22;
-    --BORDER_COLOR: #1d1d1d;    
+    --BORDER_COLOR: #30363d;    
     --SCROLLBAR: #4b4b4b; 
     --SCROLLBAR_DARKER: #272727;
 
@@ -145,6 +145,7 @@ body,
 * { 
     color: inherit;
     font-weight: 500;
+    letter-spacing: 0.02rem;
     text-rendering: optimizeLegibility;
     user-select: none; 
     appearance: auto;
@@ -1001,18 +1002,10 @@ svg {
 
 
 /* flash messages */
-#flash-box {
-    position: absolute;
-    left: 50%;
-    top: 0px;
-    margin-top: 0.5rem;
-    transform: translate(-50%, 0);
-    pointer-events: none;   
-}
-
 .flash-message {
     position: absolute;
     top: -100px;
+    left: 50%;
     opacity: 0;
     width: max-content;
     padding: 0.75rem 1rem;
@@ -1020,13 +1013,14 @@ svg {
     border-color: transparent;
     border-radius: 50px;
     box-shadow: 0 0 8px var(--BORDER_COLOR);
+    transform: translateX(-50%);
     transition: 0.17s ease; 
     animation: top-slide 3s;
 }
 
 @keyframes top-slide {
     0%, 100% { top: -100px; opacity: 0 }
-    25%, 75% { top: 0px; opacity: 1 }
+    25%, 75% { top: 10px; opacity: 1 }
 }
 
 

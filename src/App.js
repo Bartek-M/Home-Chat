@@ -1,8 +1,6 @@
 import { lazy } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-import { LayerProvider } from "./context"
-
 const Home = lazy(() => import("./pages/Home").then(module => { return { default: module.Home } }))
 const NotFound = lazy(() => import("./components").then(module => { return { default: module.NotFound } }))
 
@@ -12,7 +10,7 @@ const Logout = lazy(() => import("./pages/Connection").then(module => { return {
 
 export default function App() {
     return (
-        <LayerProvider>
+        <>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Home />} />
@@ -27,7 +25,8 @@ export default function App() {
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
-        </LayerProvider>
+            <div className="layer"></div>
+        </>
     )
 }
 
