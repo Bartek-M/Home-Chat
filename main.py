@@ -4,7 +4,7 @@ from api import *
 from views import view
 
 # GLOBAL VARIABLES
-ADDR = "192.168.0.194" # 192.168.0.194 | 127.0.0.1
+ADDR = "127.0.0.1" # 192.168.0.194 | 127.0.0.1
 PORT = 5000
 
 # INITIALIZE FLASK
