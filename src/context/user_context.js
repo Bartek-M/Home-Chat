@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
+import { ChannelsProvider, FriendsProvider } from "./";
+
 import { api_get, app_theme, prefered_theme, flash_message } from "../utils/";
 import { Loading } from "../components/"
 
@@ -21,18 +23,6 @@ export function UserProvider({ children }) {
 
             setUser(res.user)
             if (localStorage.getItem("email") !== res.user.email) localStorage.setItem("email", res.user.email)
-
-            setTimeout(() => {
-                const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")
-                if (!loading_screen_wrapper) return
-
-                loading_screen_wrapper.classList.add("deactive")
-                setTimeout(() => { 
-                    if (!loading_screen_wrapper) return
-                    loading_screen_wrapper.innerHTML = null; 
-                    loading_screen_wrapper.remove() 
-                }, 170)
-            }, 250)
         })
     })
 
@@ -51,9 +41,13 @@ export function UserProvider({ children }) {
     return (
         <div id="home-view">
             <Loading />
-            {user && 
+            {user &&
                 <UserContext.Provider value={[user, setUser]}>
-                    {children}
+                    <ChannelsProvider>
+                        <FriendsProvider>
+                            {children}
+                        </FriendsProvider>
+                    </ChannelsProvider>
                 </UserContext.Provider>
             }
         </div>

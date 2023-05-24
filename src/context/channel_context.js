@@ -29,6 +29,18 @@ export function ChannelsProvider({ children }) {
             }
 
             setChannels(res.user_channels)
+
+            setTimeout(() => {
+                const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")
+                if (!loading_screen_wrapper) return
+
+                loading_screen_wrapper.classList.add("deactive")
+                setTimeout(() => { 
+                    if (!loading_screen_wrapper) return
+                    loading_screen_wrapper.innerHTML = null; 
+                    loading_screen_wrapper.remove() 
+                }, 170)
+            }, 250)
         })
     })
 

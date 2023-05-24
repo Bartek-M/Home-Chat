@@ -49,7 +49,6 @@ Version: dev-96ee16a
 8. LAYER LEVEL - tooltips, flash messages, context menus
     | tooltip
     | flash message
-    | context menu
 
 9. [NOT FOUND - 404] - not found elements
 
@@ -444,13 +443,25 @@ svg {
 
 .channel-menu {
     position: absolute;
-    padding: 0.5rem;
-    gap: 0.5rem;
+    padding: 0.25rem;
     width: max-content;
-    background-color: var(--TOOLTIP_COLOR);
+    background-color: var(--MAIN_COLOR);
     border-radius: 8px;
+    box-shadow: 0 0 8px var(--BORDER_COLOR);
     pointer-events: auto;
 }
+
+.channel-menu-btn {
+    width: 100%;
+    text-align: left;
+    gap: 2rem;
+    padding: 4px 10px; 
+    margin-bottom: 2px;
+    border-radius: 4px;
+    color: var(--FONT_RV_COLOR);
+}
+
+.channel-menu-btn:hover { background-color: var(--BUTTON_HOVER) }
 
 /* chat */
 #chat-window { height: 100%; width: calc(100% - 1rem); margin: 0 0.5rem; }
@@ -528,6 +539,11 @@ svg {
 
 .chat-send-btn:hover svg { fill: var(--BLUE) }
 
+/* responsive home view */
+@media screen and (max-width: 700px) {
+
+}
+
 
 /* [SETTINGS PAGE] */
 .settings {
@@ -556,7 +572,6 @@ svg {
 .settings-sidebar {
     width: 180px;
     height: max-content;
-    gap: 0;
     padding: 60px 6px 60px 20px;
 }
 
@@ -575,8 +590,6 @@ svg {
     color: var(--FONT_RV_COLOR);
 }
 
-#settings-logout { color: var(--RED_BUTTON) }
-
 .settings-sidebar button.active, 
 #settings-logout.active { 
     background-color: var(--BUTTON_HOVER); 
@@ -586,6 +599,8 @@ svg {
 #settings-logout:hover { 
     background-color: var(--BUTTON_HOVER) 
 }
+
+.leave-btn { color: var(--RED_BUTTON)!important }
 
 /* settings content */
 .settings-page {

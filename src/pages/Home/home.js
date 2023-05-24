@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { UserProvider, FriendsProvider, ChannelsProvider } from "../../context";
+import { UserProvider } from "../../context";
 
 import { Card, Tooltip } from "../../components";
 import { Settings } from "../Settings/";
@@ -23,8 +23,6 @@ export function Home() {
 
     return (
         <UserProvider>
-            <FriendsProvider>
-                <ChannelsProvider>
                     <div className="home-page container">
                         <nav className="main-sidebar column-container scroller-container">
                             <li className={`main-sidebar-item center-container ${settings ? "active" : ""}`}>
@@ -60,8 +58,6 @@ export function Home() {
                         </div>
                     )}
                     {settings && (<Settings setSettings={setSettings} setCard={setCard} />)}
-                </ChannelsProvider>
-            </FriendsProvider>
         </UserProvider>
     )
 }
