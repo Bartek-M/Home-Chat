@@ -11,21 +11,19 @@ const error_icon = `
 `
 
 export function flash_message(text, type = "info") {
-    let id = text.toLowerCase().replaceAll(" ", "")
+    if (!document.getElementsByClassName("layer")[0]) return
 
-    if (!document.getElementById(id)) {
-        if (!document.getElementsByClassName("layer")[0]) return
-
-        document.getElementsByClassName("layer")[0].innerHTML += `
-            <div class="flash-message center-container" id=${id}>
+    document.getElementsByClassName("layer")[0].innerHTML = `
+            <div class="flash-message center-container" >
                 ${type === "error" ? error_icon : info_icon}
-                <p>${text}</p>
+                ${text}
             </div>
         `
 
-        setTimeout(() => {
-            if (!document.getElementById(id)) return
-            document.getElementById(id).remove()
-        }, 3000)
-    }
+    setTimeout(() => {
+        let message = document.getElementsByClassName("flash-message")[0]
+        if (message && message.top !== -100) return
+
+        document.getElementsByClassName("layer")[0].innerHTML = ""
+    }, 3000)
 }
