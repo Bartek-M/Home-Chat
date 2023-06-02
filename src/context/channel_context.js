@@ -14,31 +14,29 @@ export function ChannelsProvider({ children }) {
 
         api_get("user_channels", "@me").then(res => {
             if (res.message !== "200 OK") return flash_message("Couldn't load channels!", "error")
-            if (res.user_channels === undefined) return
-            
-            if (!res.user_channels) return
-            
+            if (!res.user_channels || !res.user_channels.length) return true
+
             if (id && res.user_channels.find(channel => channel.id === id)) {
                 res.user_channels.filter(channel => {
                     if (channel.id === id) channel.active = true
                     return channel
                 })
-            } else { 
+            } else {
                 res.user_channels[0].active = true
                 window.history.replaceState(null, "", `/channels/${res.user_channels[0].id}`)
             }
 
             setChannels(res.user_channels)
-
+        }).then(() => {
             setTimeout(() => {
                 const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")
                 if (!loading_screen_wrapper) return
 
                 loading_screen_wrapper.classList.add("deactive")
-                setTimeout(() => { 
+                setTimeout(() => {
                     if (!loading_screen_wrapper) return
-                    loading_screen_wrapper.innerHTML = null; 
-                    loading_screen_wrapper.remove() 
+                    loading_screen_wrapper.innerHTML = null;
+                    loading_screen_wrapper.remove()
                 }, 170)
             }, 250)
         })

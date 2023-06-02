@@ -17,6 +17,9 @@ class Images:
 
     @images.route("/<image_id>")
     def get_image(image_id):
+        if image_id == "generic.webp":
+            return send_file(f"{AVATARS_FOLDER}generic.webp", mimetype=image_id)
+
         try:
             return send_file(f"{AVATARS_FOLDER}{image_id}", mimetype=image_id)
         except:
@@ -24,11 +27,13 @@ class Images:
 
     @images.route("/channels/<image_id>")
     def get_channel_image(image_id):
+        if image_id == "generic.webp":
+            return send_file(f"{ICONS_FOLDER}generic.webp", mimetype=image_id)
+         
         try:
             return send_file(f"{ICONS_FOLDER}{image_id}", mimetype=image_id)
         except:
             return send_file(f"{ICONS_FOLDER}generic.webp", mimetype=image_id)
-
 
     @images.route("/avatar", methods=["POST"])
     @Decorators.manage_database
@@ -37,21 +42,9 @@ class Images:
         if not (file := request.files.get("image")):
             return ({"errors": {"image": "No image"}}, 400)
         
-        try:
-            img = Image.open(file)
-        except:
+        if not (img := Functions.crop_image(file, IMAGE_SIZE)):
             return ({"errors": {"image": "Invalid image format"}}, 400)
 
-        width, height = img.size
-
-        if width > height:
-            left_right = int(((height - width) * -1) / 2)
-            img = img.crop((left_right, 0, width-left_right, height))
-        else:
-            top_bottom = int(((width - height) * -1) / 2)
-            img = img.crop((0, top_bottom, width, height - top_bottom))
-        
-        img = img.resize(IMAGE_SIZE)
         user_avatar = db.get_entry(USER_TABLE, user_id).avatar
 
         if user_avatar != "generic" and os.path.isfile(f"{AVATARS_FOLDER}{user_avatar}.webp"): 
@@ -79,21 +72,9 @@ class Images:
         if user_channel.admin != 1 and channel.owner != user_id:
             return ({"errors": {"channel": "You are not admin or owner of this channel"}}, 403)
         
-        try:
-            img = Image.open(file)
-        except:
+        if not (img := Functions.crop_image(file, IMAGE_SIZE)):
             return ({"errors": {"image": "Invalid image format"}}, 400)
-
-        width, height = img.size
-
-        if width > height:
-            left_right = int(((height - width) * -1) / 2)
-            img = img.crop((left_right, 0, width-left_right, height))
-        else:
-            top_bottom = int(((width - height) * -1) / 2)
-            img = img.crop((0, top_bottom, width, height - top_bottom))
         
-        img = img.resize(IMAGE_SIZE)
         channel_icon = db.get_entry(CHANNEL_TABLE, channel_id).icon
 
         if channel_icon != "generic" and os.path.isfile(f"{ICONS_FOLDER}{channel_icon}.webp"): 

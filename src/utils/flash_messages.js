@@ -24,6 +24,7 @@ export function flash_message(text, type = "info") {
         let message = document.getElementsByClassName("flash-message")[0]
         if (message && message.top !== -100) return
 
+        if (!document.getElementsByClassName("layer")[0]) return
         document.getElementsByClassName("layer")[0].innerHTML = ""
     }, 3000)
 }

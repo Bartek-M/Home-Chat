@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 
-export function Tooltip({ text, type, children }) {
+export function Tooltip({ text, note, type, children }) {
     const [showTooltip, setShowTooltip] = useState(false)
     const ref = useRef()
 
@@ -25,16 +25,19 @@ export function Tooltip({ text, type, children }) {
     const tooltip = showTooltip ? (<div className={`tooltip-${type}`} style={
         type === "right" 
         ? {
-            top: ref.current.getBoundingClientRect().top,
+            top: ref.current.getBoundingClientRect().bottom,
             left: ref.current.getBoundingClientRect().right + 20,
-            transform: "translateY(25%)"
+            transform: `translateY(calc(-50% - ${ref.current.offsetHeight / 2}px))`
         } 
         : {
             top: ref.current.getBoundingClientRect().top,
             left: ref.current.getBoundingClientRect().right,
             transform: `translate(calc(-50% - ${ref.current.offsetWidth / 2}px), -125%)`
         }
-    }>{text}</div>) : null
+    }>
+        {note && <p>{note}</p>}
+        <p className={note ? "text-note" : ""}>{text}</p>
+    </div>) : null
 
     return (
         <div ref={ref}>

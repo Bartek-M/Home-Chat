@@ -52,10 +52,10 @@ class Users:
     @Decorators.manage_database
     @Decorators.auth
     def search_users(db, user_id):
-        if not (username := request.json.get("username")) or len((tag := request.json.get("tag"))) != 4:
-            return ({"errors": {"username": "Username or tag is invalid."}}, 400)
+        if not (username := request.json.get("username")):
+            return ({"errors": {"username": "Username is invalid."}}, 400)
         
-        if not (user := db.get_user(f"{username}#{tag}", "name")):
+        if not (user := db.get_user(username, "name")) or user.visibility == 0:
             return ({"errors": {"username": "User does not exist."}}, 400)
         
         if user.id == user_id:
@@ -100,13 +100,11 @@ class Users:
             return ({"errors": {"password": "Password doesn't match"}}, 403)
         
         if category == "name":
-            if (tag := db.get_available_tag(data)) is None:
-                return ({"errors": {"name": "Too many users have this username"}}, 406)
+            if db.get_user(data, "name"):
+                return ({"errors": {"username": "Username is already taken"}}, 409)
 
-            db.update_entry(USER_TABLE, user_id, "name", data)
-            db.update_entry(USER_TABLE, user_id, "tag", tag)
-
-            return ({"tag": tag}, 200)
+            db.update_entry(USER_TABLE, user_id, "name", data.lower())
+            return 200
 
         if category == "email":
             if not Functions.verify_email(data):
@@ -114,7 +112,7 @@ class Users:
             if db.get_user(data):
                 return ({"errors": {"email": "Email is already registered!"}}, 406)
 
-            db.update_entry(USER_SETTING_TABLE, user_id, "email", data)
+            db.update_entry(USER_SETTING_TABLE, user_id, "email", data.lower())
 
         if category == "password":
             if len(data) < 6:
@@ -138,6 +136,10 @@ class Users:
     def change_settings(db, user_id):
         if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
             return ({"errors": {"data": "No data or category", "category": "No data or category"}}, 400)
+        
+        if category == "display_name":
+            db.update_entry(USER_TABLE, user_id, "display_name", data if data != "" else None)
+            return 200
 
         if category == "theme":
             if data not in ["auto", "light", "dark"]:

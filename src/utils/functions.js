@@ -35,7 +35,7 @@ export function open_channel(friend_id, setChannels, close, setSettings) {
     if (!friend_id) return
 
     api_send("channel_open", { friend: friend_id }, "POST").then(res => {
-        if (res.errors && res.errors.friend) return flash_message(res.errors.friend)
+        if (res.errors && res.errors.friend) return flash_message(res.errors.friend, "error")
 
         if (res.message == "200 OK" && res.channel) {
             setChannels(channels => {

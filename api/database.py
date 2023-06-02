@@ -44,7 +44,7 @@ class Database:
         """
         queries = [ 
             f"""{USER_TABLE} (
-                id TEXT UNIQUE, name TEXT, tag TEXT, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER
+                id TEXT UNIQUE, name TEXT UNIQUE, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER, display_name TEXT
             )""",
             f"""{MESSAGE_TABLE} (
                 id TEXT UNIQUE, author TEXT, channel_id TEXT, content TEXT, create_time TEXT, system INTEGER
@@ -93,16 +93,13 @@ class Database:
         :return: UserSettings or User object
         """
         if option == "email":
-            self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email=?", [search])
+            self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email=?", [search.lower()])
 
             if fetched := self.cursor.fetchone():
                 return UserSettings(*fetched)
         
         if option == "name":
-            if len(username := search.split("#")) != 2: 
-                return None
-            
-            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name=? AND tag=? AND visibility=1", [username[0], username[1]])
+            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name=?", [search.lower()])
 
             if fetched := self.cursor.fetchone():
                 return User(*fetched)
@@ -122,7 +119,7 @@ class Database:
             if fetched := self.cursor.fetchall():
                 return sorted(
                     [self.get_entry(USER_TABLE, data[0]).__dict__ for data in fetched],
-                    key=lambda x: f"{x.get('name')}#{x.get('tag')}"
+                    key=lambda x: x.get("name")
                 )
 
         if option == "mesages":
@@ -178,13 +175,16 @@ class Database:
                 channels = []
 
                 for data in sorted(fetched, key=lambda x: last if (last := self.get_channel_stuff(x[1], "last_message")) else x[2], reverse=True):
-                    channel = self.get_entry(CHANNEL_TABLE, data[1]).__dict__
-
-                    if not channel:
+                    if not (channel :=  self.get_entry(CHANNEL_TABLE, data[1]).__dict__):
                         continue
                     
                     if channel["direct"] == 1 and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
-                        channel["name"] = friend_channel.nick if friend_channel.nick else friend.name 
+                        if friend_channel.nick:
+                            channel["display_name"] = friend_channel.nick
+                        elif friend.display_name:
+                            channel["display_name"] = friend.display_name    
+
+                        channel["name"] = friend.name 
                         channel["icon"] = friend.avatar
 
                     channel["users"] = self.get_channel_stuff(channel["id"], "users")
@@ -202,7 +202,7 @@ class Database:
                         {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
-                    key=lambda x: f"{x.get('name')}#{x.get('tag')}"
+                    key=lambda x: x.get('name')
                 )
 
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted!='waiting'", [req_id, req_id])
@@ -212,7 +212,7 @@ class Database:
                         {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
-                    key=lambda x: f"{x.get('name')}#{x.get('tag')}"
+                    key=lambda x: x.get('name')
                 )
             
             return friends
@@ -224,20 +224,6 @@ class Database:
                 return {**(self.get_entry(USER_TABLE, fetched[0] if fetched[0] != req_id[0] else fetched[1]).__dict__), "accepted": fetched[2], "inviting": fetched[0]}
                          
         return []    
-
-    def get_available_tag(self, name):
-        """
-        Get available tags for specific name
-        :param name: Name to check tags for
-        :return: Random available tag or None
-        """
-        self.cursor.execute(f"SELECT tag FROM {USER_TABLE} WHERE name=?", [name])
-        tag_range = set(range(1000, 10000))
-
-        if fetched := self.cursor.fetchall():
-            tag_range -= {int(tag[0]) for tag in fetched}
-
-        return random.choice(list(tag_range)) if tag_range else None
 
     def insert_entry(self, table, entry):
         """

@@ -3,7 +3,9 @@ import re
 import smtplib
 import random
 
+from PIL import Image
 from dotenv import load_dotenv
+
 load_dotenv(dotenv_path="./api/.env")
 
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
@@ -71,3 +73,21 @@ class Functions:
             case 429: return "429 Too Many Requests"            
             
         return None
+    
+    @staticmethod
+    def crop_image(file, IMAGE_SIZE):
+        try:
+            img = Image.open(file)
+        except:
+            return None
+
+        width, height = img.size
+
+        if width > height:
+            left_right = int(((height - width) * -1) / 2)
+            img = img.crop((left_right, 0, width-left_right, height))
+        else:
+            top_bottom = int(((width - height) * -1) / 2)
+            img = img.crop((0, top_bottom, width, height - top_bottom))
+        
+        return img.resize(IMAGE_SIZE)

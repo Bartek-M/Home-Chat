@@ -27,7 +27,10 @@ export function ChannelView({ setCard }) {
                     <div className="channel-title spaced-container">
                         <div className="center-container">
                             <img className="channel-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
-                            <p className="channel-name">{channel.name}</p>
+                            <div className="column-container">
+                                {channel.display_name && <p className="channel-name">{channel.display_name}</p>}
+                                <p className={`channel-name ${channel.display_name ? "username" : ""}`}>{channel.name}</p>
+                            </div>
                         </div>
                         <div className="channel-settings-wraper">
                             <button className="channel-settings center-container" ref={ref} onClick={(e) => setMenu({ show: true, x: e.target.offsetLeft, y: e.target.offsetTop })}>

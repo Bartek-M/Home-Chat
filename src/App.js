@@ -10,23 +10,21 @@ const Logout = lazy(() => import("./pages/Connection").then(module => { return {
 
 export default function App() {
     return (
-        <>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/channels/:id" element={<Home />} />
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/channels/:id" element={<Home />} />
 
 
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/logout" element={<Logout />} />
-                    <Route path="register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route path="register" element={<Register />} />
 
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </BrowserRouter>
+                <Route path="*" element={<NotFound />} />
+            </Routes>
             <div className="layer"></div>
-        </>
+        </BrowserRouter>
     )
 }
 

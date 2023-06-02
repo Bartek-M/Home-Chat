@@ -8,11 +8,11 @@ class User:
     """
     id: str
     name: str
-    tag: str
     avatar: str
     create_time: str
     verified: int = 0 # 0 | 1
     visibility: int = 1 # 0 | 1
+    display_name: str = None
 
     def marks(self):
         return "?, ?, ?, ?, ?, ?, ?"

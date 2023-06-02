@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useUser } from "../context"
 import { Loading } from ".";
 
-import { Email, Username, DeleteAccount } from "../pages/Settings/Account";
-import { Password, MFASetup } from "../pages/Settings/Security"; 
+import { DisplayName, Username, Email, DeleteAccount } from "../pages/Settings/Account";
+import { Password, MFASetup } from "../pages/Settings/Security";
 import { ChannelCreator, ChannelSettings, ChannelMembers, ChannelInvite, ChannelLeave } from "../pages/Home/";
 
 // Card content (edit card)
@@ -24,6 +24,7 @@ export function Card(props) {
     if (!user) return (<Loading />)
 
     // Account Page
+    if (card === "display_name") return (<DisplayName props={props} />)
     if (card === "username") return (<Username props={props} />)
     if (card === "email") return (<Email props={props} />)
     if (card === "delete_account") return (<DeleteAccount props={props} />)
@@ -33,9 +34,9 @@ export function Card(props) {
     if (card === "mfa") return (<MFASetup props={props} />)
 
     // Channels managing
-    if (card === "channel_creator") return (<ChannelCreator props={props}/>)
-    if (card === "channel_settings") return (<ChannelSettings props={props}/>)
-    if (card === "channel_members") return (<ChannelMembers props={props}/>)
-    if (card === "channel_invite") return (<ChannelInvite props={props}/>)
-    if (card === "channel_leave") return (<ChannelLeave props={props}/>)
+    if (card === "channel_creator") return (<ChannelCreator props={props} />)
+    if (card === "channel_settings") return (<ChannelSettings props={props} />)
+    if (card === "channel_members") return (<ChannelMembers props={props} />)
+    if (card === "channel_invite") return (<ChannelInvite props={props} />)
+    if (card === "channel_leave") return (<ChannelLeave props={props} />)
 } 

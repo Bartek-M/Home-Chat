@@ -58,18 +58,18 @@ class Auth:
     @auth.route('/register', methods=["POST"])
     @Decorators.manage_database
     def register(db):
-        email = request.json.get("email")
-        username = request.json.get("username")
+        email = request.json.get("email").lower()
+        username = request.json.get("username").lower()
         password = request.json.get("password")
 
         if not Functions.verify_email(email):
             return ({"errors": {"email": "Invalid email syntax"}}, 400)
         
-        if db.get_user(email.lower()):
+        if db.get_user(email):
             return ({"errors": {"email": "Email is already registered"}}, 409)
         
-        if (tag := db.get_available_tag(username)) is None:
-            return ({"errors": {"username": "Too many users have this username"}}, 409)
+        if db.get_user(username, "name"):
+            return ({"errors": {"username": "Username is already taken"}}, 409)
         
         if len(password) < 6:
             return ({"errors": {"password": "Password must have at least 6 characters"}}, 400)
@@ -77,11 +77,11 @@ class Auth:
         current_time = time.time() 
         id = Functions.create_id(current_time)
         verify_code = "123456"
-        # verify_code = secrets.token_hex(3).upper()
+        #verify_code = secrets.token_hex(3).upper()
 
-        # Process(target=Security.send_verification, args=(email, username, verify_code)).start()
+        #Process(target=Security.send_verification, args=(email, username, verify_code)).start()
 
-        db.insert_entry(USER_TABLE, User(id, username, tag, "generic", current_time))
+        db.insert_entry(USER_TABLE, User(id, username, "generic", current_time))
         db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
         db.insert_entry(USER_SECRET_TABLE, UserSecrets(id, Security.hash_passwd(password), secrets.token_hex(32), verify_code))
         

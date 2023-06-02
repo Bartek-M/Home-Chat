@@ -141,14 +141,14 @@ export function ChannelCreator({ props }) {
                         <div className="added-users-wrapper container">
                             <p className="category-text">USERS: </p>
                             <div className="added-users-list container">
-                                <Tooltip text={`${user.name}#${user.tag}`} type="top">
+                                <Tooltip text={user.name} note={user.display_name ? user.display_name : null} type="top">
                                     <button className="user-icon-wrapper center-container">
                                         <img className="added-user-icon" src={`/api/images/${user.avatar}.webp`} />
                                     </button>
                                 </Tooltip>
                                 <>
                                     {selectedItems.map(friend => (
-                                        <Tooltip text={`${friend.name}#${friend.tag}`} type="top" key={`selected-${friend.id}`}>
+                                        <Tooltip text={friend.name} note={friend.display_name ? friend.display_name : null} type="top" key={`selected-${friend.id}`}>
                                             <button className="user-icon-wrapper center-container" key={`selected-${friend.id}`} onClick={() =>
                                                 setSelected(current => { return current.filter(frnd => frnd != friend.id) })
                                             }>
@@ -175,8 +175,11 @@ export function ChannelCreator({ props }) {
                                         <div className="center-container">
                                             <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                             <div className="column-container">
-                                                <p>{friend.name}<span className="user-tag">#{friend.tag}</span></p>
-                                                <p className="message-time">From: {format_time(friend.accepted, "date")}</p>
+                                                {friend.display_name
+                                                    ? <p>{friend.display_name}</p>
+                                                    : <p>{friend.name}</p>
+                                                }
+                                                <p className="text-note">{friend.display_name ? friend.name : ""}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -203,8 +206,11 @@ export function ChannelCreator({ props }) {
                                     <div className="center-container">
                                         <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                         <div className="column-container">
-                                            <p>{friend.name}<span className="user-tag">#{friend.tag}</span></p>
-                                            <p className="message-time">From: {format_time(friend.accepted, "date")}</p>
+                                            {friend.display_name
+                                                ? <p>{friend.display_name}</p>
+                                                : <p>{friend.name}</p>
+                                            }
+                                            <p className="text-note">{friend.display_name ? friend.name : ""}</p>
                                         </div>
                                     </div>
                                 </div>

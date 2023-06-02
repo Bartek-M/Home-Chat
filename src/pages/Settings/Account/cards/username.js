@@ -18,8 +18,8 @@ function update_username(user, setUser, name, password, close) {
             return
         }
 
-        if (res.message === "200 OK" && res.tag) {
-            setUser((current_user) => { return { ...current_user, name: name.value, tag: res.tag } })
+        if (res.message === "200 OK") {
+            setUser((current_user) => { return { ...current_user, name: name.value } })
             close()
             return flash_message("Username updated")
         }

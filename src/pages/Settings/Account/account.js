@@ -15,7 +15,7 @@ function change_avatar(file, setUser) {
             if (res.errors && res.errors.image) return flash_message(res.errors.image, "error")
 
             if (res.message === "200 OK" && res.image) {
-                setUser((current_user) => { return { ...current_user, avatar: res.image } }) 
+                setUser((current_user) => { return { ...current_user, avatar: res.image } })
                 return flash_message("Avatar updated!")
             }
 
@@ -47,13 +47,23 @@ export function Account({ props }) {
                             </svg>
                         </div>
                     </div>
-                    <h2>{user.name}<span className="user-tag">#{user.tag}</span></h2>
+                    <div className="column-container">
+                        {user.display_name && <h2>{user.display_name}</h2>}
+                        <h2 className={user.display_name ? "username" : ""}>{user.name}</h2>
+                    </div>
                 </div>
                 <div className="account-settings column-container">
                     <div className="spaced-container">
                         <div className="column-container">
+                            <p className="category-text">DISPLAY NAME</p>
+                            <p>{user.display_name ? user.display_name : "You haven't added a display name yet."}</p>
+                        </div>
+                        <button className="edit-settings-btn" onClick={() => card("display_name")}>{user.display_name ? "Edit" : "Add"}</button>
+                    </div>
+                    <div className="spaced-container">
+                        <div className="column-container">
                             <p className="category-text">USERNAME</p>
-                            <p>{user.name}<span className="user-tag">#{user.tag}</span></p>
+                            <p>{user.name}</p>
                         </div>
                         <button className="edit-settings-btn" onClick={() => card("username")}>Edit</button>
                     </div>
@@ -72,9 +82,9 @@ export function Account({ props }) {
                     <p className="category-text">USER ID</p>
                     <p>{user.id}</p>
                 </div>
-                <button className="action-settings-btn " onClick={() => { 
-                    try { navigator.clipboard.writeText(user.id) } catch { return flash_message("Something went wrong!", "error")}
-                    flash_message("ID Copied!") 
+                <button className="action-settings-btn " onClick={() => {
+                    try { navigator.clipboard.writeText(user.id) } catch { return flash_message("Something went wrong!", "error") }
+                    flash_message("ID Copied!")
                 }}>Copy</button>
             </div>
             <div className="spaced-container">

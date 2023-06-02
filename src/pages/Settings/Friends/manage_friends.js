@@ -14,7 +14,7 @@ export function add_friend(user_id, friend, setFriends) {
 
                 return { ...current_friends, pending: [ friend ] }
             })
-            return flash_message("Sent a friend request!")
+            return flash_message("Friend request sent")
         }
 
         flash_message("Something went wrong!", "error")
@@ -31,7 +31,7 @@ export function remove_friend(friend_id, setFriends) {
                 if (!current_friends.accepted) return current_friends
                 return { ...current_friends, accepted: current_friends.accepted.filter(filter_friend => filter_friend.id != friend_id) }
             })
-            return flash_message("Removed a friend!")
+            return flash_message("Friend removed")
         }
 
         flash_message("Something went wrong!", "error")
@@ -58,7 +58,7 @@ export function confirm_friend(friend, setFriends) {
                     accepted: current_friends.accepted ? [friend, ...current_friends.accepted] : [friend]
                 }
             })
-            return flash_message("Confirmed friend request!")
+            return flash_message("Friend request confirmed!")
         }
 
         flash_message("Something went wrong!", "error")
@@ -75,7 +75,7 @@ export function decline_friend(friend_id, setFriends) {
                 if (!current_friends.pending) return current_friends
                 return { ...current_friends, pending: current_friends.pending.filter(filter_friend => filter_friend.id != friend_id) }
             })
-            return flash_message("Declined friend request!")
+            return flash_message("Friend request declined")
         }
 
         flash_message("Something went wrong!", "error")
