@@ -12,10 +12,11 @@ class User:
     create_time: str
     verified: int = 0 # 0 | 1
     visibility: int = 1 # 0 | 1
+    notifications: int = 1 # 0 | 1
     display_name: str = None
 
     def marks(self):
-        return "?, ?, ?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -61,9 +62,10 @@ class UserChannel:
     nick: str = None
     admin: int = 0 # 0 | 1
     direct: int = 0 # 0 | 1
+    notifications: int = 1 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?, ?"
 
 
 @dataclass
@@ -74,6 +76,7 @@ class UserFriend:
     user_id: str
     friend_id: str
     accepted: str = "waiting" # waiting | accepted_time
+    notifications: str = None # None | displayed time
 
     def marks(self):
         return "?, ?, ?"
@@ -89,9 +92,11 @@ class UserSettings:
     theme: str = "auto" # auto | light | dark
     message_display: str = "standard" # standard | compact
     mfa_enabled: int = 0 # 0 | 1
+    friend_notifications: int = 1 # 0 | 1
+    changelog_notifications: int = 1 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?, ?"
 
 
 @dataclass

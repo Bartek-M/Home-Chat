@@ -31,7 +31,7 @@ export function DisplayName({ props }) {
     return (
         <form className="settings-edit-card center-column-container" onSubmit={(e) => { e.preventDefault(); update_displayname(user, setUser, display_name.current, close) }}>
             <div className="column-container">
-                <h2>Change your display name</h2>
+                <h3>Change your display name</h3>
             </div>
             <div className="column-container">
                 <p className="category-text">DISPLAY NAME <span className="error-category-text" id="displayname-error" key="display-name-error">*</span></p>

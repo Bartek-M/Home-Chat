@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { useUser } from "../context"
 
 export function MFA(props) {
-    const { title, submit_text, submit_function, password, setPage, close, data } = props
+    const { title, submit_text, warning, submit_function, password, setPage, close, data } = props
     const [user, setUser] = useUser()
 
     const navigator = useNavigate()
@@ -24,7 +24,7 @@ export function MFA(props) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" value={submit_text} />
+                <input className={`card-submit-btn ${warning ? 'warning-btn' : 'submit-btn'}`} type="submit" value={submit_text} />
             </div>
         </form>
     )

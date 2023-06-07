@@ -14,6 +14,7 @@ Version: dev-96ee16a
     | separators
     | category text
     | inputs
+    | toogle slider
     | scrollbar
     | animations
 
@@ -302,6 +303,20 @@ svg {
     line-height: 1.375rem;
 }
 .submit-btn:hover { cursor: pointer; background-color: var(--DIM_GREEN); }
+.submit-btn:active { transform: translateY(4px); }
+
+.warning-btn {
+    background-color: var(--RED_BUTTON);
+    color: var(--FONT_COLOR);
+    border-radius: 4px;
+    padding: 0.25rem 1rem;
+    line-height: 1.375rem;
+}
+.warning-btn:hover { cursor: pointer; background-color: var(--RED_BUTTON_HOVER);}
+.warning-btn:active { transform: translateY(4px); }
+
+/* toogle slider */
+
 
 /* scrollbar */
 ::-webkit-scrollbar { width: 6px }
@@ -885,6 +900,7 @@ svg {
 
 .warning-wrapper { 
     background-color: var(--WARNING); 
+    color: var(--BLACK);
     padding: 0.75rem 0.5rem; 
     margin: 0.5rem 0;
     border-radius: 4px; 

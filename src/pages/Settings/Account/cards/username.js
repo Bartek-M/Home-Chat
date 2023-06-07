@@ -19,7 +19,7 @@ function update_username(user, setUser, name, password, close) {
         }
 
         if (res.message === "200 OK") {
-            setUser((current_user) => { return { ...current_user, name: name.value } })
+            setUser((current_user) => { return { ...current_user, name: name.value.toLowerCase() } })
             close()
             return flash_message("Username updated")
         }
@@ -47,10 +47,10 @@ export function Username({ props }) {
                 </button>
             </div>
             <div className="column-container">
-                <p className="category-text">USERNAME <span className="error-category-text" id="name-error"></span></p>
+                <p className="category-text">USERNAME <span className="error-category-text" id="name-error">*</span></p>
                 <input className="input-field" autoFocus type="text" ref={username} defaultValue={user.name} maxLength={50} required />
 
-                <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error"></span></p>
+                <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error">*</span></p>
                 <input className="input-field" type="password" ref={password} maxLength={50} required />
             </div>
             <div className="card-submit-wrapper">

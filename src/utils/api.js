@@ -10,6 +10,7 @@ const api_pages = {
 
     channel_open: () => `/api/channels/open/`,
     channel_create: () => `/api/channels/create/`,
+    channel_leave: (value) => `/api/channels/leave/${value}`,
 
     user: (value) => `/api/users/${value}/`,
     user_search: () => `/api/users/search/`,
@@ -47,6 +48,15 @@ export async function api_send(page, data, method, id=null) {
         body: JSON.stringify(data)
     })
         .then(async (response) => { return await response.json() })
+        .then((data) => { return data })
+}
+
+export async function api_delete(page, id) {
+    return await fetch(api_pages[page](id), {
+        method: "DELETE",
+        headers: { "Authentication": localStorage.getItem("token") }
+    })
+        .then((response) => { return response.json() })
         .then((data) => { return data })
 }
 

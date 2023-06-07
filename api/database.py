@@ -44,7 +44,7 @@ class Database:
         """
         queries = [ 
             f"""{USER_TABLE} (
-                id TEXT UNIQUE, name TEXT UNIQUE, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER, display_name TEXT
+                id TEXT UNIQUE, name TEXT UNIQUE, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER, notifications INTEGER, display_name TEXT
             )""",
             f"""{MESSAGE_TABLE} (
                 id TEXT UNIQUE, author TEXT, channel_id TEXT, content TEXT, create_time TEXT, system INTEGER
@@ -56,10 +56,10 @@ class Database:
                 user_id TEXT, channel_id TEXT, join_time TEXT, nick TEXT, admin INTEGER, direct INTEGER
             )""",
             f"""{USER_FRIENDS_TABLE} (
-                user_id TEXT, friend_id TEXT, accepted TEXT 
+                user_id TEXT, friend_id TEXT, accepted TEXT, notifications TEXT
             )""",
             f"""{USER_SETTING_TABLE} (
-                id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER
+                id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER, friend_notifications INTEGER, changelog_notifications INTEGER
             )""",
             f"""{USER_SECRET_TABLE} (
                 id TEXT UNIQUE, password TEXT, secret TEXT, verify_code TEXT, sent_time TEXT, mfa_code TEXT
@@ -178,8 +178,8 @@ class Database:
                     if not (channel :=  self.get_entry(CHANNEL_TABLE, data[1]).__dict__):
                         continue
                     
-                    if channel["direct"] == 1 and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
-                        if friend_channel.nick:
+                    if channel["direct"] == 1 and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))):
+                        if (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")) and friend_channel.nick:
                             channel["display_name"] = friend_channel.nick
                         elif friend.display_name:
                             channel["display_name"] = friend.display_name    
@@ -270,6 +270,9 @@ class Database:
         
         if option == "user_channels":
             self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
+
+        if option == "user_channel":
+            self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
 
         if option == "user_friends":
             self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])

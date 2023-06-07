@@ -37,7 +37,7 @@ export function DeleteAccount({ props }) {
     const password = useRef()
 
     const [page, setPage] = useState(null)
-    if (page) return <MFA title="Delete Account" submit_text="Delete Account" submit_function={submit_delete} password={password.current.value} setPage={setPage} close={close} />
+    if (page) return <MFA title="Delete Account" submit_text="Delete Account" warning={true} submit_function={submit_delete} password={password.current.value} setPage={setPage} close={close} />
 
     return (
         <form className="settings-edit-card center-column-container">
@@ -51,7 +51,7 @@ export function DeleteAccount({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_delete({ navigator: navigator, user: user, password: password.current.value, setPage: setPage }) }} value={user.mfa_enabled ? "Continue" : "Delete Account"} />
+                <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_delete({ navigator: navigator, user: user, password: password.current.value, setPage: setPage }) }} value={user.mfa_enabled ? "Continue" : "Delete Account"} />
             </div>
         </form>
     )
