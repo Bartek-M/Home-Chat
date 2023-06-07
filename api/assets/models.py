@@ -79,7 +79,7 @@ class UserFriend:
     notifications: str = None # None | displayed time
 
     def marks(self):
-        return "?, ?, ?"
+        return "?, ?, ?, ?"
     
 
 @dataclass

@@ -265,6 +265,7 @@ svg {
     font-weight: 700; 
     font-size: 0.75rem; 
     color: var(--FONT_DIM_COLOR); 
+    text-transform: uppercase;
 }
 
 .error-category-text { 
@@ -316,7 +317,33 @@ svg {
 .warning-btn:active { transform: translateY(4px); }
 
 /* toogle slider */
+.slider {
+    display: inline-block;
+    position: relative;
+    min-width: 48px;;
+    width: 48px;
+    height: 28px;
+    border-radius: 50px;
+    background-color: var(--BUTTON);
+    cursor: pointer;
+}
 
+.slider:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    z-index: 2;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--FONT_COLOR);
+    transition: 0.17s ease; 
+}
+
+.slider:checked { background-color: var(--BLUE); }
+.slider:checked:before { left: 22px; }
 
 /* scrollbar */
 ::-webkit-scrollbar { width: 6px }

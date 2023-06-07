@@ -53,7 +53,7 @@ class Database:
                 id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct INTEGER
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                user_id TEXT, channel_id TEXT, join_time TEXT, nick TEXT, admin INTEGER, direct INTEGER
+                user_id TEXT, channel_id TEXT, join_time TEXT, nick TEXT, admin INTEGER, direct INTEGER, notifications INTEGER
             )""",
             f"""{USER_FRIENDS_TABLE} (
                 user_id TEXT, friend_id TEXT, accepted TEXT, notifications TEXT

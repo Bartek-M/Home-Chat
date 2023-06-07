@@ -72,6 +72,7 @@ class Channels:
 
         channel["name"] = friend.get("name")
         channel["icon"] = friend.get("avatar")
+        channel["users"] = db.get_channel_stuff(channel["id"], "users")
 
         return ({"channel": channel}, 200)
 
