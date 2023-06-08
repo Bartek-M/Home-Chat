@@ -26,7 +26,8 @@ export function Home() {
                     <div className="home-page container">
                         <nav className="main-sidebar column-container scroller-container">
                             <li className={`main-sidebar-item center-container ${settings ? "active" : ""}`}>
-                                <div className="main-sidebar-pill" id="channel-pill-settings"></div>
+                                <div className="main-sidebar-pill"></div>
+                                <div className="notification-dot"></div>
                                 <Tooltip text="Settings" type="right">
                                     <button className="main-sidebar-icon sidebar-settings-icon center-container" onClick={() => { setSettings(true) }}>
                                         <svg width="24" height="24" viewBox="0 0 16 16">
@@ -37,7 +38,7 @@ export function Home() {
                                 </Tooltip>
                             </li>
                             <li className={`main-sidebar-item center-container ${card === "channel_creator" ? "active" : ""}`}>
-                                <div className="main-sidebar-pill" id="channel-pill-addchannel"></div>
+                                <div className="main-sidebar-pill"></div>
                                 <Tooltip text="Create" type="right">
                                     <button className="main-sidebar-icon sidebar-settings-icon center-container" onClick={() => { setCard("channel_creator") }}>
                                         <svg width="32" height="32" viewBox="0 0 16 16">

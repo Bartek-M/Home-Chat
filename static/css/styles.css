@@ -389,7 +389,7 @@ svg {
     gap: 0.75rem;
 }
 
-.main-sidebar-item { pointer-events: none;  }
+.main-sidebar-item { position: relative; pointer-events: none;  }
 .main-sidebar-item:hover .main-sidebar-pill { height: 20px; }
 
 .main-sidebar-item.active .main-sidebar-icon { border-radius: 10px; }
@@ -400,12 +400,25 @@ svg {
 .main-sidebar-pill { 
     position: absolute;
     left: 0;
+    z-index: 10;
     width: 8px;
     height: 0;
     border-radius: 0 4px 4px 0; 
     margin-left: -4px;
     background-color: var(--FONT_DIM_COLOR); 
     transition: 0.17s ease; 
+}
+
+.notification-dot {
+    position: absolute;
+    top: -0.2rem;
+    right: 0.3rem;
+    z-index: 10;
+    border-radius: 50%;
+    max-width: 12px;
+    width: 12px;
+    height: 12px;
+    background-color: var(--RED_BUTTON);
 }
 
 .main-sidebar-icon {
@@ -643,6 +656,7 @@ svg {
 
 .settings-sidebar button, 
 #settings-logout {
+    position: relative;
     text-align: left;
     margin-bottom: 2px;
     border-radius: 4px;
@@ -660,6 +674,8 @@ svg {
 }
 
 .leave-btn { color: var(--RED_BUTTON)!important }
+
+.stng-notification-dot { right: -0.2rem }
 
 /* settings content */
 .settings-page {

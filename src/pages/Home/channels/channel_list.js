@@ -25,6 +25,7 @@ export function ChannelList() {
             {channels && channels.map(channel => (
                 <li className={`main-sidebar-item center-container ${channel.active ? "active" : ""}`} key={`channel-${channel.id}`}>
                     <div className="main-sidebar-pill"></div>
+                    <div className="notification-dot"></div>
                     <Tooltip text={channel.name} note={channel.display_name ? channel.display_name : null} type="right">
                         <button className="center-container" onClick={() => open_channel(channel.id, channel.active, setChannels)}>
                             <img className="main-sidebar-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />

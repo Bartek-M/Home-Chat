@@ -23,7 +23,10 @@ export function Settings({ setSettings, setCard }) {
                         <p className="category-text">USER SETTINGS</p>
                         <button className={page === "account" ? "active" : ""} onClick={() => setPage("account")}>Account</button>
                         <button className={page === "security" ? "active" : ""} onClick={() => setPage("security")}>Security</button>
-                        <button className={page === "friends" ? "active" : ""} onClick={() => setPage("friends")}>Friends</button>
+                        <button className={page === "friends" ? "active" : ""} onClick={() => setPage("friends")}>
+                            <div className="notification-dot stng-notification-dot"></div>
+                            Friends
+                        </button>
                         <hr className="separator" />
 
                         <p className="category-text">APP SETTINGS</p>
