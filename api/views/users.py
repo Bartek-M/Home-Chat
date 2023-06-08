@@ -41,8 +41,8 @@ class Users:
     @Decorators.manage_database
     @Decorators.auth
     def get_settings(db, user_id):
-        if (stng := {**db.get_entry(USER_TABLE, user_id).__dict__, **db.get_entry(USER_SETTING_TABLE, user_id).__dict__}):
-            return ({"user": {**stng}}, 200)
+        if (user := db.get_entry(USER_TABLE, user_id).__dict__) and (stng := db.get_entry(USER_SETTING_TABLE, user_id).__dict__):
+            return ({"user": {**user, **stng}}, 200)
         
         return None
     

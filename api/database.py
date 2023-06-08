@@ -53,13 +53,13 @@ class Database:
                 id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct INTEGER
             )""",
             f"""{USER_CHANNEL_TABLE} (
-                user_id TEXT, channel_id TEXT, join_time TEXT, nick TEXT, admin INTEGER, direct INTEGER, notifications INTEGER
+                user_id TEXT, channel_id TEXT, join_time TEXT, nick TEXT, admin INTEGER, direct INTEGER, notifications TEXT
             )""",
             f"""{USER_FRIENDS_TABLE} (
-                user_id TEXT, friend_id TEXT, accepted TEXT, notifications TEXT
+                user_id TEXT, friend_id TEXT, accepted TEXT, notifications INTEGER
             )""",
             f"""{USER_SETTING_TABLE} (
-                id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER, friend_notifications INTEGER, changelog_notifications INTEGER
+                id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER, notifications_message INTEGER, notifications_friend INTEGER, notifications_changelog TEXT
             )""",
             f"""{USER_SECRET_TABLE} (
                 id TEXT UNIQUE, password TEXT, secret TEXT, verify_code TEXT, sent_time TEXT, mfa_code TEXT

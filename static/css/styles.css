@@ -320,9 +320,9 @@ svg {
 .slider {
     display: inline-block;
     position: relative;
-    min-width: 48px;;
-    width: 48px;
-    height: 28px;
+    min-width: 40px;;
+    width: 40px;
+    height: 22px;
     border-radius: 50px;
     background-color: var(--BUTTON);
     cursor: pointer;
@@ -335,15 +335,18 @@ svg {
     top: 2px;
     left: 2px;
     z-index: 2;
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background-color: var(--FONT_COLOR);
     transition: 0.17s ease; 
 }
 
 .slider:checked { background-color: var(--BLUE); }
-.slider:checked:before { left: 22px; }
+.slider:checked:before { left: 20px; }
+
+.slider:disabled  { background-color: var(--BORDER_COLOR); }
+.slider:disabled:before { background-color: var(--BUTTON); }
 
 /* scrollbar */
 ::-webkit-scrollbar { width: 6px }
