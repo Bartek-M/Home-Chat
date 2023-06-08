@@ -162,6 +162,7 @@ class Users:
             db.update_entry(USER_TABLE, user_id, category, data)
             return 200
 
+        # Wrong option 
         return ({"errors": {"category": "Invalid category"}}, 400)
     
     @users.route("/<user_id>/settings/mfa", methods=["PATCH"])
@@ -226,6 +227,34 @@ class Users:
         db.update_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "accepted", current_time := time.time(), "friend")
         return ({"time": current_time}, 200)
     
+    @users.route("/<user_id>/notifications/", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def notifications(db, user_id):
+        option = request.json.get("option")
+        position = request.json.get("position")
+
+        if position != 0 and position != 1:
+            return ({"errors": {"position": "Invalid position"}}, 400)
+            
+        if option == "notifications":
+            db.update_entry(USER_TABLE, user_id, "notifications", position)
+            return ({"position": position}, 200)
+        
+        elif option == "message":
+            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_message", position)
+            return ({"position": position}, 200)
+        
+        elif option == "friend":
+            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_friend", position)
+            return ({"position": position}, 200)
+
+        elif option == "changelog":
+            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_changelog", "1" if position else None)
+            return ({"position": "1" if position else None}, 200)
+
+        return ({"errors": {"option": "Invalid option"}}, 400)
+        
     
     # DELETE
     @users.route("/<user_id>/delete", methods=["DELETE"])
