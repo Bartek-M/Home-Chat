@@ -55,7 +55,7 @@ class Users:
         if not (username := request.json.get("username")):
             return ({"errors": {"username": "Username is invalid."}}, 400)
         
-        if not (user := db.get_user(username, "name")) or user.visibility == 0:
+        if not (user := db.get_entry(USER_TABLE, username.lower(), "name")) or user.visibility == 0:
             return ({"errors": {"username": "User does not exist."}}, 400)
         
         if user.id == user_id:
@@ -100,8 +100,8 @@ class Users:
             return ({"errors": {"password": "Password doesn't match"}}, 403)
         
         if category == "name":
-            if db.get_user(data, "name"):
-                return ({"errors": {"username": "Username is already taken"}}, 409)
+            if db.get_entry(USER_TABLE, data.lower(), "name"):
+                return ({"errors": {"name": "Username is already taken"}}, 409)
 
             db.update_entry(USER_TABLE, user_id, "name", data.lower())
             return 200
@@ -109,7 +109,7 @@ class Users:
         if category == "email":
             if not Functions.verify_email(data):
                 return ({"errors": {"email": "Invalid email form"}}, 400)
-            if db.get_user(data):
+            if db.get_entry(USER_SETTING_TABLE, data, "email"):
                 return ({"errors": {"email": "Email is already registered!"}}, 406)
 
             db.update_entry(USER_SETTING_TABLE, user_id, "email", data.lower())
@@ -263,7 +263,7 @@ class Users:
     def delete_account(db, user_id):
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
-        if db.get_user_stuff(user_id, "owner_channels"):
+        if db.get_entry(CHANNEL_TABLE, user_id, "owner"):
             return ({"errors": {"channels": "You own some channels!"}}, 400)
 
         if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
@@ -272,12 +272,7 @@ class Users:
         if db.get_entry(USER_SETTING_TABLE, user_id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
             return ({"errors": {"code": "Invalid two-factor code"}}, 400)
         
-        db.delete_entry(USER_TABLE, user_id)
-        db.delete_entry(USER_SETTING_TABLE, user_id)
-        db.delete_entry(USER_SECRET_TABLE, user_id)
-        db.delete_entry(USER_FRIENDS_TABLE, user_id, "user_friends")
-        db.delete_entry(USER_CHANNEL_TABLE, user_id, "user_channels")
-
+        db.delete_entry(None, user_id, option="account")
         return 200
     
     @users.route("/<user_id>/friends/remove", methods=["DELETE"])
@@ -297,5 +292,5 @@ class Users:
         if not db.get_user_stuff([user_id, friend_id], "friend"):
             return ({"errors": {"friend": "No friend connection"}}, 400)
         
-        db.delete_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "user_friend")
+        db.delete_entry(None, [user_id, friend_id], option="user_friend")
         return 200

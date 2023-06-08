@@ -5,7 +5,6 @@ import { ChannelMenu } from "../"
 import { createPortal } from "react-dom"
 
 export function ChannelView({ setCard }) {
-    const [user,] = useUser()
     const [channels,] = useChannels()
 
     const ref = useRef()
@@ -39,7 +38,7 @@ export function ChannelView({ setCard }) {
                                     <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                                 </svg>
                             </button>
-                            {menu.show && createPortal(<ChannelMenu element={ref} owner={user.id === channel.owner} x={menu.x} y={menu.y} close={() => setMenu({ show: false, x: 0, y: 0 })} setCard={setCard} />, document.getElementsByClassName("layer")[0])}
+                            {menu.show && createPortal(<ChannelMenu element={ref} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ show: false, x: 0, y: 0 })} setCard={setCard} />, document.getElementsByClassName("layer")[0])}
                         </div>
                     </div>
                     <div className="column-container scroller-container" id="chat-window">

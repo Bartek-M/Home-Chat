@@ -19,7 +19,7 @@ class Auth:
     @auth.route("/login", methods=["POST"])
     @Decorators.manage_database
     def login(db):
-        if settings := db.get_user(request.json.get("email").lower()):
+        if settings := db.get_entry(USER_SETTING_TABLE, request.json.get("email").lower(), "email"):
             user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
             
             if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) == user_secrets.password:
@@ -65,10 +65,10 @@ class Auth:
         if not Functions.verify_email(email):
             return ({"errors": {"email": "Invalid email syntax"}}, 400)
         
-        if db.get_user(email):
+        if db.get_entry(USER_SETTING_TABLE, email, "email"):
             return ({"errors": {"email": "Email is already registered"}}, 409)
         
-        if db.get_user(username, "name"):
+        if db.get_entry(USER_TABLE, username, "name"):
             return ({"errors": {"username": "Username is already taken"}}, 409)
         
         if len(password) < 6:

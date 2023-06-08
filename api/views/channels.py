@@ -93,7 +93,7 @@ class Channels:
         channel = Channel(str(Functions.create_id(float(creation_time))), name, "generic", user_id, creation_time)
         
         db.insert_entry(CHANNEL_TABLE, channel)
-        db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, channel.id, creation_time, None, 1))
+        db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user_id, channel.id, creation_time, 0, 1))
         
         for member_id in users:
             if not (user := db.get_entry(USER_TABLE, member_id)):
@@ -109,7 +109,7 @@ class Channels:
     @Decorators.manage_database
     @Decorators.auth
     def delete_channel(db, channel_id):
-        db.delete_entry(None, channel_id, "channel")
+        db.delete_entry(None, channel_id, option="channel")
         return 200
     
     @channels.route("/leave/<channel_id>", methods=["DELETE"])
@@ -126,8 +126,8 @@ class Channels:
             return ({"errors": {"channel": "You are an owner"}}, 400)
         
         if len(db.get_channel_stuff(channel_id, "users")) <= 1:
-            db.delete_entry(None, channel_id, "channel")
+            db.delete_entry(None, channel_id, option="channel")
             return 200
 
-        db.delete_entry(None, [user_id, channel_id], "user_channel")
+        db.delete_entry(None, [user_id, channel_id], option="user_channel")
         return 200

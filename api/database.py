@@ -1,4 +1,3 @@
-import random
 import sqlite3
 
 from .assets.models import *
@@ -71,39 +70,18 @@ class Database:
         
         self.conn.commit()
 
-    def get_entry(self, table, req_id):
+    def get_entry(self, table, req_id, entry="id", order=None):
         """
         Get specific entry
         :param table: Table to look at
         :param req_id: ID of entry to get
         :return: Desired config object or None
         """
-        self.cursor.execute(f"SELECT * FROM {table} WHERE id=?", [req_id])
+        self.cursor.execute(f"SELECT * FROM {table} WHERE {entry}=? {f'ORDER BY {order}' if order else ''}", [req_id])
 
         if fetched := self.cursor.fetchone():
             return CONFIG_OBJECTS[table](*fetched)
 
-        return None
-
-    def get_user(self, search, option="email"):
-        """
-        Get specifc user using his information
-        :param search: User information
-        :param option: Option to use ("email", "name")
-        :return: UserSettings or User object
-        """
-        if option == "email":
-            self.cursor.execute(f"SELECT * FROM {USER_SETTING_TABLE} WHERE email=?", [search.lower()])
-
-            if fetched := self.cursor.fetchone():
-                return UserSettings(*fetched)
-        
-        if option == "name":
-            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE name=?", [search.lower()])
-
-            if fetched := self.cursor.fetchone():
-                return User(*fetched)
-            
         return None
     
     def get_channel_stuff(self, req_id, option):
@@ -141,12 +119,6 @@ class Database:
 
                 return messages
             
-        if option == "last_message":
-            self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? ORDER BY id DESC", [req_id])
-
-            if fetched := self.cursor.fetchone():
-                return Message(*fetched)
-            
         if option == "user_channel":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
 
@@ -159,26 +131,24 @@ class Database:
         """
         Get specific information about the user
         :param req_id: ID to check for
-        :param option: Option to use ("owner_channels", "channels", "friends", "friend")
+        :param option: Option to use ("channels", "friends", "friend")
         :return: List of Channel objects or []
-        """
-        if option == "owner_channels":
-            self.cursor.execute(f"SELECT * FROM {CHANNEL_TABLE} WHERE owner=?", [req_id])
-
-            if fetched := self.cursor.fetchall():
-                return [Channel(*channel) for channel in fetched]
-                
+        """                
         if option == "channels":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():
                 channels = []
 
-                for data in sorted(fetched, key=lambda x: last if (last := self.get_channel_stuff(x[1], "last_message")) else x[2], reverse=True):
+                for data in sorted(
+                    fetched, 
+                    key=lambda x: last if (last := self.get_entry(MESSAGE_TABLE, x[1], "channel_id", "id DESC")) else x[2], 
+                    reverse=True
+                ):
                     if not (channel :=  self.get_entry(CHANNEL_TABLE, data[1]).__dict__):
                         continue
                     
-                    if channel["direct"] == 1 and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))):
+                    if channel["direct"] and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))):
                         if (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")) and friend_channel.nick:
                             channel["display_name"] = friend_channel.nick
                         elif friend.display_name:
@@ -187,6 +157,9 @@ class Database:
                         channel["name"] = friend.name 
                         channel["icon"] = friend.avatar
 
+                    channel["admin"] = True if self.get_channel_stuff([req_id, channel["id"]], "user_channel").admin else False
+
+                    channel["notifications"] = data[6]
                     channel["users"] = self.get_channel_stuff(channel["id"], "users")
                     channels.append(channel)
 
@@ -252,7 +225,7 @@ class Database:
         
         self.conn.commit()
 
-    def delete_entry(self, table, req_id, option=None):
+    def delete_entry(self, table, req_id, entry="id", option=None):
         """
         Delete specific entry
         :param table: Table to delete in
@@ -261,28 +234,29 @@ class Database:
         :return: None
         """
         if option is None:
-            self.cursor.execute(f"DELETE FROM {table} WHERE id=?", [req_id])
+            self.cursor.execute(f"DELETE FROM {table} WHERE {entry}=?", [req_id])
+
+        if option == "account":
+            self.cursor.execute(f"DELETE FROM {USER_TABLE} WHERE id=?", [req_id])
+            self.cursor.execute(f"DELETE FROM {USER_SETTING_TABLE} WHERE id=?", [req_id])
+            self.cursor.execute(f"DELETE FROM {USER_SECRET_TABLE} WHERE id=?", [req_id])
+            self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
+            self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
 
         if option == "channel":
             self.cursor.execute(f"DELETE FROM {CHANNEL_TABLE} WHERE id=?", [req_id])
             self.cursor.execute(f"DELETE FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
             self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE channel_id=?", [req_id])
-        
-        if option == "user_channels":
-            self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
 
         if option == "user_channel":
             self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
-
-        if option == "user_friends":
-            self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE user_id=? OR friend_id=?", [req_id, req_id])
 
         if option == "user_friend":
             self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [*req_id, *req_id])
 
         self.conn.commit()
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, *_):
         """
         Close database connection
         :return: None

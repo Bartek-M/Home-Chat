@@ -62,7 +62,7 @@ class UserChannel:
     nick: str = None
     admin: int = 0 # 0 | 1
     direct: int = 0 # 0 | 1
-    notifications: str = None # None | last_message_time
+    notifications: str = "1" # None | last_message_time
 
     def marks(self):
         return "?, ?, ?, ?, ?, ?, ?"

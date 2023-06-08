@@ -527,6 +527,8 @@ svg {
 
 .channel-menu-btn:hover { background-color: var(--BUTTON_HOVER) }
 
+.channel-stngs-card { gap: 1rem!important; }
+
 /* chat */
 #chat-window { height: 100%; width: calc(100% - 1rem); margin: 0 0.5rem; }
 
