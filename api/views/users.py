@@ -261,10 +261,10 @@ class Users:
     @Decorators.manage_database
     @Decorators.auth
     def delete_account(db, user_id):
-        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
-
         if db.get_entry(CHANNEL_TABLE, user_id, "owner"):
             return ({"errors": {"channels": "You own some channels!"}}, 400)
+        
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
         if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
             return ({"errors": {"password": "Password doesn't match"}}, 403)

@@ -3,7 +3,7 @@
 
 Project: Home Chat
 Author: Bartosz Mroczkowski
-Version: dev-96ee16a
+Version: dev-85c616f
 
 
 [Table of Contents]
@@ -678,6 +678,7 @@ svg {
 .leave-btn { color: var(--RED_BUTTON)!important }
 
 .stng-notification-dot { right: -0.2rem }
+.small-category-text { text-transform: none; }
 
 /* settings content */
 .settings-page {

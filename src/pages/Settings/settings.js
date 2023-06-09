@@ -41,7 +41,7 @@ export function Settings({ setSettings, setCard }) {
                                 <path d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
                             </svg>
                         </a>
-                        <p className="category-text">
+                        <p className="category-text small-category-text">
                             ver. pre-{version}
                             <br />
                             {user_os}

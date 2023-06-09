@@ -1,5 +1,8 @@
-import { useMemo, useRef } from "react"
+import { useMemo, useRef, useState } from "react"
 import { useChannels, useUser } from "../../../context"
+
+import { MFA } from "../../../components"
+import { api_send, flash_message } from "../../../utils"
 
 // Functions
 function set_image(file, icon) {
@@ -9,6 +12,48 @@ function set_image(file, icon) {
     icon.src = URL.createObjectURL(user_file)
 }
 
+function delete_channel({ data, password, code, setChannels, close }) {
+    if ((password && !password.value) || (code && !code.value)) return
+
+    if (!data || data.length !== 2) return
+    if (!data[0] || !data[1]) return
+
+    var channel_id = data[0]
+    var channel_name = data[1]
+
+    api_send("channel_delete", {
+        password: password ? password.value : null,
+        code: code ? code.value : null
+    }, "DELETE", channel_id).then(res => {
+        if (res.errors) {
+            if (res.errors.channel) return flash_message(res.errors.channel, "error")
+
+            if (document.getElementById("password-error")) return document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
+            if (document.getElementById("code-error")) return document.getElementById("code-error").innerText = `- ${res.errors.code}`
+
+            return
+        }
+
+        if (res.message === "200 OK") {
+            setChannels(channels => {
+                channels = channels.filter(channel => channel.id !== channel_id)
+
+                if (channels && channels.length > 0) {
+                    channels[0].active = true
+                    window.history.replaceState(null, "", `/channels/${channels[0].id}`)
+                } else { window.history.replaceState(null, "", `/`) }
+
+                return channels
+            })
+
+            close()
+            return flash_message(`Deleted '${channel_name}'`)
+        }
+
+        flash_message("Something went wrong!", "error")
+    })
+}
+
 export function ChannelSettings({ props }) {
     const { close } = props
 
@@ -16,17 +61,40 @@ export function ChannelSettings({ props }) {
     const [channels, setChannels] = useChannels()
 
     const channel_name = useRef()
+    const nick = useRef()
     const channel_icon = useRef()
     const file_input = useRef()
+    const passw = useRef()
 
     const channel = useMemo(() => {
         if (!channels) return null
         return channels.find(channel => channel.active)
     }, [channels])
 
-    console.log(channel)
-    console.log(user)
+    // Delete channel password or MFA check
+    const [page, setPage] = useState(null)
 
+    if (page && user.mfa_enabled) return <MFA title={`Delete '${channel.name}'`} submit_text="Delete" warning={true} submit_function={delete_channel} setChannels={setChannels} close={close} data={[channel.id, channel.name]}/>
+    if (page) return (
+        <form className="settings-edit-card center-column-container" onSubmit={(e) => {
+            e.preventDefault()
+            delete_channel({ data: [channel.id, channel.name], password: passw.current, setChannels: setChannels, close: close })
+        }}>
+            <div className="column-container">
+                <h3>Delete '{channel.name}'</h3>
+            </div>
+            <div className="column-container">
+                <p className="category-text">PASSWORD <span className="error-category-text" id="password-error" key="password-error">*</span></p>
+                <input className="input-field small-card-field" autoFocus ref={passw} key="password-inpt" maxLength={10} required />
+            </div>
+            <div className="card-submit-wrapper">
+                <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
+                <input className="card-submit-btn warning-btn" type="submit" value="Delete" />
+            </div>
+        </form>
+    )
+
+    // Channel settings
     return (
         <div className="settings-edit-card channel-stngs-card center-column-container">
             <div className="column-container">
@@ -63,7 +131,7 @@ export function ChannelSettings({ props }) {
             }
             <div className="column-container">
                 <p className="category-text">NICKNAME <span className="error-category-name" id="name-error">*</span></p>
-                <input className="input-field small-card-field" spellCheck={false} maxLength={50} required />
+                <input className="input-field small-card-field" spellCheck={false} ref={nick} defaultValue={channel.nick} maxLength={50} required />
             </div>
             <div className="spaced-container">
                 <div className="column-container">
@@ -86,7 +154,7 @@ export function ChannelSettings({ props }) {
                             <p className="category-text">DELETE CHANNEL</p>
                             <p>This action cannot be undone and all messages will be lost.</p>
                         </div>
-                        <button className="warning-settings-btn">Delete</button>
+                        <button className="warning-settings-btn" onClick={() => setPage(true)}>Delete</button>
                     </div>
                 </>
             }

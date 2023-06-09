@@ -9,7 +9,7 @@ function update_password({user, password, data, close, setPage, code}) {
     if (data.length !== 2) return
     if (!data[0] || !data[1]) return
 
-    var new_passw = data[1]
+    var new_passw = data[0]
     var confirm_passw = data[1]
     if (!password.value || !new_passw.value || !confirm_passw.value || (code && !code.value)) return
 

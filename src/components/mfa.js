@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { useUser } from "../context"
 
 export function MFA(props) {
-    const { title, submit_text, warning, submit_function, password, setPage, close, data } = props
+    const { title, submit_text, warning, submit_function, password, setChannels, setPage, close, data } = props
     const [user, setUser] = useUser()
 
     const navigator = useNavigate()
@@ -13,7 +13,7 @@ export function MFA(props) {
     return (
         <form className="settings-edit-card center-column-container" onSubmit={(e) => {
             e.preventDefault()
-            submit_function({ navigator: navigator, user: user, setUser: setUser, setPage: setPage, password: password, code: code.current, data: data, close: close })
+            submit_function({ navigator: navigator, user: user, setUser: setUser, setChannels: setChannels, setPage: setPage, password: password, code: code.current, data: data, close: close })
         }}>
             <div className="column-container">
                 <h3>{title}</h3>

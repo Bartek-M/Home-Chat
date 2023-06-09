@@ -34,7 +34,7 @@ function enable_mfa(setUser, password, setPage, close, code, secret) {
     })
 }
 
-function disable_mfa(setUser, code, close) {
+function disable_mfa({setUser, code, close}) {
     if (!code.value) return
 
     api_send("user_mfa", {

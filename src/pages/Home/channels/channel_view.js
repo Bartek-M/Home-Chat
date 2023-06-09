@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react"
-import { useChannels, useUser } from "../../../context"
+import { useChannels } from "../../../context"
 
 import { ChannelMenu } from "../"
 import { createPortal } from "react-dom"

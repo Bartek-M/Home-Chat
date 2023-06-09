@@ -75,6 +75,8 @@ class Database:
         Get specific entry
         :param table: Table to look at
         :param req_id: ID of entry to get
+        :param entry: Entry to get
+        :param order: Sorting order
         :return: Desired config object or None
         """
         self.cursor.execute(f"SELECT * FROM {table} WHERE {entry}=? {f'ORDER BY {order}' if order else ''}", [req_id])
@@ -140,30 +142,32 @@ class Database:
             if fetched := self.cursor.fetchall():
                 channels = []
 
-                for data in sorted(
-                    fetched, 
-                    key=lambda x: last if (last := self.get_entry(MESSAGE_TABLE, x[1], "channel_id", "id DESC")) else x[2], 
-                    reverse=True
-                ):
-                    if not (channel :=  self.get_entry(CHANNEL_TABLE, data[1]).__dict__):
-                        continue
-                    
-                    if channel["direct"] and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))):
-                        if (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")) and friend_channel.nick:
-                            channel["display_name"] = friend_channel.nick
-                        elif friend.display_name:
-                            channel["display_name"] = friend.display_name    
+                for data in fetched:
+                    user_channel = UserChannel(*data)
 
+                    if not (channel :=  self.get_entry(CHANNEL_TABLE, user_channel.channel_id)):
+                        continue
+
+                    channel = channel.__dict__
+                    
+                    if channel["direct"] and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
+                        channel["display_name"] = friend_channel.nick if friend_channel.nick else friend.__dict__.get("display_name", None)
                         channel["name"] = friend.name 
                         channel["icon"] = friend.avatar
+                    elif channel["direct"]:
+                        channel["name"] = "Deleted Account"
+                        channel["icon"] = "generic"
 
-                    channel["admin"] = True if self.get_channel_stuff([req_id, channel["id"]], "user_channel").admin else False
+                    channels.append({
+                        **channel,
+                        "nick": user_channel.nick,
+                        "notifications": user_channel.notifications,
+                        "join_time": user_channel.join_time,
+                        "admin": True if user_channel.admin else False,
+                        "users": self.get_channel_stuff(channel["id"], "users")
+                    })
 
-                    channel["notifications"] = data[6]
-                    channel["users"] = self.get_channel_stuff(channel["id"], "users")
-                    channels.append(channel)
-
-                return channels
+                return sorted(channels, key=lambda channel: message.create_time if (message := self.get_entry(MESSAGE_TABLE, channel["id"], "channel_id", "id DESC")) else channel["join_time"], reverse=True)
                                                 
         if option == "friends":
             friends = {}
@@ -230,6 +234,7 @@ class Database:
         Delete specific entry
         :param table: Table to delete in
         :param req_id: ID of entry to delete
+        :param entry: Entry to delete
         :param option: Option to use
         :return: None
         """

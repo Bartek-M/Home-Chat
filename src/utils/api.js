@@ -11,6 +11,7 @@ const API_PAGES = {
     channel_open: () => `channels/open`,
     channel_create: () => `channels/create`,
     channel_leave: (value) => `channels/leave/${value}`,
+    channel_delete: (value) => `channels/delete/${value}`,
 
     user: (value) => `users/${value}`,
     user_search: () => `users/search`,
