@@ -1,10 +1,10 @@
 import { useMemo } from "react"
 import { useChannels } from "../../../context"
 
-import { api_delete, flash_message } from "../../../utils"
+import { api_delete } from "../../../utils"
 
-function leave(channel_id, channel_name, setChannels, close) {
-    api_delete("channel_leave", channel_id).then((res) => {
+function leave(button, channel_id, channel_name, setChannels, close) {
+    api_delete(button, "channel_leave", channel_id).then((res) => {
         if (res.errors) {
             if (res.errors.channel) return flash_message(res.errors.channel, "error")
             return flash_message("Something went wrong!", "error")
@@ -46,7 +46,7 @@ export function ChannelLeave({ props }) {
             <p className="edit-card-info">Are you sure you want to leave '{channel.name}'? {(channel.users && channel.users.length > 1) ? "You won't be able to rejoin this channel unless you are re-invited." : "This action cannot be undone and all messages will be lost."}</p>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => { e.preventDefault(); leave(channel.id, channel.name, setChannels, close) }} value="Leave" />
+                <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => { e.preventDefault(); leave(e.target, channel.id, channel.name, setChannels, close) }} value="Leave" />
             </div>
         </div>
     )

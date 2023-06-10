@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { ChannelsProvider, FriendsProvider } from "./";
 
-import { api_get, app_theme, prefered_theme, flash_message } from "../utils/";
+import { api_get, app_theme, prefered_theme } from "../utils/";
 import { Loading } from "../components/"
 
 const UserContext = React.createContext()

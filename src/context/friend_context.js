@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react"
-import { api_get, flash_message } from "../utils/";
+import { api_get } from "../utils/";
 
 const FriendsContext = React.createContext()
 export function useFriends() { return useContext(FriendsContext) }

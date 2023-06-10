@@ -113,8 +113,16 @@ class Channels:
         }}, 200)
     
 
+    # PATCH
+    @channels.route("/<channel_id>/settings", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def settings_channel(db, user_id, channel_id):
+        return 200
+
+
     # DELETE
-    @channels.route("/delete/<channel_id>", methods=["DELETE"])
+    @channels.route("/<channel_id>/delete", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
     def delete_channel(db, user_id, channel_id):
@@ -135,7 +143,7 @@ class Channels:
         db.delete_entry(None, channel_id, option="channel")
         return 200
     
-    @channels.route("/leave/<channel_id>", methods=["DELETE"])
+    @channels.route("/<channel_id>/leave", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
     def leave_channel(db, user_id, channel_id):

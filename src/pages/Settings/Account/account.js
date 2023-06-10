@@ -1,7 +1,7 @@
 import { useRef } from "react"
 
 import { useUser } from "../../../context"
-import { api_file, flash_message } from "../../../utils"
+import { api_file } from "../../../utils"
 
 function change_avatar(file, setUser) {
     const user_file = file.files[0]

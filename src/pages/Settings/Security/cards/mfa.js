@@ -2,15 +2,15 @@ import { useRef, useState } from "react";
 
 import { useUser } from "../../../../context";
 import { MFA } from "../../../../components"
-import { api_send, flash_message, gen_secret } from "../../../../utils";
+import { api_send, gen_secret } from "../../../../utils";
 
 const qrcodes = require("qrcode")
 
 // Functions
-function enable_mfa(setUser, password, setPage, close, code, secret) {
+function enable_mfa(button, setUser, password, setPage, close, code, secret) {
     if (!password || (code && !code.value)) return
 
-    api_send("user_mfa", {
+    api_send(button, "user_mfa", {
         code: code ? code.value : null,
         password: password,
         secret: secret,
@@ -34,10 +34,10 @@ function enable_mfa(setUser, password, setPage, close, code, secret) {
     })
 }
 
-function disable_mfa({setUser, code, close}) {
+function disable_mfa({button, setUser, code, close}) {
     if (!code.value) return
 
-    api_send("user_mfa", {
+    api_send(button, "user_mfa", {
         code: code.value,
         option: "disable"
     }, "PATCH", "@me").then(res => {
@@ -121,7 +121,7 @@ export function MFASetup({ props }) {
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
                             <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(setUser, passw, setPage, close, code.current, secret) }} value="Activate" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, passw, setPage, close, code.current, secret) }} value="Activate" />
                         </div>
                     </div>
                 </div>
@@ -141,7 +141,7 @@ export function MFASetup({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(setUser, password.current.value, setPage, close) }} value="Continue" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, password.current.value, setPage, close) }} value="Continue" />
             </div>
         </form>
     )

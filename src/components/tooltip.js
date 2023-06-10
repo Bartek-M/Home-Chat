@@ -15,29 +15,31 @@ export function Tooltip({ text, note, type, children }) {
 
         return () => {
             if (!ref.current) return
-            
+
             ref.current.removeEventListener("mouseenter", onMouseEnter)
             ref.current.removeEventListener("click", onMouseLeave)
             ref.current.removeEventListener("mouseleave", onMouseLeave)
         }
     }, [])
 
-    const tooltip = showTooltip ? (<div className={`tooltip-${type}`} style={
-        type === "right" 
-        ? {
-            top: ref.current.getBoundingClientRect().bottom,
-            left: ref.current.getBoundingClientRect().right + 20,
-            transform: `translateY(calc(-50% - ${ref.current.offsetHeight / 2}px))`
-        } 
-        : {
-            top: ref.current.getBoundingClientRect().top,
-            left: ref.current.getBoundingClientRect().right,
-            transform: `translate(calc(-50% - ${ref.current.offsetWidth / 2}px), -125%)`
-        }
-    }>
-        {note && <p>{note}</p>}
-        <p className={note ? "text-note" : ""}>{text}</p>
-    </div>) : null
+    const tooltip = showTooltip
+        ? (<div className={`tooltip-${type}`} style={
+            type === "right"
+                ? {
+                    top: ref.current.getBoundingClientRect().bottom,
+                    left: ref.current.getBoundingClientRect().right + 20,
+                    transform: `translateY(calc(-50% - ${ref.current.offsetHeight / 2}px))`
+                }
+                : {
+                    top: ref.current.getBoundingClientRect().top,
+                    left: ref.current.getBoundingClientRect().right,
+                    transform: `translate(calc(-50% - ${ref.current.offsetWidth / 2}px), -125%)`
+                }
+        }>
+            {note && <p>{note}</p>}
+            <p className={note ? "text-note" : ""}>{text}</p>
+        </div>)
+        : null
 
     return (
         <div ref={ref}>

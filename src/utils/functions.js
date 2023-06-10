@@ -1,4 +1,4 @@
-import { api_file, api_send, flash_message } from "./"
+import { api_send } from "./"
 export const { os_list, version } = require("../data/config.json")
 
 // Set user_os
@@ -31,10 +31,10 @@ export async function copy_text(text) {
 }
 
 // Open DM channel
-export function open_channel(friend_id, setChannels, close, setSettings) {
+export function open_channel(button, friend_id, setChannels, close, setSettings) {
     if (!friend_id) return
 
-    api_send("channel_open", { friend: friend_id }, "POST").then(res => {
+    api_send(button, "channel_open", { friend: friend_id }, "POST").then(res => {
         if (res.errors && res.errors.friend) return flash_message(res.errors.friend, "error")
 
         if (res.message == "200 OK" && res.channel) {

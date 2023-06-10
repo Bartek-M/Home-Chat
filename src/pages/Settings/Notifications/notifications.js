@@ -1,11 +1,11 @@
 import { useUser } from "../../../context"
-import { api_send, flash_message } from "../../../utils"
+import { api_send } from "../../../utils"
 
-function set_notifications(option, position, setUser) {
+function set_notifications(button, option, position, setUser) {
     if (!option) return
     if (position !== 1 && position !== 0) return
 
-    api_send("notifications", {
+    api_send(button, "notifications", {
         option: option,
         position: position
     }, "PATCH", "@me").then(res => {
@@ -48,7 +48,7 @@ export function Notifications() {
                     className="slider"
                     type="checkbox"
                     defaultChecked={user.notifications ? true : false}
-                    onChange={e => set_notifications("notifications", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "notifications", e.target.checked ? 1 : 0, setUser)}
                 />
             </div>
 
@@ -63,7 +63,7 @@ export function Notifications() {
                     type="checkbox"
                     defaultChecked={user.notifications_message ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications("message", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "message", e.target.checked ? 1 : 0, setUser)}
                 />
             </div>
             <div className="spaced-container">
@@ -76,7 +76,7 @@ export function Notifications() {
                     type="checkbox"
                     defaultChecked={user.notifications_friend ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications("friend", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "friend", e.target.checked ? 1 : 0, setUser)}
                 />
             </div>
 
@@ -91,7 +91,7 @@ export function Notifications() {
                     type="checkbox"
                     defaultChecked={user.notifications_changelog ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications("changelog", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "changelog", e.target.checked ? 1 : 0, setUser)}
                 />
             </div>
         </>

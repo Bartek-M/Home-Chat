@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom"
 
 import { useUser } from "../../../../context"
 import { MFA } from "../../../../components"
-import { api_send, flash_message } from "../../../../utils"
+import { api_send } from "../../../../utils"
 
 // Functions
-function submit_delete({ navigator, user, password, setPage, code }) {
+function submit_delete({ button, navigator, user, password, setPage, code }) {
     if (!password || (code && !code.value)) return
 
-    api_send("user_delete", {
+    api_send(button, "user_delete", {
         password: password,
         code: code ? code.value : null
     }, "DELETE", "@me").then(res => {
@@ -51,7 +51,11 @@ export function DeleteAccount({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => { e.preventDefault(); submit_delete({ navigator: navigator, user: user, password: password.current.value, setPage: setPage }) }} value={user.mfa_enabled ? "Continue" : "Delete Account"} />
+                <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => {
+                    e.preventDefault()
+                    submit_delete({ button: e.target, navigator: navigator, user: user, password: password.current.value, setPage: setPage })
+                }} value={user.mfa_enabled ? "Continue" : "Delete Account"}
+                />
             </div>
         </form>
     )

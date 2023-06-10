@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from "react"
 
 import { useUser, useFriends, useChannels } from "../../../context"
-import { api_send, api_file, open_channel, format_time, flash_message } from "../../../utils"
+import { api_send, api_file, open_channel } from "../../../utils"
 import { Tooltip } from "../../../components"
 
 // Functions 
@@ -28,10 +28,10 @@ function set_channels(setChannels, channel, icon = null) {
     })
 }
 
-function create_channel(name, users, icon, img_file, setChannels, close) {
+function create_channel(button, name, users, icon, img_file, setChannels, close) {
     if (!name.value || !users || !icon) return
 
-    api_send("channel_create", {
+    api_send(button, "channel_create", {
         name: name.value,
         users: users
     }, "POST").then(res => {
@@ -189,7 +189,7 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="card-submit-wrapper">
                             <button className="card-cancel-btn" onClick={() => close()}>Cancel</button>
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={() => create_channel(channel_name.current, selected, channel_icon.current, file_input.current, setChannels, close)} value="Create" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); create_channel(e.target, channel_name.current, selected, channel_icon.current, file_input.current, setChannels, close) }} value="Create" />
                         </div>
                     </div>
                     : <div className="column-container">
@@ -202,7 +202,7 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="friends-wrapper column-container scroller-container">
                             {filteredItems.map(friend => (
-                                <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={() => open_channel(friend.id, setChannels, close)}>
+                                <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => open_channel(e.target, friend.id, setChannels, close)}>
                                     <div className="center-container">
                                         <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                         <div className="column-container">

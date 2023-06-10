@@ -2,10 +2,10 @@ import { useState, useRef } from "react"
 
 import { useUser } from "../../../../context";
 import { MFA } from "../../../../components"
-import { api_send, flash_message } from "../../../../utils";
+import { api_send } from "../../../../utils";
  
 // Function
-function update_password({user, password, data, close, setPage, code}) {
+function update_password({button, user, password, data, close, setPage, code}) {
     if (data.length !== 2) return
     if (!data[0] || !data[1]) return
 
@@ -21,7 +21,7 @@ function update_password({user, password, data, close, setPage, code}) {
         document.getElementById("new-passw-error").innerText = "*"
     }
 
-    api_send("user", {
+    api_send(button, "user", {
         category: "password",
         data: new_passw.value,
         password: password.value,
@@ -88,7 +88,7 @@ export function Password({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_password({ user: user, password: password.current, data: [new_password.current, confirm_password.current], setPage: setPage, close: close}) }} value={user.mfa_enabled ? "Continue" : "Update Password"} />
+                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_password({ button: e.target, user: user, password: password.current, data: [new_password.current, confirm_password.current], setPage: setPage, close: close}) }} value={user.mfa_enabled ? "Continue" : "Update Password"} />
             </div>
         </form>
     )

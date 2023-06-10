@@ -1,9 +1,9 @@
 import { useUser } from "../../../context"
-import { api_send, flash_message } from "../../../utils"
+import { api_send, } from "../../../utils"
 
 // Functions
-function set_visibility(user, setUser) {
-    api_send("user_settings", { 
+function set_visibility(button, user, setUser) {
+    api_send(button, "user_settings", { 
         category: "visibility", 
         data: user.visibility ? 0 : 1 
     }, "PATCH", "@me").then(res => { 
@@ -45,7 +45,7 @@ export function Security({ props }) {
                     <p className="category-text">ACCOUNT VISIBILITY</p>
                     <p>Change your account visibility</p>
                 </div>
-                <button className="settings-btn" id={user.visibility ? "visibility-public" : "visibility-private"} onClick={() => set_visibility(user, setUser)}>
+                <button className="settings-btn" id={user.visibility ? "visibility-public" : "visibility-private"} onClick={(e) => set_visibility(e.target, user, setUser)}>
                     {user.visibility ? "Public" : "Private"}
                 </button>
             </div>

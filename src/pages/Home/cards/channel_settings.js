@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react"
 import { useChannels, useUser } from "../../../context"
 
 import { MFA } from "../../../components"
-import { api_send, flash_message } from "../../../utils"
+import { api_send, api_file } from "../../../utils"
 
 // Functions
 function set_image(file, icon) {
@@ -12,7 +12,50 @@ function set_image(file, icon) {
     icon.src = URL.createObjectURL(user_file)
 }
 
-function delete_channel({ data, password, code, setChannels, close }) {
+function submit_settings(button, channel, name, nick, notifications, img_file, icon, setChannels, close) {
+    if ((name.value !== channel.name) || (nick.value !== channel.nick) || (notifications.checked != notifications.notifications)) {
+        api_send(button, "channel_settings", {
+            name: name.value,
+            nick: nick.value,
+            notifications: notifications.checked
+        }, "PATCH", channel.id).then(res => {
+            if (res.errors) {
+
+            }
+
+            if (res.message === "200 OK") {
+
+            }
+
+            flash_message("Something went wrong!", "error")
+        })
+    }
+
+
+    if (img_file.files && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp")) {
+        const user_file = img_file.files[0]
+        const form_data = new FormData()
+        form_data.append("image", user_file, "untitled.jpg")
+
+        api_file("icon", form_data, channel.id).then(img_res => {
+            if (img_res.errors) {
+                if (img_res.errors.image) flash_message(res.errors.image, "error")
+                if (img_res.errors.channel) flash_message(res.errors.channel, "error")
+                return
+            }
+
+            if (img_res.message === "200 OK" && img_res.image) {
+                setChannels(current_channels => {
+
+                })
+            }
+
+            flash_message("Something went wrong!", "error")
+        })
+    }
+}
+
+function delete_channel({ button, data, password, code, setChannels, close }) {
     if ((password && !password.value) || (code && !code.value)) return
 
     if (!data || data.length !== 2) return
@@ -21,7 +64,7 @@ function delete_channel({ data, password, code, setChannels, close }) {
     var channel_id = data[0]
     var channel_name = data[1]
 
-    api_send("channel_delete", {
+    api_send(button, "channel_delete", {
         password: password ? password.value : null,
         code: code ? code.value : null
     }, "DELETE", channel_id).then(res => {
@@ -54,6 +97,7 @@ function delete_channel({ data, password, code, setChannels, close }) {
     })
 }
 
+
 export function ChannelSettings({ props }) {
     const { close } = props
 
@@ -62,6 +106,7 @@ export function ChannelSettings({ props }) {
 
     const channel_name = useRef()
     const nick = useRef()
+    const notifications = useRef()
     const channel_icon = useRef()
     const file_input = useRef()
     const passw = useRef()
@@ -71,25 +116,27 @@ export function ChannelSettings({ props }) {
         return channels.find(channel => channel.active)
     }, [channels])
 
+    console.log(channel)
+
     // Delete channel password or MFA check
     const [page, setPage] = useState(null)
 
-    if (page && user.mfa_enabled) return <MFA title={`Delete '${channel.name}'`} submit_text="Delete" warning={true} submit_function={delete_channel} setChannels={setChannels} close={close} data={[channel.id, channel.name]}/>
+    if (page && user.mfa_enabled) return <MFA title={`Delete '${channel.name}'`} submit_text="Delete" warning={true} submit_function={delete_channel} setChannels={setChannels} close={close} data={[channel.id, channel.name]} />
     if (page) return (
-        <form className="settings-edit-card center-column-container" onSubmit={(e) => {
-            e.preventDefault()
-            delete_channel({ data: [channel.id, channel.name], password: passw.current, setChannels: setChannels, close: close })
-        }}>
+        <form className="settings-edit-card center-column-container">
             <div className="column-container">
                 <h3>Delete '{channel.name}'</h3>
             </div>
             <div className="column-container">
                 <p className="category-text">PASSWORD <span className="error-category-text" id="password-error" key="password-error">*</span></p>
-                <input className="input-field small-card-field" autoFocus ref={passw} key="password-inpt" maxLength={10} required />
+                <input className="input-field small-card-field" type="password" autoFocus ref={passw} key="password-inpt" maxLength={10} required />
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn warning-btn" type="submit" value="Delete" />
+                <input className="card-submit-btn warning-btn" type="submit" value="Delete" onClick={(e) => {
+                    e.preventDefault()
+                    delete_channel({ button: e.target, data: [channel.id, channel.name], password: passw.current, setChannels: setChannels, close: close })
+                }} />
             </div>
         </form>
     )
@@ -141,9 +188,9 @@ export function ChannelSettings({ props }) {
                 <input
                     className="slider"
                     type="checkbox"
+                    ref={notifications}
                     defaultChecked={channel.notifications ? true : false}
                     disabled={!user.notifications_message || !user.notifications ? true : false}
-                    onChange={e => console.log(e.target.checked)}
                 />
             </div>
             {!channel.direct && channel.owner === user.id &&
@@ -160,7 +207,10 @@ export function ChannelSettings({ props }) {
             }
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault() }} value="Save" />
+                <input className="card-submit-btn submit-btn" type="submit" value="Save" onClick={e => {
+                    e.preventDefault()
+                    submit_settings(e.target, channel, channel_name.current, nick.current, notifications.current, channel_icon.current, file_input.current, setChannels, close)
+                }} />
             </div>
         </div>
     )

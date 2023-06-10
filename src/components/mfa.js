@@ -11,10 +11,7 @@ export function MFA(props) {
     const code = useRef()
 
     return (
-        <form className="settings-edit-card center-column-container" onSubmit={(e) => {
-            e.preventDefault()
-            submit_function({ navigator: navigator, user: user, setUser: setUser, setChannels: setChannels, setPage: setPage, password: password, code: code.current, data: data, close: close })
-        }}>
+        <form className="settings-edit-card center-column-container">
             <div className="column-container">
                 <h3>{title}</h3>
             </div>
@@ -24,7 +21,10 @@ export function MFA(props) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className={`card-submit-btn ${warning ? 'warning-btn' : 'submit-btn'}`} type="submit" value={submit_text} />
+                <input className={`card-submit-btn ${warning ? 'warning-btn' : 'submit-btn'}`} type="submit" value={submit_text} onClick={(e) => {
+                    e.preventDefault()
+                    submit_function({ button: e.target, navigator: navigator, user: user, setUser: setUser, setChannels: setChannels, setPage: setPage, password: password, code: code.current, data: data, close: close })
+                }} />
             </div>
         </form>
     )

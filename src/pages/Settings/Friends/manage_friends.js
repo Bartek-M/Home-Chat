@@ -1,9 +1,9 @@
-import { api_send, flash_message } from "../../../utils"
+import { api_send } from "../../../utils"
 
-export function add_friend(user_id, friend, setFriends) {
+export function add_friend(button, user_id, friend, setFriends) {
     if (!friend) return
 
-    api_send("add_friend", { friend: friend.id }, "POST", "@me").then(res => {
+    api_send(button, "add_friend", { friend: friend.id }, "POST", "@me").then(res => {
         if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") {
             friend.accepted = "waiting"
@@ -21,10 +21,10 @@ export function add_friend(user_id, friend, setFriends) {
     })
 }
 
-export function remove_friend(friend_id, setFriends) {
+export function remove_friend(button, friend_id, setFriends) {
     if (!friend_id) return
 
-    api_send("remove_friend", { friend: friend_id }, "DELETE", "@me").then(res => {
+    api_send(button, "remove_friend", { friend: friend_id }, "DELETE", "@me").then(res => {
         if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") {
             setFriends(current_friends => {
@@ -38,10 +38,10 @@ export function remove_friend(friend_id, setFriends) {
     })
 }
 
-export function confirm_friend(friend, setFriends) {
+export function confirm_friend(button, friend, setFriends) {
     if (!friend) return
 
-    api_send("confirm_friend", { friend: friend.id }, "PATCH", "@me").then(res => {
+    api_send(button, "confirm_friend", { friend: friend.id }, "PATCH", "@me").then(res => {
         if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK" && res.time) {
             friend.accepted = res.time
@@ -65,10 +65,10 @@ export function confirm_friend(friend, setFriends) {
     })
 }
 
-export function decline_friend(friend_id, setFriends) {
+export function decline_friend(button, friend_id, setFriends) {
     if (!friend_id) return
 
-    api_send("decline_friend", { friend: friend_id }, "DELETE", "@me").then(res => {
+    api_send(button, "decline_friend", { friend: friend_id }, "DELETE", "@me").then(res => {
         if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") {
             setFriends(current_friends => {

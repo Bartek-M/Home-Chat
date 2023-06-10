@@ -10,8 +10,10 @@ const API_PAGES = {
 
     channel_open: () => `channels/open`,
     channel_create: () => `channels/create`,
-    channel_leave: (value) => `channels/leave/${value}`,
-    channel_delete: (value) => `channels/delete/${value}`,
+
+    channel_settings: (value) => `channels/${value}/settings`,
+    channel_leave: (value) => `channels/${value}/leave`,
+    channel_delete: (value) => `channels/${value}/delete`,
 
     user: (value) => `users/${value}`,
     user_search: () => `users/search`,
@@ -41,7 +43,9 @@ export async function api_get(page, id) {
         .then((data) => { return data })
 }
 
-export async function api_send(page, data, method, id=null) {
+export async function api_send(button, page, data, method, id=null) {
+    button.disabled = true
+
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
         method: method,
         headers: {
@@ -52,15 +56,19 @@ export async function api_send(page, data, method, id=null) {
     })
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
+        .finally(() => button.disabled = false)
 }
 
-export async function api_delete(page, id) {
+export async function api_delete(button, page, id) {
+    button.disabled = true
+
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
         method: "DELETE",
         headers: { "Authentication": localStorage.getItem("token") }
     })
         .then((response) => { return response.json() })
         .then((data) => { return data })
+        .finally(() => button.disabled = false)
 }
 
 export async function api_file(page, data, id=null) {

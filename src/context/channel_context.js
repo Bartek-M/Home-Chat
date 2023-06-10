@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useParams } from "react-router-dom";
-import { api_get, flash_message } from "../utils/";
+import { api_get } from "../utils/";
 
 const ChannelContext = React.createContext()
 export function useChannels() { return useContext(ChannelContext) }

@@ -1,12 +1,12 @@
 import { useRef } from "react"
 
 import { useUser } from "../../../../context"
-import { api_send, flash_message } from "../../../../utils"
+import { api_send } from "../../../../utils"
 
-function update_displayname(user, setUser, display_name, close) {
+function update_displayname(button, user, setUser, display_name, close) {
     if (user.display_name === display_name.value) return
 
-    api_send("user_settings", {
+    api_send(button, "user_settings", {
         category: "display_name",
         data: display_name.value,
     }, "PATCH", "@me").then(res => {
@@ -29,17 +29,20 @@ export function DisplayName({ props }) {
     const display_name = useRef()
 
     return (
-        <form className="settings-edit-card center-column-container" onSubmit={(e) => { e.preventDefault(); update_displayname(user, setUser, display_name.current, close) }}>
+        <form className="settings-edit-card center-column-container">
             <div className="column-container">
                 <h3>Change your display name</h3>
             </div>
             <div className="column-container">
                 <p className="category-text">DISPLAY NAME <span className="error-category-text" id="displayname-error" key="display-name-error">*</span></p>
-                <input className="input-field small-card-field" autoFocus defaultValue={user.display_name ? user.display_name : ""} ref={display_name} key="name-inpt" maxLength={50} />
+                <input className="input-field small-card-field" type="text" autoFocus defaultValue={user.display_name ? user.display_name : ""} ref={display_name} key="name-inpt" maxLength={50} />
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" value="Update" />
+                <input className="card-submit-btn submit-btn" type="submit" value="Update" onClick={(e) => { 
+                    e.preventDefault()
+                    update_displayname(e.target, user, setUser, display_name.current, close) 
+                }} />
             </div>
         </form>
     )

@@ -1,13 +1,13 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send, flash_message } from "../../../../utils"
+import { api_send } from "../../../../utils"
 import { useUser } from "../../../../context"
 
-function update_email(navigator, user, email, password) {
+function update_email(button, navigator, user, email, password) {
     if (!password.value || user.email === email.value) return
 
-    api_send("user", {
+    api_send(button, "user", {
         category: "email",
         data: email.value,
         password: password.value
@@ -57,7 +57,7 @@ export function Email({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(navigator, user, email.current, password.current) }} value="Done" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(e.target, navigator, user, email.current, password.current) }} value="Done" />
             </div>
         </form>
     )

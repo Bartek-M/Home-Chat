@@ -1,12 +1,12 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send, flash_message } from "../../utils/"
+import { api_send } from "../../utils/"
 
-function submit(navigator, email, username, password) {
+function submit(button, navigator, email, username, password) {
     if (!email.value || !username.value || !password.value) return
     
-    api_send("auth_register", {
+    api_send(button, "auth_register", {
         email: email.value,
         username: username.value,
         password: password.value
@@ -50,7 +50,7 @@ export function Register() {
                         <input className="input-field" type="password" ref={password} size="30" required />
                     </div>
 
-                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(), submit(navigator, email.current, username.current, password.current) }} value="CONTINUE" />
+                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(), submit(e.target, navigator, email.current, username.current, password.current) }} value="CONTINUE" />
                     <p className="login-redirect">Already have an account? <a className="link" href="login">Log In</a></p>
                 </form>
             </div>

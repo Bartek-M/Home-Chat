@@ -1,12 +1,12 @@
 import { useRef } from "react"
 
 import { useUser } from "../../../../context"
-import { api_send, flash_message } from "../../../../utils"
+import { api_send } from "../../../../utils"
 
-function update_username(user, setUser, name, password, close) {
+function update_username(button, user, setUser, name, password, close) {
     if (!password.value || user.name == name.value) return
 
-    api_send("user", {
+    api_send(button, "user", {
         category: "name",
         data: name.value,
         password: password.value
@@ -55,7 +55,7 @@ export function Username({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_username(user, setUser, username.current, password.current, close) }} value="Done" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_username(e.target, user, setUser, username.current, password.current, close) }} value="Done" />
             </div>
         </form>
     )

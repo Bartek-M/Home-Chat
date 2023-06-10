@@ -189,6 +189,14 @@ input {
 button:hover { cursor: pointer; }
 button:active { transform: translateY(4px); }
 
+button:disabled, 
+input:disabled {
+    color: var(--FONT_DIM_COLOR)!important;
+    background-color: var(--BUTTON_HOVER)!important;
+}
+
+button:disabled svg { fill: var(--FONT_DIM_COLOR)!important }
+
 a { 
     color: var(--FONT_COLOR); 
     transition: 0.17s ease; 
@@ -881,6 +889,8 @@ svg {
 .friend-search-input {
     width: 100%;
 }
+
+.search-submit:disabled { background-color: transparent!important; }
 
 .small-search {
     max-width: calc(100% - 1rem);
