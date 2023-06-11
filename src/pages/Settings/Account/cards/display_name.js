@@ -1,12 +1,12 @@
 import { useRef } from "react"
 
-import { useUser } from "../../../../context"
-import { api_send } from "../../../../utils"
+import { useFlash, useUser } from "../../../../context"
+import { apiSend } from "../../../../utils"
 
-function update_displayname(button, user, setUser, display_name, close) {
+function update_displayname(button, user, setUser, display_name, close, setFlash) {
     if (user.display_name === display_name.value) return
 
-    api_send(button, "user_settings", {
+    apiSend(button, "user_settings", {
         category: "display_name",
         data: display_name.value,
     }, "PATCH", "@me").then(res => {
@@ -15,16 +15,18 @@ function update_displayname(button, user, setUser, display_name, close) {
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, display_name: display_name.value } })
             close()
-            return flash_message("Display name updated")
+            return setFlash("Display name updated")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function DisplayName({ props }) {
     const { close } = props
+    
     const [user, setUser] = useUser()
+    const setFlash = useFlash()
 
     const display_name = useRef()
 
@@ -39,9 +41,9 @@ export function DisplayName({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" value="Update" onClick={(e) => { 
+                <input className="card-submit-btn submit-btn" type="submit" value="Update" onClick={(e) => {
                     e.preventDefault()
-                    update_displayname(e.target, user, setUser, display_name.current, close) 
+                    update_displayname(e.target, user, setUser, display_name.current, close, setFlash)
                 }} />
             </div>
         </form>

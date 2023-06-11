@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from "react"
 
-import { useUser, useFriends, useChannels } from "../../../context"
-import { api_send, api_file, open_channel } from "../../../utils"
+import { useUser, useFriends, useChannels, useFlash } from "../../../context"
+import { apiSend, apiFile, open_channel } from "../../../utils"
 import { Tooltip } from "../../../components"
 
 // Functions 
@@ -28,15 +28,15 @@ function set_channels(setChannels, channel, icon = null) {
     })
 }
 
-function create_channel(button, name, users, icon, img_file, setChannels, close) {
+function create_channel(button, name, users, icon, img_file, setChannels, close, setFlash) {
     if (!name.value || !users || !icon) return
 
-    api_send(button, "channel_create", {
+    apiSend(button, "channel_create", {
         name: name.value,
         users: users
     }, "POST").then(res => {
         if (res.errors) {
-            if (res.errors.users) flash_message(res.errors.users, "error")
+            if (res.errors.users) setFlash(res.errors.users, "error")
             document.getElementById("name-error").innerText = res.errors.name ? res.errors.name : "*"
             return
         }
@@ -47,17 +47,17 @@ function create_channel(button, name, users, icon, img_file, setChannels, close)
                 const form_data = new FormData()
                 form_data.append("image", user_file, "untitled.jpg")
 
-                api_file("icon", form_data, res.channel.id).then(img_res => {
+                apiFile("icon", form_data, res.channel.id).then(img_res => {
                     if (img_res.errors) {
-                        if (img_res.errors.image) flash_message(res.errors.image, "error")
-                        if (img_res.errors.channel) flash_message(res.errors.channel, "error")
+                        if (img_res.errors.image) setFlash(res.errors.image, "error")
+                        if (img_res.errors.channel) setFlash(res.errors.channel, "error")
 
                         return set_channels(setChannels, img_res.channel)
                     }
 
                     if (img_res.message === "200 OK" && img_res.image) return set_channels(setChannels, res.channel, img_res.image)
 
-                    flash_message("Something went wrong!", "error")
+                    setFlash("Something went wrong!", "error")
                     set_channels(setChannels, res.channel)
                 })
             } else set_channels(setChannels, res.channel)
@@ -66,7 +66,7 @@ function create_channel(button, name, users, icon, img_file, setChannels, close)
             return close()
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
@@ -80,6 +80,7 @@ export function ChannelCreator({ props }) {
     const [user,] = useUser()
     const [friends,] = useFriends()
     const [, setChannels] = useChannels()
+    const setFlash = useFlash()
 
     const file_input = useRef()
     const channel_name = useRef()
@@ -189,7 +190,7 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="card-submit-wrapper">
                             <button className="card-cancel-btn" onClick={() => close()}>Cancel</button>
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); create_channel(e.target, channel_name.current, selected, channel_icon.current, file_input.current, setChannels, close) }} value="Create" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); create_channel(e.target, channel_name.current, selected, channel_icon.current, file_input.current, setChannels, close, setFlash) }} value="Create" />
                         </div>
                     </div>
                     : <div className="column-container">
@@ -202,7 +203,7 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="friends-wrapper column-container scroller-container">
                             {filteredItems.map(friend => (
-                                <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => open_channel(e.target, friend.id, setChannels, close)}>
+                                <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => open_channel(e.target, friend.id, setChannels, close, setFlash)}>
                                     <div className="center-container">
                                         <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                         <div className="column-container">

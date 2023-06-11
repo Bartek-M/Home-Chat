@@ -1,36 +1,36 @@
 import { useFlash, useUser } from "../../../context"
-import { api_send } from "../../../utils"
+import { apiSend } from "../../../utils"
 
 // Functions
 function set_theme(button, user, setUser, theme, setFlash) {
     if (theme === user.theme) return
 
-    api_send(button, "user_settings", {
+    apiSend(button, "user_settings", {
         category: "theme",
         data: theme
     }, "PATCH", "@me").then(res => {
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, theme: theme } })
-            return setFlash({ text: "Theme saved!" })
+            return setFlash("Theme saved!")
         }
 
-        setFlash({ text: "Something went wrong!", type: "error" })
+        setFlash("Something went wrong!", "error")
     })
 }
 
 function set_message_display(button, user, setUser, msg_display, setFlash) {
     if (msg_display === user.message_display) return
 
-    api_send(button, "user_settings", {
+    apiSend(button, "user_settings", {
         category: "message_display",
         data: msg_display
     }, "PATCH", "@me").then(res => {
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, message_display: msg_display } })
-            return setFlash({ text: "Message display saved!" })
+            return setFlash("Message display saved!")
         }
 
-        setFlash({ text: "Something went wrong!", type: "error" })
+        setFlash("Something went wrong!", "error")
     })
 }
 

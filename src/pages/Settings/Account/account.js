@@ -1,31 +1,33 @@
 import { useRef } from "react"
 
-import { useUser } from "../../../context"
-import { api_file } from "../../../utils"
+import { useUser, useFlash } from "../../../context"
+import { apiFile } from "../../../utils"
 
-function change_avatar(file, setUser) {
+function change_avatar(file, setUser, setFlash) {
     const user_file = file.files[0]
     if (!user_file) return
 
     const form_data = new FormData()
     form_data.append("image", user_file, "untitled.jpg")
 
-    api_file("avatar", form_data)
+    apiFile("avatar", form_data)
         .then(res => {
-            if (res.errors && res.errors.image) return flash_message(res.errors.image, "error")
+            if (res.errors && res.errors.image) return setFlash(res.errors.image, "error")
 
             if (res.message === "200 OK" && res.image) {
                 setUser((current_user) => { return { ...current_user, avatar: res.image } })
-                return flash_message("Avatar updated!")
+                return setFlash("Avatar updated!")
             }
 
-            flash_message("Something went wrong!", "error")
+            setFlash("Something went wrong!", "error")
         })
 }
 
 export function Account({ props }) {
     const { card } = props
+
     const [user, setUser] = useUser()
+    const setFlash = useFlash()
 
     const file_input = useRef()
 
@@ -38,7 +40,7 @@ export function Account({ props }) {
                         <img className="settings-avatar" src={`/api/images/${user.avatar}.webp`} />
                         <div className="change-icon center-container absolute-container">
                             CHANGE<br />AVATAR
-                            <input ref={file_input} type="file" accept="image/*" onChange={() => change_avatar(file_input.current, setUser)} />
+                            <input ref={file_input} type="file" accept="image/*" onChange={() => change_avatar(file_input.current, setUser, setFlash)} />
                         </div>
                         <div className="add-avatar-icon">
                             <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
@@ -83,8 +85,8 @@ export function Account({ props }) {
                     <p>{user.id}</p>
                 </div>
                 <button className="action-settings-btn " onClick={() => {
-                    try { navigator.clipboard.writeText(user.id) } catch { return flash_message("Something went wrong!", "error") }
-                    flash_message("ID Copied!")
+                    try { navigator.clipboard.writeText(user.id) } catch { return setFlash("Something went wrong!", "error") }
+                    setFlash("ID Copied!")
                 }}>Copy</button>
             </div>
             <div className="spaced-container">

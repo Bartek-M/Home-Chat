@@ -1,40 +1,41 @@
-import { useUser } from "../../../context"
-import { api_send } from "../../../utils"
+import { useFlash, useUser } from "../../../context"
+import { apiSend } from "../../../utils"
 
-function set_notifications(button, option, position, setUser) {
+function set_notifications(button, option, position, setUser, setFlash) {
     if (!option) return
     if (position !== 1 && position !== 0) return
 
-    api_send(button, "notifications", {
+    apiSend(button, "notifications", {
         option: option,
         position: position
     }, "PATCH", "@me").then(res => {
         if (res.errors) {
-            if (res.errors.option) return flash_message(res.errors.option, "error")
-            if (res.errors.position) return flash_message(res.errors.position, "error")
+            if (res.errors.option) return setFlash(res.errors.option, "error")
+            if (res.errors.position) return setFlash(res.errors.position, "error")
 
-            return flash_message("Something went wrong", "error")
+            return setFlash("Something went wrong", "error")
         }
 
         if (res.message === "200 OK" && res.position !== undefined) {
             if (option === "notifications") {
                 setUser(current_user => { return { ...current_user, notifications: res.position } })
-                return flash_message(`${res.position ? "Enabled" : "Disabled"} notifications`)
+                return setFlash(`${res.position ? "Enabled" : "Disabled"} notifications`)
             }
 
-            setUser(current_user => { 
+            setUser(current_user => {
                 current_user[`notifications_${option}`] = res.position
-                return current_user 
+                return current_user
             })
-            return flash_message(`${res.position ? "Enabled" : "Disabled"} ${option} notifications`)
+            return setFlash(`${res.position ? "Enabled" : "Disabled"} ${option} notifications`)
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function Notifications() {
     const [user, setUser] = useUser()
+    const setFlash = useFlash()
 
     return (
         <>
@@ -48,7 +49,7 @@ export function Notifications() {
                     className="slider"
                     type="checkbox"
                     defaultChecked={user.notifications ? true : false}
-                    onChange={e => set_notifications(e.target, "notifications", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "notifications", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
 
@@ -63,7 +64,7 @@ export function Notifications() {
                     type="checkbox"
                     defaultChecked={user.notifications_message ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications(e.target, "message", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "message", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
             <div className="spaced-container">
@@ -76,7 +77,7 @@ export function Notifications() {
                     type="checkbox"
                     defaultChecked={user.notifications_friend ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications(e.target, "friend", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "friend", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
 
@@ -91,7 +92,7 @@ export function Notifications() {
                     type="checkbox"
                     defaultChecked={user.notifications_changelog ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications(e.target, "changelog", e.target.checked ? 1 : 0, setUser)}
+                    onChange={e => set_notifications(e.target, "changelog", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
         </>

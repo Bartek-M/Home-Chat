@@ -1,12 +1,13 @@
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../../utils/"
+import { useFlash } from "../../context"
+import { apiSend } from "../../utils/"
 
-function submit(button, navigator, setCodePage, email, password) {
+function submit(button, navigator, setCodePage, email, password, setFlash) {
     if (!email.value || !password.value) return
 
-    api_send(button, "auth_login", {
+    apiSend(button, "auth_login", {
         email: email.value,
         password: password.value
     }, "POST").then(res => {
@@ -22,7 +23,7 @@ function submit(button, navigator, setCodePage, email, password) {
             if (!res.mfa && res.verified && res.token) {
                 localStorage.setItem("token", res.token)
                 navigator("/")
-                return flash_message("Logged in!")
+                return setFlash("Logged in!")
             }
 
             // MFA disabled + NON VERIFIED user + TICKET recived with no TOKEN
@@ -39,14 +40,14 @@ function submit(button, navigator, setCodePage, email, password) {
         }
 
         // Something went wrong
-        return flash_message("Something went wrong!", "error")
+        return setFlash("Something went wrong!", "error")
     })
 }
 
-function verify(button, navigator, auth_code) {
+function verify(button, navigator, auth_code, setFlash) {
     if (!auth_code) return
 
-    api_send(button, "auth_verify", {
+    apiSend(button, "auth_verify", {
         code: auth_code.value,
         ticket: localStorage.getItem("ticket"),
     }, "POST").then(res => {
@@ -59,7 +60,7 @@ function verify(button, navigator, auth_code) {
                 localStorage.removeItem("ticket")
                 localStorage.setItem("token", res.token)
                 navigator("/")
-                return flash_message("Logged in!")
+                return setFlash("Logged in!")
             }
 
             // MFA enabled + VERIFIED user + TICKET recived
@@ -71,12 +72,14 @@ function verify(button, navigator, auth_code) {
 
         // Something went wrong
         navigator("/login")
-        return flash_message("Login again!", "error")
+        return setFlash("Login again!", "error")
     })
 }
 
 export function Login() {
     const [codePage, setCodePage] = useState(null)
+    const setFlash = useFlash()
+
     const navigator = useNavigate()
 
     const email = useRef()
@@ -99,7 +102,7 @@ export function Login() {
                         </div>
                         <p className="login-redirect"><a className="link" href="recovery/mfa">Don't have any access to auth codes?</a></p>
 
-                        <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current) }} value="LOG IN" />
+                        <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current, setFlash) }} value="LOG IN" />
                         <p className="login-redirect"><a className="link" href="login">Go Back to Login</a></p>
                     </form>
                 </div>
@@ -120,7 +123,7 @@ export function Login() {
                             <input className="input-field" autoFocus type="text" ref={auth_code} key="verify-inpt" maxLength={10} required />
                         </div>
 
-                        <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current) }} value="LOG IN" />
+                        <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current, setFlash) }} value="LOG IN" />
                         <p className="login-redirect"><a className="link" href="login">Go Back to Login</a></p>
                     </form>
                 </div>
@@ -145,7 +148,7 @@ export function Login() {
                     </div>
                     <p className="login-redirect"><a className="link" href="recovery/password">Forgot your password?</a></p>
 
-                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit(e.target, navigator, setCodePage, email.current, password.current) }} value="LOG IN" />
+                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit(e.target, navigator, setCodePage, email.current, password.current, setFlash) }} value="LOG IN" />
                     <p className="login-redirect">Need an account? <a className="link" href="register">Register</a></p>
                 </form>
             </div>

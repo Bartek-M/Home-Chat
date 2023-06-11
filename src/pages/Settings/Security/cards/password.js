@@ -2,10 +2,10 @@ import { useState, useRef } from "react"
 
 import { useUser } from "../../../../context";
 import { MFA } from "../../../../components"
-import { api_send } from "../../../../utils";
- 
+import { apiSend } from "../../../../utils";
+
 // Function
-function update_password({button, user, password, data, close, setPage, code}) {
+function update_password({ button, user, password, data, close, setPage, code, setFlash }) {
     if (data.length !== 2) return
     if (!data[0] || !data[1]) return
 
@@ -21,7 +21,7 @@ function update_password({button, user, password, data, close, setPage, code}) {
         document.getElementById("new-passw-error").innerText = "*"
     }
 
-    api_send(button, "user", {
+    apiSend(button, "user", {
         category: "password",
         data: new_passw.value,
         password: password.value,
@@ -40,17 +40,17 @@ function update_password({button, user, password, data, close, setPage, code}) {
 
         if (res.message === "200 OK") {
             close()
-            return flash_message("Password updated!")
+            return setFlash("Password updated!")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function Password({ props }) {
     const { close } = props
 
-    const [user, ] = useUser()
+    const [user,] = useUser()
     const [page, setPage] = useState(null)
 
     const password = useRef()
@@ -88,7 +88,7 @@ export function Password({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                    <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_password({ button: e.target, user: user, password: password.current, data: [new_password.current, confirm_password.current], setPage: setPage, close: close}) }} value={user.mfa_enabled ? "Continue" : "Update Password"} />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_password({ button: e.target, user: user, password: password.current, data: [new_password.current, confirm_password.current], setPage: setPage, close: close, setFlash: setFlash }) }} value={user.mfa_enabled ? "Continue" : "Update Password"} />
             </div>
         </form>
     )

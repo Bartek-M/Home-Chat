@@ -1,12 +1,12 @@
 import { useRef } from "react"
 
-import { useUser } from "../../../../context"
-import { api_send } from "../../../../utils"
+import { useFlash, useUser } from "../../../../context"
+import { apiSend } from "../../../../utils"
 
-function update_username(button, user, setUser, name, password, close) {
+function update_username(button, user, setUser, name, password, close, setFlash) {
     if (!password.value || user.name == name.value) return
 
-    api_send(button, "user", {
+    apiSend(button, "user", {
         category: "name",
         data: name.value,
         password: password.value
@@ -21,16 +21,18 @@ function update_username(button, user, setUser, name, password, close) {
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, name: name.value.toLowerCase() } })
             close()
-            return flash_message("Username updated")
+            return setFlash("Username updated")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function Username({ props }) {
     const { close } = props
+
     const [user, setUser] = useUser()
+    const setFlash = useFlash()
 
     const username = useRef()
     const password = useRef()
@@ -55,7 +57,7 @@ export function Username({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_username(e.target, user, setUser, username.current, password.current, close) }} value="Done" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_username(e.target, user, setUser, username.current, password.current, close, setFlash) }} value="Done" />
             </div>
         </form>
     )

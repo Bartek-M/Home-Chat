@@ -1,15 +1,15 @@
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { useUser } from "../../../../context"
+import { useFlash, useUser } from "../../../../context"
 import { MFA } from "../../../../components"
-import { api_send } from "../../../../utils"
+import { apiSend } from "../../../../utils"
 
 // Functions
-function submit_delete({ button, navigator, user, password, setPage, code }) {
+function submit_delete({ button, navigator, user, password, setPage, code, setFlash }) {
     if (!password || (code && !code.value)) return
 
-    api_send(button, "user_delete", {
+    apiSend(button, "user_delete", {
         password: password,
         code: code ? code.value : null
     }, "DELETE", "@me").then(res => {
@@ -22,16 +22,18 @@ function submit_delete({ button, navigator, user, password, setPage, code }) {
         if (res.message == "200 OK") {
             localStorage.clear()
             navigator("/login")
-            return flash_message("Removed your account!")
+            return setFlash("Removed your account!")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function DeleteAccount({ props }) {
     const { close } = props
+
     const [user,] = useUser()
+    const setFlash = useFlash()
 
     const navigator = useNavigate()
     const password = useRef()
@@ -53,7 +55,7 @@ export function DeleteAccount({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => {
                     e.preventDefault()
-                    submit_delete({ button: e.target, navigator: navigator, user: user, password: password.current.value, setPage: setPage })
+                    submit_delete({ button: e.target, navigator: navigator, user: user, password: password.current.value, setPage: setPage, setFlash: setFlash })
                 }} value={user.mfa_enabled ? "Continue" : "Delete Account"}
                 />
             </div>

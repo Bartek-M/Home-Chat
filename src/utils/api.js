@@ -19,15 +19,15 @@ const API_PAGES = {
     user_search: () => `users/search`,
     user_channels: (value) => `users/${value}/channels`,
     user_settings: (value) => `users/${value}/settings`,
-    
+
     user_mfa: (value) => `users/${value}/settings/mfa`,
     user_delete: (value) => `users/${value}/delete`,
-    
+
     user_friends: (value) => `users/${value}/friends`,
-    add_friend: (value) => `users/${value}/friends/add`,
-    remove_friend: (value) => `users/${value}/friends/remove`,
-    confirm_friend: (value) => `users/${value}/friends/confirm`,
-    decline_friend: (value) => `users/${value}/friends/decline`, 
+    addFriend: (value) => `users/${value}/friends/add`,
+    removeFriend: (value) => `users/${value}/friends/remove`,
+    confirmFriend: (value) => `users/${value}/friends/confirm`,
+    declineFriend: (value) => `users/${value}/friends/decline`,
 
     notifications: (value) => `users/${value}/notifications`,
 
@@ -35,7 +35,7 @@ const API_PAGES = {
     icon: (value) => `images/icon/${value}`
 }
 
-export async function api_get(page, id) {
+export async function apiGet(page, id) {
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
         headers: { "Authentication": localStorage.getItem("token") }
     })
@@ -43,7 +43,7 @@ export async function api_get(page, id) {
         .then((data) => { return data })
 }
 
-export async function api_send(button, page, data, method, id=null) {
+export async function apiSend(button, page, data, method, id = null) {
     button.disabled = true
 
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
@@ -59,7 +59,7 @@ export async function api_send(button, page, data, method, id=null) {
         .finally(() => button.disabled = false)
 }
 
-export async function api_delete(button, page, id) {
+export async function apiDeletee(button, page, id) {
     button.disabled = true
 
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
@@ -71,7 +71,7 @@ export async function api_delete(button, page, id) {
         .finally(() => button.disabled = false)
 }
 
-export async function api_file(page, data, id=null) {
+export async function apiFile(page, data, id = null) {
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
         method: "POST",
         headers: { "Authentication": localStorage.getItem("token") },

@@ -1,16 +1,16 @@
 import { useRef, useState } from "react";
 
-import { useUser } from "../../../../context";
+import { useFlash, useUser } from "../../../../context";
 import { MFA } from "../../../../components"
-import { api_send, gen_secret } from "../../../../utils";
+import { apiSend, gen_secret } from "../../../../utils";
 
 const qrcodes = require("qrcode")
 
 // Functions
-function enable_mfa(button, setUser, password, setPage, close, code, secret) {
+function enable_mfa(button, setUser, password, setPage, close, code, secret, setFlash) {
     if (!password || (code && !code.value)) return
 
-    api_send(button, "user_mfa", {
+    apiSend(button, "user_mfa", {
         code: code ? code.value : null,
         password: password,
         secret: secret,
@@ -26,18 +26,18 @@ function enable_mfa(button, setUser, password, setPage, close, code, secret) {
 
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, "mfa_enabled": 1 } })
-            flash_message("MFA Enabled!")
+            setFlash("MFA Enabled!")
             return close()
         }
 
-        return flash_message("Something went wrong!", "error")
+        return setFlash("Something went wrong!", "error")
     })
 }
 
-function disable_mfa({button, setUser, code, close}) {
+function disable_mfa({ button, setUser, code, close, setFlash }) {
     if (!code.value) return
 
-    api_send(button, "user_mfa", {
+    apiSend(button, "user_mfa", {
         code: code.value,
         option: "disable"
     }, "PATCH", "@me").then(res => {
@@ -45,11 +45,11 @@ function disable_mfa({button, setUser, code, close}) {
 
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, "mfa_enabled": 0 } })
-            flash_message("MFA Disabled!")
+            setFlash("MFA Disabled!")
             return close()
         }
 
-        return flash_message("Something went wrong!", "error")
+        return setFlash("Something went wrong!", "error")
     })
 }
 
@@ -58,6 +58,8 @@ export function MFASetup({ props }) {
     const { close } = props
 
     const [user, setUser] = useUser()
+    const setFlash = useFlash()
+
     const [page, setPage] = useState(null)
 
     const password = useRef()
@@ -121,7 +123,7 @@ export function MFASetup({ props }) {
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
                             <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, passw, setPage, close, code.current, secret) }} value="Activate" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, passw, setPage, close, code.current, secret, setFlash) }} value="Activate" />
                         </div>
                     </div>
                 </div>
@@ -141,7 +143,7 @@ export function MFASetup({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, password.current.value, setPage, close) }} value="Continue" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, password.current.value, setPage, close, setFlash) }} value="Continue" />
             </div>
         </form>
     )

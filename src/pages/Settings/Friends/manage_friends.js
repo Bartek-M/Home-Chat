@@ -1,10 +1,10 @@
-import { api_send } from "../../../utils"
+import { apiSend } from "../../../utils"
 
-export function add_friend(button, user_id, friend, setFriends) {
+export function addFriend(button, user_id, friend, setFriends, setFlash) {
     if (!friend) return
 
-    api_send(button, "add_friend", { friend: friend.id }, "POST", "@me").then(res => {
-        if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+    apiSend(button, "addFriend", { friend: friend.id }, "POST", "@me").then(res => {
+        if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") {
             friend.accepted = "waiting"
             friend.inviting = user_id
@@ -12,37 +12,37 @@ export function add_friend(button, user_id, friend, setFriends) {
                 if (current_friends.pending && current_friends.pending.some(({ id }) => id === friend.id)) return current_friends
                 if (current_friends.pending) return { ...current_friends, pending: [friend, ...current_friends.pending] }
 
-                return { ...current_friends, pending: [ friend ] }
+                return { ...current_friends, pending: [friend] }
             })
-            return flash_message("Friend request sent")
+            return setFlash("Friend request sent")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
-export function remove_friend(button, friend_id, setFriends) {
+export function removeFriend(button, friend_id, setFriends, setFlash) {
     if (!friend_id) return
 
-    api_send(button, "remove_friend", { friend: friend_id }, "DELETE", "@me").then(res => {
-        if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+    apiSend(button, "removeFriend", { friend: friend_id }, "DELETE", "@me").then(res => {
+        if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") {
             setFriends(current_friends => {
                 if (!current_friends.accepted) return current_friends
                 return { ...current_friends, accepted: current_friends.accepted.filter(filter_friend => filter_friend.id != friend_id) }
             })
-            return flash_message("Friend removed")
+            return setFlash("Friend removed")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
-export function confirm_friend(button, friend, setFriends) {
+export function confirmFriend(button, friend, setFriends, setFlash) {
     if (!friend) return
 
-    api_send(button, "confirm_friend", { friend: friend.id }, "PATCH", "@me").then(res => {
-        if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+    apiSend(button, "confirmFriend", { friend: friend.id }, "PATCH", "@me").then(res => {
+        if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK" && res.time) {
             friend.accepted = res.time
             setFriends(current_friends => {
@@ -58,26 +58,26 @@ export function confirm_friend(button, friend, setFriends) {
                     accepted: current_friends.accepted ? [friend, ...current_friends.accepted] : [friend]
                 }
             })
-            return flash_message("Friend request confirmed!")
+            return setFlash("Friend request confirmed!")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
-export function decline_friend(button, friend_id, setFriends) {
+export function declineFriend(button, friend_id, setFriends, setFlash) {
     if (!friend_id) return
 
-    api_send(button, "decline_friend", { friend: friend_id }, "DELETE", "@me").then(res => {
-        if (res.errors) return flash_message(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+    apiSend(button, "declineFriend", { friend: friend_id }, "DELETE", "@me").then(res => {
+        if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") {
             setFriends(current_friends => {
                 if (!current_friends.pending) return current_friends
                 return { ...current_friends, pending: current_friends.pending.filter(filter_friend => filter_friend.id != friend_id) }
             })
-            return flash_message("Friend request declined")
+            return setFlash("Friend request declined")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }

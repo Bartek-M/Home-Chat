@@ -1,13 +1,13 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../../../../utils"
-import { useUser } from "../../../../context"
+import { apiSend } from "../../../../utils"
+import { useFlash, useUser } from "../../../../context"
 
-function update_email(button, navigator, user, email, password) {
+function update_email(button, navigator, user, email, password, setFlash) {
     if (!password.value || user.email === email.value) return
 
-    api_send(button, "user", {
+    apiSend(button, "user", {
         category: "email",
         data: email.value,
         password: password.value
@@ -19,17 +19,19 @@ function update_email(button, navigator, user, email, password) {
         }
 
         if (res.message === "200 OK") {
-            
-            return flash_message("Email updated!")
+
+            return setFlash("Email updated!")
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function Email({ props }) {
     const { close } = props
+
     const [user, _] = useUser()
+    const setFlash = useFlash()
 
     const navigator = useNavigate()
 
@@ -57,7 +59,7 @@ export function Email({ props }) {
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(e.target, navigator, user, email.current, password.current) }} value="Done" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(e.target, navigator, user, email.current, password.current, setFlash) }} value="Done" />
             </div>
         </form>
     )

@@ -1,8 +1,8 @@
 import { useMemo, useRef, useState } from "react"
-import { useChannels, useUser } from "../../../context"
+import { useChannels, useFlash, useUser } from "../../../context"
 
 import { MFA } from "../../../components"
-import { api_send, api_file } from "../../../utils"
+import { apiSend, apiFile } from "../../../utils"
 
 // Functions
 function set_image(file, icon) {
@@ -12,9 +12,9 @@ function set_image(file, icon) {
     icon.src = URL.createObjectURL(user_file)
 }
 
-function submit_settings(button, channel, name, nick, notifications, img_file, icon, setChannels, close) {
+function submit_settings(button, channel, name, nick, notifications, img_file, icon, setChannels, close, setFlash) {
     if ((name.value !== channel.name) || (nick.value !== channel.nick) || (notifications.checked != notifications.notifications)) {
-        api_send(button, "channel_settings", {
+        apiSend(button, "channel_settings", {
             name: name.value,
             nick: nick.value,
             notifications: notifications.checked
@@ -27,7 +27,7 @@ function submit_settings(button, channel, name, nick, notifications, img_file, i
 
             }
 
-            flash_message("Something went wrong!", "error")
+            setFlash("Something went wrong!", "error")
         })
     }
 
@@ -37,10 +37,10 @@ function submit_settings(button, channel, name, nick, notifications, img_file, i
         const form_data = new FormData()
         form_data.append("image", user_file, "untitled.jpg")
 
-        api_file("icon", form_data, channel.id).then(img_res => {
+        apiFile("icon", form_data, channel.id).then(img_res => {
             if (img_res.errors) {
-                if (img_res.errors.image) flash_message(res.errors.image, "error")
-                if (img_res.errors.channel) flash_message(res.errors.channel, "error")
+                if (img_res.errors.image) setFlash(res.errors.image, "error")
+                if (img_res.errors.channel) setFlash(res.errors.channel, "error")
                 return
             }
 
@@ -50,12 +50,12 @@ function submit_settings(button, channel, name, nick, notifications, img_file, i
                 })
             }
 
-            flash_message("Something went wrong!", "error")
+            setFlash("Something went wrong!", "error")
         })
     }
 }
 
-function delete_channel({ button, data, password, code, setChannels, close }) {
+function delete_channel({ button, data, password, code, setChannels, close, setFlash }) {
     if ((password && !password.value) || (code && !code.value)) return
 
     if (!data || data.length !== 2) return
@@ -64,12 +64,12 @@ function delete_channel({ button, data, password, code, setChannels, close }) {
     var channel_id = data[0]
     var channel_name = data[1]
 
-    api_send(button, "channel_delete", {
+    apiSend(button, "channel_delete", {
         password: password ? password.value : null,
         code: code ? code.value : null
     }, "DELETE", channel_id).then(res => {
         if (res.errors) {
-            if (res.errors.channel) return flash_message(res.errors.channel, "error")
+            if (res.errors.channel) return setFlash(res.errors.channel, "error")
 
             if (document.getElementById("password-error")) return document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
             if (document.getElementById("code-error")) return document.getElementById("code-error").innerText = `- ${res.errors.code}`
@@ -90,10 +90,10 @@ function delete_channel({ button, data, password, code, setChannels, close }) {
             })
 
             close()
-            return flash_message(`Deleted '${channel_name}'`)
+            return setFlash(`Deleted '${channel_name}'`)
         }
 
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
@@ -103,6 +103,7 @@ export function ChannelSettings({ props }) {
 
     const [user,] = useUser()
     const [channels, setChannels] = useChannels()
+    const setFlash = useFlash()
 
     const channel_name = useRef()
     const nick = useRef()
@@ -135,7 +136,7 @@ export function ChannelSettings({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn warning-btn" type="submit" value="Delete" onClick={(e) => {
                     e.preventDefault()
-                    delete_channel({ button: e.target, data: [channel.id, channel.name], password: passw.current, setChannels: setChannels, close: close })
+                    delete_channel({ button: e.target, data: [channel.id, channel.name], password: passw.current, setChannels: setChannels, close: close, setFlash: setFlash })
                 }} />
             </div>
         </form>
@@ -209,7 +210,7 @@ export function ChannelSettings({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn submit-btn" type="submit" value="Save" onClick={e => {
                     e.preventDefault()
-                    submit_settings(e.target, channel, channel_name.current, nick.current, notifications.current, channel_icon.current, file_input.current, setChannels, close)
+                    submit_settings(e.target, channel, channel_name.current, nick.current, notifications.current, channel_icon.current, file_input.current, setChannels, close, setFlash)
                 }} />
             </div>
         </div>

@@ -70,7 +70,7 @@ class Users:
     @users.route("/<user_id>/friends/add", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
-    def add_friend(db, user_id):
+    def addFriend(db, user_id):
         if not (friend_id := request.json.get("friend")):
             return ({"errors": {"friend": "No friend"}}, 400)
 
@@ -205,7 +205,7 @@ class Users:
     @users.route("/<user_id>/friends/confirm", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
-    def confirm_friend(db, user_id):
+    def confirmFriend(db, user_id):
         if not (friend_id := request.json.get("friend")):
             return ({"errors": {"friend": "No friend"}}, 400)
 
@@ -279,7 +279,7 @@ class Users:
     @users.route("/<user_id>/friends/decline", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
-    def remove_friend(db, user_id):
+    def removeFriend(db, user_id):
         if not (friend_id := request.json.get("friend")):
             return ({"errors": {"friend": "No friend"}}, 400)
 

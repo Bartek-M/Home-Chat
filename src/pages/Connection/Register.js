@@ -1,12 +1,13 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { api_send } from "../../utils/"
+import { apiSend } from "../../utils/"
+import { useFlash } from "../../context/flash_context"
 
-function submit(button, navigator, email, username, password) {
+function submit(button, navigator, email, username, password, setFlash) {
     if (!email.value || !username.value || !password.value) return
-    
-    api_send(button, "auth_register", {
+
+    apiSend(button, "auth_register", {
         email: email.value,
         username: username.value,
         password: password.value
@@ -20,11 +21,12 @@ function submit(button, navigator, email, username, password) {
         }
 
         if (res.message === "200 OK") return navigator("/login")
-        flash_message("Something went wrong!", "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function Register() {
+    const setFlash = useFlash()
     const navigator = useNavigate()
 
     const email = useRef()
@@ -50,7 +52,7 @@ export function Register() {
                         <input className="input-field" type="password" ref={password} size="30" required />
                     </div>
 
-                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(), submit(e.target, navigator, email.current, username.current, password.current) }} value="CONTINUE" />
+                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(), submit(e.target, navigator, email.current, username.current, password.current, setFlash) }} value="CONTINUE" />
                     <p className="login-redirect">Already have an account? <a className="link" href="login">Log In</a></p>
                 </form>
             </div>

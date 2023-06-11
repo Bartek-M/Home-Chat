@@ -1,19 +1,22 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useParams } from "react-router-dom";
-import { api_get } from "../utils/";
+import { apiGet } from "../utils/";
+import { useFlash } from "./flash_context";
 
 const ChannelContext = React.createContext()
 export function useChannels() { return useContext(ChannelContext) }
 
 export function ChannelsProvider({ children }) {
     const [channels, setChannels] = useState([])
+    const setFlash = useFlash()
+
     const { id } = useParams()
 
     useEffect(() => {
         if (channels.length) return
 
-        api_get("user_channels", "@me").then(res => {
-            if (res.message !== "200 OK") return flash_message("Couldn't load channels!", "error")
+        apiGet("user_channels", "@me").then(res => {
+            if (res.message !== "200 OK") return setFlash("Couldn't load channels!", "error")
             if (!res.user_channels || !res.user_channels.length) return true
 
             if (id && res.user_channels.find(channel => channel.id === id)) {
