@@ -46,3 +46,7 @@ def page_not_found(_):
 @view.app_errorhandler(405)
 def method_not_allowed(_):
     return jsonify({"message": "405 Method Not Allowed"}), 405
+
+@view.app_errorhandler(429)
+def too_many_requests(_):
+    return jsonify({"message": "429 Too Many Requests"}), 429

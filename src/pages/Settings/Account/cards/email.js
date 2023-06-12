@@ -12,6 +12,8 @@ function update_email(button, navigator, user, email, password, setFlash) {
         data: email.value,
         password: password.value
     }, "PATCH", "@me").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+        
         if (res.errors) {
             document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
             document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"

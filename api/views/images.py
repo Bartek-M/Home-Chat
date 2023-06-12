@@ -1,7 +1,6 @@
 import os
 import secrets
 
-from PIL import Image
 from flask import Blueprint, request, send_file
 
 from ..database import *

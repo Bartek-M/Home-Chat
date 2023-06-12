@@ -4,7 +4,9 @@ export function addFriend(button, user_id, friend, setFriends, setFlash) {
     if (!friend) return
 
     apiSend(button, "addFriend", { friend: friend.id }, "POST", "@me").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+
         if (res.message === "200 OK") {
             friend.accepted = "waiting"
             friend.inviting = user_id
@@ -25,7 +27,9 @@ export function removeFriend(button, friend_id, setFriends, setFlash) {
     if (!friend_id) return
 
     apiSend(button, "removeFriend", { friend: friend_id }, "DELETE", "@me").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+
         if (res.message === "200 OK") {
             setFriends(current_friends => {
                 if (!current_friends.accepted) return current_friends
@@ -42,7 +46,9 @@ export function confirmFriend(button, friend, setFriends, setFlash) {
     if (!friend) return
 
     apiSend(button, "confirmFriend", { friend: friend.id }, "PATCH", "@me").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+
         if (res.message === "200 OK" && res.time) {
             friend.accepted = res.time
             setFriends(current_friends => {
@@ -69,7 +75,9 @@ export function declineFriend(button, friend_id, setFriends, setFlash) {
     if (!friend_id) return
 
     apiSend(button, "declineFriend", { friend: friend_id }, "DELETE", "@me").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
+        
         if (res.message === "200 OK") {
             setFriends(current_friends => {
                 if (!current_friends.pending) return current_friends

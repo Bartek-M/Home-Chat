@@ -1,4 +1,6 @@
 from flask import Flask
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from api import *
 from views import view
@@ -21,6 +23,13 @@ app.register_blueprint(auth, url_prefix="/api/auth")
 app.register_blueprint(channels, url_prefix="/api/channels")
 app.register_blueprint(users, url_prefix="/api/users")
 app.register_blueprint(images, url_prefix="/api/images")
+
+# SETUP RATE LIMITER
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["10/second", "50/minute"],
+)
 
 
 if __name__ == "__main__":

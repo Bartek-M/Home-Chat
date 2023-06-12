@@ -19,6 +19,8 @@ export function UserProvider({ children }) {
         if (user) return
 
         apiGet("userSettings", "@me").then(res => {
+            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
             if (res.message === "401 Unauthorized") { navigator("/login"); return setFlash("Not logged in!", "error") }
             if (res.message === "403 Forbidden") { navigator("/login"); return setFlash("Logged out!", "error") }
             if (!res.user || !res.user.id) return

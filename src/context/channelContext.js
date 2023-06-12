@@ -17,6 +17,8 @@ export function ChannelsProvider({ children }) {
         if (channels.length) return
 
         apiGet("userChannels", "@me").then(res => {
+            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
             if (res.message !== "200 OK") return setFlash("Couldn't load channels!", "error")
             if (!res.user_channels || !res.user_channels.length) return true
 

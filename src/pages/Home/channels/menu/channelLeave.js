@@ -5,6 +5,8 @@ import { apiDeletee } from "../../../../utils"
 
 function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
     apiDeletee(button, "channelLeave", channel_id).then((res) => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
             return setFlash("Something went wrong!", "error")

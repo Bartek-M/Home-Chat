@@ -1,0 +1,6 @@
+flask
+flask_limiter
+Pillow
+pyotp 
+python-dotenv
+websockets

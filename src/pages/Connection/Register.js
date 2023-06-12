@@ -12,6 +12,8 @@ function submit(button, navigator, email, username, password, setFlash) {
         username: username.value,
         password: password.value
     }, "POST").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
         if (res.errors) {
             document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
             document.getElementById("username-error").innerText = res.errors.username ? `- ${res.errors.username}` : "*"

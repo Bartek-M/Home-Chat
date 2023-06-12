@@ -1,9 +1,9 @@
 import time 
 import secrets
+from multiprocessing import Process
 
 import pyotp
 from flask import Blueprint, request
-from multiprocessing import Process
 
 from ..database import *
 from ..utils import *

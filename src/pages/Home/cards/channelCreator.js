@@ -35,6 +35,8 @@ function createChannel(button, name, users, icon, img_file, setChannels, close, 
         name: name.value,
         users: users
     }, "POST").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
         if (res.errors) {
             if (res.errors.users) setFlash(res.errors.users, "error")
             document.getElementById("name-error").innerText = res.errors.name ? res.errors.name : "*"
@@ -48,6 +50,8 @@ function createChannel(button, name, users, icon, img_file, setChannels, close, 
                 form_data.append("image", user_file, "untitled.jpg")
 
                 apiFile("icon", form_data, res.channel.id).then(img_res => {
+                    if (img_res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
                     if (img_res.errors) {
                         if (img_res.errors.image) setFlash(res.errors.image, "error")
                         if (img_res.errors.channel) setFlash(res.errors.channel, "error")

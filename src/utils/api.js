@@ -1,3 +1,5 @@
+import { useFlash } from "../context/flashContext"
+
 // API
 const API_PAGES = {
     authLogin: () => `auth/login`,

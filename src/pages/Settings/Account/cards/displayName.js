@@ -10,6 +10,7 @@ function update_displayname(button, user, setUser, display_name, close, setFlash
         category: "display_name",
         data: display_name.value,
     }, "PATCH", "@me").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return document.getElementById("display-name-error").innerText = res.errors.display_name ? `- ${res.errors.display_name}` : "*"
 
         if (res.message === "200 OK") {

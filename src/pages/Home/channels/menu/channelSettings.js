@@ -19,6 +19,8 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
             nick: nick.value,
             notifications: notifications.checked
         }, "PATCH", channel.id).then(res => {
+            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
             if (res.errors) {
                 if (res.errors.channel) return setFlash(res.errors.channel, "error")
                 return
@@ -51,6 +53,8 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
         form_data.append("image", user_file, "untitled.jpg")
 
         apiFile("icon", form_data, channel.id).then(img_res => {
+            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
             if (img_res.errors) {
                 if (img_res.errors.image) setFlash(res.errors.image, "error")
                 if (img_res.errors.channel) setFlash(res.errors.channel, "error")
@@ -87,6 +91,8 @@ function delete_channel({ button, data, password, code, setChannels, close, setF
         password: password ? password.value : null,
         code: code ? code.value : null
     }, "DELETE", channel_id).then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
 
