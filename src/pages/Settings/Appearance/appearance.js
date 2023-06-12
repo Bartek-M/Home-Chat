@@ -5,7 +5,7 @@ import { apiSend } from "../../../utils"
 function set_theme(button, user, setUser, theme, setFlash) {
     if (theme === user.theme) return
 
-    apiSend(button, "user_settings", {
+    apiSend(button, "userSettings", {
         category: "theme",
         data: theme
     }, "PATCH", "@me").then(res => {
@@ -21,7 +21,7 @@ function set_theme(button, user, setUser, theme, setFlash) {
 function set_message_display(button, user, setUser, msg_display, setFlash) {
     if (msg_display === user.message_display) return
 
-    apiSend(button, "user_settings", {
+    apiSend(button, "userSettings", {
         category: "message_display",
         data: msg_display
     }, "PATCH", "@me").then(res => {

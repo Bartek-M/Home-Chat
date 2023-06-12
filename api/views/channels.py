@@ -29,12 +29,6 @@ class Channels:
     @Decorators.auth
     def get_messages(db, channel_id):
         return ({"channel_messages": db.get_channel_stuff(channel_id, "messages")}, 200)
-        
-    @channels.route("/<channel_id>/users")
-    @Decorators.manage_database
-    @Decorators.auth 
-    def get_users(db, channel_id):
-        return ({"channel_users": db.get_channel_stuff(channel_id, "users")}, 200)
     
     
     # POST

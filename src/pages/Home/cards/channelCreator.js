@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from "react"
 
 import { useUser, useFriends, useChannels, useFlash } from "../../../context"
-import { apiSend, apiFile, open_channel } from "../../../utils"
+import { apiSend, apiFile, openChannel } from "../../../utils"
 import { Tooltip } from "../../../components"
 
 // Functions 
@@ -31,7 +31,7 @@ function set_channels(setChannels, channel, icon = null) {
 function create_channel(button, name, users, icon, img_file, setChannels, close, setFlash) {
     if (!name.value || !users || !icon) return
 
-    apiSend(button, "channel_create", {
+    apiSend(button, "channelCreate", {
         name: name.value,
         users: users
     }, "POST").then(res => {
@@ -203,7 +203,7 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="friends-wrapper column-container scroller-container">
                             {filteredItems.map(friend => (
-                                <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => open_channel(e.target, friend.id, setChannels, close, setFlash)}>
+                                <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => openChannel(e.target, friend.id, setChannels, close, setFlash)}>
                                     <div className="center-container">
                                         <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                         <div className="column-container">

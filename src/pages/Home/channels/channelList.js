@@ -1,7 +1,7 @@
 import { useChannels } from "../../../context"
 import { Tooltip } from "../../../components"
 
-function open_channel(channel_id, active, setChannels) {
+function openChannel(channel_id, active, setChannels) {
     if (active) return
 
     setChannels(channels => {
@@ -27,7 +27,7 @@ export function ChannelList() {
                     <div className="main-sidebar-pill"></div>
                     {/* <div className="notification-dot"></div> */}
                     <Tooltip text={channel.name} note={channel.display_name ? channel.display_name : null} type="right">
-                        <button className="center-container" onClick={() => open_channel(channel.id, channel.active, setChannels)}>
+                        <button className="center-container" onClick={() => openChannel(channel.id, channel.active, setChannels)}>
                             <img className="main-sidebar-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
                         </button>
                     </Tooltip>

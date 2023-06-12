@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react"
-import { useUser } from "../../../context"
+import { useUser } from "../../../../context"
 
 export function ChannelMenu({ element, channel, x, y, close, setCard }) {
     const [user,] = useUser()
@@ -22,7 +22,7 @@ export function ChannelMenu({ element, channel, x, y, close, setCard }) {
 
     return (
         <div className="channel-menu center-column-container" ref={menu} style={{ top: y + 20, left: x, transform: "translateX(-95%)" }}>
-            <button className="channel-menu-btn spaced-container" onClick={() => { setCard("channel_settings"); close() }}>
+            <button className="channel-menu-btn spaced-container" onClick={() => { setCard("channelSettings"); close() }}>
                 Channel Settings
                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                     <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
@@ -47,7 +47,7 @@ export function ChannelMenu({ element, channel, x, y, close, setCard }) {
             {(channel.direct || channel.owner !== user.id) &&
                 <>
                     <hr className="separator" />
-                    <button className="channel-menu-btn leave-btn spaced-container" onClick={() => { setCard("channel_leave"); close() }}>
+                    <button className="channel-menu-btn leave-btn spaced-container" onClick={() => { setCard("channelLeave"); close() }}>
                         Leave Channel
                         <svg width="16" height="16" fill="var(--RED_BUTTON)" viewBox="0 0 16 16">
                             <path d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />

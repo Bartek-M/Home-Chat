@@ -1,8 +1,8 @@
 import { useMemo, useRef, useState } from "react"
-import { useChannels, useFlash, useUser } from "../../../context"
+import { useChannels, useFlash, useUser } from "../../../../context"
 
-import { MFA } from "../../../components"
-import { apiSend, apiFile } from "../../../utils"
+import { MFA } from "../../../../components"
+import { apiSend, apiFile } from "../../../../utils"
 
 // Functions
 function set_image(file, icon) {
@@ -14,7 +14,7 @@ function set_image(file, icon) {
 
 function submit_settings(button, channel, name, nick, notifications, img_file, icon, setChannels, close, setFlash) {
     if ((name.value !== channel.name) || (nick.value !== channel.nick) || (notifications.checked != notifications.notifications)) {
-        apiSend(button, "channel_settings", {
+        apiSend(button, "channelSettings", {
             name: name.value,
             nick: nick.value,
             notifications: notifications.checked
@@ -64,7 +64,7 @@ function delete_channel({ button, data, password, code, setChannels, close, setF
     var channel_id = data[0]
     var channel_name = data[1]
 
-    apiSend(button, "channel_delete", {
+    apiSend(button, "channelDelete", {
         password: password ? password.value : null,
         code: code ? code.value : null
     }, "DELETE", channel_id).then(res => {

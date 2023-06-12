@@ -35,8 +35,8 @@ export function Card(props) {
 
     // Channels managing
     if (card === "channel_creator") return (<ChannelCreator props={props} />)
-    if (card === "channel_settings") return (<ChannelSettings props={props} />)
+    if (card === "channelSettings") return (<ChannelSettings props={props} />)
     if (card === "channel_members") return (<ChannelMembers props={props} />)
     if (card === "channel_invite") return (<ChannelInvite props={props} />)
-    if (card === "channel_leave") return (<ChannelLeave props={props} />)
+    if (card === "channelLeave") return (<ChannelLeave props={props} />)
 } 

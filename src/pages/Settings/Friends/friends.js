@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { useChannels, useFlash, useFriends, useUser } from "../../../context"
 
-import { apiSend, format_time, open_channel } from "../../../utils"
+import { apiSend, formatTime, openChannel } from "../../../utils"
 import { addFriend, removeFriend, confirmFriend, declineFriend } from "./"
 import { Tooltip } from "../../../components"
 
@@ -9,7 +9,7 @@ function search_user(button, username, searchUser, setSearchUser, setFlash) {
     if (!username.value) return
     if (searchUser && username.value.toLowerCase() === searchUser.name) return
 
-    apiSend(button, "user_search", {
+    apiSend(button, "userSearch", {
         username: username.value,
     }, "POST").then(res => {
         if (res.errors) return document.getElementById("search-error").innerText = res.errors.username ? `- ${res.errors.username}` : null
@@ -28,7 +28,7 @@ export function Friends({ props }) {
     const setFlash = useFlash()
 
     const [searchUser, setSearchUser] = useState(null)
-    const user_search = useRef()
+    const userSearch = useRef()
 
     return (
         <>
@@ -36,7 +36,7 @@ export function Friends({ props }) {
             <form className="column-container">
                 <p className="category-text">SEARCH <span className="error-category-text" id="search-error"></span></p>
                 <div className="friend-search-wrapper spaced-container">
-                    <input className="friend-search-input" type="text" ref={user_search} onChange={(e) => {
+                    <input className="friend-search-input" type="text" ref={userSearch} onChange={(e) => {
                         document.getElementById("search-error").innerText = null
                         if (!searchUser || e.target.value === searchUser.name) return
                         setSearchUser(null)
@@ -45,7 +45,7 @@ export function Friends({ props }) {
                         e.preventDefault()
                         if (e.target.disabled) return
                         console.log("TEST 1234")
-                        search_user(e.target, user_search.current, searchUser, setSearchUser, setFlash)
+                        search_user(e.target, userSearch.current, searchUser, setSearchUser, setFlash)
                     }}>
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
@@ -57,7 +57,7 @@ export function Friends({ props }) {
                     <div className="column-container">
                         <div className="friend-card spaced-container" onClick={(e) => {
                             if (!searchUser.accepted || searchUser.accepted === "waiting") return
-                            open_channel(e.target, searchUser.id, setChannels, card, setSettings, setFlash)
+                            openChannel(e.target, searchUser.id, setChannels, card, setSettings, setFlash)
                         }}>
                             <div className="center-container">
                                 <img className="friend-icon" src={`/api/images/${searchUser.avatar}.webp`} />
@@ -68,7 +68,7 @@ export function Friends({ props }) {
                                     }
 
                                     {(searchUser.accepted && searchUser.accepted !== "waiting")
-                                        ? <p className="text-note">{searchUser.display_name ? `${searchUser.name}  |  ` : ""}From: {format_time(searchUser.accepted, "date")}</p>
+                                        ? <p className="text-note">{searchUser.display_name ? `${searchUser.name}  |  ` : ""}From: {formatTime(searchUser.accepted, "date")}</p>
                                         : (searchUser.display_name && <p className="text-note">{searchUser.name}</p>)
                                     }
                                 </div>
@@ -87,7 +87,7 @@ export function Friends({ props }) {
                                 {(searchUser.accepted && searchUser.accepted !== "waiting") && (
                                     <>
                                         <Tooltip text="Message" type="top">
-                                            <button className="message-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); open_channel(e.target, searchUser.id, setChannels, card, setSettings, setFlash) }}>
+                                            <button className="message-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); openChannel(e.target, searchUser.id, setChannels, card, setSettings, setFlash) }}>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                                                 </svg>
@@ -172,7 +172,7 @@ export function Friends({ props }) {
                 <div className="column-container">
                     <p className="extended-category-text">ALL FRIENDS</p>
                     {friends.accepted.map(friend =>
-                        <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={(e) => open_channel(e.target, friend.id, setChannels, card, setSettings, setFlash)}>
+                        <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={(e) => openChannel(e.target, friend.id, setChannels, card, setSettings, setFlash)}>
                             <div className="center-container">
                                 <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
                                 <div className="column-container">
@@ -180,12 +180,12 @@ export function Friends({ props }) {
                                         ? <p>{friend.display_name}</p>
                                         : <p>{friend.name}</p>
                                     }
-                                    <p className="text-note">{friend.display_name ? `${friend.name}  |  ` : ""}From: {format_time(friend.accepted, "date")}</p>
+                                    <p className="text-note">{friend.display_name ? `${friend.name}  |  ` : ""}From: {formatTime(friend.accepted, "date")}</p>
                                 </div>
                             </div>
                             <div className="center-container">
                                 <Tooltip text="Message" type="top">
-                                    <button className="message-friend-btn center-container" onClick={(e) => { e.stopPropagation(); open_channel(e.target, friend.id, setChannels, card, setSettings, setFlash) }}>
+                                    <button className="message-friend-btn center-container" onClick={(e) => { e.stopPropagation(); openChannel(e.target, friend.id, setChannels, card, setSettings, setFlash) }}>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                                         </svg>

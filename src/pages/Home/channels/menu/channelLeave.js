@@ -1,10 +1,10 @@
 import { useMemo } from "react"
-import { useChannels, useFlash } from "../../../context"
+import { useChannels, useFlash } from "../../../../context"
 
-import { apiDeletee } from "../../../utils"
+import { apiDeletee } from "../../../../utils"
 
 function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
-    apiDeletee(button, "channel_leave", channel_id).then((res) => {
+    apiDeletee(button, "channelLeave", channel_id).then((res) => {
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
             return setFlash("Something went wrong!", "error")

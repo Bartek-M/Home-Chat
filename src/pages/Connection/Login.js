@@ -2,12 +2,12 @@ import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { useFlash } from "../../context"
-import { apiSend } from "../../utils/"
+import { apiSend } from "../../utils"
 
 function submit(button, navigator, setCodePage, email, password, setFlash) {
     if (!email.value || !password.value) return
 
-    apiSend(button, "auth_login", {
+    apiSend(button, "authLogin", {
         email: email.value,
         password: password.value
     }, "POST").then(res => {
@@ -47,7 +47,7 @@ function submit(button, navigator, setCodePage, email, password, setFlash) {
 function verify(button, navigator, auth_code, setFlash) {
     if (!auth_code) return
 
-    apiSend(button, "auth_verify", {
+    apiSend(button, "authVerify", {
         code: auth_code.value,
         ticket: localStorage.getItem("ticket"),
     }, "POST").then(res => {

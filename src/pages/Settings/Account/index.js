@@ -1,6 +1,6 @@
 export { Account } from "./account"
 
-export { DisplayName } from "./cards/display_name"
+export { DisplayName } from "./cards/displayName"
 export { Username } from "./cards/username"
 export { Email } from "./cards/email"
-export { DeleteAccount } from "./cards/delete_account"
+export { DeleteAccount } from "./cards/deleteAccount"

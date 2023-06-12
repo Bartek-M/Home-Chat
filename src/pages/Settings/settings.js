@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { version, user_os } from "../../utils/"
 
-import Page from "./content_page"
+import Page from "./pageContent"
 
 export function Settings({ setSettings, setCard }) {
     const [page, setPage] = useState("account")

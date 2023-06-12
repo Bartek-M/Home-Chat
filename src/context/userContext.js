@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { ChannelsProvider, FriendsProvider, useFlash } from "./";
+import { ChannelsProvider, FriendsProvider, useFlash } from ".";
 
-import { apiGet, app_theme, prefered_theme } from "../utils/";
-import { Loading } from "../components/"
+import { apiGet, app_theme, prefered_theme } from "../utils";
+import { Loading } from "../components"
 
 const UserContext = React.createContext()
 export function useUser() { return useContext(UserContext) }
@@ -18,7 +18,7 @@ export function UserProvider({ children }) {
     useEffect(() => {
         if (user) return
 
-        apiGet("user_settings", "@me").then(res => {
+        apiGet("userSettings", "@me").then(res => {
             if (res.message === "401 Unauthorized") { navigator("/login"); return setFlash("Not logged in!", "error") }
             if (res.message === "403 Forbidden") { navigator("/login"); return setFlash("Logged out!", "error") }
             if (!res.user || !res.user.id) return

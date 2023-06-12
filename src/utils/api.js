@@ -1,29 +1,29 @@
 // API
 const API_PAGES = {
-    auth_login: () => `auth/login`,
-    auth_register: () => `auth/register`,
-    auth_verify: () => `auth/verify`,
+    authLogin: () => `auth/login`,
+    authRegister: () => `auth/register`,
+    authVerify: () => `auth/verify`,
 
     channel: (value) => `channels/${value}`,
-    channel_users: (value) => `channels/${value}/users`,
-    channel_messages: (value) => `channels/${value}/messages`,
+    channelUsers: (value) => `channels/${value}/users`,
+    channelMessages: (value) => `channels/${value}/messages`,
 
-    channel_open: () => `channels/open`,
-    channel_create: () => `channels/create`,
+    channelOpen: () => `channels/open`,
+    channelCreate: () => `channels/create`,
 
-    channel_settings: (value) => `channels/${value}/settings`,
-    channel_leave: (value) => `channels/${value}/leave`,
-    channel_delete: (value) => `channels/${value}/delete`,
+    channelSettings: (value) => `channels/${value}/settings`,
+    channelLeave: (value) => `channels/${value}/leave`,
+    channelDelete: (value) => `channels/${value}/delete`,
 
     user: (value) => `users/${value}`,
-    user_search: () => `users/search`,
-    user_channels: (value) => `users/${value}/channels`,
-    user_settings: (value) => `users/${value}/settings`,
+    userSearch: () => `users/search`,
+    userChannels: (value) => `users/${value}/channels`,
+    userSettings: (value) => `users/${value}/settings`,
 
-    user_mfa: (value) => `users/${value}/settings/mfa`,
-    user_delete: (value) => `users/${value}/delete`,
+    userMFA: (value) => `users/${value}/settings/mfa`,
+    userDelete: (value) => `users/${value}/delete`,
 
-    user_friends: (value) => `users/${value}/friends`,
+    userFriends: (value) => `users/${value}/friends`,
     addFriend: (value) => `users/${value}/friends/add`,
     removeFriend: (value) => `users/${value}/friends/remove`,
     confirmFriend: (value) => `users/${value}/friends/confirm`,

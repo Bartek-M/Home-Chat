@@ -1,4 +1,4 @@
-export { useUser, UserProvider } from "./user_context"
-export { useFriends, FriendsProvider } from "./friend_context"
-export { useChannels, ChannelsProvider } from "./channel_context"
-export { useFlash, FlashProvider } from "./flash_context"
+export { useUser, UserProvider } from "./userContext"
+export { useFriends, FriendsProvider } from "./friendContext"
+export { useChannels, ChannelsProvider } from "./channelContext"
+export { useFlash, FlashProvider } from "./flashContext"

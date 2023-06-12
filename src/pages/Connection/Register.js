@@ -1,13 +1,13 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { apiSend } from "../../utils/"
-import { useFlash } from "../../context/flash_context"
+import { apiSend } from "../../utils"
+import { useFlash } from "../../context"
 
 function submit(button, navigator, email, username, password, setFlash) {
     if (!email.value || !username.value || !password.value) return
 
-    apiSend(button, "auth_register", {
+    apiSend(button, "authRegister", {
         email: email.value,
         username: username.value,
         password: password.value

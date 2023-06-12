@@ -10,7 +10,7 @@ const qrcodes = require("qrcode")
 function enable_mfa(button, setUser, password, setPage, close, code, secret, setFlash) {
     if (!password || (code && !code.value)) return
 
-    apiSend(button, "user_mfa", {
+    apiSend(button, "userMFA", {
         code: code ? code.value : null,
         password: password,
         secret: secret,
@@ -37,7 +37,7 @@ function enable_mfa(button, setUser, password, setPage, close, code, secret, set
 function disable_mfa({ button, setUser, code, close, setFlash }) {
     if (!code.value) return
 
-    apiSend(button, "user_mfa", {
+    apiSend(button, "userMFA", {
         code: code.value,
         option: "disable"
     }, "PATCH", "@me").then(res => {

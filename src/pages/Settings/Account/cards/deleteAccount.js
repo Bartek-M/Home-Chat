@@ -9,7 +9,7 @@ import { apiSend } from "../../../../utils"
 function submit_delete({ button, navigator, user, password, setPage, code, setFlash }) {
     if (!password || (code && !code.value)) return
 
-    apiSend(button, "user_delete", {
+    apiSend(button, "userDelete", {
         password: password,
         code: code ? code.value : null
     }, "DELETE", "@me").then(res => {

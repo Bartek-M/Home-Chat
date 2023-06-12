@@ -187,12 +187,17 @@ input {
 }
 
 button:hover { cursor: pointer; }
-button:active { transform: translateY(4px); }
+button:active { transform: translateY(2px); }
 
 button:disabled, 
 input:disabled {
     color: var(--FONT_DIM_COLOR)!important;
     background-color: var(--BUTTON_HOVER)!important;
+}
+
+button:disabled {
+    cursor: unset;
+    transform: none;
 }
 
 button:disabled svg { fill: var(--FONT_DIM_COLOR)!important }

@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react"
-import { apiGet } from "../utils/";
-import { useFlash } from "./flash_context";
+
+import { apiGet } from "../utils";
+import { useFlash } from ".";
 
 const FriendsContext = React.createContext()
 export function useFriends() { return useContext(FriendsContext) }
@@ -12,7 +13,7 @@ export function FriendsProvider({ children }) {
     useEffect(() => {
         if (friends) return
 
-        apiGet("user_friends", "@me").then(res => {
+        apiGet("userFriends", "@me").then(res => {
             if (res.message !== "200 OK") return setFlash("Couldn't load friends!", "error")
             setFriends(res.user_friends ? res.user_friends : [])
         })

@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react"
 import { useChannels } from "../../../context"
 
-import { ChannelMenu } from "../"
+import { ChannelMenu } from ".."
 import { createPortal } from "react-dom"
 
 export function ChannelView({ setCard }) {

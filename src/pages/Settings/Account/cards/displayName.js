@@ -6,7 +6,7 @@ import { apiSend } from "../../../../utils"
 function update_displayname(button, user, setUser, display_name, close, setFlash) {
     if (user.display_name === display_name.value) return
 
-    apiSend(button, "user_settings", {
+    apiSend(button, "userSettings", {
         category: "display_name",
         data: display_name.value,
     }, "PATCH", "@me").then(res => {
@@ -24,7 +24,7 @@ function update_displayname(button, user, setUser, display_name, close, setFlash
 
 export function DisplayName({ props }) {
     const { close } = props
-    
+
     const [user, setUser] = useUser()
     const setFlash = useFlash()
 

@@ -17,7 +17,7 @@ export function gen_secret() {
 }
 
 // Convert EPOCH time to local
-export function format_time(time, format = "full") {
+export function formatTime(time, format = "full") {
     time = parseFloat(time)
     let date = new Date(time * 1000)
 

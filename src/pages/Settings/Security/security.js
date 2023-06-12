@@ -3,7 +3,7 @@ import { apiSend, } from "../../../utils"
 
 // Functions
 function set_visibility(button, user, setUser, setFlash) {
-    apiSend(button, "user_settings", {
+    apiSend(button, "userSettings", {
         category: "visibility",
         data: user.visibility ? 0 : 1
     }, "PATCH", "@me").then(res => {
