@@ -5,7 +5,7 @@ import { apiSend, apiFile, openChannel } from "../../../utils"
 import { Tooltip } from "../../../components"
 
 // Functions 
-function set_image(file, icon) {
+function setImage(file, icon) {
     const user_file = file.files[0]
     if (!user_file) return
 
@@ -28,7 +28,7 @@ function set_channels(setChannels, channel, icon = null) {
     })
 }
 
-function create_channel(button, name, users, icon, img_file, setChannels, close, setFlash) {
+function createChannel(button, name, users, icon, img_file, setChannels, close, setFlash) {
     if (!name.value || !users || !icon) return
 
     apiSend(button, "channelCreate", {
@@ -125,7 +125,7 @@ export function ChannelCreator({ props }) {
                                 <img className="settings-avatar" ref={channel_icon} src={"/api/images/channels/generic.webp"} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} />
                                 <div className="change-icon center-container absolute-container">
                                     CHANGE<br />ICON
-                                    <input ref={file_input} type="file" accept="image/*" onChange={() => set_image(file_input.current, channel_icon.current)} />
+                                    <input ref={file_input} type="file" accept="image/*" onChange={() => setImage(file_input.current, channel_icon.current)} />
                                 </div>
                                 <div className="add-avatar-icon">
                                     <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
@@ -190,7 +190,7 @@ export function ChannelCreator({ props }) {
                         </div>
                         <div className="card-submit-wrapper">
                             <button className="card-cancel-btn" onClick={() => close()}>Cancel</button>
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); create_channel(e.target, channel_name.current, selected, channel_icon.current, file_input.current, setChannels, close, setFlash) }} value="Create" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); createChannel(e.target, channel_name.current, selected, channel_icon.current, file_input.current, setChannels, close, setFlash) }} value="Create" />
                         </div>
                     </div>
                     : <div className="column-container">

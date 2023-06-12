@@ -226,6 +226,9 @@ class Database:
         
         if option == "friend":
             self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [data, *req_id, *req_id])
+
+        if option == "user_channel":
+            self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE user_id=? AND channel_id=?", [data, *req_id])
         
         self.conn.commit()
 

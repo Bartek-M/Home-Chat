@@ -5,34 +5,47 @@ import { MFA } from "../../../../components"
 import { apiSend, apiFile } from "../../../../utils"
 
 // Functions
-function set_image(file, icon) {
+function setImage(file, icon) {
     const user_file = file.files[0]
     if (!user_file) return
 
     icon.src = URL.createObjectURL(user_file)
 }
 
-function submit_settings(button, channel, name, nick, notifications, img_file, icon, setChannels, close, setFlash) {
-    if ((name.value !== channel.name) || (nick.value !== channel.nick) || (notifications.checked != notifications.notifications)) {
+function submit_settings(button, channel, name, nick, notifications, icon, img_file, setChannels, close, setFlash) {
+    if ((name && name.value !== channel.name) || (nick && nick.value !== channel.nick) || (notifications && notifications.checked != channel.notifications)) {
         apiSend(button, "channelSettings", {
-            name: name.value,
+            name: (name && name.value !== channel.name) ? name.value : null,
             nick: nick.value,
             notifications: notifications.checked
         }, "PATCH", channel.id).then(res => {
             if (res.errors) {
-
+                if (res.errors.channel) return setFlash(res.errors.channel, "error")
+                return
             }
 
             if (res.message === "200 OK") {
+                setChannels(current_channels => {
+                    return current_channels.filter(fltr_channel => {
+                        if (fltr_channel.id === channel.id) {
+                            fltr_channel.name = (name && name.value !== channel.name) ? name.value : channel.name
+                            fltr_channel.nick = (nick && nick.value !== channel.nick) ? nick.value : channel.nick
+                            fltr_channel.notifications = (notifications && notifications.checked != channel.notifications) ? (notifications.checked ? "1" : null) : channel.notifications
+                        }
 
+                        return fltr_channel
+                    })
+                })
+
+                if (!(img_file && img_file.files && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp"))) close()
+                return setFlash("Settings saved")
             }
 
             setFlash("Something went wrong!", "error")
         })
     }
 
-
-    if (img_file.files && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp")) {
+    if (img_file && img_file.files && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp")) {
         const user_file = img_file.files[0]
         const form_data = new FormData()
         form_data.append("image", user_file, "untitled.jpg")
@@ -46,8 +59,14 @@ function submit_settings(button, channel, name, nick, notifications, img_file, i
 
             if (img_res.message === "200 OK" && img_res.image) {
                 setChannels(current_channels => {
-
+                    return current_channels.filter(fltr_channel => {
+                        if (fltr_channel.id === channel.id) fltr_channel.icon = img_res.image                        
+                        return fltr_channel
+                    })
                 })
+
+                close()
+                return setFlash("Settings saved")
             }
 
             setFlash("Something went wrong!", "error")
@@ -117,8 +136,6 @@ export function ChannelSettings({ props }) {
         return channels.find(channel => channel.active)
     }, [channels])
 
-    console.log(channel)
-
     // Delete channel password or MFA check
     const [page, setPage] = useState(null)
 
@@ -160,7 +177,7 @@ export function ChannelSettings({ props }) {
                             <img className="settings-avatar" ref={channel_icon} src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} />
                             <div className="change-icon center-container absolute-container">
                                 CHANGE<br />ICON
-                                <input ref={file_input} type="file" accept="image/*" onChange={() => set_image(file_input.current, channel_icon.current)} />
+                                <input ref={file_input} type="file" accept="image/*" onChange={() => setImage(file_input.current, channel_icon.current)} />
                             </div>
                             <div className="add-avatar-icon">
                                 <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">

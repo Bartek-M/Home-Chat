@@ -69,16 +69,17 @@ class Images:
         if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You are not a member of this channel"}}, 403)
         
+        if channel.direct:
+            return ({"errors": {"channel": "Direct channel"}}, 406)
+        
         if user_channel.admin != 1 and channel.owner != user_id:
-            return ({"errors": {"channel": "You are not admin or owner of this channel"}}, 403)
+            return ({"errors": {"channel": "You are not a stuff member of this channel"}}, 403)
         
         if not (img := Functions.crop_image(file, IMAGE_SIZE)):
             return ({"errors": {"image": "Invalid image format"}}, 400)
         
-        channel_icon = db.get_entry(CHANNEL_TABLE, channel_id).icon
-
-        if channel_icon != "generic" and os.path.isfile(f"{ICONS_FOLDER}{channel_icon}.webp"): 
-            os.remove(f"{ICONS_FOLDER}{channel_icon}.webp")
+        if channel.icon != "generic" and os.path.isfile(f"{ICONS_FOLDER}{channel.icon}.webp"): 
+            os.remove(f"{ICONS_FOLDER}{channel.icon}.webp")
         
         file_name = f"{channel_id}{secrets.token_hex(2)}"
         img.save(f"{ICONS_FOLDER}{file_name}.webp")

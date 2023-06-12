@@ -1,3 +1,4 @@
+import os
 import time 
 
 import pyotp
@@ -112,6 +113,28 @@ class Channels:
     @Decorators.manage_database
     @Decorators.auth
     def settings_channel(db, user_id, channel_id):
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
+            return ({"errors": {"channel": "You are not a member"}}, 401)
+
+        if (name := request.json.get("name")) and name != channel.name:
+            if channel.direct:
+                return ({"errors": {"channel": "Direct channel"}}, 406)
+
+            if user_id != channel.owner and not user_channel.admin:
+                return ({"errors": {"channel": "You are not a stuff member of this channel"}}, 403)
+
+            db.update_entry(CHANNEL_TABLE, channel_id, "name", name)
+
+        if (nick := request.json.get("nick")) != user_channel.nick:
+            db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "nick", nick, "user_channel")
+
+        notifications = (user_channel.notifications if user_channel.notifications else "1") if request.json.get("notifications") else None
+        if notifications != user_channel.notifications:
+            db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", notifications, "user_channel")
+
         return 200
 
 
@@ -133,6 +156,9 @@ class Channels:
             return ({"errors": {"password": "Password doesn't match"}}, 403)
         elif user_settings.mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
             return ({"errors": {"code": "Invalid two-factor code"}}, 400)
+        
+        if channel.icon != "generic" and os.path.isfile(f"{ICONS_FOLDER}{channel.icon}.webp"): 
+            os.remove(f"{ICONS_FOLDER}{channel.icon}.webp")
 
         db.delete_entry(None, channel_id, option="channel")
         return 200
