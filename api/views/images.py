@@ -66,13 +66,13 @@ class Images:
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
         
         if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
-            return ({"errors": {"channel": "You are not a member of this channel"}}, 403)
+            return ({"errors": {"channel": "You are not a member"}}, 403)
         
         if channel.direct:
             return ({"errors": {"channel": "Direct channel"}}, 406)
         
         if user_channel.admin != 1 and channel.owner != user_id:
-            return ({"errors": {"channel": "You are not a stuff member of this channel"}}, 403)
+            return ({"errors": {"channel": "You are not a stuff member"}}, 403)
         
         if not (img := Functions.crop_image(file, IMAGE_SIZE)):
             return ({"errors": {"image": "Invalid image format"}}, 400)

@@ -78,9 +78,6 @@ export function ChannelCreator({ props }) {
     const { close } = props
     const [page, setPage] = useState("direct")
 
-    const [query, setQuery] = useState("")
-    const [selected, setSelected] = useState([])
-
     const [user,] = useUser()
     const [friends,] = useFriends()
     const [, setChannels] = useChannels()
@@ -89,6 +86,9 @@ export function ChannelCreator({ props }) {
     const file_input = useRef()
     const channel_name = useRef()
     const channel_icon = useRef()
+
+    const [query, setQuery] = useState("")
+    const [selected, setSelected] = useState([])
 
     const filteredItems = useMemo(() => {
         if (!friends || !friends.accepted) return []

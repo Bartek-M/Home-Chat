@@ -1,5 +1,3 @@
-import { useFlash } from "../context/flashContext"
-
 // API
 const API_PAGES = {
     authLogin: () => `auth/login`,
@@ -14,6 +12,7 @@ const API_PAGES = {
     channelCreate: () => `channels/create`,
 
     channelSettings: (value) => `channels/${value}/settings`,
+    channelInvite: (value) => `channels/${value}/invite`,
     channelLeave: (value) => `channels/${value}/leave`,
     channelDelete: (value) => `channels/${value}/delete`,
 

@@ -1,4 +1,4 @@
-import { useUser } from "../../../context"
+import { useFlash, useUser } from "../../../context"
 import { apiSend, } from "../../../utils"
 
 // Functions
@@ -21,7 +21,9 @@ function set_visibility(button, user, setUser, setFlash) {
 // Render
 export function Security({ props }) {
     const { card } = props
+
     const [user, setUser] = useUser()
+    const setFlash = useFlash()
 
     return (
         <>

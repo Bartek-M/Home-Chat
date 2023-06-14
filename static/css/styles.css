@@ -23,6 +23,7 @@ Version: dev-85c616f
     | channel creator
     | channel info
     | channel settings
+    | invite friends
     | chat
     | sending messages
 
@@ -542,6 +543,19 @@ svg {
 
 .channel-stngs-card { gap: 1rem!important; }
 
+/* invite friends */
+.invite-member-btn {
+    font-size: 0.875rem;
+    padding: 2px 16px;
+    border-radius: 4px;
+    min-height: 32px;
+    width: max-content;
+    border: 2px solid var(--BLUE); 
+}
+
+.invite-member-btn:hover { background-color: var(--BLUE); color: var(--FONT_COLOR)}
+
+
 /* chat */
 #chat-window { height: 100%; width: calc(100% - 1rem); margin: 0 0.5rem; }
 
@@ -916,6 +930,8 @@ svg {
     border-radius: 4px;
     cursor: pointer; 
 }
+
+.user-card:hover { cursor: default }
 .friend-card:hover+.friend-card { border-color: transparent; }
 
 .friend-icon {

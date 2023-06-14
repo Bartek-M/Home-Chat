@@ -107,6 +107,30 @@ class Channels:
             "users": db.get_channel_stuff(channel.id, "users")
         }}, 200)
     
+    @channels.route("/<channel_id>/invite", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def invite_member(db, user_id, channel_id):
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
+            return ({"errors": {"channel": "You are not a member"}}, 401)
+
+        if channel.direct:
+            return ({"errors": {"channel": "Direct channel"}}, 406)
+
+        if user_id != channel.owner and not user_channel.admin:
+            return ({"errors": {"channel": "You are not a stuff member"}}, 403)
+
+        if not (member := db.get_entry(USER_TABLE, request.json.get("member"))):
+            return ({"errors": {"member": "User does not exist"}}, 400)
+
+        if not db.get_channel_stuff([member.id, channel_id], "user_channel"):
+            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(member.id, channel.id, time.time()))
+
+        return ({"user": member}, 200)
+
 
     # PATCH
     @channels.route("/<channel_id>/settings", methods=["PATCH"])
@@ -124,7 +148,7 @@ class Channels:
                 return ({"errors": {"channel": "Direct channel"}}, 406)
 
             if user_id != channel.owner and not user_channel.admin:
-                return ({"errors": {"channel": "You are not a stuff member of this channel"}}, 403)
+                return ({"errors": {"channel": "You are not a stuff member"}}, 403)
 
             db.update_entry(CHANNEL_TABLE, channel_id, "name", name)
 
@@ -147,7 +171,7 @@ class Channels:
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
         
         if channel.owner != user_id:
-            return ({"errors": {"channel": "You are not the owner of this channel"}}, 403)
+            return ({"errors": {"channel": "You are not the owner"}}, 403)
         
         user_settings = db.get_entry(USER_SETTING_TABLE, user_id)
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
@@ -174,7 +198,7 @@ class Channels:
             return ({"errors": {"channel": "You are not a member"}}, 401)
 
         if channel.owner == user_id:
-            return ({"errors": {"channel": "You are an owner"}}, 400)
+            return ({"errors": {"channel": "You are the owner"}}, 400)
         
         if len(db.get_channel_stuff(channel_id, "users")) <= 1:
             db.delete_entry(None, channel_id, option="channel")

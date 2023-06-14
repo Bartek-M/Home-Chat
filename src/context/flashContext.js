@@ -7,7 +7,7 @@ export function FlashProvider({ children }) {
     const [flashMessage, setFlashMessage] = useState(null)
     const message = useRef()
 
-    const setFlash = (text, type="info") => setFlashMessage({text: text, type: type})
+    const setFlash = (text, type = "info") => setFlashMessage({ text: text, type: type })
 
     useEffect(() => {
         if (!flashMessage) return
@@ -20,13 +20,13 @@ export function FlashProvider({ children }) {
             setFlashMessage(null)
         }, 3000)
     })
-    
+
 
     return (
         <FlashContext.Provider value={setFlash}>
             {children}
             <div className="layer">
-                {flashMessage
+                {flashMessage && flashMessage.text
                     ? <div className="flash-message center-container" ref={message} key={Math.random()}>
                         {flashMessage.type === "error"
                             ? <svg width="14" height="14" fill="#c24246" viewBox="0 0 16 16">

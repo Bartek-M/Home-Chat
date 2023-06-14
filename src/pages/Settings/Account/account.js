@@ -84,7 +84,7 @@ export function Account({ props }) {
                     <p className="category-text">USER ID</p>
                     <p>{user.id}</p>
                 </div>
-                <button className="action-settings-btn " onClick={() => {
+                <button className="action-settings-btn" onClick={() => {
                     try { navigator.clipboard.writeText(user.id) } catch { return setFlash("Something went wrong!", "error") }
                     setFlash("ID Copied!")
                 }}>Copy</button>

@@ -31,10 +31,11 @@ export async function copy_text(text) {
 }
 
 // Open DM channel
-export function openChannel(button, friend_id, setChannels, close, setSettings, setFlash) {
+export function openChannel(button, friend_id, setChannels, close, setFlash, setSettings) {
     if (!friend_id) return
 
     apiSend(button, "channelOpen", { friend: friend_id }, "POST").then(res => {
+        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors && res.errors.friend) return setFlash(res.errors.friend, "error")
 
         if (res.message == "200 OK" && res.channel) {
