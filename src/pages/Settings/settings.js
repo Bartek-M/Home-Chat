@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { version, user_os } from "../../utils/"
+import { version, userOS } from "../../utils/"
 
 import Page from "./pageContent"
 
@@ -44,7 +44,7 @@ export function Settings({ setSettings, setCard }) {
                         <p className="category-text small-category-text">
                             ver. pre-{version}
                             <br />
-                            {user_os}
+                            {userOS}
                         </p>
                         <div className="scroller-spacer"></div>
                     </nav>

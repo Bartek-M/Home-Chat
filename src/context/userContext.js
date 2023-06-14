@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { ChannelsProvider, FriendsProvider, useFlash } from ".";
 
-import { apiGet, app_theme, prefered_theme } from "../utils";
+import { apiGet, appTheme, preferedTheme } from "../utils";
 import { Loading } from "../components"
 
 const UserContext = React.createContext()
@@ -32,13 +32,13 @@ export function UserProvider({ children }) {
 
     useEffect(() => {
         if (!user) return
-        app_theme(user.theme)
+        appTheme(user.theme)
 
         if (user.theme === "auto") {
             let theme_match = window.matchMedia("(prefers-color-scheme: dark)")
 
-            theme_match.addEventListener("change", prefered_theme)
-            return () => { theme_match.removeEventListener("change", prefered_theme) }
+            theme_match.addEventListener("change", preferedTheme)
+            return () => { theme_match.removeEventListener("change", preferedTheme) }
         }
     }, [user])
 

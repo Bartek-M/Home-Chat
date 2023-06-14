@@ -70,24 +70,27 @@ export function ChannelInvite({ props }) {
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                     </svg>
                 </div>
-                <div className="friends-wrapper column-container scroller-container">
-                    {filteredItems.map(friend => (
-                        <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${friend.id}`}>
-                            <div className="center-container">
-                                <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
-                                <div className="column-container">
-                                    {friend.display_name
-                                        ? <p>{friend.display_name}</p>
-                                        : <p>{friend.name}</p>
-                                    }
-                                    <p className="text-note">{friend.display_name ? friend.name : ""}</p>
+                {filteredItems && filteredItems.length
+                    ? <div className="friends-wrapper column-container scroller-container">
+                        {filteredItems.map(friend => (
+                            <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${friend.id}`}>
+                                <div className="center-container">
+                                    <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                    <div className="column-container">
+                                        {friend.display_name
+                                            ? <p>{friend.display_name}</p>
+                                            : <p>{friend.name}</p>
+                                        }
+                                        <p className="text-note">{friend.display_name ? friend.name : ""}</p>
+                                    </div>
                                 </div>
+                                <button className="invite-member-btn" onClick={(e) => inviteFriend(e.target, channel.id, friend, setChannels, setFlash)}>Invite</button>
                             </div>
-                            <button className="invite-member-btn" onClick={(e) => inviteFriend(e.target, channel.id, friend, setChannels, setFlash)}>Invite</button>
-                        </div>
-                    ))}
-                    <div className="scroller-spacer"></div>
-                </div>
+                        ))}
+                        <div className="scroller-spacer"></div>
+                    </div>
+                    : <div className="category-text center-container">NO MATCHING FRIENDS</div>
+                }
             </div>
         </div>
     )

@@ -97,11 +97,21 @@ class Database:
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE channel_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():
-                return sorted(
-                    [self.get_entry(USER_TABLE, data[0]).__dict__ for data in fetched],
-                    key=lambda x: x.get("name")
-                )
+                users = []
 
+                for data in fetched:
+                    user_channel = UserChannel(*data)
+                    user = self.get_entry(USER_TABLE, user_channel.user_id).__dict__
+
+                    users.append({
+                        **user,
+                        "nick": user_channel.nick,
+                        "join_time": user_channel.join_time,
+                        "admin": user_channel.admin
+                    })
+
+                return sorted(users, key=lambda x: x.get("name")) 
+            
         if option == "mesages":
             self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
 
@@ -109,7 +119,7 @@ class Database:
                 messages = []
                 users = {}
 
-                for data in sorted(fetched, key=lambda x: x[4]):
+                for data in fetched:
                     message = Message(*data)
 
                     if (user := users.get(message.user_id)) is None:
@@ -117,9 +127,9 @@ class Database:
                         users[message.author] = user
 
                     message.author = user
-                    messages.append(message)
+                    messages.append(message.__dict__)
 
-                return messages
+                return sorted(messages, key=lambda x: x.get("create_time"))
             
         if option == "user_channel":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])

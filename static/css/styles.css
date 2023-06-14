@@ -24,6 +24,7 @@ Version: dev-85c616f
     | channel info
     | channel settings
     | invite friends
+    | channel members
     | chat
     | sending messages
 
@@ -555,6 +556,22 @@ svg {
 
 .invite-member-btn:hover { background-color: var(--BLUE); color: var(--FONT_COLOR)}
 
+/* channel members */
+.member-name-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.member-options-btn {
+    position: relative;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--COLOR_3);
+}
+
+.member-options-btn:hover svg { fill: var(--BLUE); }
 
 /* chat */
 #chat-window { height: 100%; width: calc(100% - 1rem); margin: 0 0.5rem; }

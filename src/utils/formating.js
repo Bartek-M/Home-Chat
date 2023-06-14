@@ -1,7 +1,7 @@
 // Generate 16 letter secret code
 const base32_alph = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
-export function gen_secret() {
+export function genSecret() {
     let secret = ""
     let formated = ""
 

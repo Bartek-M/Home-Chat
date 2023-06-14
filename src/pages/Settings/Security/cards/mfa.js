@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 import { useFlash, useUser } from "../../../../context";
 import { MFA } from "../../../../components"
-import { apiSend, gen_secret } from "../../../../utils";
+import { apiSend, genSecret } from "../../../../utils";
 
 const qrcodes = require("qrcode")
 
@@ -73,7 +73,7 @@ export function MFASetup({ props }) {
 
     // Setup MFA
     if (page) {
-        const generated = gen_secret()
+        const generated = genSecret()
         const passw = password.current.value
 
         const secret = generated[0]
