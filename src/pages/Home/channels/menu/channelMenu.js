@@ -7,7 +7,7 @@ export function ChannelMenu({ element, channel, x, y, close, setCard }) {
 
     useEffect(() => {
         const listener = (e) => {
-            if (!element.current || element.current.contains(e.target) || menu.current.contains(e.target)) return
+            if (!element || element.contains(e.target) || menu.current.contains(e.target)) return
             close()
         }
 

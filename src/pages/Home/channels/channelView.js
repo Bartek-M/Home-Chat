@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 import { useChannels } from "../../../context"
 
 import { ChannelMenu } from ".."
@@ -6,8 +6,6 @@ import { createPortal } from "react-dom"
 
 export function ChannelView({ setCard }) {
     const [channels,] = useChannels()
-
-    const ref = useRef()
     const [menu, setMenu] = useState({ show: false, x: 0, y: 0 })
 
     const channel = useMemo(() => {
@@ -32,12 +30,12 @@ export function ChannelView({ setCard }) {
                                 <p className={`channel-name ${channel.display_name ? "username" : ""}`}>{channel.name}</p>
                             </div>
                         </div>
-                        <button className="channel-settings center-container" ref={ref} onClick={(e) => setMenu({ show: true, x: e.target.offsetLeft, y: e.target.offsetTop })}>
+                        <button className="channel-settings center-container" onClick={(e) => setMenu({ show: true, element: e.target, x: e.target.offsetLeft, y: e.target.offsetTop })}>
                             <svg width="28" height="28" viewBox="0 0 16 16">
                                 <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                             </svg>
                         </button>
-                        {menu.show && createPortal(<ChannelMenu element={ref} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ show: false, x: 0, y: 0 })} setCard={setCard} />, document.getElementsByClassName("layer")[0])}
+                        {menu.show && createPortal(<ChannelMenu element={menu.element} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ show: false, element: null, x: 0, y: 0 })} setCard={setCard} />, document.getElementsByClassName("layer")[0])}
                     </div>
                     <div className="column-container scroller-container" id="chat-window">
                         <div id="messages-list"></div>

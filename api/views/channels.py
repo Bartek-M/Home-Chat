@@ -160,7 +160,55 @@ class Channels:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", notifications, "user_channel")
 
         return 200
+    
+    @channels.route("/<channel_id>/users/<member_id>/nick", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def member_nick(db, user_id, channel_id, member_id):
+        # Check if channel exists
 
+        # Check if user and member are in the channel
+
+        # Check if user is a stuff member
+
+        # Change nick
+
+        return 200
+
+    @channels.route("/<channel_id>/users/<member_id>/admin", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def member_admin(db, user_id, channel_id, member_id):
+        # Check if channel exists
+
+        # Check if user and member are in the channel
+
+        # Check if user is a stuff member
+
+        # Check if member is not an owner 
+
+        # Check if user is not a member
+
+        # Set admin status
+
+        return 200
+
+    @channels.route("/<channel_id>/users/<member_id>/owner", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def member_owner(db, user_id, channel_id, member_id):
+        # Check if channel exists
+
+        # Check if user and member are in the channel
+
+        # Check if user is an owner
+
+        # Check if owner's password / auth code is correct
+
+        # Change owner
+
+        return 200
+    
 
     # DELETE
     @channels.route("/<channel_id>/delete", methods=["DELETE"])
@@ -205,4 +253,20 @@ class Channels:
             return 200
 
         db.delete_entry(None, [user_id, channel_id], option="user_channel")
+        return 200
+    
+    @channels.route("/<channel_id>/users/<member_id>/nick", methods=["DELETE"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def member_kick(db, user_id, channel_id, member_id):
+        # Check if channel exists
+
+        # Check if user and member are in the channel
+
+        # Check if user is a stuff member
+
+        # Check if member is not an owner
+
+        # Kick user
+
         return 200

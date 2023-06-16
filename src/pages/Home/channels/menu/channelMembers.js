@@ -1,12 +1,17 @@
 import { useState, useMemo } from "react"
-import { useChannels, useFlash } from "../../../../context"
+import { createPortal } from "react-dom"
+
+import { useChannels, useFlash, useUser } from "../../../../context"
+import { OptionsMenu } from "../member_options"
 
 export function ChannelMembers({ props }) {
     const { close } = props
 
+    const [user,] = useUser()
     const [channels, setChannels] = useChannels()
     const setFlash = useFlash()
 
+    const [menu, setMenu] = useState({ id: null, x: 0, y: 0 })
     const [query, setQuery] = useState("")
 
     const channel = useMemo(() => {
@@ -43,30 +48,33 @@ export function ChannelMembers({ props }) {
                 {filteredItems && filteredItems.length
                     ? <div className="friends-wrapper column-container scroller-container">
                         {filteredItems.map(member => (
-                            <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${member.id}`}>
+                            <div className="small-card friend-card center-container spaced-container" key={`filtered-${member.id}`}>
                                 <div className="center-container">
                                     <img className="friend-icon" src={`/api/images/${member.avatar}.webp`} />
                                     <div className="column-container">
                                         {(member.display_name || member.nick)
                                             ? <div className="member-name-wrapper">
                                                 {member.nick ? member.nick : member.display_name}
-                                                {member.id === channel.owner ? <p className="text-note">OWNER</p> : null}
-                                                {(member.admin && member.id !== channel.owner) ? <p className="text-note">ADMIN</p> : null}
+                                                {(!channel.direct && (member.id === channel.owner || member.admin)) ? <p className="text-note">{member.id === channel.owner ? "OWNER" : "ADMIN"}</p> : null}
                                             </div>
                                             : <div className="member-name-wrapper">
                                                 {member.name}
-                                                {member.id === channel.owner ? <p className="text-note">OWNER</p> : null}
-                                                {(member.admin && member.id !== channel.owner) ? <p className="text-note">ADMIN</p> : null}
+                                                {(!channel.direct && (member.id === channel.owner || member.admin)) ? <p className="text-note">{member.id === channel.owner ? "OWNER" : "ADMIN"}</p> : null}
                                             </div>
                                         }
                                         <p className="text-note">{(member.display_name || member.nick) ? member.name : ""}</p>
                                     </div>
                                 </div>
-                                <button className="member-options-btn center-container" onClick={(e) => null}>
-                                    <svg xwidth="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
-                                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
-                                    </svg>
-                                </button>
+                                {((channel.owner !== member.id || member.id !== user.id) && (channel.owner === user.id || channel.admin)) &&
+                                    <>
+                                        <button className="member-options-btn center-container" onClick={(e) => setMenu({ id: member.id, element: e.target, x: e.target.getBoundingClientRect().left, y: e.target.getBoundingClientRect().top })}>
+                                            <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
+                                                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                            </svg>
+                                        </button>
+                                        {menu.id === member.id && createPortal(<OptionsMenu element={menu.element} member={member} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])}
+                                    </>
+                                }
                             </div>
                         ))}
                         <div className="scroller-spacer"></div>

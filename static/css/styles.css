@@ -524,7 +524,7 @@ svg {
     position: absolute;
     padding: 0.25rem;
     width: max-content;
-    background-color: var(--MAIN_COLOR);
+    background-color: var(--COLOR_3);
     border-radius: 4px;
     box-shadow: 0 0 8px var(--BORDER_COLOR);
     pointer-events: auto;
@@ -564,14 +564,11 @@ svg {
 }
 
 .member-options-btn {
-    position: relative;
     min-width: 32px;
     height: 32px;
     border-radius: 50%;
-    background-color: var(--COLOR_3);
 }
 
-.member-options-btn:hover svg { fill: var(--BLUE); }
 
 /* chat */
 #chat-window { height: 100%; width: calc(100% - 1rem); margin: 0 0.5rem; }

@@ -1,21 +1,32 @@
 // API
 const API_PAGES = {
+    // Auth
     authLogin: () => `auth/login`,
     authRegister: () => `auth/register`,
     authVerify: () => `auth/verify`,
 
+    // Channel data
     channel: (value) => `channels/${value}`,
     channelUsers: (value) => `channels/${value}/users`,
     channelMessages: (value) => `channels/${value}/messages`,
 
+    // Create channels
     channelOpen: () => `channels/open`,
     channelCreate: () => `channels/create`,
 
+    // Channel profile
     channelSettings: (value) => `channels/${value}/settings`,
     channelInvite: (value) => `channels/${value}/invite`,
     channelLeave: (value) => `channels/${value}/leave`,
     channelDelete: (value) => `channels/${value}/delete`,
 
+    // Channel users
+    memberNick: (value) => `channels/${value[0]}/users/${value[1]}/nick`,
+    memberAdmin: (value) => `channels/${value[0]}/users/${value[1]}/admin`,
+    memberOwner: (value) => `channels/${value[0]}/users/${value[1]}/owner`,
+    memberKick: (value) => `channels/${value[0]}/users/${value[1]}/kick`,
+
+    // User data
     user: (value) => `users/${value}`,
     userSearch: () => `users/search`,
     userChannels: (value) => `users/${value}/channels`,
@@ -24,14 +35,17 @@ const API_PAGES = {
     userMFA: (value) => `users/${value}/settings/mfa`,
     userDelete: (value) => `users/${value}/delete`,
 
+    // Friends
     userFriends: (value) => `users/${value}/friends`,
     addFriend: (value) => `users/${value}/friends/add`,
     removeFriend: (value) => `users/${value}/friends/remove`,
     confirmFriend: (value) => `users/${value}/friends/confirm`,
     declineFriend: (value) => `users/${value}/friends/decline`,
 
+    // Notifications
     notifications: (value) => `users/${value}/notifications`,
 
+    // Avatars + Icons
     avatar: () => `images/avatar`,
     icon: (value) => `images/icon/${value}`
 }
