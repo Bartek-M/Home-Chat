@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from "react"
-import { useParams } from "react-router-dom";
 
 import { apiGet } from "../utils";
 import { useFlash } from ".";
@@ -11,8 +10,6 @@ export function ChannelsProvider({ children }) {
     const [channels, setChannels] = useState([])
     const setFlash = useFlash()
 
-    const { id } = useParams()
-
     useEffect(() => {
         if (channels.length) return
 
@@ -21,16 +18,6 @@ export function ChannelsProvider({ children }) {
 
             if (res.message !== "200 OK") return setFlash("Couldn't load channels!", "error")
             if (!res.user_channels || !res.user_channels.length) return true
-
-            if (id && res.user_channels.find(channel => channel.id === id)) {
-                res.user_channels.filter(channel => {
-                    if (channel.id === id) channel.active = true
-                    return channel
-                })
-            } else {
-                res.user_channels[0].active = true
-                window.history.replaceState(null, "", `/channels/${res.user_channels[0].id}`)
-            }
 
             setChannels(res.user_channels)
         }).then(() => {

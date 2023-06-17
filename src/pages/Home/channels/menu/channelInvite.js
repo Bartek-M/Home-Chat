@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { useChannels, useFlash, useFriends } from "../../../../context"
+import { useActive, useChannels, useFlash, useFriends } from "../../../../context"
 
 import { apiSend } from "../../../../utils"
 
@@ -37,12 +37,10 @@ export function ChannelInvite({ props }) {
     const [friends,] = useFriends()
     const setFlash = useFlash()
 
-    const [query, setQuery] = useState("")
+    const [active,] = useActive()
+    const channel = active.channel
 
-    const channel = useMemo(() => {
-        if (!channels) return null
-        return channels.find(channel => channel.active)
-    }, [channels])
+    const [query, setQuery] = useState("")
 
     const filteredItems = useMemo(() => {
         if (!friends || !friends.accepted || !channel.users) return []

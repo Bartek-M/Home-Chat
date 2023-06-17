@@ -4,7 +4,7 @@ import { UserProvider } from "../../context";
 import { Card, Tooltip } from "../../components";
 import { Settings } from "../Settings/";
 
-import { ChannelList, ChannelView } from "./";
+import { ChannelList, ChannelView } from "./channels";
 
 export function Home() {
     const [settings, setSettings] = useState(false)

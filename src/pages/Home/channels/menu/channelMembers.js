@@ -1,23 +1,20 @@
 import { useState, useMemo } from "react"
 import { createPortal } from "react-dom"
 
-import { useChannels, useFlash, useUser } from "../../../../context"
-import { OptionsMenu } from "../member_options"
+import { useActive, useChannels, useUser } from "../../../../context"
+import { OptionsMenu } from "../"
 
 export function ChannelMembers({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-    const [channels, setChannels] = useChannels()
-    const setFlash = useFlash()
+    const [channels,] = useChannels()
+    
+    const [active,] = useActive()
+    const channel = active.channel
 
     const [menu, setMenu] = useState({ id: null, x: 0, y: 0 })
     const [query, setQuery] = useState("")
-
-    const channel = useMemo(() => {
-        if (!channels) return null
-        return channels.find(channel => channel.active)
-    }, [channels])
 
     const filteredItems = useMemo(() => {
         if (!channel || !channel.users) return []

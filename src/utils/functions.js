@@ -26,7 +26,7 @@ export function smoothScroll(id) {
 }
 
 // Open DM channel
-export function openChannel(button, friend_id, setChannels, close, setFlash, setSettings) {
+export function openChannel(button, friend_id, setChannels, setActive, close, setFlash, setSettings) {
     if (!friend_id) return
 
     apiSend(button, "channelOpen", { friend: friend_id }, "POST").then(res => {
@@ -35,20 +35,15 @@ export function openChannel(button, friend_id, setChannels, close, setFlash, set
 
         if (res.message == "200 OK" && res.channel) {
             setChannels(channels => {
-                if (!channels.some(({ id }) => id === res.channel.id)) channels.unshift(res.channel)
-
-                return channels.filter(channel => {
-                    if (channel.active) channel.active = false
-                    if (channel.id === res.channel.id) channel.active = true
-
-                    return channel
-                })
+                channels.filter(channel => channel.id !== res.channel.id)
+                return [res.channel, ...channels]
             })
+
+            setActive({ channel: res.channel })
 
             close()
             if (setSettings) setSettings(false)
-
-            return window.history.replaceState(null, "", `/channels/${res.channel.id}`)
+            return 
         }
 
         setFlash("Something went wrong!", "error")

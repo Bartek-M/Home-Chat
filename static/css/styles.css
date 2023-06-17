@@ -384,11 +384,6 @@ svg {
     gap: 0
 }
 
-.homechat-icon:hover {
-    fill: #42c0fb;
-    transition: 0.17s ease; 
-}
-
 /* home sidebar */
 .main-sidebar {
     min-width: 64px;

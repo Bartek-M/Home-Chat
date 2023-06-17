@@ -1,23 +1,20 @@
-import { useMemo, useState } from "react"
-import { useChannels } from "../../../context"
+import { useState } from "react"
+import { useActive } from "../../../context"
 
-import { ChannelMenu } from ".."
+import { ChannelMenu } from "."
 import { createPortal } from "react-dom"
 
 export function ChannelView({ setCard }) {
-    const [channels,] = useChannels()
-    const [menu, setMenu] = useState({ show: false, x: 0, y: 0 })
+    const [active,] = useActive()
+    const channel = active.channel
 
-    const channel = useMemo(() => {
-        if (!channels) return null
-        return channels.find(channel => channel.active)
-    }, [channels])
+    const [menu, setMenu] = useState({ show: false, x: 0, y: 0 })
 
     return (
         <>
             {!channel
                 ? <div className="main-view center-container">
-                    <svg className="homechat-icon" width="92px" height="92px" fill="var(--COLOR_3)" viewBox="0 0 16 16">
+                    <svg width="92px" height="92px" fill="var(--COLOR_3)" viewBox="0 0 16 16">
                         <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                     </svg>
                 </div>
@@ -35,7 +32,7 @@ export function ChannelView({ setCard }) {
                                 <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                             </svg>
                         </button>
-                        {menu.show && createPortal(<ChannelMenu element={menu.element} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ show: false, element: null, x: 0, y: 0 })} setCard={setCard} />, document.getElementsByClassName("layer")[0])}
+                        {menu.show && createPortal(<ChannelMenu element={menu.element} x={menu.x} y={menu.y} close={() => setMenu({ show: false, element: null, x: 0, y: 0 })} setCard={setCard} />, document.getElementsByClassName("layer")[0])}
                     </div>
                     <div className="column-container scroller-container" id="chat-window">
                         <div id="messages-list"></div>

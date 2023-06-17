@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from "react"
-import { useChannels, useFlash, useUser } from "../../../../context"
+import { useRef, useState } from "react"
+import { useActive, useChannels, useFlash, useUser } from "../../../../context"
 
 import { MFA } from "../../../../components"
 import { apiSend, apiFile } from "../../../../utils"
@@ -53,18 +53,18 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
         form_data.append("image", user_file, "untitled.jpg")
 
         apiFile("icon", form_data, channel.id).then(img_res => {
-            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+            if (img_res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
 
             if (img_res.errors) {
-                if (img_res.errors.image) setFlash(res.errors.image, "error")
-                if (img_res.errors.channel) setFlash(res.errors.channel, "error")
+                if (img_res.errors.image) setFlash(img_res.errors.image, "error")
+                if (img_res.errors.channel) setFlash(img_res.errors.channel, "error")
                 return
             }
 
             if (img_res.message === "200 OK" && img_res.image) {
                 setChannels(current_channels => {
                     return current_channels.filter(fltr_channel => {
-                        if (fltr_channel.id === channel.id) fltr_channel.icon = img_res.image                        
+                        if (fltr_channel.id === channel.id) fltr_channel.icon = img_res.image
                         return fltr_channel
                     })
                 })
@@ -103,17 +103,7 @@ function delete_channel({ button, data, password, code, setChannels, close, setF
         }
 
         if (res.message === "200 OK") {
-            setChannels(channels => {
-                channels = channels.filter(channel => channel.id !== channel_id)
-
-                if (channels && channels.length > 0) {
-                    channels[0].active = true
-                    window.history.replaceState(null, "", `/channels/${channels[0].id}`)
-                } else { window.history.replaceState(null, "", `/`) }
-
-                return channels
-            })
-
+            setChannels(channels => { return channels.filter(channel => channel.id !== channel_id) })
             close()
             return setFlash(`Deleted '${channel_name}'`)
         }
@@ -127,8 +117,11 @@ export function ChannelSettings({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-    const [channels, setChannels] = useChannels()
+    const [setChannels] = useChannels()
     const setFlash = useFlash()
+
+    const [active,] = useActive()
+    const channel = active.channel
 
     const channel_name = useRef()
     const nick = useRef()
@@ -137,15 +130,12 @@ export function ChannelSettings({ props }) {
     const file_input = useRef()
     const passw = useRef()
 
-    const channel = useMemo(() => {
-        if (!channels) return null
-        return channels.find(channel => channel.active)
-    }, [channels])
+
 
     // Delete channel password or MFA check
     const [page, setPage] = useState(null)
 
-    if (page && user.mfa_enabled) return <MFA title={`Delete '${channel.name}'`} submit_text="Delete" warning={true} submit_function={delete_channel} setChannels={setChannels} close={close} data={[channel.id, channel.name]} />
+    if (page && user.mfa_enabled) return <MFA title={`Delete '${channel.name}'`} submit_text="Delete" warning={true} submit_function={delete_channel} close={close} data={[channel.id, channel.name]} />
     if (page) return (
         <form className="settings-edit-card center-column-container">
             <div className="column-container">

@@ -1,12 +1,13 @@
 import { useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { useFlash, useUser } from "../context"
+import { useActive, useChannels, useFlash, useUser } from "../context"
 
 export function MFA(props) {
-    const { title, submit_text, warning, submit_function, password, setChannels, setPage, close, data } = props
+    const { title, submit_text, warning, submit_function, password, setPage, close, data } = props
 
     const [user, setUser] = useUser()
+    const [, setChannels] = useChannels()
     const setFlash = useFlash()
 
     const navigator = useNavigate()

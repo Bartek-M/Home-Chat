@@ -1,8 +1,12 @@
 import { useRef, useEffect } from "react"
-import { useUser } from "../../../../context"
+import { useActive, useUser } from "../../../../context"
 
-export function ChannelMenu({ element, channel, x, y, close, setCard }) {
+export function ChannelMenu({ element, x, y, close, setCard }) {
     const [user,] = useUser()
+
+    const [active,] = useActive()
+    const channel = active.channel
+
     const menu = useRef()
 
     useEffect(() => {

@@ -1,6 +1,4 @@
-import { useMemo } from "react"
-import { useChannels, useFlash } from "../../../../context"
-
+import { useActive, useChannels, useFlash } from "../../../../context"
 import { apiDeletee } from "../../../../utils"
 
 function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
@@ -13,17 +11,7 @@ function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
         }
 
         if (res.message == "200 OK") {
-            setChannels(channels => {
-                channels = channels.filter(channel => channel.id !== channel_id)
-
-                if (channels && channels.length > 0) {
-                    channels[0].active = true
-                    window.history.replaceState(null, "", `/channels/${channels[0].id}`)
-                } else { window.history.replaceState(null, "", `/`) }
-
-                return channels
-            })
-
+            setChannels(channels => { return channels.filter(channel => channel.id !== channel_id) })
             close()
             return setFlash(`Left '${channel_name}'`)
         }
@@ -36,13 +24,11 @@ function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
 export function ChannelLeave({ props }) {
     const { close } = props
 
-    const [channels, setChannels] = useChannels()
+    const [, setChannels] = useChannels()
     const setFlash = useFlash()
 
-    const channel = useMemo(() => {
-        if (!channels) return null
-        return channels.find(channel => channel.active)
-    }, [channels])
+    const [active,] = useActive()
+    const channel = active.channel
 
     return (
         <div className="settings-edit-card center-column-container">
