@@ -8,9 +8,7 @@ function set_notifications(button, option, position, setUser, setFlash) {
     apiSend(button, "notifications", {
         option: option,
         position: position
-    }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-        
+    }, "PATCH", "@me").then(res => {        
         if (res.errors) {
             if (res.errors.option) return setFlash(res.errors.option, "error")
             if (res.errors.position) return setFlash(res.errors.position, "error")
@@ -31,6 +29,7 @@ function set_notifications(button, option, position, setUser, setFlash) {
             return setFlash(`${res.position ? "Enabled" : "Disabled"} ${option} notifications`)
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

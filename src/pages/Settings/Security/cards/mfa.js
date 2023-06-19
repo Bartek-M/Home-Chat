@@ -16,8 +16,6 @@ function enable_mfa(button, setUser, password, setPage, close, code, secret, set
         secret: secret,
         option: "enable"
     }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
         if (res.errors) {
             if (!code) {
                 if (!res.errors.password) return setPage("mfa-page")
@@ -32,7 +30,8 @@ function enable_mfa(button, setUser, password, setPage, close, code, secret, set
             return close()
         }
 
-        return setFlash("Something went wrong!", "error")
+        if (res.message) return setFlash(res.message, "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
@@ -43,7 +42,6 @@ function disable_mfa({ button, setUser, code, close, setFlash }) {
         code: code.value,
         option: "disable"
     }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
 
         if (res.message === "200 OK") {
@@ -52,7 +50,8 @@ function disable_mfa({ button, setUser, code, close, setFlash }) {
             return close()
         }
 
-        return setFlash("Something went wrong!", "error")
+        if (res.message) return setFlash(res.message, "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 

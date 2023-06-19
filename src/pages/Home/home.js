@@ -37,10 +37,10 @@ export function Home() {
                             </button>
                         </Tooltip>
                     </li>
-                    <li className={`main-sidebar-item center-container ${card === "channel_creator" ? "active" : ""}`}>
+                    <li className={`main-sidebar-item center-container ${card === "channelCreator" ? "active" : ""}`}>
                         <div className="main-sidebar-pill"></div>
                         <Tooltip text="Create" type="right">
-                            <button className="main-sidebar-icon sidebar-settings-icon center-container" onClick={() => { setCard("channel_creator") }}>
+                            <button className="main-sidebar-icon sidebar-settings-icon center-container" onClick={() => { setCard("channelCreator") }}>
                                 <svg width="32" height="32" viewBox="0 0 16 16">
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>

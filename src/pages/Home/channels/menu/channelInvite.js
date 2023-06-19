@@ -7,8 +7,6 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
     apiSend(button, "channelInvite", {
         member: friend.id
     }, "POST", channel_id).then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
             if (res.errors.member) return setFlash(res.member.channel, "error")
@@ -26,6 +24,7 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
             return setFlash(`Invited '${friend.name}'`)
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

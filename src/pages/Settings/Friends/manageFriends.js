@@ -4,7 +4,6 @@ export function addFriend(button, user_id, friend, setFriends, setFlash) {
     if (!friend) return
 
     apiSend(button, "addFriend", { friend: friend.id }, "POST", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
 
         if (res.message === "200 OK") {
@@ -19,6 +18,7 @@ export function addFriend(button, user_id, friend, setFriends, setFlash) {
             return setFlash("Friend request sent")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }
@@ -27,7 +27,6 @@ export function removeFriend(button, friend_id, setFriends, setFlash) {
     if (!friend_id) return
 
     apiSend(button, "removeFriend", { friend: friend_id }, "DELETE", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
 
         if (res.message === "200 OK") {
@@ -38,6 +37,7 @@ export function removeFriend(button, friend_id, setFriends, setFlash) {
             return setFlash("Friend removed")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }
@@ -46,7 +46,6 @@ export function confirmFriend(button, friend, setFriends, setFlash) {
     if (!friend) return
 
     apiSend(button, "confirmFriend", { friend: friend.id }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
 
         if (res.message === "200 OK" && res.time) {
@@ -67,6 +66,7 @@ export function confirmFriend(button, friend, setFriends, setFlash) {
             return setFlash("Friend request confirmed!")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }
@@ -75,7 +75,6 @@ export function declineFriend(button, friend_id, setFriends, setFlash) {
     if (!friend_id) return
 
     apiSend(button, "declineFriend", { friend: friend_id }, "DELETE", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         
         if (res.message === "200 OK") {
@@ -86,6 +85,7 @@ export function declineFriend(button, friend_id, setFriends, setFlash) {
             return setFlash("Friend request declined")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

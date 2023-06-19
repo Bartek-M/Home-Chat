@@ -9,13 +9,12 @@ function set_theme(button, user, setUser, theme, setFlash) {
         category: "theme",
         data: theme
     }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, theme: theme } })
             return setFlash("Theme saved!")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }
@@ -26,14 +25,13 @@ function set_message_display(button, user, setUser, msg_display, setFlash) {
     apiSend(button, "userSettings", {
         category: "message_display",
         data: msg_display
-    }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-        
+    }, "PATCH", "@me").then(res => {        
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, message_display: msg_display } })
             return setFlash("Message display saved!")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

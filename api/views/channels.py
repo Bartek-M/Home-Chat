@@ -179,19 +179,25 @@ class Channels:
     @Decorators.manage_database
     @Decorators.auth
     def member_admin(db, user_id, channel_id, member_id):
-        # Check if channel exists
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
-        # Check if user and member are in the channel
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")) or not (member_channel := db.get_channel_stuff([member_id, channel_id], "user_channel")):
+            return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
+        
+        if user_id != channel.owner and not user_channel.admin:
+                return ({"errors": {"channel": "You are not a stuff member"}}, 403)
 
-        # Check if user is a stuff member
+        if user_id == member_id:
+            return ({"errors": {"user": "Client user"}}, 406)
 
-        # Check if member is not an owner 
+        if member_id == channel.owner:
+            return ({"errors": {"user": "Selected member is the owner"}}, 403)
 
-        # Check if user is not a member
+        admin_status = 0 if member_channel.admin else 1
+        db.update_entry(USER_CHANNEL_TABLE, [member_id, channel_id], "admin", admin_status, "user_channel")
 
-        # Set admin status
-
-        return 200
+        return ({"admin_status": admin_status}, 200)
 
     @channels.route("/<channel_id>/users/<member_id>/owner", methods=["PATCH"])
     @Decorators.manage_database

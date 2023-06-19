@@ -27,8 +27,6 @@ function update_password({ button, user, password, data, close, setPage, code, s
         password: password.value,
         code: code ? code.value : null
     }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-        
         if (res.errors) {
             if (!code && user.mfa_enabled && !res.errors.password && !res.errors.new_password) { return setPage("mfa") }
             if (!code && (!res.errors.password || !res.errors.new_password)) {
@@ -45,6 +43,7 @@ function update_password({ button, user, password, data, close, setPage, code, s
             return setFlash("Password updated!")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

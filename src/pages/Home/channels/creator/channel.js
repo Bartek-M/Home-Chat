@@ -28,8 +28,6 @@ function createChannel(button, name, users, icon, img_file, setChannels, setActi
         name: name.value,
         users: users
     }, "POST").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
         if (res.errors) {
             if (res.errors.users) setFlash(res.errors.users, "error")
             document.getElementById("name-error").innerText = res.errors.name ? res.errors.name : "*"
@@ -62,6 +60,7 @@ function createChannel(button, name, users, icon, img_file, setChannels, setActi
             return close()
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

@@ -19,8 +19,6 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
             nick: nick.value,
             notifications: notifications.checked
         }, "PATCH", channel.id).then(res => {
-            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
             if (res.errors) {
                 if (res.errors.channel) return setFlash(res.errors.channel, "error")
                 return
@@ -43,6 +41,7 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
                 return setFlash("Settings saved")
             }
 
+            if (res.message) return setFlash(res.message, "error")
             setFlash("Something went wrong!", "error")
         })
     }
@@ -91,8 +90,6 @@ function delete_channel({ button, data, password, code, setChannels, close, setF
         password: password ? password.value : null,
         code: code ? code.value : null
     }, "DELETE", channel_id).then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
 
@@ -108,6 +105,7 @@ function delete_channel({ button, data, password, code, setChannels, close, setF
             return setFlash(`Deleted '${channel_name}'`)
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

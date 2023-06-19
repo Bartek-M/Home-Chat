@@ -11,12 +11,11 @@ function search_user(button, username, searchUser, setSearchUser, setFlash) {
 
     apiSend(button, "userSearch", {
         username: username.value,
-    }, "POST").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-        
+    }, "POST").then(res => {        
         if (res.errors) return document.getElementById("search-error").innerText = res.errors.username ? `- ${res.errors.username}` : null
         if (res.message == "200 OK" && res.user) return setSearchUser(res.user)
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong", "error")
     })
 }

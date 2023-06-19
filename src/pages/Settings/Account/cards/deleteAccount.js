@@ -12,9 +12,7 @@ function submit_delete({ button, navigator, user, password, setPage, code, setFl
     apiSend(button, "userDelete", {
         password: password,
         code: code ? code.value : null
-    }, "DELETE", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-        
+    }, "DELETE", "@me").then(res => {        
         if (res.errors) {
             if (!code && user.mfa_enabled && !res.errors.password) { return setPage("mfa") }
             if (!code && res.errors.password) return document.getElementById("password-error").innerText = `- ${res.errors.password}`
@@ -27,6 +25,7 @@ function submit_delete({ button, navigator, user, password, setPage, code, setFl
             return setFlash("Removed your account!")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

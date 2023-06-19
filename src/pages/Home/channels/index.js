@@ -10,3 +10,6 @@ export { ChannelMenu } from "./menu/channelMenu"
 export { ChannelCreator } from "./creator/channelCreator"
 
 export { OptionsMenu } from "./member_options/optionsMenu"
+export { MemberNick } from "./member_options/memberNick"
+export { MemberKick } from "./member_options/memberKick"
+export { TransferOwner } from "./member_options/transferOwner"

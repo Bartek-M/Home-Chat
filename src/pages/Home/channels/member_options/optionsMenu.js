@@ -3,15 +3,36 @@ import { useChannels, useFlash, useUser } from "../../../../context"
 
 import { apiSend } from "../../../../utils"
 
-function setAdmin(button, member, channel_id, setChannels, close, setCard, setFlash) {
+function setAdmin(button, member, channel_id, setChannels, setFlash) {
     apiSend(button, "memberAdmin", {}, "PATCH", [channel_id, member.id]).then(res => {
-        console.log(res)
+        if (res.errors) {
+            if (res.errors.channel) return setFlash(res.errors.channel, "error")
+            if (res.errors.user) return setFlash(res.errors.user, "error")
+        }
+
+        if (res.message === "200 OK") {
+            setChannels(current_channels => {
+                return current_channels.filter(fltr_channel => {
+                    if (fltr_channel.id === channel_id) fltr_channel.users = fltr_channel.users.filter(user => {
+                        if (user.id === member.id) user.admin = res.admin_status ? 1 : 0
+                        return user
+                    })
+
+                    return fltr_channel
+                })
+            })
+
+            return setFlash(res.admin_status ? `Set ${member.name} as admin` : `Removed ${member.name} as admin`)
+        }
+
+        if (res.message) return setFlash(res.message, "error")
+        setFlash("Something went wrong!", "error")
     })
 }
 
 export function OptionsMenu({ element, member, channel, x, y, close, setCard }) {
     const [user,] = useUser()
-    const [,setChannels] = useChannels()
+    const [, setChannels] = useChannels()
     const setFlash = useFlash()
 
     const menu = useRef()
@@ -33,17 +54,17 @@ export function OptionsMenu({ element, member, channel, x, y, close, setCard }) 
 
     return (
         <div className="channel-menu center-column-container" ref={menu} style={{ top: y + 20, left: x, transform: "translateX(-95%)" }}>
-            <button className="channel-menu-btn spaced-container" onClick={() => { setCard("member_nick"); close() }}>Change Nickname</button>
+            <button className="channel-menu-btn spaced-container" onClick={() => { setCard("memberNick"); close() }}>Change Nickname</button>
             {!channel.direct &&
-                <button className="channel-menu-btn spaced-container" onClick={e => setAdmin(e.target, member, channel.id, setChannels, close, setCard, setFlash)}>{member.admin ? "Remove as Admin" : "Make Admin"}</button>
+                <button className="channel-menu-btn spaced-container" onClick={e => { setAdmin(e.target, member, channel.id, setChannels, setFlash); close() }}>{member.admin ? "Remove as Admin" : "Set as Admin"}</button>
             }
             {(!channel.direct && channel.owner === user.id) &&
-                <button className="channel-menu-btn spaced-container" onClick={() => { setCard("transfer_owner"); close() }}>Transfer Ownership</button>
+                <button className="channel-menu-btn spaced-container" onClick={() => { setCard("transferOwner"); close() }}>Transfer Ownership</button>
             }
             {!channel.direct &&
                 <>
                     <hr className="separator" />
-                    <button className="channel-menu-btn leave-btn spaced-container" onClick={() => { setCard("member_kick"); close() }}>Kick '{member.name}'</button>
+                    <button className="channel-menu-btn leave-btn spaced-container" onClick={() => { setCard("memberKick"); close() }}>Kick '{member.name}'</button>
                 </>
             }
         </div>

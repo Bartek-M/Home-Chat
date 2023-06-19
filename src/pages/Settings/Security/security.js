@@ -6,14 +6,13 @@ function set_visibility(button, user, setUser, setFlash) {
     apiSend(button, "userSettings", {
         category: "visibility",
         data: user.visibility ? 0 : 1
-    }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-        
+    }, "PATCH", "@me").then(res => {        
         if (res.message === "200 OK") {
             setUser((current_user) => { return { ...current_user, visibility: user.visibility ? 0 : 1 } })
             return setFlash("Visibility saved!")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

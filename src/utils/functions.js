@@ -30,7 +30,6 @@ export function openChannel(button, friend_id, setChannels, setActive, close, se
     if (!friend_id) return
 
     apiSend(button, "channelOpen", { friend: friend_id }, "POST").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors && res.errors.friend) return setFlash(res.errors.friend, "error")
 
         if (res.message == "200 OK" && res.channel) {
@@ -46,6 +45,7 @@ export function openChannel(button, friend_id, setChannels, setActive, close, se
             return 
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

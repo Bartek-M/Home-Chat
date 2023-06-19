@@ -14,8 +14,6 @@ export function FriendsProvider({ children }) {
         if (friends) return
 
         apiGet("userFriends", "@me").then(res => {
-            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
             if (res.message !== "200 OK") return setFlash("Couldn't load friends!", "error")
             setFriends(res.user_friends ? res.user_friends : [])
         })

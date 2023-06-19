@@ -11,8 +11,6 @@ function submit(button, navigator, setCodePage, email, password, setFlash) {
         email: email.value,
         password: password.value
     }, "POST").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
         if (res.errors) {
             document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
             document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
@@ -40,6 +38,7 @@ function submit(button, navigator, setCodePage, email, password, setFlash) {
             }
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }
@@ -51,7 +50,6 @@ function verify(button, navigator, auth_code, setFlash) {
         code: auth_code.value,
         ticket: localStorage.getItem("ticket"),
     }, "POST").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
         if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
 
         if (res.message === "200 OK") {

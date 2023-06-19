@@ -10,13 +10,11 @@ function update_username(button, user, setUser, name, password, close, setFlash)
         category: "name",
         data: name.value,
         password: password.value
-    }, "PATCH", "@me").then(res => {
-        if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-        
+    }, "PATCH", "@me").then(res => {        
         if (res.errors) {
             document.getElementById("name-error").innerText = res.errors.name ? `- ${res.errors.name}` : "*"
             document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
-
+            
             return
         }
 
@@ -26,6 +24,7 @@ function update_username(button, user, setUser, name, password, close, setFlash)
             return setFlash("Username updated")
         }
 
+        if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
 }

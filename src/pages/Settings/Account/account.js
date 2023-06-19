@@ -11,16 +11,16 @@ function change_avatar(file, setUser, setFlash) {
     form_data.append("image", user_file, "untitled.jpg")
 
     apiFile("avatar", form_data).then(res => {
-            if (res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-            if (res.errors && res.errors.image) return setFlash(res.errors.image, "error")
+        if (res.errors && res.errors.image) return setFlash(res.errors.image, "error")
 
-            if (res.message === "200 OK" && res.image) {
-                setUser((current_user) => { return { ...current_user, avatar: res.image } })
-                return setFlash("Avatar updated!")
-            }
+        if (res.message === "200 OK" && res.image) {
+            setUser((current_user) => { return { ...current_user, avatar: res.image } })
+            return setFlash("Avatar updated!")
+        }
 
-            setFlash("Something went wrong!", "error")
-        })
+        if (res.message) return setFlash(res.message, "error")
+        setFlash("Something went wrong!", "error")
+    })
 }
 
 export function Account({ props }) {
@@ -60,7 +60,7 @@ export function Account({ props }) {
                             <p className="category-text">DISPLAY NAME</p>
                             <p>{user.display_name ? user.display_name : "You haven't added a display name yet."}</p>
                         </div>
-                        <button className="edit-settings-btn" onClick={() => card("display_name")}>{user.display_name ? "Edit" : "Add"}</button>
+                        <button className="edit-settings-btn" onClick={() => card("displayName")}>{user.display_name ? "Edit" : "Add"}</button>
                     </div>
                     <div className="spaced-container">
                         <div className="column-container">
@@ -94,7 +94,7 @@ export function Account({ props }) {
                     <p className="category-text">ACCOUNT REMOVAL</p>
                     <p>Delete your account (This action can not be reverted!)</p>
                 </div>
-                <button className="warning-settings-btn" onClick={() => card("delete_account")}>Delete Account</button>
+                <button className="warning-settings-btn" onClick={() => card("deleteAccount")}>Delete Account</button>
             </div>
         </>
     )
