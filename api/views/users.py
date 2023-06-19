@@ -113,6 +113,7 @@ class Users:
                 return ({"errors": {"email": "Email is already registered!"}}, 406)
 
             db.update_entry(USER_SETTING_TABLE, user_id, "email", data.lower())
+            return 200
 
         if category == "password":
             if len(data) < 6:

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useParams } from "react-router-dom";
 
-import { useChannels } from "./channelContext";
+import { useChannels } from ".";
 
 const ActiveContext = React.createContext()
 export function useActive() { return useContext(ActiveContext) }

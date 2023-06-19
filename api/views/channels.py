@@ -261,18 +261,24 @@ class Channels:
         db.delete_entry(None, [user_id, channel_id], option="user_channel")
         return 200
     
-    @channels.route("/<channel_id>/users/<member_id>/nick", methods=["DELETE"])
+    @channels.route("/<channel_id>/users/<member_id>/kick", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
     def member_kick(db, user_id, channel_id, member_id):
-        # Check if channel exists
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
-        # Check if user and member are in the channel
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")) or not db.get_channel_stuff([member_id, channel_id], "user_channel"):
+            return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
+        
+        if user_id != channel.owner and not user_channel.admin:
+                return ({"errors": {"channel": "You are not a stuff member"}}, 403)
 
-        # Check if user is a stuff member
+        if user_id == member_id:
+            return ({"errors": {"user": "Client user"}}, 406)
 
-        # Check if member is not an owner
+        if member_id == channel.owner:
+            return ({"errors": {"user": "Selected member is the owner"}}, 403)
 
-        # Kick user
-
+        db.delete_entry(None, [member_id, channel_id], option="user_channel")
         return 200

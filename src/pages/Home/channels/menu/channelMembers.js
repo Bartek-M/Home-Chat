@@ -62,7 +62,7 @@ export function ChannelMembers({ props }) {
                                         <p className="text-note">{(member.display_name || member.nick) ? member.name : ""}</p>
                                     </div>
                                 </div>
-                                {((channel.owner !== member.id || member.id !== user.id) && (channel.owner === user.id || channel.admin)) &&
+                                {((channel.owner !== member.id && member.id !== user.id) && (channel.owner === user.id || channel.admin)) &&
                                     <>
                                         <button className="member-options-btn center-container" onClick={(e) => setMenu({ id: member.id, element: e.target, x: e.target.getBoundingClientRect().left, y: e.target.getBoundingClientRect().top })}>
                                             <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">

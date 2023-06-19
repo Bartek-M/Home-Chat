@@ -16,7 +16,7 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
         if (res.message === "200 OK" && res.user) {
             setChannels(current_channels => {
                 return current_channels.filter(fltr_channel => {
-                    if (fltr_channel.id === channel_id && !(fltr_channel.users.some(({ id }) => id === res.id))) fltr_channel.users.push(res.user)
+                    if (fltr_channel.id === channel_id && !(fltr_channel.users.some(({ id }) => id === res.id))) fltr_channel.users.unshift(res.user)
                     return fltr_channel
                 })
             })

@@ -115,7 +115,7 @@ export function ChannelSettings({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-    const [setChannels] = useChannels()
+    const [,setChannels] = useChannels()
     const setFlash = useFlash()
 
     const [active,] = useActive()
@@ -127,8 +127,7 @@ export function ChannelSettings({ props }) {
     const channel_icon = useRef()
     const file_input = useRef()
     const passw = useRef()
-
-
+    
 
     // Delete channel password or MFA check
     const [page, setPage] = useState(null)

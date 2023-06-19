@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react"
-import { useChannels, useFlash, useUser } from "../../../../context"
+import { useActive, useChannels, useFlash, useUser } from "../../../../context"
 
 import { apiSend } from "../../../../utils"
 
@@ -33,11 +33,14 @@ function setAdmin(button, member, channel_id, setChannels, setFlash) {
 export function OptionsMenu({ element, member, channel, x, y, close, setCard }) {
     const [user,] = useUser()
     const [, setChannels] = useChannels()
+    const [, setActive] = useActive()
     const setFlash = useFlash()
 
     const menu = useRef()
 
     useEffect(() => {
+        setActive({ user: member })
+
         const listener = (e) => {
             if (!element || element.contains(e.target) || menu.current.contains(e.target)) return
             close()

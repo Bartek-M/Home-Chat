@@ -197,7 +197,8 @@ input:disabled {
     background-color: var(--BUTTON_HOVER)!important;
 }
 
-button:disabled {
+button:disabled,
+input:disabled {
     cursor: unset;
     transform: none;
 }
