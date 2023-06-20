@@ -110,7 +110,7 @@ class Database:
                         "admin": user_channel.admin
                     })
 
-                return sorted(users, key=lambda x: (x["nick"] if x["nick"] else x["display_name"]) if x["nick"] or x["display_name"] else x["name"]) 
+                return sorted(users, key=lambda x: x["name"]) 
             
         if option == "mesages":
             self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])

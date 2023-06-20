@@ -165,14 +165,22 @@ class Channels:
     @Decorators.manage_database
     @Decorators.auth
     def member_nick(db, user_id, channel_id, member_id):
-        # Check if channel exists
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
-        # Check if user and member are in the channel
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")) or not (member_channel := db.get_channel_stuff([member_id, channel_id], "user_channel")):
+            return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
 
-        # Check if user is a stuff member
+        if user_id != channel.owner and not user_channel.admin:
+            return ({"errors": {"channel": "You are not a stuff member"}}, 403)
+        
+        if member_id == channel.owner:
+            return ({"errors": {"user": "Selected member is the owner"}}, 403)
+        
+        if (nick := request.json.get("nick")) == member_channel.nick:
+            return ({"errors": {"nick": "Invalid nickname"}}, 400)
 
-        # Change nick
-
+        db.update_entry(USER_CHANNEL_TABLE, [member_id, channel_id], "nick", nick, "user_channel")
         return 200
 
     @channels.route("/<channel_id>/users/<member_id>/admin", methods=["PATCH"])

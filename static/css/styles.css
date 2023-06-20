@@ -1179,7 +1179,7 @@ svg {
 
 @keyframes top-slide {
     0%, 100% { top: -100px; opacity: 0 }
-    25%, 75% { top: 10px; opacity: 1 }
+    15%, 85% { top: 10px; opacity: 1 }
 }
 
 
