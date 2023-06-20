@@ -14,7 +14,7 @@ Version: dev-85c616f
     | separators
     | category text
     | inputs
-    | toogle slider
+    | toggle slider
     | scrollbar
     | animations
 
@@ -40,7 +40,7 @@ Version: dev-85c616f
 5. EDIT CARD - edit card elements
     | card wrapper
     | card content
-    | card submition
+    | card submit
 
 6. LOGIN & REGISTER PAGE - login, register page elements
 
@@ -148,7 +148,6 @@ body,
 /* [GLOBALS] */
 * { 
     color: inherit;
-    font-weight: 500;
     letter-spacing: 0.02rem;
     text-rendering: optimizeLegibility;
     user-select: none; 
@@ -248,7 +247,7 @@ svg {
 }
 
 .center-column-container { 
-    justify-content: center; 
+    justify-content: center;
     align-items: center; 
 }
 
@@ -273,7 +272,7 @@ svg {
     background-color: var(--BUTTON_HOVER);
 }
 
-.scroller-spacer { min-height: 30px;}
+.scroller-spacer { min-height: 20px;}
 
 /* category text */
 .category-text { 
@@ -332,7 +331,7 @@ svg {
 .warning-btn:hover { cursor: pointer; background-color: var(--RED_BUTTON_HOVER);}
 .warning-btn:active { transform: translateY(4px); }
 
-/* toogle slider */
+/* toggle slider */
 .slider {
     display: inline-block;
     position: relative;
@@ -461,7 +460,7 @@ svg {
 .switch-btn:hover, .switch-btn.active { background-color: var(--BLUE); color: var(--FONT_COLOR) }
 
 .small-card { max-width: calc(100% - 1.5rem) }
-.friends-wrapper { max-height: 180px; }
+.friends-wrapper { max-height: 25vh; }
 
 .added-users-wrapper { align-items: center; margin: 0.5rem 0  } 
 .added-users-wrapper div { width: max-content!important; }
@@ -565,6 +564,15 @@ svg {
     border-radius: 50%;
 }
 
+.member-icon-big {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.member-icon-big.disabled { opacity: 0.4; }
+
 
 /* chat */
 #chat-window { height: 100%; width: calc(100% - 1rem); margin: 0 0.5rem; }
@@ -666,7 +674,7 @@ svg {
     animation: show 0.17s;
 }
 
-/* settings siderbar */
+/* settings sidebar */
 .settings-sidebar-wrapper {
     display: flex;
     flex: 1 1 200px;
@@ -769,7 +777,7 @@ svg {
     .settings-page::-webkit-scrollbar { display: none; }
 
     #settings-dropdown-btn { display: flex; }
-    #settomgs-dropdown-btn:hover svg { fill: var(--BLUE) }
+    #settings-dropdown-btn:hover svg { fill: var(--BLUE) }
     .settings-content { padding: 20px 1rem; }
 }
 
@@ -1001,7 +1009,7 @@ svg {
 .edit-card-info { color: var(--FONT_DIM_COLOR) }
 .card-header-text { font-size: 0.75rem; font-weight: 700; text-transform: uppercase}
 
-/* card submition */
+/* card submit */
 .card-close { 
     position: absolute;
     top: 1rem;
@@ -1055,7 +1063,7 @@ svg {
     color: var(--FONT_COLOR); 
     transition: 0.17s ease; 
 }
-#loading-screen-wrapper.deactive { opacity: 0; }
+#loading-screen-wrapper.deactivate { opacity: 0; }
 
 /* loading content */
 #loading-screen { position: relative; gap: 2rem; }

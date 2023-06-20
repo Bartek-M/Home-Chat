@@ -8,6 +8,7 @@ export function MFA(props) {
 
     const [user, setUser] = useUser()
     const [, setChannels] = useChannels()
+    const [active,] = useActive()
     const setFlash = useFlash()
 
     const navigator = useNavigate()
@@ -26,7 +27,7 @@ export function MFA(props) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className={`card-submit-btn ${warning ? 'warning-btn' : 'submit-btn'}`} type="submit" value={submit_text} onClick={(e) => {
                     e.preventDefault()
-                    submit_function({ button: e.target, navigator: navigator, user: user, setUser: setUser, setChannels: setChannels, setPage: setPage, password: password, code: code.current, data: data, setFlash: setFlash, close: close })
+                    submit_function({ button: e.target, navigator: navigator, user: user, setUser: setUser, setChannels: setChannels, setPage: setPage, password: password, code: code.current, data: data, active: active, setFlash: setFlash, close: close })
                 }} />
             </div>
         </form>

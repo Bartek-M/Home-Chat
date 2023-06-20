@@ -7,7 +7,7 @@ import { apiSend, genSecret } from "../../../../utils";
 const qrcodes = require("qrcode")
 
 // Functions
-function enable_mfa(button, setUser, password, setPage, close, code, secret, setFlash) {
+function enable_mfa(button, setUser, password, setPage, close, setFlash, code, secret) {
     if (!password || (code && !code.value)) return
 
     apiSend(button, "userMFA", {
@@ -125,7 +125,7 @@ export function MFASetup({ props }) {
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
                             <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
-                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, passw, setPage, close, code.current, secret, setFlash) }} value="Activate" />
+                            <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, passw, setPage, close, setFlash, code.current, secret) }} value="Activate" />
                         </div>
                     </div>
                 </div>

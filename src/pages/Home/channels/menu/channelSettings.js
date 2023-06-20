@@ -77,14 +77,12 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
     }
 }
 
-function delete_channel({ button, data, password, code, setChannels, close, setFlash }) {
+function delete_channel({ button, active, password, code, setChannels, close, setFlash }) {
     if ((password && !password.value) || (code && !code.value)) return
+    if (!active.channel) return
 
-    if (!data || data.length !== 2) return
-    if (!data[0] || !data[1]) return
-
-    var channel_id = data[0]
-    var channel_name = data[1]
+    const channel_id = active.channel.id
+    const channel_name = active.channel.name
 
     apiSend(button, "channelDelete", {
         password: password ? password.value : null,
@@ -95,7 +93,6 @@ function delete_channel({ button, data, password, code, setChannels, close, setF
 
             if (document.getElementById("password-error")) return document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
             if (document.getElementById("code-error")) return document.getElementById("code-error").innerText = `- ${res.errors.code}`
-
             return
         }
 
@@ -115,7 +112,7 @@ export function ChannelSettings({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-    const [,setChannels] = useChannels()
+    const [, setChannels] = useChannels()
     const setFlash = useFlash()
 
     const [active,] = useActive()
@@ -127,12 +124,12 @@ export function ChannelSettings({ props }) {
     const channel_icon = useRef()
     const file_input = useRef()
     const passw = useRef()
-    
+
 
     // Delete channel password or MFA check
     const [page, setPage] = useState(null)
 
-    if (page && user.mfa_enabled) return <MFA title={`Delete '${channel.name}'`} submit_text="Delete" warning={true} submit_function={delete_channel} close={close} data={[channel.id, channel.name]} />
+    if (page && user.mfa_enabled) return <MFA title={`Delete '${channel.name}'`} submit_text="Delete" warning={true} submit_function={delete_channel} close={close} />
     if (page) return (
         <form className="settings-edit-card center-column-container">
             <div className="column-container">
@@ -146,7 +143,7 @@ export function ChannelSettings({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn warning-btn" type="submit" value="Delete" onClick={(e) => {
                     e.preventDefault()
-                    delete_channel({ button: e.target, data: [channel.id, channel.name], password: passw.current, setChannels: setChannels, close: close, setFlash: setFlash })
+                    delete_channel({ button: e.target, active: active, password: passw.current, setChannels: setChannels, close: close, setFlash: setFlash })
                 }} />
             </div>
         </form>

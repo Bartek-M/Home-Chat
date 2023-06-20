@@ -185,6 +185,9 @@ class Channels:
         if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")) or not (member_channel := db.get_channel_stuff([member_id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
         
+        if channel.direct:
+            return ({"errors": {"channel": "Direct channel"}}, 406)
+        
         if user_id != channel.owner and not user_channel.admin:
                 return ({"errors": {"channel": "You are not a stuff member"}}, 403)
 
@@ -203,16 +206,27 @@ class Channels:
     @Decorators.manage_database
     @Decorators.auth
     def member_owner(db, user_id, channel_id, member_id):
-        # Check if channel exists
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+        
+        if not db.get_channel_stuff([user_id, channel_id], "user_channel") or not db.get_channel_stuff([member_id, channel_id], "user_channel"):
+            return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
+        
+        if channel.direct:
+            return ({"errors": {"channel": "Direct channel"}}, 406)
+        
+        if channel.owner != user_id:
+            return ({"errors": {"channel": "You are not the owner"}}, 403)
+        
+        user_settings = db.get_entry(USER_SETTING_TABLE, user_id)
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
-        # Check if user and member are in the channel
+        if user_settings.mfa_enabled == 0 and Security.hash_passwd(request.json.get("password"), user_secrets.password.split("$")[0]) != user_secrets.password:
+            return ({"errors": {"password": "Password doesn't match"}}, 403)
+        elif user_settings.mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
+            return ({"errors": {"code": "Invalid two-factor code"}}, 400)
 
-        # Check if user is an owner
-
-        # Check if owner's password / auth code is correct
-
-        # Change owner
-
+        db.update_entry(CHANNEL_TABLE, channel_id, "owner", member_id)
         return 200
     
 
@@ -223,6 +237,9 @@ class Channels:
     def delete_channel(db, user_id, channel_id):
         if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
+        
+        if channel.direct:
+            return ({"errors": {"channel": "Direct channel"}}, 406)
         
         if channel.owner != user_id:
             return ({"errors": {"channel": "You are not the owner"}}, 403)
@@ -270,6 +287,9 @@ class Channels:
 
         if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")) or not db.get_channel_stuff([member_id, channel_id], "user_channel"):
             return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
+        
+        if channel.direct:
+            return ({"errors": {"channel": "Direct channel"}}, 406)
         
         if user_id != channel.owner and not user_channel.admin:
                 return ({"errors": {"channel": "You are not a stuff member"}}, 403)

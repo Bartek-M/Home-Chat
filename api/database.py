@@ -110,7 +110,7 @@ class Database:
                         "admin": user_channel.admin
                     })
 
-                return sorted(users, key=lambda x: x.get("name")) 
+                return sorted(users, key=lambda x: (x["nick"] if x["nick"] else x["display_name"]) if x["nick"] or x["display_name"] else x["name"]) 
             
         if option == "mesages":
             self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
@@ -189,7 +189,7 @@ class Database:
                         {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
-                    key=lambda x: x.get('name')
+                    key=lambda x: x["display_name"] if x["display_name"] else x["name"] 
                 )
 
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted!='waiting'", [req_id, req_id])
@@ -199,7 +199,7 @@ class Database:
                         {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
                         for friend in fetched 
                     ], 
-                    key=lambda x: x.get('name')
+                    key=lambda x: x["display_name"] if x["display_name"] else x["name"] 
                 )
             
             return friends

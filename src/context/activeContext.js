@@ -33,7 +33,7 @@ export function ActiveProvider({ children }) {
         }
 
         if (!channels.length) return setActive({ channel: null })
-        if (channels.length && !channels.find(channel => channel.id === active.channel.id)) setActive({ channel: channels[0] })
+        if (channels.length && !channels.find(channel => channel.id === active.channel.id)) return setActive({ channel: channels[0] })
     }, [active.channel, channels])
 
     return (

@@ -23,7 +23,7 @@ export function ChannelsProvider({ children }) {
                 const loading_screen_wrapper = document.getElementById("loading-screen-wrapper")
                 if (!loading_screen_wrapper) return
 
-                loading_screen_wrapper.classList.add("deactive")
+                loading_screen_wrapper.classList.add("deactivate")
                 setTimeout(() => {
                     if (!loading_screen_wrapper) return
                     loading_screen_wrapper.innerHTML = null;

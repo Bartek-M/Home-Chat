@@ -23,8 +23,8 @@ const API_PAGES = {
     // Channel users
     memberNick: (value) => `channels/${value[0]}/users/${value[1]}/nick`,
     memberAdmin: (value) => `channels/${value[0]}/users/${value[1]}/admin`,
-    memberOwner: (value) => `channels/${value[0]}/users/${value[1]}/owner`,
     memberKick: (value) => `channels/${value[0]}/users/${value[1]}/kick`,
+    transferOwner: (value) => `channels/${value[0]}/users/${value[1]}/owner`,
 
     // User data
     user: (value) => `users/${value}`,
@@ -74,7 +74,7 @@ export async function apiSend(button, page, data, method, id = null) {
         .finally(() => button.disabled = false)
 }
 
-export async function apiDeletee(button, page, id) {
+export async function apiDelete(button, page, id) {
     button.disabled = true
 
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
