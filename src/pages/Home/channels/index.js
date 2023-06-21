@@ -1,4 +1,3 @@
-export { ChannelList } from "./channelList"
 export { ChannelView } from "./channelView"
 
 export { ChannelInvite } from "./menu/channelInvite"
