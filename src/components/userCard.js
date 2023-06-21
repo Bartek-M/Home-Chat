@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react"
 import { useUser, useActive, useFlash, useFriends, useChannels } from "../context"
 
-import { formatTime, openChannel } from "../utils"
+import { formatTime, openChannel, addFriend } from "../utils"
 
 export function UserCard({ element, member, x, y, close, setCard }) {
     const [user,] = useUser()
@@ -44,7 +44,7 @@ export function UserCard({ element, member, x, y, close, setCard }) {
             {member.id !== user.id &&
                 <>
                     {(accepted_status && !active.channel.direct) && <button className="user-card-btn" onClick={e => { e.preventDefault(); openChannel(e.target, member.id, setChannels, setActive, setCard, setFlash) }}>Message</button>}
-                    {(!pending_status && !accepted_status) && <button className="user-card-btn" onClick={e => { e.preventDefault(); }}>Add Friend</button>}
+                    {(!pending_status && !accepted_status) && <button className="user-card-btn" onClick={e => { e.preventDefault(); addFriend(e.target, user.id, member, setFriends, setFlash) }}>Add Friend</button>}
                     {pending_status && <button className="user-card-btn" disabled>Pending</button>}
                 </>
             }

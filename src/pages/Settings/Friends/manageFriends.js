@@ -1,28 +1,5 @@
 import { apiSend } from "../../../utils"
 
-export function addFriend(button, user_id, friend, setFriends, setFlash) {
-    if (!friend) return
-
-    apiSend(button, "addFriend", { friend: friend.id }, "POST", "@me").then(res => {
-        if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
-
-        if (res.message === "200 OK") {
-            friend.accepted = "waiting"
-            friend.inviting = user_id
-            setFriends(current_friends => {
-                if (current_friends.pending && current_friends.pending.some(({ id }) => id === friend.id)) return current_friends
-                if (current_friends.pending) return { ...current_friends, pending: [friend, ...current_friends.pending] }
-
-                return { ...current_friends, pending: [friend] }
-            })
-            return setFlash("Friend request sent")
-        }
-
-        if (res.message) return setFlash(res.message, "error")
-        setFlash("Something went wrong!", "error")
-    })
-}
-
 export function removeFriend(button, friend_id, setFriends, setFlash) {
     if (!friend_id) return
 

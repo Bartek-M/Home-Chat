@@ -1,8 +1,8 @@
 import { useRef, useState } from "react"
 import { useActive, useChannels, useFlash, useFriends, useUser } from "../../../context"
 
-import { apiSend, formatTime, openChannel } from "../../../utils"
-import { addFriend, removeFriend, confirmFriend, declineFriend } from "./"
+import { apiSend, formatTime, openChannel, addFriend } from "../../../utils"
+import { removeFriend, confirmFriend, declineFriend } from "./manageFriends"
 import { Tooltip } from "../../../components"
 
 function search_user(button, username, searchUser, setSearchUser, setFlash) {

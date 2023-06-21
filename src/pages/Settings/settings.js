@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { useFriends } from "../../context";
+import { useFriends, useUser } from "../../context";
 
 import { version, userOS } from "../../utils/"
 import Page from "./pageContent"
 
 export function Settings({ setSettings, setCard }) {
     const [page, setPage] = useState("account")
-    const [friends, ] = useFriends()
+
+    const [user,] = useUser()
+    const [friends,] = useFriends()
 
     return (
         <>
@@ -26,7 +28,7 @@ export function Settings({ setSettings, setCard }) {
                         <button className={page === "account" ? "active" : ""} onClick={() => setPage("account")}>Account</button>
                         <button className={page === "security" ? "active" : ""} onClick={() => setPage("security")}>Security</button>
                         <button className={page === "friends" ? "active" : ""} onClick={() => setPage("friends")}>
-                            {(friends.pending && friends.pending.length) ? <div className="notification-dot stng-notification-dot"></div> : null}
+                            {(user.notifications && user.notifications_friend && friends.pending && friends.pending.length) ? <div className="notification-dot stng-notification-dot"></div> : null}
                             Friends
                         </button>
                         <hr className="separator" />

@@ -94,8 +94,8 @@ export function Login() {
 
                     <form>
                         <div className="column-container">
-                            <p className="category-text">ENTER HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                            <input className="input-field" autoFocus type="text" ref={auth_code} key="mfa-inpt" maxLength={10} required />
+                            <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
+                            <input className="input-field" autoFocus type="text" ref={auth_code} placeholder="6-digit authentication code" key="mfa-inpt" maxLength={10} required />
                         </div>
                         <p className="login-redirect"><a className="link" href="recovery/mfa">Don't have any access to auth codes?</a></p>
 
@@ -116,7 +116,7 @@ export function Login() {
 
                     <form>
                         <div className="column-container">
-                            <p className="category-text">ENTER CODE FROM YOUR EMAIL <span className="error-category-text" id="code-error" key="code-error">*</span></p>
+                            <p className="category-text">CODE FROM YOUR EMAIL <span className="error-category-text" id="code-error" key="code-error">*</span></p>
                             <input className="input-field" autoFocus type="text" ref={auth_code} key="verify-inpt" maxLength={10} required />
                         </div>
 

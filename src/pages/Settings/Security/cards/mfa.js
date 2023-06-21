@@ -124,7 +124,7 @@ export function MFASetup({ props }) {
                         <h3 className="card-header-text">Log in with your code <span className="error-category-text" id="code-error" key="code-error">*</span></h3>
                         <p className="category-text">Enter the 6-digit verification code generated.</p>
                         <div className="container">
-                            <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
+                            <input className="input-field small-card-field" autoFocus ref={code} placeholder="6-digit authentication code" key="mfa-inpt" maxLength={10} required />
                             <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); enable_mfa(e.target, setUser, passw, setPage, close, setFlash, code.current, secret) }} value="Activate" />
                         </div>
                     </div>

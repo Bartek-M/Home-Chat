@@ -21,7 +21,7 @@ export function MFA(props) {
             </div>
             <div className="column-container">
                 <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
-                <input className="input-field small-card-field" autoFocus ref={code} key="mfa-inpt" maxLength={10} required />
+                <input className="input-field small-card-field" autoFocus ref={code} placeholder="6-digit authentication code" key="mfa-inpt" maxLength={10} required />
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>

@@ -1,8 +1,8 @@
 import { useState } from "react"
-import { useActive } from "../../../context"
-
-import { ChannelMenu } from "."
 import { createPortal } from "react-dom"
+
+import { useActive } from "../../../context"
+import { ChannelMenu } from "."
 
 export function ChannelView({ setCard }) {
     const [active,] = useActive()
