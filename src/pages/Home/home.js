@@ -27,7 +27,7 @@ export function Home() {
                 <nav className="main-sidebar column-container scroller-container">
                     <li className={`main-sidebar-item center-container ${settings ? "active" : ""}`}>
                         <div className="main-sidebar-pill"></div>
-                        <div className="notification-dot"></div>
+                        {/* <div className="notification-dot"></div> */}
                         <Tooltip text="Settings" type="right">
                             <button className="main-sidebar-icon sidebar-settings-icon center-container" onClick={() => { setSettings(true) }}>
                                 <svg width="24" height="24" viewBox="0 0 16 16">
