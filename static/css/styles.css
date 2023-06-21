@@ -20,15 +20,21 @@ Version: dev-85c616f
 
 3. HOME PAGE - home page elements
     | home sidebar
+    | responsive home view
+    
+4. CHANNEL SETTINGS - channel settings elements
     | channel creator
-    | channel info
     | channel settings
     | invite friends
     | channel members
+    
+5. CHAT VIEW - chat elements
+    | channel info
     | chat
+    | user card
     | sending messages
 
-4. SETTINGS PAGE - settings page elements
+6. SETTINGS PAGE - settings page elements
     | settings sidebar
     | settings content
     | responsive settings
@@ -37,23 +43,23 @@ Version: dev-85c616f
     | settings security
     | settings friends
 
-5. EDIT CARD - edit card elements
+7. EDIT CARD - edit card elements
     | card wrapper
     | card content
     | card submit
 
-6. LOGIN & REGISTER PAGE - login, register page elements
+8. LOGIN & REGISTER PAGE - login, register page elements
 
-7. LOADING SCREEN - loading screen elements
+9. LOADING SCREEN - loading screen elements
     | loading wrapper
     | loading content
     | loading animation
 
-8. LAYER LEVEL - tooltips, flash messages, context menus
+10. LAYER LEVEL - tooltips, flash messages, context menus
     | tooltip
     | flash message
 
-9. [NOT FOUND - 404] - not found elements
+11. [NOT FOUND - 404] - not found elements
 
 
 [Color Codes]
@@ -159,6 +165,8 @@ body,
 h1, 
 h2, 
 h3, 
+h4,
+h5,
 p {
     margin: 0; 
     word-break: break-word
@@ -447,6 +455,12 @@ svg {
 .sidebar-settings-icon:hover svg { fill: var(--FONT_COLOR) }
 .sidebar-settings-icon:hover { background-color: var(--BLUE) }
 
+/* responsive home view */
+@media screen and (max-width: 700px) {
+
+}
+
+/* CHANNEL SETTINGS */
 /* channel creator */
 .creator-tabs-wrapper { margin-bottom: 1rem; }
 
@@ -480,35 +494,6 @@ svg {
 }
 
 .user-icon-wrapper:hover .added-user-icon { opacity: 0.8; }
-
-/* channel info */
-.main-view {
-    width: 100%;
-    height: 100%;
-    min-height: 200px;
-    gap: 0;
-    border-left: 1px solid var(--BORDER_COLOR);
-    background-color: inherit;
-}
-
-.channel-title {
-    min-height: 48px;
-    width: calc(100% - 1rem);
-    margin: 0.5rem 0.5rem 0 0.5rem;
-    border-radius: 10px;
-    border-color: transparent;
-    background-color: var(--MAIN_COLOR);
-    color: var(--FONT_RV_COLOR);
-}
-
-.channel-name { font-size: 1.25rem; }
-
-.channel-icon {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 4px 0 0 4px;
-}
 
 /* channel settings */
 .channel-settings { width: 48px; height: 48px; }
@@ -574,6 +559,36 @@ svg {
 .member-icon-big.disabled { opacity: 0.4; }
 
 
+/* CHAT VIEW */
+/* channel info */
+.main-view {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    gap: 0;
+    border-left: 1px solid var(--BORDER_COLOR);
+    background-color: inherit;
+}
+
+.channel-title {
+    min-height: 48px;
+    width: calc(100% - 1rem);
+    margin: 0.5rem 0.5rem 0 0.5rem;
+    border-radius: 10px;
+    border-color: transparent;
+    background-color: var(--MAIN_COLOR);
+    color: var(--FONT_RV_COLOR);
+}
+
+.channel-name { font-size: 1.25rem; }
+
+.channel-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px 0 0 4px;
+}
+
 /* chat */
 #chat-window { height: 100%; width: calc(100% - 1rem); margin: 0 0.5rem; }
 
@@ -612,6 +627,37 @@ svg {
 
 .message-content {max-width: calc(100% - 3rem);}
 .message-text { line-height: 1.375rem; word-break: break-word; white-space: break-spaces; }
+
+/* user card */
+.user-info-card {
+    position: absolute;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    width: max-content;
+    background-color: var(--COLOR_3);
+    border-radius: 4px;
+    box-shadow: 0 0 8px var(--BORDER_COLOR);
+    pointer-events: auto;
+}
+
+.user-card-avatar {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 50%;
+    user-select: none;
+}
+
+.user-card-btn {
+    font-size: 0.875rem;
+    padding: 2px 16px;
+    border-radius: 4px;
+    min-height: 32px;
+    width: 100%;
+    border: 2px solid var(--BLUE); 
+}
+.user-card-btn:hover { background-color: var(--BLUE); color: var(--FONT_COLOR)}
+
 
 /* sending messages */
 .chat-inpt-wrapper {
@@ -656,11 +702,6 @@ svg {
     height: 28px; 
     margin: 0.5rem 1rem; 
     background-color: var(--BUTTON_HOVER);
-}
-
-/* responsive home view */
-@media screen and (max-width: 700px) {
-
 }
 
 

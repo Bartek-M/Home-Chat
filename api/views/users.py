@@ -1,3 +1,4 @@
+import os
 import time 
 import secrets
 
@@ -265,6 +266,7 @@ class Users:
         if db.get_entry(CHANNEL_TABLE, user_id, "owner"):
             return ({"errors": {"channels": "You own some channels!"}}, 400)
         
+        user = db.get_entry(USER_TABLE, user_id)
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
         if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
@@ -272,6 +274,9 @@ class Users:
 
         if db.get_entry(USER_SETTING_TABLE, user_id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
             return ({"errors": {"code": "Invalid two-factor code"}}, 400)
+        
+        if user.avatar != "generic" and os.path.isfile(f"{AVATARS_FOLDER}{user.avatar}.webp"): 
+            os.remove(f"{AVATARS_FOLDER}{user.avatar}.webp")
         
         db.delete_entry(None, user_id, option="account")
         return 200

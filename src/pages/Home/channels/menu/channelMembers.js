@@ -2,6 +2,7 @@ import { useState, useMemo } from "react"
 import { createPortal } from "react-dom"
 
 import { useActive, useChannels, useUser } from "../../../../context"
+import { UserCard } from "../../../../components"
 import { OptionsMenu } from "../"
 
 export function ChannelMembers({ props }) {
@@ -9,11 +10,11 @@ export function ChannelMembers({ props }) {
 
     const [user,] = useUser()
     const [channels,] = useChannels()
-    
+
     const [active,] = useActive()
     const channel = active.channel
 
-    const [menu, setMenu] = useState({ id: null, x: 0, y: 0 })
+    const [menu, setMenu] = useState({ id: null, element: null, type: null, x: 0, y: 0 })
     const [query, setQuery] = useState("")
 
     const filteredItems = useMemo(() => {
@@ -45,9 +46,11 @@ export function ChannelMembers({ props }) {
                 {filteredItems && filteredItems.length
                     ? <div className="friends-wrapper column-container scroller-container">
                         {filteredItems.map(member => (
-                            <div className="small-card friend-card center-container spaced-container" key={`filtered-${member.id}`}>
+                            <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${member.id}`}>
                                 <div className="center-container">
-                                    <img className="friend-icon" src={`/api/images/${member.avatar}.webp`} />
+                                    <button onClick={(e) => setMenu({ id: member.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
+                                        <img className="friend-icon" src={`/api/images/${member.avatar}.webp`} />
+                                    </button>
                                     <div className="column-container">
                                         {(member.display_name || member.nick)
                                             ? <div className="member-name-wrapper">
@@ -62,14 +65,19 @@ export function ChannelMembers({ props }) {
                                         <p className="text-note">{(member.display_name || member.nick) ? member.name : ""}</p>
                                     </div>
                                 </div>
+                                {(menu.id === member.id && menu.type === "userCard") &&
+                                    createPortal(<UserCard element={menu.element} member={member} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
+                                }
                                 {((channel.owner !== member.id && member.id !== user.id) && (channel.owner === user.id || channel.admin)) &&
                                     <>
-                                        <button className="member-options-btn center-container" onClick={(e) => setMenu({ id: member.id, element: e.target, x: e.target.getBoundingClientRect().left, y: e.target.getBoundingClientRect().top })}>
+                                        <button className="member-options-btn center-container" onClick={(e) => setMenu({ id: member.id, element: e.target, type: "options", x: e.target.getBoundingClientRect().left, y: e.target.getBoundingClientRect().top })}>
                                             <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                 <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
                                             </svg>
                                         </button>
-                                        {menu.id === member.id && createPortal(<OptionsMenu element={menu.element} member={member} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])}
+                                        {(menu.id === member.id && menu.type === "options") &&
+                                            createPortal(<OptionsMenu element={menu.element} member={member} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
+                                        }
                                     </>
                                 }
                             </div>

@@ -9,14 +9,14 @@ export const userOS = (() => {
 })()
 
 // Theme
-export function preferedTheme() {
+export function preferredTheme() {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.setAttribute("data-theme", "dark")
     else document.documentElement.setAttribute("data-theme", "light")
 }
 
 export function appTheme(theme) {
     if (theme === "dark" || theme === "light") return document.documentElement.setAttribute("data-theme", theme)
-    preferedTheme()
+    preferredTheme()
 }
 
 // Smooth scroll
@@ -34,15 +34,15 @@ export function openChannel(button, friend_id, setChannels, setActive, close, se
 
         if (res.message == "200 OK" && res.channel) {
             setChannels(channels => {
-                channels.filter(channel => channel.id !== res.channel.id)
-                return [res.channel, ...channels]
+                if (!channels.some(({ id }) => id === res.channel.id)) channels.unshift(res.channel)
+                return channels
             })
 
             setActive({ channel: res.channel })
 
             close()
             if (setSettings) setSettings(false)
-            return 
+            return
         }
 
         if (res.message) return setFlash(res.message, "error")

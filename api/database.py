@@ -55,7 +55,7 @@ class Database:
                 user_id TEXT, channel_id TEXT, join_time TEXT, nick TEXT, admin INTEGER, direct INTEGER, notifications TEXT
             )""",
             f"""{USER_FRIENDS_TABLE} (
-                user_id TEXT, friend_id TEXT, accepted TEXT, notifications INTEGER
+                user_id TEXT, friend_id TEXT, accepted TEXT
             )""",
             f"""{USER_SETTING_TABLE} (
                 id TEXT UNIQUE, email TEXT UNIQUE, theme TEXT, message_display TEXT, mfa_enabled INTEGER, notifications_message INTEGER, notifications_friend INTEGER, notifications_changelog TEXT
@@ -112,7 +112,7 @@ class Database:
 
                 return sorted(users, key=lambda x: x["name"]) 
             
-        if option == "mesages":
+        if option == "messages":
             self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():

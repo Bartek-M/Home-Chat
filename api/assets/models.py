@@ -76,10 +76,9 @@ class UserFriend:
     user_id: str
     friend_id: str
     accepted: str = "waiting" # waiting | accepted_time
-    notifications: int = 0 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?"
+        return "?, ?, ?"
     
 
 @dataclass

@@ -3,17 +3,17 @@ const base32_alph = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
 export function genSecret() {
     let secret = ""
-    let formated = ""
+    let formatted = ""
 
     for (let i = 0; i < 16; i++) {
         let char = base32_alph[Math.floor(Math.random() * base32_alph.length)]
-        if (i % 4 === 0 && i != 0) formated += "-"
+        if (i % 4 === 0 && i != 0) formatted += "-"
 
         secret += char
-        formated += char
+        formatted += char
     }
 
-    return [secret, formated]
+    return [secret, formatted]
 }
 
 // Convert EPOCH time to local
