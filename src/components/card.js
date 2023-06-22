@@ -5,7 +5,8 @@ import { Loading } from ".";
 
 import { DisplayName, Username, Email, DeleteAccount } from "../pages/Settings/Account";
 import { Password, MFASetup } from "../pages/Settings/Security";
-import { ChannelCreator, ChannelSettings, ChannelMembers, ChannelInvite, ChannelLeave, MemberNick, MemberKick, TransferOwner } from "../pages/Home/channels";
+import { ChannelCreator } from "../pages/Home/creator"
+import { ChannelSettings, ChannelMembers, ChannelInvite, ChannelLeave, MemberNick, MemberKick, TransferOwner } from "../pages/Home/channels";
 
 // Card content (edit card)
 export function Card(props) {

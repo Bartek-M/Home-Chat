@@ -17,6 +17,7 @@ function changeNick(button, member, channel_id, nick, setChannels, close, setFla
         if (res.message === "200 OK") {
             setChannels(current_channels => {
                 return current_channels.filter(fltr_channel => {
+                    if (fltr_channel.id === channel_id && fltr_channel.direct) fltr_channel.display_name = nick.value
                     if (fltr_channel.id === channel_id) fltr_channel.users = fltr_channel.users.filter(user => {
                         if (user.id === member.id) user.nick = nick.value
                         return user
@@ -46,7 +47,7 @@ export function MemberNick({ props }) {
     const nick = useRef()
 
     return (
-        <div className="settings-edit-card center-column-container">
+        <form className="settings-edit-card center-column-container">
             <div className="column-container">
                 <h3>Change Nickname</h3>
                 <p className="edit-card-info">Nicknames are visible for everyone</p>
@@ -62,6 +63,6 @@ export function MemberNick({ props }) {
                     changeNick(e.target, member, active.channel.id, nick.current, setChannels, () => close("channelMembers"), setFlash)
                 }} />
             </div>
-        </div>
+        </form>
     )
 }

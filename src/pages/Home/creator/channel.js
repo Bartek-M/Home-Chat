@@ -1,8 +1,8 @@
 import { useState, useMemo, useRef } from "react"
 
-import { useUser, useFriends, useChannels, useFlash, useActive } from "../../../../context"
-import { apiSend, apiFile } from "../../../../utils"
-import { Tooltip } from "../../../../components"
+import { useUser, useFriends, useChannels, useFlash, useActive } from "../../../context"
+import { apiSend, apiFile } from "../../../utils"
+import { Tooltip } from "../../../components"
 
 // Functions 
 function setImage(file, icon) {

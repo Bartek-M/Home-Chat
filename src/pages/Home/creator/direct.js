@@ -1,8 +1,7 @@
 import { useState, useMemo } from "react"
 
-import { useFriends, useChannels, useFlash, useActive } from "../../../../context"
-import { openChannel } from "../../../../utils"
-
+import { useFriends, useChannels, useFlash, useActive } from "../../../context"
+import { openChannel } from "../../../utils"
 
 export function Direct({ close }) {
     const [friends,] = useFriends()

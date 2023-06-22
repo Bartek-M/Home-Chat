@@ -28,9 +28,8 @@ app.register_blueprint(images, url_prefix="/api/images")
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["10/second", "50/minute"],
+    default_limits=["1000/minute"]
 )
-
 
 if __name__ == "__main__":
     app.run(debug=True, host=ADDR, port=PORT)
