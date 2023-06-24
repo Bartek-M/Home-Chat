@@ -1,6 +1,10 @@
 from flask import Flask
+from flask_socketio import SocketIO
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
+app = Flask(__name__)
+socketio = SocketIO(app, ping_interval=45, ping_timeout=10)
 
 from api import *
 from views import view
@@ -9,8 +13,7 @@ from views import view
 ADDR = "127.0.0.1" # 192.168.0.194 | 127.0.0.1
 PORT = 5000
 
-# INITIALIZE FLASK
-app = Flask(__name__)
+# CONFIGURE FLASK
 app.url_map.strict_slashes = False
 
 app.json.sort_keys = False
@@ -32,4 +35,4 @@ limiter = Limiter(
 )
 
 if __name__ == "__main__":
-    app.run(debug=True, host=ADDR, port=PORT)
+    socketio.run(app, debug=True, host=ADDR, port=PORT)

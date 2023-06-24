@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { ChannelsProvider, FriendsProvider, ActiveProvider, useFlash } from ".";
+import { ChannelsProvider, FriendsProvider, ActiveProvider, useFlash, SocketProvider } from ".";
 
 import { apiGet, appTheme, preferredThemeTheme } from "../utils";
 import { Loading } from "../components"
@@ -45,13 +45,15 @@ export function UserProvider({ children }) {
             <Loading />
             {user &&
                 <UserContext.Provider value={[user, setUser]}>
-                    <ChannelsProvider>
-                        <FriendsProvider>
-                            <ActiveProvider>
-                                {children}
-                            </ActiveProvider>
-                        </FriendsProvider>
-                    </ChannelsProvider>
+                    <SocketProvider>
+                        <ChannelsProvider>
+                            <FriendsProvider>
+                                <ActiveProvider>
+                                    {children}
+                                </ActiveProvider>
+                            </FriendsProvider>
+                        </ChannelsProvider>
+                    </SocketProvider>
                 </UserContext.Provider>
             }
         </div>

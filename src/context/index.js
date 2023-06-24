@@ -4,3 +4,5 @@ export { useChannels, ChannelsProvider } from "./channelContext"
 
 export { useActive, ActiveProvider } from "./activeContext"
 export { useFlash, FlashProvider } from "./flashContext"
+
+export { useSocket, SocketProvider } from "./socketContext"

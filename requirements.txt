@@ -1,5 +1,6 @@
 flask
 flask_limiter
+flask-socketio
 Pillow
 pyotp 
 python-dotenv
