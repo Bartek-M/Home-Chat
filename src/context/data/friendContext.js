@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react"
 
-import { apiGet } from "../utils";
-import { useFlash } from ".";
+import { apiGet } from "../../utils";
+import { useFlash } from "..";
 
 const FriendsContext = React.createContext()
 export function useFriends() { return useContext(FriendsContext) }

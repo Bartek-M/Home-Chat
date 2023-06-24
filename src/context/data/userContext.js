@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { ChannelsProvider, FriendsProvider, ActiveProvider, useFlash, SocketProvider } from ".";
+import { ChannelsProvider, FriendsProvider, ActiveProvider, useFlash, SocketProvider } from "..";
 
-import { apiGet, appTheme, preferredThemeTheme } from "../utils";
-import { Loading } from "../components"
+import { apiGet, appTheme, preferredThemeTheme } from "../../utils";
+import { Loading } from "../../components"
 
 const UserContext = React.createContext()
 export function useUser() { return useContext(UserContext) }

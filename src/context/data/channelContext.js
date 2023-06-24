@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react"
 
-import { apiGet } from "../utils";
-import { useFlash, useSocket } from ".";
+import { apiGet } from "../../utils";
+import { useFlash, useSocket } from "..";
 
 const ChannelContext = React.createContext()
 export function useChannels() { return useContext(ChannelContext) }
@@ -15,14 +15,14 @@ export function ChannelsProvider({ children }) {
     useEffect(() => {
         if (!channels.length) return
 
-        const onMessage = (data) => { 
+        const onMessage = (data) => {
             setChannels(current_channels => {
                 return current_channels.filter(fltr_channel => {
                     if (fltr_channel.id === data.channel_id) fltr_channel.messages = fltr_channel.messages ? [...fltr_channel.messages, data] : [data]
                     return fltr_channel
                 })
             })
-         }
+        }
         socket.on("message", onMessage)
 
         return () => socket.off("message", onMessage)
