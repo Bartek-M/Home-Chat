@@ -18,22 +18,27 @@ export function MessageList({ channel, close }) {
                 ? <>
                     {user.message_display === "standard"
                         ? (
-                            channel.messages.map(message => (
-                                <li className="message-list-item container" key={message.id}>
-                                    <button onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
-                                        <img className="avatar" src={`/api/images/${message.author.avatar}.webp`} />
-                                    </button>
-                                    <div className="message-content">
-                                        <div className="message-info container">
-                                            <p className="message-author">{message.author.display_name ? message.author.display_name : message.author.name}</p>
-                                            <p className="message-time">{formatTime(message.time)}</p>
+                            channel.messages.map((message, index) => (
+                                (channel.messages[index - 1] && channel.messages[index - 1].author.id === message.author.id && (message.time - channel.messages[index - 1].time) < 360)
+                                    ? <li className="message-list-item repeated-message-list-item container" key={message.id}>
+                                        <div className="message-hidden-time center-container">{formatTime(message.time, "time")}</div>
+                                        <div className="message-content">
+                                            <div className="message-text">{message.content}</div>
                                         </div>
-                                        <div className="message-text">{message.content}</div>
-                                    </div>
-                                    {(menu.id === message.id && menu.type === "userCard") &&
-                                        createPortal(<UserCard element={menu.element} member={message.author} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
-                                    }
-                                </li>
+                                    </li>
+                                    : <li className="message-list-item container" key={message.id}>
+                                        <img className="avatar" src={`/api/images/${message.author.avatar}.webp`} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })} />
+                                        <div className="message-content">
+                                            <div className="message-info container">
+                                                <p className="message-author">{message.author.display_name ? message.author.display_name : message.author.name}</p>
+                                                <p className="message-time">{formatTime(message.time)}</p>
+                                            </div>
+                                            <div className="message-text">{message.content}</div>
+                                        </div>
+                                        {(menu.id === message.id && menu.type === "userCard") &&
+                                            createPortal(<UserCard element={menu.element} member={message.author} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
+                                        }
+                                    </li>
                             ))
                         )
                         : (
