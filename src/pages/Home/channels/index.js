@@ -1,5 +1,9 @@
 export { ChannelView } from "./channelView"
 
+export { ChannelTitle } from "./components/channelTitle"
+export { MessageList } from "./components/messageList"
+export { ChatInput } from "./components/chatInput"
+
 export { ChannelInvite } from "./menu/channelInvite"
 export { ChannelLeave } from "./menu/channelLeave"
 export { ChannelMembers } from "./menu/channelMembers"

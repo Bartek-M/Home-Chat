@@ -20,9 +20,9 @@ export function appTheme(theme) {
 }
 
 // Smooth scroll
-export function smoothScroll(id) {
-    var div = document.getElementById(id)
-    div.scrollBy(0, div.scrollHeight - div.clientHeight)
+export function smoothScroll(element) {
+    if (!element) return
+    element.scrollBy(0, element.scrollHeight - element.clientHeight)
 }
 
 // Open DM channel
