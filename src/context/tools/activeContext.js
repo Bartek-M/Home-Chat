@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react"
+import React, { useState, useContext, useEffect, useMemo } from "react"
 import { useParams } from "react-router-dom";
 
 import { useChannels } from "..";
@@ -22,19 +22,22 @@ export function ActiveProvider({ children }) {
         }
     })
 
-    useEffect(() => {
-        if (!active.channel && channels.length) {
-            const channel = channels.find(channel => channel.id === id)
+    const sortedChannels = useMemo(() => {
+        if (!Object.values(channels)) return []
+        return Object.values(channels).sort((a, b) => (b.last_message ? b.last_message : b.join_time) - (a.last_message ? a.last_message : a.join_time))
+    }, [Object.values(channels)])
 
-            if (channel) setActive({ channel: channel })
-            else setActive({ channel: channels[0] })
+    useEffect(() => {
+        if (!active.channel && sortedChannels.length) {
+            if (channels[id]) setActive({ channel: channels[id] })
+            else setActive({ channel: sortedChannels[0] })
 
             return
         }
 
-        if (!channels.length) return setActive({ channel: null })
-        if (channels.length && !channels.find(channel => channel.id === active.channel.id)) return setActive({ channel: channels[0] })
-    }, [active.channel, channels])
+        if (!sortedChannels.length) return setActive({ channel: null })
+        if (sortedChannels.length && !channels[active.channel.id]) return setActive({ channel: sortedChannels[0] })
+    }, [active.channel, sortedChannels])
 
     return (
         <ActiveContext.Provider value={[active, setActive]}>

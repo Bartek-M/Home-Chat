@@ -8,7 +8,7 @@ export function useSocket() { return useContext(SocketContext) }
 
 export function SocketProvider({ children }) {
     useEffect(() => {
-        const onConnect = () => { console.log("CONNECTED"); socket.send("TESTING") }
+        const onConnect = () => { console.log("CONNECTED") }
         const onDisconnect = () => console.log("DISCONNECTED")
 
         socket.on("connect", onConnect)

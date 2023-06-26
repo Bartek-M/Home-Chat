@@ -1,3 +1,5 @@
+import { useMemo } from "react"
+
 import { useActive, useChannels, useFriends, useUser } from "../../context"
 import { Tooltip } from "../../components"
 
@@ -11,6 +13,11 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
     const [channels,] = useChannels()
     const [friends,] = useFriends()
     const [active, setActive] = useActive()
+
+    const sortedChannels = useMemo(() => {
+        if (!Object.values(channels)) return []
+        return Object.values(channels).sort((a, b) => (b.last_message ? b.last_message : b.join_time) - (a.last_message ? a.last_message : a.join_time))
+    }, [Object.values(channels)])
 
     return (
         <nav className="main-sidebar column-container scroller-container">
@@ -38,7 +45,7 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
             </li>
             <hr className="separator" />
             <>
-                {channels && channels.map(channel => (
+                {sortedChannels && sortedChannels.map(channel => (
                     <li className={`main-sidebar-item center-container ${(active.channel && channel.id === active.channel.id) ? "active" : ""}`} key={`channel-${channel.id}`}>
                         <div className="main-sidebar-pill"></div>
                         {/* <div className="notification-dot"></div> */}

@@ -1,9 +1,20 @@
 import { useState } from "react"
 import { createPortal } from "react-dom"
 
+import { useChannels } from "../../../../context"
+import { apiGet } from "../../../../utils"
 import { ChannelMenu } from ".."
 
+function getMembers(channel, setChannels) {
+    if (channel.users) return
+
+    apiGet("channelUsers", channel.id).then(res => {
+        console.log(res)
+    })
+}
+
 export function ChannelTitle({ channel, setCard }) {
+    const [, setChannels] = useChannels()
     const [menu, setMenu] = useState({ show: false, x: 0, y: 0 })
 
     return (
@@ -15,7 +26,7 @@ export function ChannelTitle({ channel, setCard }) {
                     <p className={`channel-name ${channel.display_name ? "username" : ""}`}>{channel.name}</p>
                 </div>
             </div>
-            <button className="channel-settings center-container" onClick={(e) => setMenu({ show: true, element: e.target, x: e.target.offsetLeft, y: e.target.offsetTop })}>
+            <button className="channel-settings center-container" onClick={(e) => { setMenu({ show: true, element: e.target, x: e.target.offsetLeft, y: e.target.offsetTop }); getMembers(channel, setChannels) }}>
                 <svg width="28" height="28" viewBox="0 0 16 16">
                     <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                 </svg>

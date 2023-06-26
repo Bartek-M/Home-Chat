@@ -12,14 +12,12 @@ function setAdmin(button, member, channel_id, setChannels, setFlash) {
 
         if (res.message === "200 OK") {
             setChannels(current_channels => {
-                return current_channels.filter(fltr_channel => {
-                    if (fltr_channel.id === channel_id) fltr_channel.users = fltr_channel.users.filter(user => {
-                        if (user.id === member.id) user.admin = res.admin_status ? 1 : 0
-                        return user
-                    })
-
-                    return fltr_channel
+                current_channels[channel_id].users = current_channels[channel_id].users.filter(user => {
+                    if (user.id === member.id) user.admin = res.admin_status ? 1 : 0
+                    return user
                 })
+
+                return current_channels
             })
 
             return setFlash(res.admin_status ? `Set ${member.name} as admin` : `Removed ${member.name} as admin`)

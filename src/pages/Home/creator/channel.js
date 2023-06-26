@@ -13,9 +13,9 @@ function setImage(file, icon) {
 }
 
 function set_channels(setChannels, setActive, channel) {
-    setChannels(channels => {
-        channels.filter(fltr_channel => fltr_channel.id !== channel.id)
-        return [channel, ...channels]
+    setChannels(current_channels => {
+        current_channels[channel.id] = channel
+        return current_channels
     })
 
     setActive({ channel: channel })

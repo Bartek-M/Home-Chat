@@ -33,9 +33,9 @@ export function openChannel(button, friend_id, setChannels, setActive, close, se
         if (res.errors && res.errors.friend) return setFlash(res.errors.friend, "error")
 
         if (res.message == "200 OK" && res.channel) {
-            setChannels(channels => {
-                if (!channels.some(({ id }) => id === res.channel.id)) channels.unshift(res.channel)
-                return channels
+            setChannels(current_channel => {
+                current_channel[res.channel.id] = res.channel
+                return current_channel
             })
 
             setActive({ channel: res.channel })

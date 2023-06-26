@@ -10,10 +10,8 @@ function kick(button, member, channel_id, setChannels, setFlash, close) {
 
         if (res.message === "200 OK") {
             setChannels(current_channels => {
-                return current_channels.filter(fltr_channel => {
-                    if (fltr_channel.id === channel_id) fltr_channel.users = fltr_channel.users.filter(user => { if (user.id !== member.id) return user })
-                    return fltr_channel
-                })
+                current_channels[channel_id].users.filter(user => { if (user.id !== member.id) return user })
+                return current_channels
             })
 
             close("channelMembers")
@@ -29,7 +27,7 @@ export function MemberKick({ props }) {
     const { close } = props
 
     const [, setChannels] = useChannels()
-    const [active, ] = useActive()
+    const [active,] = useActive()
     const setFlash = useFlash()
 
     const channel = active.channel

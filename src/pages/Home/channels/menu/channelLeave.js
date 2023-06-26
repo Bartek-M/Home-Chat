@@ -9,7 +9,7 @@ function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
         }
 
         if (res.message == "200 OK") {
-            setChannels(channels => { return channels.filter(channel => channel.id !== channel_id) })
+            setChannels(current_channels => { delete current_channels[channel_id]; return current_channels })
             close()
             return setFlash(`Left '${channel_name}'`)
         }

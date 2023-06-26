@@ -26,15 +26,11 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
 
             if (res.message === "200 OK") {
                 setChannels(current_channels => {
-                    return current_channels.filter(fltr_channel => {
-                        if (fltr_channel.id === channel.id) {
-                            fltr_channel.name = (name && name.value !== channel.name) ? name.value : channel.name
-                            fltr_channel.nick = (nick && nick.value !== channel.nick) ? nick.value : channel.nick
-                            fltr_channel.notifications = (notifications && notifications.checked != channel.notifications) ? (notifications.checked ? "1" : null) : channel.notifications
-                        }
+                    current_channels[channel.id].name = (name && name.value !== channel.name) ? name.value : channel.name
+                    current_channels[channel.id].nick = (nick && nick.value !== channel.nick) ? nick.value : channel.nick
+                    current_channels[channel.id].notifications = (notifications && notifications.checked != channel.notifications) ? (notifications.checked ? "1" : null) : channel.notifications
 
-                        return fltr_channel
-                    })
+                    return current_channels
                 })
 
                 if (!(img_file && img_file.files && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp"))) close()
@@ -62,10 +58,8 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
 
             if (img_res.message === "200 OK" && img_res.image) {
                 setChannels(current_channels => {
-                    return current_channels.filter(fltr_channel => {
-                        if (fltr_channel.id === channel.id) fltr_channel.icon = img_res.image
-                        return fltr_channel
-                    })
+                    current_channels[channel.id].icon = img_res.image
+                    return current_channels
                 })
 
                 close()
@@ -97,7 +91,7 @@ function delete_channel({ button, active, password, code, setChannels, close, se
         }
 
         if (res.message === "200 OK") {
-            setChannels(channels => { return channels.filter(channel => channel.id !== channel_id) })
+            setChannels(current_channels => { delete current_channels[channel_id]; return current_channels })
             close()
             return setFlash(`Deleted '${channel_name}'`)
         }

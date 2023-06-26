@@ -15,20 +15,29 @@ class Channels:
     """
     channels = Blueprint("channels", __name__)
     
-    # GET
-    @channels.route("/<channel_id>")
+    # GET  
+    @channels.route("/<channel_id>/users")
     @Decorators.manage_database
     @Decorators.auth
-    def get_channel(db, channel_id):
-        if (chnl := db.get_entry(CHANNEL_TABLE, channel_id)):
-            return ({"channel": chnl}, 200)
-        
-        return None
+    def get_users(db, user_id, channel_id):
+        if not db.get_entry(CHANNEL_TABLE, channel_id):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+
+        if not db.get_channel_stuff([user_id, channel_id], "user_channel"):
+            return ({"errors": {"channel": "You are not a member"}}, 401)
+
+        return ({"channel_users": db.get_channel_stuff(channel_id, "users")}, 200)
         
     @channels.route("/<channel_id>/messages")
     @Decorators.manage_database
     @Decorators.auth
-    def get_messages(db, channel_id):
+    def get_messages(db, user_id, channel_id):
+        if not db.get_entry(CHANNEL_TABLE, channel_id):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+
+        if not db.get_channel_stuff([user_id, channel_id], "user_channel"):
+            return ({"errors": {"channel": "You are not a member"}}, 401)
+
         return ({"channel_messages": db.get_channel_stuff(channel_id, "messages")}, 200)
     
     

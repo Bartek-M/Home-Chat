@@ -6,7 +6,6 @@ const API_PAGES = {
     authVerify: () => `auth/verify`,
 
     // Channel data
-    channel: (value) => `channels/${value}`,
     channelUsers: (value) => `channels/${value}/users`,
     channelMessages: (value) => `channels/${value}/messages`,
 

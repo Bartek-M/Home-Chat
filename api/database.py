@@ -144,13 +144,13 @@ class Database:
         Get specific information about the user
         :param req_id: ID to check for
         :param option: Option to use ("channels", "friends", "friend")
-        :return: List of Channel objects or []
+        :return: Dictionary
         """                
         if option == "channels":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():
-                channels = []
+                channels = {}
 
                 for data in fetched:
                     user_channel = UserChannel(*data)
@@ -168,16 +168,18 @@ class Database:
                         channel["name"] = "Deleted Account"
                         channel["icon"] = "generic"
 
-                    channels.append({
+                    channels[channel["id"]] = {
                         **channel,
                         "nick": user_channel.nick,
                         "notifications": user_channel.notifications,
                         "join_time": user_channel.join_time,
+                        "last_message": message.create_time if (message := self.get_entry(MESSAGE_TABLE, channel["id"], "channel_id", "id DESC")) else None,
                         "admin": True if user_channel.admin else False,
-                        "users": self.get_channel_stuff(channel["id"], "users")
-                    })
+                        "users": None,
+                        "messages": None
+                    }
 
-                return sorted(channels, key=lambda channel: message.create_time if (message := self.get_entry(MESSAGE_TABLE, channel["id"], "channel_id", "id DESC")) else channel["join_time"], reverse=True)
+                return channels
                                                 
         if option == "friends":
             friends = {}
@@ -210,7 +212,7 @@ class Database:
             if fetched := self.cursor.fetchone():
                 return {**(self.get_entry(USER_TABLE, fetched[0] if fetched[0] != req_id[0] else fetched[1]).__dict__), "accepted": fetched[2], "inviting": fetched[0]}
                          
-        return []    
+        return {}
 
     def insert_entry(self, table, entry):
         """

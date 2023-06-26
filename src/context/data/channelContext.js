@@ -7,12 +7,13 @@ const ChannelContext = React.createContext()
 export function useChannels() { return useContext(ChannelContext) }
 
 export function ChannelsProvider({ children }) {
-    const [channels, setChannels] = useState([])
+    const [channels, setChannels] = useState({})
     const setFlash = useFlash()
 
     const socket = useSocket()
 
     useEffect(() => {
+        return
         if (!channels.length) return
 
         const onMessage = (data) => {
@@ -29,11 +30,11 @@ export function ChannelsProvider({ children }) {
     }, [channels])
 
     useEffect(() => {
-        if (channels.length) return
+        if (Object.keys(channels).length) return
 
         apiGet("userChannels", "@me").then(res => {
             if (res.message !== "200 OK") return setFlash("Couldn't load channels!", "error")
-            if (!res.user_channels || !res.user_channels.length) return true
+            if (!res.user_channels) return
 
             setChannels(res.user_channels)
         }).then(() => {

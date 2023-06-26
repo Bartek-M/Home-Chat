@@ -621,8 +621,6 @@ svg {
 }
 
 .compact-msg-time-info { margin-top: 0.2rem; font-size: 0.75rem; color: var(--FONT_DIM_COLOR) }
-.compact-msg-text { word-break: break-word; white-space: break-spaces; }
-
 .compact-msg-user-info { font-weight: 700; margin: 0 0.5rem 0 0.25rem; cursor: pointer; }
 .compact-msg-user-info:hover { text-decoration: underline; }
 
@@ -631,7 +629,19 @@ svg {
 .message-time { font-size: .75rem; color: var(--FONT_DIM_COLOR) }
 
 .message-content {max-width: calc(100% - 3rem);}
-.message-text { line-height: 1.375rem; word-break: break-word; white-space: break-spaces; }
+
+.message-text { 
+    line-height: 1.375rem; 
+    word-break: break-word; 
+    white-space: break-spaces;
+    user-select: text;
+}
+
+.compact-msg-text { 
+    word-break: break-word; 
+    white-space: break-spaces; 
+    user-select: text;
+}
 
 /* user card */
 .user-info-card {

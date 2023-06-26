@@ -24,11 +24,9 @@ function owner({ button, active, password, code, setChannels, close, setFlash })
         }
 
         if (res.message === "200 OK") {
-            setChannels(channels => {
-                return channels.filter(fltr_channel => {
-                    if (fltr_channel.id === channel.id) fltr_channel["owner"] = member.id
-                    return fltr_channel
-                })
+            setChannels(current_channels => {
+                current_channels[channel.id].owner = member.id
+                return current_channels
             })
 
             close()
