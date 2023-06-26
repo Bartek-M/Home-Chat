@@ -19,7 +19,6 @@ function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
     })
 }
 
-
 export function ChannelLeave({ props }) {
     const { close } = props
 

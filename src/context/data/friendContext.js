@@ -17,7 +17,7 @@ export function FriendsProvider({ children }) {
             if (res.message !== "200 OK") return setFlash("Couldn't load friends!", "error")
             setFriends(res.user_friends ? res.user_friends : [])
         })
-    })
+    }, [])
 
     return (
         <FriendsContext.Provider value={[friends, setFriends]}>

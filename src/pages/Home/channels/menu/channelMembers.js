@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react"
 import { createPortal } from "react-dom"
 
-import { useActive, useChannels, useUser } from "../../../../context"
+import { useActive, useUser } from "../../../../context"
 import { UserCard } from "../../../../components"
 import { OptionsMenu } from "../"
 
@@ -9,7 +9,6 @@ export function ChannelMembers({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-    const [channels,] = useChannels()
 
     const [active,] = useActive()
     const channel = active.channel
@@ -23,7 +22,7 @@ export function ChannelMembers({ props }) {
         return channel.users.filter(member => {
             return member.name.toLowerCase().includes(query.toLowerCase())
         })
-    }, [channels, query])
+    }, [channel.users, query])
 
     return (
         <div className="settings-edit-card center-column-container">

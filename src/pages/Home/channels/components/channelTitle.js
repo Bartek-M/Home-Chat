@@ -9,7 +9,13 @@ function getMembers(channel, setChannels) {
     if (channel.users) return
 
     apiGet("channelUsers", channel.id).then(res => {
-        console.log(res)
+        if (res.message !== "200 OK") return setFlash("Couldn't load channel users!", "error")
+        if (!res.channel_users) return
+
+        setChannels(current_channels => {
+            current_channels[channel.id].users = res.channel_users
+            return current_channels
+        })
     })
 }
 

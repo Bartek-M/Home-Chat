@@ -19,7 +19,7 @@ export function FlashProvider({ children }) {
 
             setFlashMessage(null)
         }, 3000)
-    })
+    }, [flashMessage])
 
 
     return (

@@ -23,9 +23,9 @@ export function ActiveProvider({ children }) {
     })
 
     const sortedChannels = useMemo(() => {
-        if (!Object.values(channels)) return []
+        if (!Object.values(channels).length) return []
         return Object.values(channels).sort((a, b) => (b.last_message ? b.last_message : b.join_time) - (a.last_message ? a.last_message : a.join_time))
-    }, [Object.values(channels)])
+    }, [Object.keys(channels).length])
 
     useEffect(() => {
         if (!active.channel && sortedChannels.length) {
@@ -37,7 +37,7 @@ export function ActiveProvider({ children }) {
 
         if (!sortedChannels.length) return setActive({ channel: null })
         if (sortedChannels.length && !channels[active.channel.id]) return setActive({ channel: sortedChannels[0] })
-    }, [active.channel, sortedChannels])
+    }, [Object.keys(channels).length, active.channel])
 
     return (
         <ActiveContext.Provider value={[active, setActive]}>

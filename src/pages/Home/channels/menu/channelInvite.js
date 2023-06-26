@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useActive, useChannels, useFlash, useFriends } from "../../../../context"
 
 import { apiSend } from "../../../../utils"
@@ -15,7 +15,7 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
 
         if (res.message === "200 OK" && res.user) {
             setChannels(current_channels => {
-                if (!(current_channels[channel_id].users.some(({ id }) => id === res.id))) current_channels[channel_id].users.unshift(res.user)
+                if (!(current_channels[channel_id].users.some(({ id }) => id === res.user.id))) current_channels[channel_id].users = [res.user, ...current_channels[channel_id].users] 
                 return current_channels
             })
 
@@ -30,7 +30,7 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
 export function ChannelInvite({ props }) {
     const { close } = props
 
-    const [channels, setChannels] = useChannels()
+    const [, setChannels] = useChannels()
     const [friends,] = useFriends()
     const setFlash = useFlash()
 
@@ -45,7 +45,8 @@ export function ChannelInvite({ props }) {
         return friends.accepted.filter(friend => {
             return friend.name.toLowerCase().includes(query.toLowerCase()) && !(channel.users.some(({ id }) => id === friend.id))
         })
-    }, [friends, channels, query])
+    }, [channel.users, friends, query])
+
 
     return (
         <div className="settings-edit-card center-column-container">

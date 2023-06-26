@@ -10,7 +10,7 @@ function kick(button, member, channel_id, setChannels, setFlash, close) {
 
         if (res.message === "200 OK") {
             setChannels(current_channels => {
-                current_channels[channel_id].users.filter(user => { if (user.id !== member.id) return user })
+                current_channels[channel_id].users = current_channels[channel_id].users.filter(user => { if (user.id !== member.id) return user })
                 return current_channels
             })
 

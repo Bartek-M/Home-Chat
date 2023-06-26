@@ -26,7 +26,7 @@ export function UserProvider({ children }) {
             setUser(res.user)
             if (localStorage.getItem("email") !== res.user.email) localStorage.setItem("email", res.user.email)
         })
-    })
+    }, [])
 
     useEffect(() => {
         if (!user) return
