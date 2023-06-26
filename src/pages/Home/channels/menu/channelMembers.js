@@ -9,7 +9,6 @@ export function ChannelMembers({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-
     const [active,] = useActive()
     const channel = active.channel
 

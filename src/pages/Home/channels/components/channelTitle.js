@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { createPortal } from "react-dom"
 
-import { useChannels } from "../../../../context"
+import { useActive, useChannels } from "../../../../context"
 import { apiGet } from "../../../../utils"
 import { ChannelMenu } from ".."
 
@@ -14,7 +14,7 @@ function getMembers(channel, setChannels) {
 
         setChannels(current_channels => {
             current_channels[channel.id].users = res.channel_users
-            return current_channels
+            return {...current_channels}
         })
     })
 }
