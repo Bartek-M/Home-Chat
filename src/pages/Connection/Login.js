@@ -4,34 +4,34 @@ import { useNavigate } from "react-router-dom"
 import { useFlash } from "../../context"
 import { apiSend } from "../../utils"
 
-function submit(button, navigator, setCodePage, email, password, setFlash) {
-    if (!email.value || !password.value) return
+function submit(button, navigator, setCodePage, login, password, setFlash) {
+    if (!login.value || !password.value) return
 
     apiSend(button, "authLogin", {
-        email: email.value,
+        login: login.value,
         password: password.value
     }, "POST").then(res => {
         if (res.errors) {
-            document.getElementById("email-error").innerText = res.errors.email ? `- ${res.errors.email}` : "*"
+            document.getElementById("login-error").innerText = res.errors.login ? `- ${res.errors.login}` : "*"
             document.getElementById("password-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
             return
         }
 
         if (res.message === "200 OK") {
-            // MFA disabled + VERIFIED user + TOKEN recived
+            // MFA disabled + VERIFIED user + TOKEN received
             if (!res.mfa && res.verified && res.token) {
                 localStorage.setItem("token", res.token)
                 navigator("/")
                 return setFlash("Logged in!")
             }
 
-            // MFA disabled + NON VERIFIED user + TICKET recived with no TOKEN
+            // MFA disabled + NON VERIFIED user + TICKET received with no TOKEN
             if (!res.mfa && !res.verified && res.ticket) {
                 localStorage.setItem("ticket", res.ticket)
                 return setCodePage("verify")
             }
 
-            // MFA enabled + VERIFIED user + TICKET recived with no TOKEN
+            // MFA enabled + VERIFIED user + TICKET received with no TOKEN
             if (res.mfa && res.verified && res.ticket) {
                 localStorage.setItem("ticket", res.ticket)
                 return setCodePage("mfa")
@@ -53,7 +53,7 @@ function verify(button, navigator, auth_code, setFlash) {
         if (res.errors) return document.getElementById("code-error").innerText = res.errors.code ? `- ${res.errors.code}` : "*"
 
         if (res.message === "200 OK") {
-            // MFA disabled + VERIFIED user + TOKEN recived
+            // MFA disabled + VERIFIED user + TOKEN received
             if (!res.mfa + res.verified + res.token) {
                 localStorage.removeItem("ticket")
                 localStorage.setItem("token", res.token)
@@ -61,7 +61,7 @@ function verify(button, navigator, auth_code, setFlash) {
                 return setFlash("Logged in!")
             }
 
-            // MFA enabled + VERIFIED user + TICKET recived
+            // MFA enabled + VERIFIED user + TICKET received
             if (res.mfa + res.verified + res.token) {
                 localStorage.setItem("ticket", res.ticket)
                 return setCodePage("mfa")
@@ -79,11 +79,11 @@ export function Login() {
 
     const navigator = useNavigate()
 
-    const email = useRef()
+    const login = useRef()
     const password = useRef()
     const auth_code = useRef()
 
-    const user_email = localStorage.getItem("email")
+    const user_login = localStorage.getItem("user_login")
 
     // Render mfa verify page
     if (codePage === "mfa") {
@@ -136,8 +136,8 @@ export function Login() {
 
                 <form>
                     <div className="column-container">
-                        <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
-                        <input className="input-field" autoFocus type="email" defaultValue={user_email} ref={email} maxLength={100} required />
+                        <p className="category-text">EMAIL OR USERNAME <span className="error-category-text" id="login-error">*</span></p>
+                        <input className="input-field" autoFocus type="text" defaultValue={user_login} ref={login} maxLength={100} required />
                     </div>
                     <div className="column-container">
                         <p className="category-text">PASSWORD <span className="error-category-text" id="password-error">*</span></p>
@@ -145,7 +145,7 @@ export function Login() {
                     </div>
                     <p className="login-redirect"><a className="link" href="recovery/password">Forgot your password?</a></p>
 
-                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit(e.target, navigator, setCodePage, email.current, password.current, setFlash) }} value="LOG IN" />
+                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit(e.target, navigator, setCodePage, login.current, password.current, setFlash) }} value="LOG IN" />
                     <p className="login-redirect">Need an account? <a className="link" href="register">Register</a></p>
                 </form>
             </div>

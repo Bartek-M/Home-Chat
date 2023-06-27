@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { createPortal } from "react-dom"
 
-import { useActive, useChannels } from "../../../../context"
+import { useChannels } from "../../../../context"
 import { apiGet } from "../../../../utils"
 import { ChannelMenu } from ".."
 

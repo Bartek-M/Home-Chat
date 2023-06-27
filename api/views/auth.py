@@ -19,12 +19,15 @@ class Auth:
     @auth.route("/login", methods=["POST"])
     @Decorators.manage_database
     def login(db):
-        if settings := db.get_entry(USER_SETTING_TABLE, request.json.get("email").lower(), "email"):
+        user = db.get_entry(USER_TABLE, request.json.get("login").lower(), "name")
+
+        if settings := (db.get_entry(USER_SETTING_TABLE, user.id) if user else db.get_entry(USER_SETTING_TABLE, request.json.get("login").lower(), "email")):
+            user = user if user else db.get_entry(USER_TABLE, settings.id)
             user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
             
             if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) == user_secrets.password:
                 # User not verified, has to pass a verification code
-                if db.get_entry(USER_TABLE, settings.id).verified == 0:
+                if user.verified == 0:
                     return ({
                         "token": None,
                         "mfa": False,
@@ -50,7 +53,7 @@ class Auth:
 
         return ({
             "errors": {
-                "email": "Login or password is invalid.",
+                "login": "Login or password is invalid.",
                 "password": "Login or password is invalid."
             }
         }, 400)

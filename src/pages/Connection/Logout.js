@@ -8,6 +8,7 @@ export function Logout() {
 
     useEffect(() => {
         localStorage.clear()
+        document.documentElement.setAttribute("data-theme", "dark")
         navigator("/login")
     })
 
