@@ -1,13 +1,28 @@
 import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { useUser } from "../../../../context"
+import { useChannels, useUser } from "../../../../context"
 
-import { formatTime, smoothScroll } from "../../../../utils"
+import { apiGet, formatTime, smoothScroll } from "../../../../utils"
 import { UserCard } from "../../../../components"
 
 export function MessageList({ channel, close }) {
     const [user,] = useUser()
+    const [, setChannels] = useChannels()
     const [menu, setMenu] = useState({ id: null, element: null, type: null, x: 0, y: 0 })
+
+    useEffect(() => {
+        if (channel.messages) return
+
+        apiGet("channelMessages", channel.id).then(res => {
+            if (res.message !== "200 OK") return setFlash("Couldn't load channel messages!", "error")
+            if (!res.channel_messages) return
+
+            setChannels(current_channels => {
+                current_channels[channel.id].messages = res.channel_messages
+                return { ...current_channels }
+            })
+        })
+    }, [channel.id])
 
     const message_list = useRef()
     useEffect(() => smoothScroll(message_list.current), [channel ? channel.messages : null])

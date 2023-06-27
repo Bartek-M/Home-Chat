@@ -1,6 +1,6 @@
 import { useMemo } from "react"
-
 import { useActive, useChannels, useFriends, useUser } from "../../context"
+
 import { Tooltip } from "../../components"
 
 function openChannel(channel, activeChannel, setActive) {
