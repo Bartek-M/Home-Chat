@@ -1128,12 +1128,13 @@ svg {
 /* loading animation */
 .loading-dots {
     position: relative;
-    width: 10px;
+    width: 10px!important;
     height: 10px;
     border-radius: 4px;
     background-color: var(--FONT_COLOR);
     animation: loading-dots 1s infinite linear alternate;
     animation-delay: 0.5s;
+    cursor: wait;
 }
 .loading-dots::before, .loading-dots::after {
     content: "";

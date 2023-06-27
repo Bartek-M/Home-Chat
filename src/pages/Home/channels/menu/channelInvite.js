@@ -15,7 +15,7 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
 
         if (res.message === "200 OK" && res.user) {
             setChannels(current_channels => {
-                if (!(current_channels[channel_id].users.some(({ id }) => id === res.user.id))) current_channels[channel_id].users = [res.user, ...current_channels[channel_id].users] 
+                if (!(current_channels[channel_id].users.some(({ id }) => id === res.user.id))) current_channels[channel_id].users = [res.user, ...current_channels[channel_id].users]
                 return current_channels
             })
 
@@ -85,7 +85,9 @@ export function ChannelInvite({ props }) {
                         ))}
                         <div className="scroller-spacer"></div>
                     </div>
-                    : <div className="category-text center-container">NO MATCHING FRIENDS</div>
+                    : channel.users
+                        ? <div className="category-text center-container">NO MATCHING FRIENDS</div>
+                        : <div className="center-container"><div className="loading-dots"></div></div>
                 }
             </div>
         </div>

@@ -82,7 +82,9 @@ export function ChannelMembers({ props }) {
                         ))}
                         <div className="scroller-spacer"></div>
                     </div>
-                    : <div className="category-text center-container">NO MATCHING FRIENDS</div>
+                    : channel.users
+                        ? <div className="category-text center-container">NO MATCHING FRIENDS</div>
+                        : <div className="center-container"><div className="loading-dots"></div></div>
                 }
             </div>
         </div>
