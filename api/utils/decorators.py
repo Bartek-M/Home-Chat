@@ -36,7 +36,7 @@ class Decorators:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication", None))
+            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication"))
 
             if verify_option and verify_code == "correct":
                 return 403
@@ -59,8 +59,8 @@ class Decorators:
     @staticmethod
     def ticket_auth(func):
         """
-        Authenticate user ticets decorator
-        :param func: Funtion tu run
+        Authenticate user tickets decorator
+        :param func: Function tu run
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
@@ -82,7 +82,6 @@ class Decorators:
                 return 401
  
             return None
-        
         
         wrapper.__name__ = func.__name__
         return wrapper

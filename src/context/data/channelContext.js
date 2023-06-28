@@ -12,22 +12,21 @@ export function ChannelsProvider({ children }) {
 
     const socket = useSocket()
 
-    // useEffect(() => {
-    //     return
-    //     if (!channels.length) return
+    useEffect(() => {
+        if (!Object.keys(channels).length) return
 
-    //     const onMessage = (data) => {
-    //         setChannels(current_channels => {
-    //             return current_channels.filter(fltr_channel => {
-    //                 if (fltr_channel.id === data.channel_id) fltr_channel.messages = fltr_channel.messages ? [...fltr_channel.messages, data] : [data]
-    //                 return fltr_channel
-    //             })
-    //         })
-    //     }
-    //     socket.on("message", onMessage)
+        const onMessage = (data) => {
+            setChannels(current_channels => {
+                if (current_channels[data.channel_id].messages) current_channels[data.channel_id].messages.push(data)
+                else current_channels[data.channel_id].messages = [data]
 
-    //     return () => socket.off("message", onMessage)
-    // }, [Object.values(channels)])
+                return {...current_channels}
+            })
+        }
+        socket.on("message", onMessage)
+
+        return () => socket.off("message", onMessage)
+    }, [Object.keys(channels).length])
 
     useEffect(() => {
         if (Object.keys(channels).length) return

@@ -19,9 +19,9 @@ class Functions:
         """
         Create unique ID
         :param creation_time: Epoch creation time
-        :return: Creation time(int)
+        :return: str ID
         """
-        return (int((creation_time - 1155909600) * 1000) << 23) + random.SystemRandom().getrandbits(22)
+        return str((int((float(creation_time) - 1155909600) * 1000) << 23) + random.SystemRandom().getrandbits(22))
     
     @staticmethod
     def verify_email(email):

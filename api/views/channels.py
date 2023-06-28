@@ -3,6 +3,7 @@ import time
 
 import pyotp
 from flask import Blueprint, request
+from __main__ import socketio
 
 from ..database import *
 from ..utils import *
@@ -95,7 +96,7 @@ class Channels:
             return ({"errors": {"users": "Too many users"}}, 406)
         
         creation_time = str(time.time())
-        channel = Channel(str(Functions.create_id(float(creation_time))), name, "generic", user_id, creation_time)
+        channel = Channel(Functions.create_id(creation_time), name, "generic", user_id, creation_time)
         user_channel = UserChannel(user_id, channel.id, creation_time, None, 1)
         
         db.insert_entry(CHANNEL_TABLE, channel)
@@ -139,6 +140,33 @@ class Channels:
             db.insert_entry(USER_CHANNEL_TABLE, UserChannel(member.id, channel.id, time.time()))
 
         return ({"user": member}, 200)
+    
+    @channels.route("/<channel_id>/message", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def send_message(db, user_id, channel_id):
+        if not db.get_entry(CHANNEL_TABLE, channel_id):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
+            return ({"errors": {"channel": "You are not a member"}}, 401)
+        
+        if not (content := request.json.get("content")):
+            return ({"errors": {"message": "Invalid message content"}}, 400)
+        
+        if len(content) > 2000:
+            return ({"errors": {"message": "Message too long"}}, 413)
+        
+        author = db.get_entry(USER_TABLE, user_channel.user_id)
+        create_time = str(time.time())
+
+        message = Message(Functions.create_id(create_time), author.id, channel_id, content, create_time)
+        db.insert_entry(MESSAGE_TABLE, message)
+
+        message = {**message.__dict__, "author": author.__dict__}
+        socketio.send(message, to=channel_id)
+
+        return ({"content": message}, 200)
 
 
     # PATCH

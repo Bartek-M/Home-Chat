@@ -122,9 +122,9 @@ class Database:
                 for data in fetched:
                     message = Message(*data)
 
-                    if (user := users.get(message.user_id)) is None:
-                        user = self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE id='{message.user_id}'").fetchone()
-                        users[message.author] = user
+                    if not (user := users.get(message.author)):
+                        user = self.get_entry(USER_TABLE, message.author)
+                        users[message.author] = user.__dict__
 
                     message.author = user
                     messages.append(message.__dict__)

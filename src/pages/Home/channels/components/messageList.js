@@ -34,9 +34,9 @@ export function MessageList({ channel, close }) {
                     {user.message_display === "standard"
                         ? (
                             channel.messages.map((message, index) => (
-                                (channel.messages[index - 1] && channel.messages[index - 1].author.id === message.author.id && (message.time - channel.messages[index - 1].time) < 360)
+                                (channel.messages[index - 1] && channel.messages[index - 1].author.id === message.author.id && (message.create_time - channel.messages[index - 1].create_time) < 360)
                                     ? <li className="message-list-item repeated-message-list-item container" key={message.id}>
-                                        <div className="message-hidden-time center-container">{formatTime(message.time, "time")}</div>
+                                        <div className="message-hidden-time center-container">{formatTime(message.create_time, "time")}</div>
                                         <div className="message-content">
                                             <div className="message-text">{message.content}</div>
                                         </div>
@@ -46,7 +46,7 @@ export function MessageList({ channel, close }) {
                                         <div className="message-content">
                                             <div className="message-info container">
                                                 <p className="message-author">{message.author.display_name ? message.author.display_name : message.author.name}</p>
-                                                <p className="message-time">{formatTime(message.time)}</p>
+                                                <p className="message-time">{formatTime(message.create_time)}</p>
                                             </div>
                                             <div className="message-text">{message.content}</div>
                                         </div>
@@ -59,7 +59,7 @@ export function MessageList({ channel, close }) {
                         : (
                             channel.messages.map(message => (
                                 <li className="compact-msg container" key={message.id}>
-                                    <div className="compact-msg-time-info">{formatTime(message.time, "time")}</div>
+                                    <div className="compact-msg-time-info">{formatTime(message.create_time, "time")}</div>
                                     <div className="compact-msg-user-info" onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
                                         {message.author.display_name ? message.author.display_name : message.author.name}
                                     </div>

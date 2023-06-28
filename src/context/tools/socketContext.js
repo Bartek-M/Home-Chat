@@ -1,24 +1,21 @@
 import React, { useContext, useEffect } from "react"
+import { useUser } from "../data/userContext"
 
 import { io } from "socket.io-client"
-const socket = io()
+const socket = io({ auth: { token: localStorage.getItem("token") } })
 
 const SocketContext = React.createContext()
 export function useSocket() { return useContext(SocketContext) }
 
 export function SocketProvider({ children }) {
-    useEffect(() => {
-        const onConnect = () => { console.log("CONNECTED") }
-        const onDisconnect = () => console.log("DISCONNECTED")
+    const [, setUser] = useUser()
+    
+    // useEffect(() => {
+    //     const onConnect = () => {}
+    //     socket.on("connect", onConnect)
 
-        socket.on("connect", onConnect)
-        socket.on("disconnect", onDisconnect)
-
-        return () => {
-            socket.off("connect", onConnect)
-            socket.off("disconnect", onDisconnect)
-        }
-    }, [])
+    //     return () => { socket.off("connect", onConnect) }
+    // }, [])
 
     return (
         <SocketContext.Provider value={socket}>
