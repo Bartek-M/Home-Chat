@@ -15,13 +15,22 @@ export function ChannelMembers({ props }) {
     const [menu, setMenu] = useState({ id: null, element: null, type: null, x: 0, y: 0 })
     const [query, setQuery] = useState("")
 
-    const filteredItems = useMemo(() => {
-        if (!channel || !channel.users) return []
+    const sortedMembers = useMemo(() => {
+        if (!channel.users || !Object.keys(channel.users).length) return []
+        return Object.values(channel.users).sort((a, b) => {
+            if (a.name < b.name) return -1
+            if (a.name > b.name) return 1
+            return 0
+        })
+    }, [channel.users])
 
-        return channel.users.filter(member => {
+    const filteredItems = useMemo(() => {
+        if (!sortedMembers.length) return []
+
+        return sortedMembers.filter(member => {
             return member.name.toLowerCase().includes(query.toLowerCase())
         })
-    }, [channel.users, query])
+    }, [sortedMembers, query])
 
     return (
         <div className="settings-edit-card center-column-container">
@@ -82,9 +91,7 @@ export function ChannelMembers({ props }) {
                         ))}
                         <div className="scroller-spacer"></div>
                     </div>
-                    : channel.users
-                        ? <div className="category-text center-container">NO MATCHING FRIENDS</div>
-                        : <div className="center-container"><div className="loading-dots"></div></div>
+                    : <div className="category-text center-container">NO MATCHING FRIENDS</div>
                 }
             </div>
         </div>

@@ -97,39 +97,25 @@ class Database:
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE channel_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():
-                users = []
+                users = {}
 
                 for data in fetched:
                     user_channel = UserChannel(*data)
-                    user = self.get_entry(USER_TABLE, user_channel.user_id).__dict__
+                    user = self.get_entry(USER_TABLE, user_channel.user_id)
 
-                    users.append({
-                        **user,
+                    users[user.id] = {
+                        **user.__dict__,
                         "nick": user_channel.nick,
-                        "join_time": user_channel.join_time,
                         "admin": user_channel.admin
-                    })
+                    }
 
-                return sorted(users, key=lambda x: x["name"]) 
+                return users
             
         if option == "messages":
             self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
 
             if fetched := self.cursor.fetchall():
-                messages = []
-                users = {}
-
-                for data in fetched:
-                    message = Message(*data)
-
-                    if not (user := users.get(message.author)):
-                        user = self.get_entry(USER_TABLE, message.author)
-                        users[message.author] = user.__dict__
-
-                    message.author = user
-                    messages.append(message.__dict__)
-
-                return sorted(messages, key=lambda x: x.get("create_time"))
+                return sorted([Message(*data).__dict__ for data in fetched], key=lambda x: x.get("create_time"))
             
         if option == "user_channel":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
@@ -175,7 +161,7 @@ class Database:
                         "join_time": user_channel.join_time,
                         "last_message": message.create_time if (message := self.get_entry(MESSAGE_TABLE, channel["id"], "channel_id", "id DESC")) else None,
                         "admin": True if user_channel.admin else False,
-                        "users": None,
+                        "users": self.get_channel_stuff(channel["id"], "users"),
                         "messages": None
                     }
 

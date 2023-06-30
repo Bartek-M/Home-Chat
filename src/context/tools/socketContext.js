@@ -1,15 +1,15 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useMemo } from "react"
 import { useUser } from "../data/userContext"
 
 import { io } from "socket.io-client"
-const socket = io({ auth: { token: localStorage.getItem("token") } })
 
 const SocketContext = React.createContext()
 export function useSocket() { return useContext(SocketContext) }
 
 export function SocketProvider({ children }) {
     const [, setUser] = useUser()
-    
+    const socket = useMemo(() => io({ auth: { token: localStorage.getItem("token") } }), [])
+
     // useEffect(() => {
     //     const onConnect = () => {}
     //     socket.on("connect", onConnect)

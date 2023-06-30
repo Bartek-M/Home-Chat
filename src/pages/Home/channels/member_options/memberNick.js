@@ -17,10 +17,7 @@ function changeNick(button, member, channel_id, nick, setChannels, close, setFla
         if (res.message === "200 OK") {
             setChannels(current_channels => {
                 if (current_channels.direct) current_channels[channel_id].display_name = nick.value
-                current_channels[channel_id].users = current_channels[channel_id].users.filter(user => {
-                    if (user.id === member.id) user.nick = nick.value
-                    return user
-                })
+                if (current_channels[channel_id].users[member.id]) current_channels[channel_id].users[member.id].nick = nick.value 
 
                 return current_channels
             })

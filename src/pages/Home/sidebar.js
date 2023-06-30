@@ -8,6 +8,13 @@ function openChannel(channel, activeChannel, setActive) {
     setActive({ channel: channel })
 }
 
+function getLastMessage(channel) {
+    if (channel.messages && channel.messages[channel.messages.length - 1]) return channel.messages[channel.messages.length - 1].create_time
+    if (channel.last_message) return channel.last_message
+
+    return null
+}
+
 export function Sidebar({ settings, card, setSettings, setCard }) {
     const [user,] = useUser()
     const [channels,] = useChannels()
@@ -16,7 +23,13 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
 
     const sortedChannels = useMemo(() => {
         if (!Object.values(channels)) return []
-        return Object.values(channels).sort((a, b) => (b.last_message ? b.last_message : b.join_time) - (a.last_message ? a.last_message : a.join_time))
+
+        return Object.values(channels).sort((a, b) => {
+            const aLastMessage = getLastMessage(a)
+            const bLastMessage = getLastMessage(b)
+
+            return (bLastMessage ? bLastMessage : b.join_time) - (aLastMessage ? aLastMessage : a.join_time)
+        })
     }, [Object.values(channels)])
 
     return (

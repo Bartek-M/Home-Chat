@@ -15,7 +15,7 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
 
         if (res.message === "200 OK" && res.user) {
             setChannels(current_channels => {
-                if (!(current_channels[channel_id].users.some(({ id }) => id === res.user.id))) current_channels[channel_id].users = [res.user, ...current_channels[channel_id].users]
+                if (!current_channels[channel_id].users[res.user.id]) current_channels[channel_id].users[res.user.id] = res.user
                 return current_channels
             })
 
@@ -40,13 +40,12 @@ export function ChannelInvite({ props }) {
     const [query, setQuery] = useState("")
 
     const filteredItems = useMemo(() => {
-        if (!friends || !friends.accepted || !channel.users) return []
+        if (!friends || !friends.accepted) return []
 
         return friends.accepted.filter(friend => {
-            return friend.name.toLowerCase().includes(query.toLowerCase()) && !(channel.users.some(({ id }) => id === friend.id))
+            return friend.name.toLowerCase().includes(query.toLowerCase()) && !channel.users[friend.id]
         })
-    }, [channel.users, friends, query])
-
+    }, [Object.keys(channel.users), friends, query])
 
     return (
         <div className="settings-edit-card center-column-container">
@@ -85,9 +84,7 @@ export function ChannelInvite({ props }) {
                         ))}
                         <div className="scroller-spacer"></div>
                     </div>
-                    : channel.users
-                        ? <div className="category-text center-container">NO MATCHING FRIENDS</div>
-                        : <div className="center-container"><div className="loading-dots"></div></div>
+                    : <div className="category-text center-container">NO MATCHING FRIENDS</div>
                 }
             </div>
         </div>

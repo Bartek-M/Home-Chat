@@ -35,13 +35,13 @@ export function UserCard({ element, member, x, y, close, setCard }) {
             <div className="user-info center-container">
                 <img className="user-card-avatar" src={`/api/images/${member.avatar}.webp`} />
                 <div className="column-container">
-                    {member.display_name && <h3>{member.display_name}</h3>}
-                    <h3 className={member.display_name ? "username" : ""}>{member.name}</h3>
+                    {(member.nick || member.display_name) && <h3>{member.nick || member.display_name}</h3>}
+                    <h3 className={(member.nick || member.display_name || !member.name) ? "username" : ""}>{member.name ? member.name : "Unknown"}</h3>
                 </div>
             </div>
-            <h5 className="container">ID: <p className="edit-card-info">{member.id}</p></h5>
-            <h5 className="container">Created at: <p className="edit-card-info">{formatTime(member.create_time, "date")}</p></h5>
-            {member.id !== user.id &&
+            <h5 className="container">ID: <p className="edit-card-info">{member.id ? member.id : "N/A"}</p></h5>
+            <h5 className="container">Created at: <p className="edit-card-info">{member.create_time ? formatTime(member.create_time, "date") : "N/A"}</p></h5>
+            {(member.id !== user.id && member.name) &&
                 <>
                     {(accepted_status && !active.channel.direct) && <button className="user-card-btn" onClick={e => { e.preventDefault(); openChannel(e.target, member.id, setChannels, setActive, setCard, setFlash) }}>Message</button>}
                     {(!pending_status && !accepted_status) && <button className="user-card-btn" onClick={e => { e.preventDefault(); addFriend(e.target, user.id, member, setFriends, setFlash) }}>Add Friend</button>}
