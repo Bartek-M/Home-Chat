@@ -34,7 +34,8 @@ export function MessageList({ channel, close }) {
                     {user.message_display === "standard"
                         ? (
                             channel.messages.map((message, index) => {
-                                const author = channel.users[message.author] ? channel.users[message.author] : {}
+                                var author = channel.users[message.author] ? channel.users[message.author] : {}
+                                if (message.author === user.id) author = {...author, ...user}
 
                                 if (channel.messages[index - 1] && channel.messages[index - 1].author === message.author && (message.create_time - channel.messages[index - 1].create_time) < 360) return (
                                     <li className="message-list-item repeated-message-list-item container" key={message.id}>
@@ -64,7 +65,8 @@ export function MessageList({ channel, close }) {
                         )
                         : (
                             channel.messages.map(message => {
-                                const author = channel.users[message.author] ? channel.users[message.author] : {}
+                                var author = channel.users[message.author] ? channel.users[message.author] : {}
+                                if (message.author === user.id) author = {...author, ...user}
                                 
                                 return (
                                     <li className="compact-msg container" key={message.id}>
