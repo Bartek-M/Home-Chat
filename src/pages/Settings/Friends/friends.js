@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { useActive, useChannels, useFlash, useFriends, useUser } from "../../../context"
 
 import { apiSend, formatTime, openChannel, addFriend } from "../../../utils"
@@ -11,7 +11,7 @@ function search_user(button, username, searchUser, setSearchUser, setFlash) {
 
     apiSend(button, "userSearch", {
         username: username.value,
-    }, "POST").then(res => {        
+    }, "POST").then(res => {
         if (res.errors) return document.getElementById("search-error").innerText = res.errors.username ? `- ${res.errors.username}` : null
         if (res.message == "200 OK" && res.user) return setSearchUser(res.user)
 
@@ -32,6 +32,26 @@ export function Friends({ props }) {
 
     const [searchUser, setSearchUser] = useState(null)
     const userSearch = useRef()
+
+    const sortedPending = useMemo(() => {
+        if (!friends.pending || !Object.keys(friends.pending).length) return []
+
+        return Object.values(friends.pending).sort((a, b) => {
+            if ((a.display_name || a.name) < (b.display_name || b.name)) return -1
+            if ((a.display_name || a.name) > (b.display_name || b.name)) return 1
+            return 0
+        })
+    }, [friends.pending])
+
+    const sortedAccepted = useMemo(() => {
+        if (!friends.accepted || !Object.keys(friends.accepted).length) return []
+
+        return Object.values(friends.accepted).sort((a, b) => {
+            if ((a.display_name || a.name) < (b.display_name || b.name)) return -1
+            if ((a.display_name || a.name) > (b.display_name || b.name)) return 1
+            return 0
+        })
+    }, [friends.accepted])
 
     return (
         <>
@@ -133,10 +153,10 @@ export function Friends({ props }) {
                     </div>
                 )}
             </form >
-            {(friends && friends.pending && friends.pending.length) ?
+            {sortedPending.length ?
                 <div className="column-container">
                     <p className="extended-category-text">PENDING REQUESTS</p>
-                    {friends.pending.map(friend =>
+                    {sortedPending.map(friend =>
                         <div className="friend-card user-card spaced-container" key={`pending-${friend.id}`}>
                             <div className="center-container">
                                 <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
@@ -170,10 +190,10 @@ export function Friends({ props }) {
                     <hr className="separator" />
                 </div> : null
             }
-            {(friends && friends.accepted && friends.accepted.length) ?
+            {sortedAccepted ?
                 <div className="column-container">
                     <p className="extended-category-text">ALL FRIENDS</p>
-                    {friends.accepted.map(friend =>
+                    {sortedAccepted.map(friend =>
                         <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={(e) => openChannel(e.target, friend.id, setChannels, setActive, card, setFlash, setSettings)}>
                             <div className="center-container">
                                 <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
@@ -205,8 +225,7 @@ export function Friends({ props }) {
                         </div>
                     )
                     }
-                </div>
-                : null
+                </div> : null
             }
         </>
     )

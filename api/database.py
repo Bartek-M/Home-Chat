@@ -172,23 +172,27 @@ class Database:
 
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted='waiting'", [req_id, req_id])
             if fetched := self.cursor.fetchall():
-                friends["pending"] = sorted(
-                    [
-                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
-                        for friend in fetched 
-                    ], 
-                    key=lambda x: x["display_name"] if x["display_name"] else x["name"] 
-                )
+                pending_friends = {}
+
+                for data in fetched:
+                    friend = UserFriend(*data)
+                    user = self.get_entry(USER_TABLE, friend.user_id if friend.user_id != req_id else friend.friend_id)
+
+                    pending_friends[user.id] = {**user.__dict__, "accepted": friend.accepted, "inviting": friend.user_id}
+
+                friends["pending"] = pending_friends
 
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted!='waiting'", [req_id, req_id])
             if fetched := self.cursor.fetchall():
-                friends["accepted"] = sorted(
-                    [
-                        {**(self.get_entry(USER_TABLE, friend[0] if friend[0] != req_id else friend[1]).__dict__), "accepted": friend[2], "inviting": friend[0]} 
-                        for friend in fetched 
-                    ], 
-                    key=lambda x: x["display_name"] if x["display_name"] else x["name"] 
-                )
+                accepted_friends = {}
+
+                for data in fetched:
+                    friend = UserFriend(*data)
+                    user = self.get_entry(USER_TABLE, friend.user_id if friend.user_id != req_id else friend.friend_id)
+                    
+                    accepted_friends[user.id] = {**user.__dict__, "accepted": friend.accepted, "inviting": friend.user_id} 
+
+                friends["accepted"] = accepted_friends
             
             return friends
         
@@ -196,7 +200,10 @@ class Database:
             self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [*req_id, *req_id])
 
             if fetched := self.cursor.fetchone():
-                return {**(self.get_entry(USER_TABLE, fetched[0] if fetched[0] != req_id[0] else fetched[1]).__dict__), "accepted": fetched[2], "inviting": fetched[0]}
+                friend = UserFriend(*fetched)
+                user = self.get_entry(USER_TABLE, friend.user_id if friend.user_id != req_id[0] else friend.friend_id)
+
+                return {**user.__dict__, "accepted": friend.accepted, "inviting": friend.user_id}
                          
         return {}
 

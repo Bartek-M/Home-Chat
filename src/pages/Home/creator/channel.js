@@ -80,21 +80,31 @@ export function Channel({ close }) {
     const [query, setQuery] = useState("")
     const [selected, setSelected] = useState([])
 
-    const filteredItems = useMemo(() => {
-        if (!friends || !friends.accepted) return []
+    const sortedFriends = useMemo(() => {
+        if (!friends.accepted || !Object.keys(friends.accepted).length) return []
 
-        return friends.accepted.filter(friend => {
+        return Object.values(friends.accepted).sort((a, b) => {
+            if ((a.display_name || a.name) < (b.display_name || b.name)) return -1
+            if ((a.display_name || a.name) > (b.display_name || b.name)) return 1
+            return 0
+        })
+    }, [friends.accepted])
+
+    const filteredItems = useMemo(() => {
+        if (!sortedFriends.length) return []
+
+        return sortedFriends.filter(friend => {
             return friend.name.toLowerCase().includes(query.toLowerCase()) && !selected.includes(friend.id)
         })
-    }, [friends, selected, query])
+    }, [sortedFriends, selected, query])
 
     const selectedItems = useMemo(() => {
-        if (!friends || !friends.accepted) return []
+        if (!sortedFriends.length) return []
 
-        return friends.accepted.filter(friend => {
+        return sortedFriends.filter(friend => {
             return selected.includes(friend.id)
         })
-    }, [friends, selected])
+    }, [sortedFriends, selected])
 
     return (
         <div className="column-container">

@@ -61,10 +61,10 @@ export function addFriend(button, user_id, friend, setFriends, setFlash) {
             friend.accepted = "waiting"
             friend.inviting = user_id
             setFriends(current_friends => {
-                if (current_friends.pending && current_friends.pending.some(({ id }) => id === friend.id)) return current_friends
-                if (current_friends.pending) return { ...current_friends, pending: [friend, ...current_friends.pending] }
+                if (!current_friends.pending) current_friends.pending = {}
+                if (!current_friends.pending[friend.id]) current_friends.pending[friend.id] = friend
 
-                return { ...current_friends, pending: [friend] }
+                return current_friends
             })
             return setFlash("Friend request sent")
         }

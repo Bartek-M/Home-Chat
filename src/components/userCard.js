@@ -10,8 +10,8 @@ export function UserCard({ element, member, x, y, close, setCard }) {
     const setFlash = useFlash()
 
     const [friends, setFriends] = useFriends()
-    const accepted_status = friends.accepted ? friends.accepted.find(friend => member.id === friend.id) : null
-    const pending_status = friends.pending ? friends.pending.find(friend => member.id === friend.id) : null
+    const accepted_status = friends.accepted ? friends.accepted[member.id] : null
+    const pending_status = friends.pending ? friends.pending[member.id] : null
 
     const menu = useRef()
 

@@ -18,8 +18,8 @@ export function ChannelMembers({ props }) {
     const sortedMembers = useMemo(() => {
         if (!channel.users || !Object.keys(channel.users).length) return []
         return Object.values(channel.users).sort((a, b) => {
-            if (a.name < b.name) return -1
-            if (a.name > b.name) return 1
+            if ((a.nick || a.display_name || a.name) < (b.nick || b.display_name || b.name)) return -1
+            if ((a.nick || a.display_name || a.name) > (b.nick || b.display_name || b.name)) return 1
             return 0
         })
     }, [channel.users])

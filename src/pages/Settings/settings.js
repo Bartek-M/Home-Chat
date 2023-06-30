@@ -28,7 +28,7 @@ export function Settings({ setSettings, setCard }) {
                         <button className={page === "account" ? "active" : ""} onClick={() => setPage("account")}>Account</button>
                         <button className={page === "security" ? "active" : ""} onClick={() => setPage("security")}>Security</button>
                         <button className={page === "friends" ? "active" : ""} onClick={() => setPage("friends")}>
-                            {(user.notifications && user.notifications_friend && friends.pending && friends.pending.length) ? <div className="notification-dot stng-notification-dot"></div> : null}
+                            {(user.notifications && user.notifications_friend && friends.pending && Object.keys(friends.pending).length) ? <div className="notification-dot stng-notification-dot"></div> : null}
                             Friends
                         </button>
                         <hr className="separator" />
