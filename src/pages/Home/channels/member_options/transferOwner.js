@@ -76,11 +76,11 @@ export function TransferOwner({ props }) {
             <h3>Transfer Ownership</h3>
             <p className="edit-card-info">This will transfer ownership of <strong>{channel.name}</strong> to <strong>{member.name}</strong>. This cannot be undone!</p>
             <div className="center-container">
-                <img className="member-icon-big disabled" src={`/api/images/${user.avatar}.webp`} />
+                <img className="member-icon-big disabled" src={`/api/images/${user.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                 <svg width="32" height="64" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                     <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                 </svg>
-                <img className="member-icon-big" src={`/api/images/${member.avatar}.webp`} />
+                <img className="member-icon-big skeleton" src={`/api/images/${member.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
             </div>
             <p className="edit-card-info">You will no longer have full control over this channel.</p>
             <div className="card-submit-wrapper">

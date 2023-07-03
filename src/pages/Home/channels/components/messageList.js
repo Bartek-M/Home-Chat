@@ -35,7 +35,7 @@ export function MessageList({ channel, close }) {
                         ? (
                             channel.messages.map((message, index) => {
                                 var author = channel.users[message.author] ? channel.users[message.author] : {}
-                                if (message.author === user.id) author = {...author, ...user}
+                                if (message.author === user.id) author = { ...author, ...user }
 
                                 if (channel.messages[index - 1] && channel.messages[index - 1].author === message.author && (message.create_time - channel.messages[index - 1].create_time) < 360) return (
                                     <li className="message-list-item repeated-message-list-item container" key={message.id}>
@@ -48,7 +48,7 @@ export function MessageList({ channel, close }) {
 
                                 return (
                                     <li className="message-list-item container" key={message.id}>
-                                        <img className="avatar" src={`/api/images/${author.avatar}.webp`} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })} />
+                                        <img className="avatar skeleton" src={`/api/images/${author.avatar}.webp`} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                         <div className="message-content">
                                             <div className="message-info container">
                                                 <p className={author.name ? "message-author" : "message-dim-text"}>{(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}</p>
@@ -66,8 +66,8 @@ export function MessageList({ channel, close }) {
                         : (
                             channel.messages.map(message => {
                                 var author = channel.users[message.author] ? channel.users[message.author] : {}
-                                if (message.author === user.id) author = {...author, ...user}
-                                
+                                if (message.author === user.id) author = { ...author, ...user }
+
                                 return (
                                     <li className="compact-msg container" key={message.id}>
                                         <div className="compact-msg-time-info">{formatTime(message.create_time, "time")}</div>

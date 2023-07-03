@@ -110,7 +110,7 @@ export function Channel({ close }) {
         <div className="column-container">
             <div className="spaced-container">
                 <div className="avatar-wrapper center-container" onClick={() => file_input.current.click()}>
-                    <img className="settings-avatar" ref={channel_icon} src={"/api/images/channels/generic.webp"} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} />
+                    <img className="settings-avatar skeleton" ref={channel_icon} src={"/api/images/channels/generic.webp"} onLoad={(e) => e.target.classList.remove("skeleton")} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} />
                     <div className="change-icon center-container absolute-container">
                         CHANGE<br />ICON
                         <input ref={file_input} type="file" accept="image/*" onChange={() => setImage(file_input.current, channel_icon.current)} />
@@ -132,7 +132,7 @@ export function Channel({ close }) {
                 <div className="added-users-list container">
                     <Tooltip text={user.name} note={user.display_name ? user.display_name : null} type="top">
                         <button className="user-icon-wrapper center-container">
-                            <img className="added-user-icon" src={`/api/images/${user.avatar}.webp`} />
+                            <img className="added-user-icon skeleton" src={`/api/images/${user.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                         </button>
                     </Tooltip>
                     <>
@@ -141,7 +141,7 @@ export function Channel({ close }) {
                                 <button className="user-icon-wrapper center-container" key={`selected-${friend.id}`} onClick={() =>
                                     setSelected(current => { return current.filter(frnd => frnd != friend.id) })
                                 }>
-                                    <img className="added-user-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                    <img className="added-user-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 </button>
                             </Tooltip>
                         ))}
@@ -163,7 +163,7 @@ export function Channel({ close }) {
                                 setSelected(current => { return (current.includes(friend.id) ? current.filter(frnd => frnd != friend.id) : [...current, friend.id]) })
                             }>
                                 <div className="center-container">
-                                    <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                    <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                     <div className="column-container">
                                         {friend.display_name
                                             ? <p>{friend.display_name}</p>

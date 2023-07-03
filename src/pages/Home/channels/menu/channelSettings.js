@@ -160,7 +160,7 @@ export function ChannelSettings({ props }) {
                 <>
                     <div className="spaced-container">
                         <div className="avatar-wrapper center-container" onClick={() => file_input.current.click()}>
-                            <img className="settings-avatar" ref={channel_icon} src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} />
+                            <img className="settings-avatar skeleton" ref={channel_icon} src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} onLoad={(e) => e.target.classList.remove("skeleton")} />
                             <div className="change-icon center-container absolute-container">
                                 CHANGE<br />ICON
                                 <input ref={file_input} type="file" accept="image/*" onChange={() => setImage(file_input.current, channel_icon.current)} />

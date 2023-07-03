@@ -82,7 +82,7 @@ export function Friends({ props }) {
                             openChannel(e.target, searchUser.id, setChannels, setActive, card, setFlash, setSettings)
                         }}>
                             <div className="center-container">
-                                <img className="friend-icon" src={`/api/images/${searchUser.avatar}.webp`} />
+                                <img className="friend-icon skeleton" src={`/api/images/${searchUser.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 <div className="column-container">
                                     {searchUser.display_name
                                         ? <p>{searchUser.display_name}</p>
@@ -159,7 +159,7 @@ export function Friends({ props }) {
                     {sortedPending.map(friend =>
                         <div className="friend-card user-card spaced-container" key={`pending-${friend.id}`}>
                             <div className="center-container">
-                                <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 <div className="column-container">
                                     {friend.display_name && <p>{friend.display_name}</p>}
                                     <p className={friend.display_name ? "text-note" : ""}>{friend.name}</p>
@@ -196,7 +196,7 @@ export function Friends({ props }) {
                     {sortedAccepted.map(friend =>
                         <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={(e) => openChannel(e.target, friend.id, setChannels, setActive, card, setFlash, setSettings)}>
                             <div className="center-container">
-                                <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 <div className="column-container">
                                     {friend.display_name
                                         ? <p>{friend.display_name}</p>

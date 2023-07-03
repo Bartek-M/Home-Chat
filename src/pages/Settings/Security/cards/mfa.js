@@ -4,7 +4,7 @@ import { useFlash, useUser } from "../../../../context";
 import { MFA } from "../../../../components"
 import { apiSend, genSecret } from "../../../../utils";
 
-const qrcodes = require("qrcode")
+const qrCodes = require("qrcode")
 
 // Functions
 function enable_mfa(button, setUser, password, setPage, close, setFlash, code, secret) {
@@ -76,11 +76,11 @@ export function MFASetup({ props }) {
         const passw = password.current.value
 
         const secret = generated[0]
-        const formated_code = generated[1]
+        const formatted_code = generated[1]
 
         var qr_code = ""
         const url = `otpauth://totp/${encodeURIComponent(user.email)}?secret=${secret}&issuer=Home%20Chat`
-        qrcodes.toDataURL(url, (e, data_url) => { qr_code = data_url })
+        qrCodes.toDataURL(url, (e, data_url) => { qr_code = data_url })
 
         return (
             <form className="settings-edit-card center-column-container">
@@ -94,7 +94,7 @@ export function MFASetup({ props }) {
                     </button>
                 </div>
                 <div className="spaced-container">
-                    <img style={{ width: "100px", height: "100px", margin: "0 1rem" }} src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Google_Authenticator_for_Android_icon.svg/1200px-Google_Authenticator_for_Android_icon.svg.png" />
+                    <img className="skeleton" style={{ width: "100px", height: "100px", minWidth: "100px", minHeight: "100px", margin: "0 1rem", borderRadius: "50%" }} src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Google_Authenticator_for_Android_icon.svg/1200px-Google_Authenticator_for_Android_icon.svg.png" onLoad={(e) => e.target.classList.remove("skeleton")} />
                     <div className="column-container">
                         <h3 className="card-header-text">Download an authenticator app</h3>
                         <p className="category-text">Download and install <a className="link" href="https://support.google.com/accounts/answer/1066447?hl=en" target="_blank">Google Authenticator</a> for your phone or tablet.</p>
@@ -102,7 +102,7 @@ export function MFASetup({ props }) {
                 </div>
                 <hr className="separator" />
                 <div className="spaced-container">
-                    <img style={{ width: "116px", height: "116px", margin: "0 .5rem" }} src={qr_code} />
+                    <img className="skeleton" style={{ width: "116px", height: "116px", minWidth: "116px", minHeight: "116px", margin: "0 .5rem" }} src={qr_code} onLoad={(e) => e.target.classList.remove("skeleton")} />
                     <div className="spaced-column-container">
                         <div className="column-container">
                             <h3 className="card-header-text">Scan the qr code</h3>
@@ -110,7 +110,7 @@ export function MFASetup({ props }) {
                         </div>
                         <div className="column-container">
                             <h3 className="card-header-text">2FA key (manual entry)</h3>
-                            <p className="category-text">{formated_code}</p>
+                            <p className="category-text">{formatted_code}</p>
                         </div>
                     </div>
                 </div>

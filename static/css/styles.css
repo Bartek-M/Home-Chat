@@ -54,8 +54,9 @@ Version: dev-fbd5a87
     | loading wrapper
     | loading content
     | loading animation
+    | skeleton loading
 
-10. LAYER LEVEL - tooltips, flash messages, context menus
+10. LAYER LEVEL - tooltips, flash messages
     | tooltip
     | flash message
 
@@ -288,7 +289,6 @@ svg {
     font-weight: 700; 
     font-size: 0.75rem; 
     color: var(--FONT_DIM_COLOR); 
-    text-transform: uppercase;
 }
 
 .error-category-text { 
@@ -1181,12 +1181,26 @@ svg {
 }
 
 @keyframes loading-dots {
-  0% {
-    background-color: var(--FONT_COLOR);
-  }
-  50%, 100% {
-    background-color: var(--FONT_DIM_COLOR);
-  }
+    0% {
+        background-color: var(--FONT_COLOR);
+    }
+    50%, 100% {
+        background-color: var(--FONT_DIM_COLOR);
+    }
+}
+
+/* skeleton loading */
+.skeleton {
+    animation: skeleton-loading 1s linear infinite alternate
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: var(--BACKGROUND_COLOR);
+    }
+    100% {
+        background-color: var(--COLOR_3);
+    }
 }
 
 

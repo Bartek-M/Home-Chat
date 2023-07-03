@@ -59,7 +59,7 @@ export function ChannelMembers({ props }) {
                                 <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${member.id}`}>
                                     <div className="center-container">
                                         <button onClick={(e) => setMenu({ id: member.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
-                                            <img className="friend-icon" src={`/api/images/${member.avatar}.webp`} />
+                                            <img className="friend-icon skeleton" src={`/api/images/${member.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                         </button>
                                         <div className="column-container">
                                             {(member.display_name || member.nick)

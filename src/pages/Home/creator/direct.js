@@ -44,7 +44,7 @@ export function Direct({ close }) {
                     {filteredItems.map(friend => (
                         <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => openChannel(e.target, friend.id, setChannels, setActive, close, setFlash)}>
                             <div className="center-container">
-                                <img className="friend-icon" src={`/api/images/${friend.avatar}.webp`} />
+                                <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 <div className="column-container">
                                     {friend.display_name
                                         ? <p>{friend.display_name}</p>

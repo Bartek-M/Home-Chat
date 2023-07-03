@@ -10,7 +10,7 @@ def home():
     return render_template("index.html")
 
 @view.route("/channels/<channel_id>")
-def channel(channel_id):
+def channel(**_):
     return render_template("index.html")
 
 

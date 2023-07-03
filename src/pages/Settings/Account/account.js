@@ -37,7 +37,7 @@ export function Account({ props }) {
             <div className="settings-card column-container">
                 <div className="user-info center-container">
                     <div className="avatar-wrapper center-container" onClick={() => file_input.current.click()}>
-                        <img className="settings-avatar" src={`/api/images/${user.avatar}.webp`} />
+                        <img className="settings-avatar skeleton" src={`/api/images/${user.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                         <div className="change-icon center-container absolute-container">
                             CHANGE<br />AVATAR
                             <input ref={file_input} type="file" accept="image/*" onChange={() => change_avatar(file_input.current, setUser, setFlash)} />

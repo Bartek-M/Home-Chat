@@ -33,7 +33,7 @@ export function UserCard({ element, member, x, y, close, setCard }) {
     return (
         <div className="user-info-card column-container" ref={menu} style={{ top: y + 20, left: x }}>
             <div className="user-info center-container">
-                <img className="user-card-avatar" src={`/api/images/${member.avatar}.webp`} />
+                <img className="user-card-avatar skeleton" src={`/api/images/${member.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                 <div className="column-container">
                     {(member.nick || member.display_name) && <h3>{member.nick || member.display_name}</h3>}
                     <h3 className={(member.nick || member.display_name || !member.name) ? "username" : ""}>{member.name ? member.name : "Unknown"}</h3>

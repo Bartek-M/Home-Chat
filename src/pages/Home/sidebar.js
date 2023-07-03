@@ -64,7 +64,7 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
                         {/* <div className="notification-dot"></div> */}
                         <Tooltip text={channel.name} note={channel.display_name ? channel.display_name : null} type="right">
                             <button className="center-container" onClick={() => openChannel(channel, active.channel, setActive)}>
-                                <img className="main-sidebar-icon" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} />
+                                <img className="main-sidebar-icon skeleton" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                             </button>
                         </Tooltip>
                     </li>
