@@ -36,10 +36,16 @@ class Channels:
         if not db.get_entry(CHANNEL_TABLE, channel_id):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
-        if not db.get_channel_stuff([user_id, channel_id], "user_channel"):
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You are not a member"}}, 401)
 
-        return ({"channel_messages": db.get_channel_stuff(channel_id, "messages")}, 200)
+        current_time = 0
+        
+        if user_channel.notifications:
+            current_time = str(time.time())
+            db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", current_time, "user_channel")
+
+        return ({"channel_messages": db.get_channel_stuff(channel_id, "messages"), "time": current_time if current_time else "0"}, 200)
     
     
     # POST

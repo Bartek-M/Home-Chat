@@ -22,6 +22,7 @@ export function MessageList({ channel, close }) {
 
             setChannels(current_channels => {
                 current_channels[channel.id].messages = res.channel_messages
+                current_channels[channel.id].notifications = res.time
                 return { ...current_channels }
             })
         })

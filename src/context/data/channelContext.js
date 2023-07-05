@@ -18,9 +18,9 @@ export function ChannelsProvider({ children }) {
         const onMessage = (data) => {
             setChannels(current_channels => {
                 if (current_channels[data.channel_id].messages) current_channels[data.channel_id].messages.push(data)
-                else current_channels[data.channel_id].messages = [data]
+                else current_channels[data.channel_id].last_message = data.create_time
 
-                return {...current_channels}
+                return { ...current_channels }
             })
         }
         socket.on("message", onMessage)
