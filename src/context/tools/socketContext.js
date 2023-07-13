@@ -7,11 +7,22 @@ const SocketContext = React.createContext()
 export function useSocket() { return useContext(SocketContext) }
 
 export function SocketProvider({ children }) {
-    const [user, setUser] = useUser()
+    const [, setUser] = useUser()
     const socket = useMemo(() => io({ auth: { token: localStorage.getItem("token") } }), [])
 
     useEffect(() => {
+        const onChange = (data) => {
+            if (!data.setting || data.content === undefined) return
+            setUser(current_user => {
+                if (current_user[data.settings] === data.content) return current_user
+                current_user[data.setting] = data.content
 
+                return { ...current_user }
+            })
+        }
+
+        socket.on("user_change", onChange)
+        return () => socket.off("user_change", onChange)
     }, [])
 
     return (

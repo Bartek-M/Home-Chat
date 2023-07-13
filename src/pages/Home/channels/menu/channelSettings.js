@@ -26,7 +26,6 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
 
             if (res.message === "200 OK") {
                 setChannels(current_channels => {
-                    console.log("HELLO")
                     if (name && name.value !== channel.name) current_channels[channel.id].name = name.value
 
                     if (notifications && notifications.checked != channel.notifications && !notifications.checked) current_channels[channel.id].notifications = "0"

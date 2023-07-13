@@ -23,8 +23,8 @@ export function ChannelsProvider({ children }) {
                 return { ...current_channels }
             })
         }
+        
         socket.on("message", onMessage)
-
         return () => socket.off("message", onMessage)
     }, [Object.keys(channels).length])
 

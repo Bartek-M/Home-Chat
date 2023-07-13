@@ -13,7 +13,6 @@ function update_displayname(button, user, setUser, display_name, close, setFlash
         if (res.errors) return document.getElementById("display-name-error").innerText = res.errors.display_name ? `- ${res.errors.display_name}` : "*"
 
         if (res.message === "200 OK") {
-            setUser((current_user) => { return { ...current_user, display_name: display_name.value } })
             close()
             return setFlash("Display name updated")
         }

@@ -4,6 +4,7 @@ import secrets
 
 import pyotp
 from flask import Blueprint, request
+from __main__ import socketio
 
 from ..database import *
 from ..utils import *
@@ -141,6 +142,7 @@ class Users:
         
         if category == "display_name":
             db.update_entry(USER_TABLE, user_id, "display_name", data if data != "" else None)
+            socketio.emit("user_change", {"setting": "display_name", "content": data if data != "" else None}, to=user_id)
             return 200
 
         if category == "theme":
@@ -148,6 +150,7 @@ class Users:
                 return ({"errors": {"theme": "Invalid theme"}}, 400)
             
             db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+            socketio.emit("user_change", {"setting": "theme", "content": data}, to=user_id)
             return 200
 
         if category == "message_display":
@@ -155,6 +158,7 @@ class Users:
                 return ({"errors": {"message_display": "Invalid message_display"}}, 400)
             
             db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+            socketio.emit("user_change", {"setting": "message_display", "content": data}, to=user_id)
             return 200
 
         if category == "visibility":
@@ -162,6 +166,7 @@ class Users:
                 return ({"errors": {"visibility": "Invalid visibility"}}, 400)
             
             db.update_entry(USER_TABLE, user_id, category, data)
+            socketio.emit("user_change", {"setting": "visibility", "content": data}, to=user_id)
             return 200
 
         # Wrong option 
