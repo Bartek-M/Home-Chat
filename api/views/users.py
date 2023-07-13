@@ -146,35 +146,26 @@ class Users:
         
         if category == "display_name":
             db.update_entry(USER_TABLE, user_id, "display_name", data if data != "" else None)
-            socketio.emit("user_change", {"setting": "display_name", "content": data if data != "" else None}, to=user_id)
-            return 200
-
-        if category == "theme":
+        elif category == "theme":
             if data not in ["auto", "light", "dark"]:
                 return ({"errors": {"theme": "Invalid theme"}}, 400)
             
             db.update_entry(USER_SETTING_TABLE, user_id, category, data)
-            socketio.emit("user_change", {"setting": "theme", "content": data}, to=user_id)
-            return 200
-
-        if category == "message_display":
+        elif category == "message_display":
             if data not in ["standard", "compact"]:
                 return ({"errors": {"message_display": "Invalid message_display"}}, 400)
             
             db.update_entry(USER_SETTING_TABLE, user_id, category, data)
-            socketio.emit("user_change", {"setting": "message_display", "content": data}, to=user_id)
-            return 200
-
-        if category == "visibility":
+        elif category == "visibility":
             if data not in [0, 1]:
                 return ({"errors": {"visibility": "Invalid visibility"}}, 400)
             
             db.update_entry(USER_TABLE, user_id, category, data)
-            socketio.emit("user_change", {"setting": "visibility", "content": data}, to=user_id)
-            return 200
-
-        # Wrong option 
-        return ({"errors": {"category": "Invalid category"}}, 400)
+        else:
+            return ({"errors": {"category": "Invalid category"}}, 400)
+        
+        socketio.emit("user_change", {"setting": category, "content": data}, to=user_id)
+        return 200
     
     @users.route("/<user_id>/settings/mfa", methods=["PATCH"])
     @Decorators.manage_database
