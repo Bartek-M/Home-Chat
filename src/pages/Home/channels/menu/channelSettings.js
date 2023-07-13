@@ -26,11 +26,19 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
 
             if (res.message === "200 OK") {
                 setChannels(current_channels => {
-                    current_channels[channel.id].name = (name && name.value !== channel.name) ? name.value : channel.name
-                    current_channels[channel.id].notifications = (notifications && notifications.checked != channel.notifications) ? (notifications.checked ? "1" : null) : channel.notifications
+                    console.log("HELLO")
+                    if (name && name.value !== channel.name) current_channels[channel.id].name = name.value
 
-                    current_channels[channel.id].nick = (nick && nick.value !== channel.nick) ? nick.value : channel.nick
-                    current_channels[channel.id].users[user_id].nick = nick.value 
+                    if (notifications && notifications.checked != channel.notifications && !notifications.checked) current_channels[channel.id].notifications = "0"
+                    else if (notifications && notifications.checked != channel.notifications && notifications.checked) {
+                        if (current_channels[channel.id].last_message) current_channels[channel.id].notifications = current_channels[channel.id].last_message
+                        else current_channels[channel.id].notifications = "1"
+                    }
+
+                    if (nick && nick.value !== channel.nick) {
+                        current_channels[channel.id].nick = nick.value
+                        if (current_channels[channel.id].users[user_id]) current_channels[channel.id].users[user_id].nick = nick.value
+                    }
 
                     return current_channels
                 })
@@ -193,7 +201,7 @@ export function ChannelSettings({ props }) {
                     className="slider"
                     type="checkbox"
                     ref={notifications}
-                    defaultChecked={channel.notifications ? true : false}
+                    defaultChecked={channel.notifications !== "0" ? true : false}
                     disabled={!user.notifications_message || !user.notifications ? true : false}
                 />
             </div>

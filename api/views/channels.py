@@ -40,8 +40,8 @@ class Channels:
             return ({"errors": {"channel": "You are not a member"}}, 401)
 
         current_time = 0
-        
-        if user_channel.notifications:
+
+        if user_channel.notifications != "0":
             current_time = str(time.time())
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", current_time, "user_channel")
 
@@ -195,7 +195,7 @@ class Channels:
         if (nick := request.json.get("nick")) != user_channel.nick:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "nick", nick, "user_channel")
 
-        notifications = (user_channel.notifications if user_channel.notifications else "1") if request.json.get("notifications") else None
+        notifications = 1 if request.json.get("notifications") else "0"
         if notifications != user_channel.notifications:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", notifications, "user_channel")
 
