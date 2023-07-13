@@ -11,7 +11,17 @@ export function MessageList({ channel, close }) {
     const [menu, setMenu] = useState({ id: null, element: null, type: null, x: 0, y: 0 })
 
     const message_list = useRef()
-    useEffect(() => smoothScroll(message_list.current), [channel.messages ? channel.messages.length : channel.messages])
+    useEffect(() => {
+        setChannels(current_channels => {
+            if (!current_channels[channel.id].notifications || current_channels[channel.id].notifications === "0") return current_channels
+            if (current_channels[channel.id].notifications >= current_channels[channel.id].last_message) return current_channels
+            
+            current_channels[channel.id].notifications = current_channels[channel.id].last_message
+            return { ...current_channels }
+        })
+
+        smoothScroll(message_list.current)
+    }, [channel.messages ? channel.messages.length : channel.messages])
 
     useEffect(() => {
         if (channel.messages) return
@@ -22,7 +32,6 @@ export function MessageList({ channel, close }) {
 
             setChannels(current_channels => {
                 current_channels[channel.id].messages = res.channel_messages
-                if (current_channels[channel.id].notifications && current_channels[channel.id].notifications !== "0") current_channels[channel.id].notifications = res.time
                 return { ...current_channels }
             })
         })
@@ -113,7 +122,7 @@ export function MessageList({ channel, close }) {
                     }
                     <div className="scroller-spacer"></div>
                 </>
-                : <div className="category-text center-container" style={{marginTop: "1rem"}}>NO MESSAGE HISTORY</div>
+                : <div className="category-text center-container" style={{ marginTop: "1rem" }}>NO MESSAGE HISTORY</div>
             }
         </div>
     )

@@ -9,7 +9,7 @@ export function UserCard({ element, member, x, y, close, setCard }) {
     const [active, setActive] = useActive()
     const setFlash = useFlash()
 
-    const [friends, setFriends] = useFriends()
+    const [friends,] = useFriends()
     const accepted_status = friends.accepted ? friends.accepted[member.id] : null
     const pending_status = friends.pending ? friends.pending[member.id] : null
 
@@ -44,7 +44,7 @@ export function UserCard({ element, member, x, y, close, setCard }) {
             {(member.id !== user.id && member.name) &&
                 <>
                     {(accepted_status && !active.channel.direct) && <button className="user-card-btn" onClick={e => { e.preventDefault(); openChannel(e.target, member.id, setChannels, setActive, setCard, setFlash) }}>Message</button>}
-                    {(!pending_status && !accepted_status) && <button className="user-card-btn" onClick={e => { e.preventDefault(); addFriend(e.target, user.id, member, setFriends, setFlash) }}>Add Friend</button>}
+                    {(!pending_status && !accepted_status) && <button className="user-card-btn" onClick={e => { e.preventDefault(); addFriend(e.target, member, setFlash) }}>Add Friend</button>}
                     {pending_status && <button className="user-card-btn" disabled>Pending</button>}
                 </>
             }

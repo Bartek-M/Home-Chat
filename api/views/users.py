@@ -18,14 +18,20 @@ class Users:
     users = Blueprint("users", __name__)
 
     # GET
-    @users.route("/<user_id>")
+    @users.route("/@me")
     @Decorators.manage_database
     @Decorators.auth
-    def get_user(db, user_id):
-        if (usr := db.get_entry(USER_TABLE, user_id)):
-            return (usr, 200)
-        
-        return None
+    def get_me(db, user_id):
+        user = db.get_entry(USER_TABLE, user_id)
+        settings = db.get_entry(USER_SETTING_TABLE, user_id)
+
+        if not user or not settings:
+            return 404
+
+        return ({"user": {
+            **user.__dict__,
+            **settings.__dict__
+        }}, 200)
     
     @users.route("/<user_id>/channels")
     @Decorators.manage_database
@@ -38,15 +44,6 @@ class Users:
     @Decorators.auth
     def get_friends(db, user_id):
         return ({"user_friends": db.get_user_stuff(user_id, "friends")}, 200)
-
-    @users.route("/<user_id>/settings")
-    @Decorators.manage_database
-    @Decorators.auth
-    def get_settings(db, user_id):
-        if (user := db.get_entry(USER_TABLE, user_id).__dict__) and (stng := db.get_entry(USER_SETTING_TABLE, user_id).__dict__):
-            return ({"user": {**user, **stng}}, 200)
-        
-        return None
     
 
     # POST
@@ -79,14 +76,21 @@ class Users:
         if friend_id == user_id: 
             return ({"errors": {"friend": "Invalid friend"}}, 406)
         
-        if not db.get_entry(USER_TABLE, friend_id):
+        if not (friend := db.get_entry(USER_TABLE, friend_id)):
             return ({"errors": {"friend": "User does not exist"}}, 400)
         
         if db.get_user_stuff([user_id, friend_id], "friend"):
             return ({"errors": {"friend": "Already added"}}, 400)
         
         db.insert_entry(USER_FRIENDS_TABLE, UserFriend(user_id, friend_id))
-        return 200
+
+        invited_friend = {**friend.__dict__, "accepted": "waiting", "inviting": user_id}
+        inviting_friend = {**db.get_entry(USER_TABLE, user_id).__dict__, "accepted": "waiting", "inviting": user_id}
+
+        socketio.emit("friends_change", {"action": "add", "friend": invited_friend}, to=user_id)
+        socketio.emit("friends_change", {"action": "add", "friend": inviting_friend}, to=friend_id)
+
+        return ({"friend": invited_friend}, 200)
 
 
     # PATCH
@@ -205,8 +209,7 @@ class Users:
             db.update_entry(USER_SECRET_TABLE, user_id, "mfa_code", None)
 
             return 200
-        
-        # Wrong option  
+
         return ({"errors": {"option": "Invalid option"}}, 400)
     
     @users.route("/<user_id>/friends/confirm", methods=["PATCH"])
@@ -218,9 +221,6 @@ class Users:
 
         if friend_id == user_id: 
             return ({"errors": {"friend": "Invalid friend"}}, 406)
-        
-        if not db.get_entry(USER_TABLE, friend_id):
-            return ({"errors": {"friend": "User does not exist"}}, 400)
 
         if not (friend := db.get_user_stuff([user_id, friend_id], "friend")):
             return ({"errors": {"friend": "No friend connection"}}, 400)
@@ -231,9 +231,17 @@ class Users:
         if friend.get("accepted") != "waiting":
             return ({"errors": {"friend": "Already confirmed"}}, 406)
         
-        db.update_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "accepted", current_time := time.time(), "friend")
-        return ({"time": current_time}, 200)
-    
+        current_time = time.time()
+        db.update_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "accepted", current_time, "friend")
+
+        user = {**db.get_entry(USER_TABLE, user_id).__dict__, "accepted": current_time, "inviting": friend.get("inviting") }
+        friend = {**friend, "accepted": current_time}
+
+        socketio.emit("friends_change", {"action": "confirm", "friend": friend}, to=user_id)
+        socketio.emit("friends_change", {"action": "confirm", "friend": user}, to=friend_id)
+
+        return ({"friend": friend}, 200)
+
     @users.route("/<user_id>/notifications/", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
@@ -304,4 +312,8 @@ class Users:
             return ({"errors": {"friend": "No friend connection"}}, 400)
         
         db.delete_entry(None, [user_id, friend_id], option="user_friend")
-        return 200
+
+        socketio.emit("friends_change", {"action": "remove", "friend": friend_id}, to=user_id)
+        socketio.emit("friends_change", {"action": "remove", "friend": user_id}, to=friend_id)
+
+        return ({"friend": friend_id}, 200)

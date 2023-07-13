@@ -5,6 +5,15 @@ const API_PAGES = {
     authRegister: () => `auth/register`,
     authVerify: () => `auth/verify`,
 
+    // User data
+    me: () => `users/@me`,
+    userSearch: () => `users/search`,
+    userChannels: (value) => `users/${value}/channels`,
+
+    userSettings: (value) => `users/${value}/settings`,
+    userMFA: (value) => `users/${value}/settings/mfa`,
+    userDelete: (value) => `users/${value}/delete`,
+
     // Channel data
     channelUsers: (value) => `channels/${value}/users`,
     channelMessages: (value) => `channels/${value}/messages`,
@@ -25,15 +34,6 @@ const API_PAGES = {
     memberAdmin: (value) => `channels/${value[0]}/users/${value[1]}/admin`,
     memberKick: (value) => `channels/${value[0]}/users/${value[1]}/kick`,
     transferOwner: (value) => `channels/${value[0]}/users/${value[1]}/owner`,
-
-    // User data
-    user: (value) => `users/${value}`,
-    userSearch: () => `users/search`,
-    userChannels: (value) => `users/${value}/channels`,
-    userSettings: (value) => `users/${value}/settings`,
-
-    userMFA: (value) => `users/${value}/settings/mfa`,
-    userDelete: (value) => `users/${value}/delete`,
 
     // Friends
     userFriends: (value) => `users/${value}/friends`,

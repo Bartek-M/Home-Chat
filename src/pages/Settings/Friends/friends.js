@@ -41,7 +41,7 @@ export function Friends({ props }) {
             if ((a.display_name || a.name) > (b.display_name || b.name)) return 1
             return 0
         })
-    }, [friends.pending])
+    }, [friends.pending ? Object.keys(friends.pending).length : friends.pending])
 
     const sortedAccepted = useMemo(() => {
         if (!friends.accepted || !Object.keys(friends.accepted).length) return []
@@ -51,7 +51,7 @@ export function Friends({ props }) {
             if ((a.display_name || a.name) > (b.display_name || b.name)) return 1
             return 0
         })
-    }, [friends.accepted])
+    }, [friends.accepted ? Object.keys(friends.accepted).length : friends.accepted])
 
     return (
         <>
@@ -98,7 +98,7 @@ export function Friends({ props }) {
                             <div className="center-container">
                                 {!searchUser.accepted && (
                                     <Tooltip text="Add" type="top">
-                                        <button className="add-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); addFriend(e.target, user.id, searchUser, setFriends, setFlash) }}>
+                                        <button className="add-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); addFriend(e.target, searchUser, setFlash) }}>
                                             <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                 <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -116,7 +116,7 @@ export function Friends({ props }) {
                                             </button>
                                         </Tooltip>
                                         <Tooltip text="Remove" type="top">
-                                            <button className="remove-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); removeFriend(e.target, searchUser.id, setFriends, setFlash) }}>
+                                            <button className="remove-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); removeFriend(e.target, searchUser.id, setFlash) }}>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                     <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -129,7 +129,7 @@ export function Friends({ props }) {
                                     <>
                                         {searchUser.inviting !== user.id &&
                                             <Tooltip text="Confirm" type="top">
-                                                <button className="add-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); confirmFriend(e.target, searchUser, setFriends, setFlash) }}>
+                                                <button className="add-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); confirmFriend(e.target, searchUser, setFlash) }}>
                                                     <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                         <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                         <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -138,7 +138,7 @@ export function Friends({ props }) {
                                             </Tooltip>
                                         }
                                         <Tooltip text="Decline" type="top">
-                                            <button className="remove-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); declineFriend(e.target, searchUser.id, setFriends, setFlash) }}>
+                                            <button className="remove-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); declineFriend(e.target, searchUser.id, setFlash) }}>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                     <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -168,7 +168,7 @@ export function Friends({ props }) {
                             <div className="center-container">
                                 {friend.inviting !== user.id &&
                                     <Tooltip text="Confirm" type="top">
-                                        <button className="add-friend-btn center-container" onClick={(e) => { e.stopPropagation(); confirmFriend(e.target, friend, setFriends, setFlash) }}>
+                                        <button className="add-friend-btn center-container" onClick={(e) => { e.stopPropagation(); confirmFriend(e.target, friend, setFlash) }}>
                                             <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                 <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -177,7 +177,7 @@ export function Friends({ props }) {
                                     </Tooltip>
                                 }
                                 <Tooltip text="Decline" type="top">
-                                    <button className="remove-friend-btn center-container" onClick={(e) => { e.stopPropagation(); declineFriend(e.target, friend.id, setFriends, setFlash) }}>
+                                    <button className="remove-friend-btn center-container" onClick={(e) => { e.stopPropagation(); declineFriend(e.target, friend.id, setFlash) }}>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                             <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
@@ -190,7 +190,7 @@ export function Friends({ props }) {
                     <hr className="separator" />
                 </div> : null
             }
-            {sortedAccepted ?
+            {sortedAccepted.length ?
                 <div className="column-container">
                     <p className="extended-category-text">ALL FRIENDS</p>
                     {sortedAccepted.map(friend =>
@@ -214,7 +214,7 @@ export function Friends({ props }) {
                                     </button>
                                 </Tooltip>
                                 <Tooltip text="Remove" type="top">
-                                    <button className="remove-friend-btn center-container" onClick={(e) => { e.stopPropagation(); removeFriend(e.target, friend.id, setFriends, setFlash) }}>
+                                    <button className="remove-friend-btn center-container" onClick={(e) => { e.stopPropagation(); removeFriend(e.target, friend.id, setFlash) }}>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                             <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />

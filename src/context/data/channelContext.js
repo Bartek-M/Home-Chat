@@ -13,20 +13,20 @@ export function ChannelsProvider({ children }) {
     const socket = useSocket()
 
     useEffect(() => {
-        if (!Object.keys(channels).length) return
-
         const onMessage = (data) => {
             setChannels(current_channels => {
+                if (!current_channels[data.channel_id]) return current_channels
+
                 if (current_channels[data.channel_id].messages) current_channels[data.channel_id].messages.push(data)
-                else current_channels[data.channel_id].last_message = data.create_time
+                current_channels[data.channel_id].last_message = data.create_time
 
                 return { ...current_channels }
             })
         }
-        
+
         socket.on("message", onMessage)
         return () => socket.off("message", onMessage)
-    }, [Object.keys(channels).length])
+    }, [])
 
     useEffect(() => {
         if (Object.keys(channels).length) return

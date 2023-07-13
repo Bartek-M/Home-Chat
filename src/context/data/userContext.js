@@ -18,7 +18,7 @@ export function UserProvider({ children }) {
     useEffect(() => {
         if (user) return
 
-        apiGet("userSettings", "@me").then(res => {
+        apiGet("me").then(res => {
             if (res.message === "401 Unauthorized") { navigator("/login"); return setFlash("Not logged in!", "error") }
             if (res.message === "403 Forbidden") { navigator("/login"); return setFlash("Logged out!", "error") }
             if (!res.user || !res.user.id) return setFlash("Couldn't load user!", "error")

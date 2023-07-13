@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFriends, useUser } from "../../context";
 
 import { version, userOS } from "../../utils/"
@@ -6,6 +6,7 @@ import Page from "./pageContent"
 
 export function Settings({ setSettings, setCard }) {
     const [page, setPage] = useState("account")
+    const settingsDropdown = useRef()
 
     const [user,] = useUser()
     const [friends,] = useFriends()
@@ -13,11 +14,11 @@ export function Settings({ setSettings, setCard }) {
     return (
         <>
             <div className="settings absolute-container">
-                <div className="settings-sidebar-wrapper scroller-container" id="settings-dropdown">
+                <div className="settings-sidebar-wrapper scroller-container" ref={settingsDropdown}>
                     <nav className="settings-sidebar column-container">
                         <div className="spaced-container">
                             <h2 className="sidebar-title"><a href="/home">Home Chat</a></h2>
-                            <button className="center-container" id="settings-dropdown-btn" onClick={() => { document.getElementById("settings-dropdown").classList.toggle("active") }}>
+                            <button className="center-container" id="settings-dropdown-btn" onClick={() => { settingsDropdown.current.classList.toggle("active") }}>
                                 <svg width="24" height="24" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
                                     <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" />
                                 </svg>

@@ -61,7 +61,12 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
                 {sortedChannels && sortedChannels.map(channel => (
                     <li className={`main-sidebar-item center-container ${(active.channel && channel.id === active.channel.id) ? "active" : ""}`} key={`channel-${channel.id}`}>
                         <div className="main-sidebar-pill"></div>
-                        {((user.notifications && user.notifications_message && channel.notifications && channel.notifications !== "0") && (channel.last_message > channel.notifications)) ? <div className="notification-dot"></div> : null}
+                        {(
+                            (user.notifications && user.notifications_message) &&
+                            (active.channel && channel.id !== active.channel.id) &&
+                            (channel.notifications && channel.notifications !== "0") &&
+                            (channel.last_message > channel.notifications)
+                        ) ? <div className="notification-dot"></div> : null}
                         <Tooltip text={channel.name} note={channel.display_name ? channel.display_name : null} type="right">
                             <button className="center-container" onClick={() => openChannel(channel, active.channel, setActive)}>
                                 <img className="main-sidebar-icon skeleton" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />

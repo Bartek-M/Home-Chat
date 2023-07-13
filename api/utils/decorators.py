@@ -51,7 +51,7 @@ class Decorators:
             if verify_code == "invalid":
                 return 401
             
-            return None
+            return 401
         
         wrapper.__name__ = func.__name__
         return wrapper
