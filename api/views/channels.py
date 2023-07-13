@@ -151,7 +151,7 @@ class Channels:
         if not db.get_entry(CHANNEL_TABLE, channel_id):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
-        if not db.get_channel_stuff([user_id, channel_id], "user_channel"):
+        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You are not a member"}}, 401)
         
         if not (content := request.json.get("content")):
@@ -159,11 +159,13 @@ class Channels:
         
         if len(content) > 2000:
             return ({"errors": {"message": "Message too long"}}, 413)
-        
 
         create_time = str(time.time())
         message = Message(Functions.create_id(create_time), user_id, channel_id, content, create_time)
         db.insert_entry(MESSAGE_TABLE, message)
+
+        if user_channel.notifications != "0":
+            db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", create_time, "user_channel")
 
         socketio.send(message.__dict__, to=channel_id)
         return ({"content": message.__dict__}, 200)

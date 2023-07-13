@@ -21,7 +21,7 @@ export function MessageList({ channel, close }) {
         })
 
         smoothScroll(message_list.current)
-    }, [channel.messages ? channel.messages.length : channel.messages])
+    }, [channel.messages ? channel.messages.length : channel.messages, channel.id])
 
     useEffect(() => {
         if (channel.messages) return
