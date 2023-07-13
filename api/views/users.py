@@ -254,21 +254,18 @@ class Users:
             
         if option == "notifications":
             db.update_entry(USER_TABLE, user_id, "notifications", position)
-            return ({"position": position}, 200)
-        
-        elif option == "message":
+        elif option == "notifications_message":
             db.update_entry(USER_SETTING_TABLE, user_id, "notifications_message", position)
-            return ({"position": position}, 200)
-        
-        elif option == "friend":
+        elif option == "notifications_friend":
             db.update_entry(USER_SETTING_TABLE, user_id, "notifications_friend", position)
-            return ({"position": position}, 200)
+        elif option == "notifications_changelog":
+            position = "1" if position else None
+            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_changelog", position)
+        else:
+            return ({"errors": {"option": "Invalid option"}}, 400)
 
-        elif option == "changelog":
-            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_changelog", "1" if position else None)
-            return ({"position": "1" if position else None}, 200)
-
-        return ({"errors": {"option": "Invalid option"}}, 400)
+        socketio.emit("user_change", {"setting": option, "content": position}, to=user_id)
+        return ({"position": position}, 200)
         
     
     # DELETE

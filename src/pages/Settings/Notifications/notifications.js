@@ -17,16 +17,8 @@ function set_notifications(button, option, position, setUser, setFlash) {
         }
 
         if (res.message === "200 OK" && res.position !== undefined) {
-            if (option === "notifications") {
-                setUser(current_user => { return { ...current_user, notifications: res.position } })
-                return setFlash(`${res.position ? "Enabled" : "Disabled"} notifications`)
-            }
-
-            setUser(current_user => {
-                current_user[`notifications_${option}`] = res.position
-                return current_user
-            })
-            return setFlash(`${res.position ? "Enabled" : "Disabled"} ${option} notifications`)
+            if (option === "notifications") return setFlash(`${res.position ? "Enabled" : "Disabled"} notifications`)
+            return setFlash(`${res.position ? "Enabled" : "Disabled"} ${option.replace("_", " ")}`)
         }
 
         if (res.message) return setFlash(res.message, "error")
@@ -49,7 +41,7 @@ export function Notifications() {
                 <input
                     className="slider"
                     type="checkbox"
-                    defaultChecked={user.notifications ? true : false}
+                    checked={user.notifications ? true : false}
                     onChange={e => set_notifications(e.target, "notifications", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
@@ -63,9 +55,9 @@ export function Notifications() {
                 <input
                     className="slider"
                     type="checkbox"
-                    defaultChecked={user.notifications_message ? true : false}
+                    checked={user.notifications_message ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications(e.target, "message", e.target.checked ? 1 : 0, setUser, setFlash)}
+                    onChange={e => set_notifications(e.target, "notifications_message", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
             <div className="spaced-container">
@@ -76,9 +68,9 @@ export function Notifications() {
                 <input
                     className="slider"
                     type="checkbox"
-                    defaultChecked={user.notifications_friend ? true : false}
+                    checked={user.notifications_friend ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications(e.target, "friend", e.target.checked ? 1 : 0, setUser, setFlash)}
+                    onChange={e => set_notifications(e.target, "notifications_friend", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
 
@@ -91,9 +83,9 @@ export function Notifications() {
                 <input
                     className="slider"
                     type="checkbox"
-                    defaultChecked={user.notifications_changelog ? true : false}
+                    checked={user.notifications_changelog ? true : false}
                     disabled={!user.notifications ? true : false}
-                    onChange={e => set_notifications(e.target, "changelog", e.target.checked ? 1 : 0, setUser, setFlash)}
+                    onChange={e => set_notifications(e.target, "notifications_changelog", e.target.checked ? 1 : 0, setUser, setFlash)}
                 />
             </div>
         </>
