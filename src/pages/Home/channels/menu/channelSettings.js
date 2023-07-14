@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { useActive, useChannels, useFlash, useUser } from "../../../../context"
 
 import { MFA } from "../../../../components"
@@ -25,18 +25,6 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
             }
 
             if (res.message === "200 OK") {
-                setChannels(current_channels => {
-                    if (name && name.value !== channel.name) current_channels[channel.id].name = name.value
-
-                    if (notifications && notifications.checked != channel.notifications && !notifications.checked) current_channels[channel.id].notifications = "0"
-                    else if (notifications && notifications.checked != channel.notifications && notifications.checked) {
-                        if (current_channels[channel.id].last_message) current_channels[channel.id].notifications = current_channels[channel.id].last_message
-                        else current_channels[channel.id].notifications = "1"
-                    }
-
-                    return current_channels
-                })
-
                 if (!(img_file && img_file.files && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp"))) close()
                 return setFlash("Settings saved")
             }
@@ -51,25 +39,19 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
         const form_data = new FormData()
         form_data.append("image", user_file, "untitled.jpg")
 
-        apiFile("icon", form_data, channel.id).then(img_res => {
-            if (img_res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
-
-            if (img_res.errors) {
-                if (img_res.errors.image) setFlash(img_res.errors.image, "error")
-                if (img_res.errors.channel) setFlash(img_res.errors.channel, "error")
+        apiFile("icon", form_data, channel.id).then(res => {
+            if (res.errors) {
+                if (res.errors.image) setFlash(res.errors.image, "error")
+                if (res.errors.channel) setFlash(res.errors.channel, "error")
                 return
             }
 
-            if (img_res.message === "200 OK" && img_res.image) {
-                setChannels(current_channels => {
-                    current_channels[channel.id].icon = img_res.image
-                    return current_channels
-                })
-
+            if (res.message === "200 OK" && res.image) {
                 close()
                 return setFlash("Settings saved")
             }
 
+            if (res.message) return setFlash(res.message, "error")
             setFlash("Something went wrong!", "error")
         })
     }
@@ -115,6 +97,9 @@ export function ChannelSettings({ props }) {
 
     const [active,] = useActive()
     const channel = active.channel
+
+    const [checked, setChecked] = useState(false)
+    useEffect(() => { setChecked(channel.notifications !== "0" ? true : false) }, [channel.notifications])
 
     const channel_name = useRef()
     const nick = useRef()
@@ -195,8 +180,9 @@ export function ChannelSettings({ props }) {
                     className="slider"
                     type="checkbox"
                     ref={notifications}
-                    defaultChecked={channel.notifications !== "0" ? true : false}
+                    checked={checked}
                     disabled={!user.notifications_message || !user.notifications ? true : false}
+                    onChange={() => setChecked(checked => !checked)}
                 />
             </div>
             {!channel.direct && channel.owner === user.id &&

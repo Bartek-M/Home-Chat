@@ -2,6 +2,7 @@ import os
 import secrets
 
 from flask import Blueprint, request, send_file
+from __main__ import socketio
 
 from ..database import *
 from ..utils import *
@@ -83,5 +84,6 @@ class Images:
         file_name = f"{channel_id}{secrets.token_hex(2)}"
         img.save(f"{ICONS_FOLDER}{file_name}.webp")
         db.update_entry(CHANNEL_TABLE, channel_id, "icon", file_name)
-    
+
+        socketio.emit("channel_change", {"channel_id": channel_id, "setting": "icon", "content": file_name}, to=channel_id)
         return ({"image": file_name}, 200)

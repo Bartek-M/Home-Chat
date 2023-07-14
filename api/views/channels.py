@@ -191,6 +191,7 @@ class Channels:
                 return ({"errors": {"channel": "You are not a stuff member"}}, 403)
 
             db.update_entry(CHANNEL_TABLE, channel_id, "name", name)
+            socketio.emit("channel_change", {"channel_id": channel_id, "setting": "name", "content": name}, to=channel_id)
 
         if (nick := request.json.get("nick")) != user_channel.nick:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "nick", nick, "user_channel")
@@ -199,6 +200,7 @@ class Channels:
         notifications = 1 if request.json.get("notifications") else "0"
         if notifications != user_channel.notifications:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", notifications, "user_channel")
+            socketio.emit("channel_change", {"channel_id": channel_id, "setting": "notifications", "content": notifications}, to=user_id)
 
         return 200
     
@@ -278,6 +280,7 @@ class Channels:
             return ({"errors": {"code": "Invalid two-factor code"}}, 400)
 
         db.update_entry(CHANNEL_TABLE, channel_id, "owner", member_id)
+        socketio.emit("channel_change", {"channel_id": channel_id, "setting": "owner", "content": member_id}, to=channel_id)
         return 200
     
 

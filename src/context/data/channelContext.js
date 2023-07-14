@@ -27,6 +27,22 @@ export function ChannelsProvider({ children }) {
             })
         }
 
+        const onChannelChange = (data) => {
+            const channel_id = data.channel_id
+            const setting = data.setting
+            const content = data.content
+
+            if (!channel_id || !setting || content === undefined) return
+
+            setChannels(current_channels => {
+                if (!current_channels[channel_id]) return current_channels
+                if (current_channels[channel_id][setting] === content) return current_channels 
+
+                current_channels[channel_id][setting] = content
+                return { ...current_channels }
+            })
+        }
+
         const onMemberChange = (data) => {
             const channel_id = data.channel_id
             const member_id = data.member_id
@@ -35,11 +51,11 @@ export function ChannelsProvider({ children }) {
 
             if (!channel_id || !member_id || !setting || content === undefined) return
 
-            setChannels((current_channels) => {
+            setChannels(current_channels => {
                 if (!current_channels[channel_id] || !current_channels[channel_id].users[member_id]) return current_channels
 
                 if (setting === "nick" && user.id !== member_id && current_channels[channel_id].direct) current_channels[channel_id].display_name = content
-                if (user.id === member_id) current_channels[channel_id][setting] = [content]
+                if (user.id === member_id) current_channels[channel_id][setting] = content
 
                 current_channels[channel_id].users[member_id][setting] = content
                 return { ...current_channels }
@@ -47,10 +63,12 @@ export function ChannelsProvider({ children }) {
         }
 
         socket.on("message", onMessage)
+        socket.on("channel_change", onChannelChange)
         socket.on("member_change", onMemberChange)
 
         return () => {
             socket.off("message", onMessage)
+            socket.off("channel_change", onChannelChange)
             socket.off("member_change", onMemberChange)
         }
     }, [])
