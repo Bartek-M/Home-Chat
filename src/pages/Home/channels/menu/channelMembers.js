@@ -78,7 +78,7 @@ export function ChannelMembers({ props }) {
                                     {(menu.id === member.id && menu.type === "userCard") &&
                                         createPortal(<UserCard element={menu.element} member={member} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
                                     }
-                                    {((channel.owner !== member.id && member.id !== user.id) && (channel.owner === user.id || channel.admin)) &&
+                                    {((channel.owner !== member.id && member.id !== user.id) && (channel.owner === user.id || channel.admin)) ?
                                         <>
                                             <button className="member-options-btn center-container" onClick={(e) => setMenu({ id: member.id, element: e.target, type: "options", x: e.target.getBoundingClientRect().left, y: e.target.getBoundingClientRect().top })}>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
@@ -88,7 +88,7 @@ export function ChannelMembers({ props }) {
                                             {(menu.id === member.id && menu.type === "options") &&
                                                 createPortal(<OptionsMenu element={menu.element} member={member} channel={channel} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
                                             }
-                                        </>
+                                        </> : null
                                     }
                                 </div>
                             )
