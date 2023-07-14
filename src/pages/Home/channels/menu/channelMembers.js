@@ -22,7 +22,7 @@ export function ChannelMembers({ props }) {
             if ((a.nick || a.display_name || a.name) > (b.nick || b.display_name || b.name)) return 1
             return 0
         })
-    }, [channel.users])
+    }, [Object.values(channel.users)])
 
     const filteredItems = useMemo(() => {
         if (!sortedMembers.length) return []

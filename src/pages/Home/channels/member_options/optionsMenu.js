@@ -10,14 +10,7 @@ function setAdmin(button, member, channel_id, setChannels, setFlash) {
             if (res.errors.user) return setFlash(res.errors.user, "error")
         }
 
-        if (res.message === "200 OK") {
-            setChannels(current_channels => {
-                if (current_channels[channel_id].users[member.id]) current_channels[channel_id].users[member.id].admin = res.admin_status ? 1 : 0
-                return current_channels
-            })
-
-            return setFlash(res.admin_status ? `Set ${member.name} as admin` : `Removed ${member.name} as admin`)
-        }
+        if (res.message === "200 OK") return setFlash(res.admin_status ? `Set ${member.name} as admin` : `Removed ${member.name} as admin`)
 
         if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")

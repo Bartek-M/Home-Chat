@@ -3,6 +3,7 @@ import time
 
 import pyotp
 from flask import Blueprint, request
+from flask_socketio import rooms, leave_room
 from __main__ import socketio
 
 from ..database import *
@@ -193,6 +194,7 @@ class Channels:
 
         if (nick := request.json.get("nick")) != user_channel.nick:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "nick", nick, "user_channel")
+            socketio.emit("member_change", {"channel_id": channel_id, "member_id": user_id, "setting": "nick", "content": nick}, to=channel_id)
 
         notifications = 1 if request.json.get("notifications") else "0"
         if notifications != user_channel.notifications:
@@ -220,6 +222,7 @@ class Channels:
             return ({"errors": {"nick": "Invalid nickname"}}, 400)
 
         db.update_entry(USER_CHANNEL_TABLE, [member_id, channel_id], "nick", nick, "user_channel")
+        socketio.emit("member_change", {"channel_id": channel_id, "member_id": member_id, "setting": "nick", "content": nick}, to=channel_id)
         return 200
 
     @channels.route("/<channel_id>/users/<member_id>/admin", methods=["PATCH"])
@@ -247,6 +250,7 @@ class Channels:
         admin_status = 0 if member_channel.admin else 1
         db.update_entry(USER_CHANNEL_TABLE, [member_id, channel_id], "admin", admin_status, "user_channel")
 
+        socketio.emit("member_change", {"channel_id": channel_id, "member_id": member_id, "setting": "admin", "content": admin_status}, to=channel_id)
         return ({"admin_status": admin_status}, 200)
 
     @channels.route("/<channel_id>/users/<member_id>/owner", methods=["PATCH"])
@@ -321,7 +325,7 @@ class Channels:
         if len(db.get_channel_stuff(channel_id, "users")) <= 1:
             db.delete_entry(None, channel_id, option="channel")
             return 200
-
+        
         db.delete_entry(None, [user_id, channel_id], option="user_channel")
         return 200
     
@@ -346,6 +350,10 @@ class Channels:
 
         if member_id == channel.owner:
             return ({"errors": {"user": "Selected member is the owner"}}, 403)
+
+        # Disconnect user clients from room        
+        # for sid in socketio.server.manager.rooms["/"].get(user_id, []):
+        #     leave_room(channel_id, sid=sid, namespace="/")
 
         db.delete_entry(None, [member_id, channel_id], option="user_channel")
         return 200

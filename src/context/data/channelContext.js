@@ -1,12 +1,13 @@
 import React, { useState, useContext, useEffect } from "react"
 
 import { apiGet } from "../../utils";
-import { useFlash, useSocket } from "..";
+import { useFlash, useSocket, useUser } from "..";
 
 const ChannelContext = React.createContext()
 export function useChannels() { return useContext(ChannelContext) }
 
 export function ChannelsProvider({ children }) {
+    const [user,] = useUser()
     const [channels, setChannels] = useState({})
     const setFlash = useFlash()
 
@@ -14,6 +15,8 @@ export function ChannelsProvider({ children }) {
 
     useEffect(() => {
         const onMessage = (data) => {
+            if (!data || !data.id) return
+
             setChannels(current_channels => {
                 if (!current_channels[data.channel_id]) return current_channels
 
@@ -24,8 +27,32 @@ export function ChannelsProvider({ children }) {
             })
         }
 
+        const onMemberChange = (data) => {
+            const channel_id = data.channel_id
+            const member_id = data.member_id
+            const setting = data.setting
+            const content = data.content
+
+            if (!channel_id || !member_id || !setting || content === undefined) return
+
+            setChannels((current_channels) => {
+                if (!current_channels[channel_id] || !current_channels[channel_id].users[member_id]) return current_channels
+
+                if (setting === "nick" && user.id !== member_id && current_channels[channel_id].direct) current_channels[channel_id].display_name = content
+                if (user.id === member_id) current_channels[channel_id][setting] = [content]
+
+                current_channels[channel_id].users[member_id][setting] = content
+                return { ...current_channels }
+            })
+        }
+
         socket.on("message", onMessage)
-        return () => socket.off("message", onMessage)
+        socket.on("member_change", onMemberChange)
+
+        return () => {
+            socket.off("message", onMessage)
+            socket.off("member_change", onMemberChange)
+        }
     }, [])
 
     useEffect(() => {

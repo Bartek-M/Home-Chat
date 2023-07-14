@@ -34,11 +34,6 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
                         else current_channels[channel.id].notifications = "1"
                     }
 
-                    if (nick && nick.value !== channel.nick) {
-                        current_channels[channel.id].nick = nick.value
-                        if (current_channels[channel.id].users[user_id]) current_channels[channel.id].users[user_id].nick = nick.value
-                    }
-
                     return current_channels
                 })
 
