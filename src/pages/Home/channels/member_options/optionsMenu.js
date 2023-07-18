@@ -1,9 +1,9 @@
 import { useRef, useEffect } from "react"
-import { useActive, useChannels, useFlash, useUser } from "../../../../context"
+import { useActive, useFlash, useUser } from "../../../../context"
 
 import { apiSend } from "../../../../utils"
 
-function setAdmin(button, member, channel_id, setChannels, setFlash) {
+function setAdmin(button, member, channel_id, setFlash) {
     apiSend(button, "memberAdmin", {}, "PATCH", [channel_id, member.id]).then(res => {
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
@@ -19,7 +19,6 @@ function setAdmin(button, member, channel_id, setChannels, setFlash) {
 
 export function OptionsMenu({ element, member, channel, x, y, close, setCard }) {
     const [user,] = useUser()
-    const [, setChannels] = useChannels()
     const [, setActive] = useActive()
     const setFlash = useFlash()
 
@@ -46,7 +45,7 @@ export function OptionsMenu({ element, member, channel, x, y, close, setCard }) 
         <div className="channel-menu center-column-container" ref={menu} style={{ top: y + 20, left: x, transform: "translateX(-95%)" }}>
             <button className="channel-menu-btn spaced-container" onClick={() => { setCard("memberNick"); close() }}>Change Nickname</button>
             {!channel.direct &&
-                <button className="channel-menu-btn spaced-container" onClick={e => { setAdmin(e.target, member, channel.id, setChannels, setFlash); close() }}>{member.admin ? "Remove as Admin" : "Set as Admin"}</button>
+                <button className="channel-menu-btn spaced-container" onClick={e => { setAdmin(e.target, member, channel.id, setFlash); close() }}>{member.admin ? "Remove as Admin" : "Set as Admin"}</button>
             }
             {(!channel.direct && channel.owner === user.id) &&
                 <button className="channel-menu-btn spaced-container" onClick={() => { setCard("transferOwner"); close() }}>Transfer Ownership</button>

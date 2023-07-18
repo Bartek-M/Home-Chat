@@ -9,7 +9,10 @@ export function ChannelTitle({ channel, setCard }) {
     return (
         <div className="channel-title spaced-container">
             <div className="center-container">
-                <img className="channel-icon skeleton" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
+                {channel.icon !== "loading"
+                    ? <img className="channel-icon skeleton" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
+                    : <div className="channel-icon skeleton" />
+                }
                 <div className="column-container">
                     {channel.display_name && <p className="channel-name">{channel.display_name}</p>}
                     <p className={`channel-name ${channel.display_name ? "username" : ""}`}>{channel.name}</p>

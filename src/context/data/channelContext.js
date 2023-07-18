@@ -27,6 +27,28 @@ export function ChannelsProvider({ children }) {
             })
         }
 
+        const onChannelInvite = (data) => {
+            if (!data || !data.id) return
+
+            setChannels(current_channels => {
+                if (current_channels[data.id]) return current_channels
+                current_channels[data.id] = data
+
+                return { ...current_channels }
+            })
+        }
+
+        const onChannelDelete = (data) => {
+            if (!data.channel_id) return
+
+            setChannels(current_channels => {
+                if (!current_channels[data.channel_id]) return current_channels
+                
+                delete current_channels[data.channel_id]
+                return { ...current_channels }
+            })
+        }
+
         const onChannelChange = (data) => {
             const channel_id = data.channel_id
             const setting = data.setting
@@ -36,7 +58,7 @@ export function ChannelsProvider({ children }) {
 
             setChannels(current_channels => {
                 if (!current_channels[channel_id]) return current_channels
-                if (current_channels[channel_id][setting] === content) return current_channels 
+                if (current_channels[channel_id][setting] === content) return current_channels
 
                 current_channels[channel_id][setting] = content
                 return { ...current_channels }
@@ -62,14 +84,47 @@ export function ChannelsProvider({ children }) {
             })
         }
 
+        const onMemberList = (data) => {
+            const channel_id = data.channel_id
+            const member = data.member
+            const action = data.action
+
+            if (!channel_id || !member || !action) return
+            if (!["add", "remove"].includes(action)) return
+
+            setChannels(current_channels => {
+                if (!current_channels[channel_id]) return current_channels
+
+                if (action === "add") {
+                    if (current_channels[channel_id].users[member.id]) return current_channels
+                    current_channels[channel_id].users[member.id] = member
+                }
+
+                else if (action === "remove") {
+                    if (!current_channels[channel_id].users[member]) return current_channels
+
+                    if (member === user.id) delete current_channels[channel_id]
+                    else delete current_channels[channel_id].users[member]
+                }
+
+                return { ...current_channels }
+            })
+        }
+
         socket.on("message", onMessage)
+        socket.on("channel_invite", onChannelInvite)
+        socket.on("channel_delete", onChannelDelete)
         socket.on("channel_change", onChannelChange)
         socket.on("member_change", onMemberChange)
+        socket.on("member_list", onMemberList)
 
         return () => {
             socket.off("message", onMessage)
+            socket.off("channel_invite", onChannelInvite)
+            socket.off("channel_delete", onChannelDelete)
             socket.off("channel_change", onChannelChange)
             socket.off("member_change", onMemberChange)
+            socket.off("member_list", onMemberList)
         }
     }, [])
 

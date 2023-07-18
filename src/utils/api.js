@@ -86,7 +86,9 @@ export async function apiDelete(button, page, id) {
         .finally(() => button.disabled = false)
 }
 
-export async function apiFile(page, data, id = null) {
+export async function apiFile(button, page, data, id = null) {
+    button.disabled = true
+
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
         method: "POST",
         headers: { "Authentication": localStorage.getItem("token") },
@@ -94,4 +96,5 @@ export async function apiFile(page, data, id = null) {
     })
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
+        .finally(() => button.disabled = false)
 }

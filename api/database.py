@@ -146,13 +146,18 @@ class Database:
 
                     channel = channel.__dict__
                     
-                    if channel["direct"] and (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
-                        channel["display_name"] = friend_channel.nick if friend_channel.nick else friend.__dict__.get("display_name", None)
-                        channel["name"] = friend.name 
-                        channel["icon"] = friend.avatar
-                    elif channel["direct"]:
-                        channel["name"] = "Deleted Account"
-                        channel["icon"] = "generic"
+                    if channel["direct"]:
+                        if (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
+                            channel["display_name"] = friend_channel.nick if friend_channel.nick else friend.display_name
+                            channel["name"] = friend.name 
+                            channel["icon"] = friend.avatar
+                        elif friend:
+                            channel["display_name"] = friend.display_name
+                            channel["name"] = friend.name 
+                            channel["icon"] = friend.avatar
+                        else:
+                            channel["name"] = "Deleted Account"
+                            channel["icon"] = "generic"
 
                     channels[channel["id"]] = {
                         **channel,

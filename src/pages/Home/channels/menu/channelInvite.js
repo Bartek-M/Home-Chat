@@ -1,9 +1,9 @@
-import { useState, useMemo, useEffect } from "react"
-import { useActive, useChannels, useFlash, useFriends } from "../../../../context"
+import { useState, useMemo } from "react"
+import { useActive, useFlash, useFriends } from "../../../../context"
 
 import { apiSend } from "../../../../utils"
 
-function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
+function inviteFriend(button, channel_id, friend, setFlash) {
     apiSend(button, "channelInvite", {
         member: friend.id
     }, "POST", channel_id).then(res => {
@@ -13,14 +13,7 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
             return setFlash("Something went wrong!", "error")
         }
 
-        if (res.message === "200 OK" && res.user) {
-            setChannels(current_channels => {
-                if (!current_channels[channel_id].users[res.user.id]) current_channels[channel_id].users[res.user.id] = res.user
-                return current_channels
-            })
-
-            return setFlash(`Invited '${friend.name}'`)
-        }
+        if (res.message === "200 OK") return setFlash(`Invited '${friend.name}'`)
 
         if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
@@ -30,7 +23,6 @@ function inviteFriend(button, channel_id, friend, setChannels, setFlash) {
 export function ChannelInvite({ props }) {
     const { close } = props
 
-    const [, setChannels] = useChannels()
     const [friends,] = useFriends()
     const setFlash = useFlash()
 
@@ -89,7 +81,7 @@ export function ChannelInvite({ props }) {
                                         <p className="text-note">{friend.display_name ? friend.name : ""}</p>
                                     </div>
                                 </div>
-                                <button className="invite-member-btn" onClick={(e) => inviteFriend(e.target, channel.id, friend, setChannels, setFlash)}>Invite</button>
+                                <button className="invite-member-btn" onClick={(e) => inviteFriend(e.target, channel.id, friend, setFlash)}>Invite</button>
                             </div>
                         ))}
                         <div className="scroller-spacer"></div>

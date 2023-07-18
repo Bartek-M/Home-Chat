@@ -5,7 +5,7 @@ import { formatTime, openChannel, addFriend } from "../utils"
 
 export function UserCard({ element, member, x, y, close, setCard }) {
     const [user,] = useUser()
-    const [, setChannels] = useChannels()
+    const [channels,] = useChannels()
     const [active, setActive] = useActive()
     const setFlash = useFlash()
 
@@ -43,7 +43,7 @@ export function UserCard({ element, member, x, y, close, setCard }) {
             <h5 className="container">Created at: <p className="edit-card-info">{member.create_time ? formatTime(member.create_time, "date") : "N/A"}</p></h5>
             {(member.id !== user.id && member.name) &&
                 <>
-                    {(accepted_status && !active.channel.direct) && <button className="user-card-btn" onClick={e => { e.preventDefault(); openChannel(e.target, member.id, setChannels, setActive, setCard, setFlash) }}>Message</button>}
+                    {(accepted_status && !active.channel.direct) && <button className="user-card-btn" onClick={e => { e.preventDefault(); openChannel(e.target, channels, member.id, setActive, setCard, setFlash) }}>Message</button>}
                     {(!pending_status && !accepted_status) && <button className="user-card-btn" onClick={e => { e.preventDefault(); addFriend(e.target, member, setFlash) }}>Add Friend</button>}
                     {pending_status && <button className="user-card-btn" disabled>Pending</button>}
                 </>

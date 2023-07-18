@@ -1,7 +1,7 @@
-import { useActive, useChannels, useFlash } from "../../../../context"
+import { useActive, useFlash } from "../../../../context"
 import { apiDelete } from "../../../../utils"
 
-function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
+function leave(button, channel_id, channel_name, close, setFlash) {
     apiDelete(button, "channelLeave", channel_id).then((res) => {
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
@@ -9,7 +9,6 @@ function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
         }
 
         if (res.message == "200 OK") {
-            setChannels(current_channels => { delete current_channels[channel_id]; return current_channels })
             close()
             return setFlash(`Left '${channel_name}'`)
         }
@@ -21,8 +20,6 @@ function leave(button, channel_id, channel_name, setChannels, close, setFlash) {
 
 export function ChannelLeave({ props }) {
     const { close } = props
-
-    const [, setChannels] = useChannels()
     const setFlash = useFlash()
 
     const [active,] = useActive()
@@ -34,7 +31,7 @@ export function ChannelLeave({ props }) {
             <p className="edit-card-info">Are you sure you want to leave '{channel.name}'? {(channel.users && channel.users.length > 1) ? "You won't be able to rejoin this channel unless you are re-invited." : "This action cannot be undone and all messages will be lost."}</p>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => { e.preventDefault(); leave(e.target, channel.id, channel.name, setChannels, close, setFlash) }} value="Leave" />
+                <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => { e.preventDefault(); leave(e.target, channel.id, channel.name, close, setFlash) }} value="Leave" />
             </div>
         </div>
     )

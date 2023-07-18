@@ -24,8 +24,8 @@ export function Friends({ props }) {
     const { card, setSettings } = props
 
     const [user,] = useUser()
-    const [, setChannels] = useChannels()
-    const [friends, setFriends] = useFriends()
+    const [channels,] = useChannels()
+    const [friends, ] = useFriends()
 
     const [, setActive] = useActive()
     const setFlash = useFlash()
@@ -79,7 +79,7 @@ export function Friends({ props }) {
                     <div className="column-container">
                         <div className={`friend-card ${!searchUser.accepted || searchUser.accepted === "waiting" ? "user-card" : ""} spaced-container`} onClick={(e) => {
                             if (!searchUser.accepted || searchUser.accepted === "waiting") return
-                            openChannel(e.target, searchUser.id, setChannels, setActive, card, setFlash, setSettings)
+                            openChannel(e.target, channels, searchUser.id, setActive, card, setFlash, setSettings)
                         }}>
                             <div className="center-container">
                                 <img className="friend-icon skeleton" src={`/api/images/${searchUser.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
@@ -109,7 +109,7 @@ export function Friends({ props }) {
                                 {(searchUser.accepted && searchUser.accepted !== "waiting") && (
                                     <>
                                         <Tooltip text="Message" type="top">
-                                            <button className="message-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); openChannel(e.target, searchUser.id, setChannels, setActive, card, setFlash, setSettings) }}>
+                                            <button className="message-friend-btn center-container" type="button" onClick={(e) => { e.stopPropagation(); openChannel(e.target, channels, searchUser.id, setActive, card, setFlash, setSettings) }}>
                                                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                                     <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                                                 </svg>
@@ -194,7 +194,7 @@ export function Friends({ props }) {
                 <div className="column-container">
                     <p className="extended-category-text">ALL FRIENDS</p>
                     {sortedAccepted.map(friend =>
-                        <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={(e) => openChannel(e.target, friend.id, setChannels, setActive, card, setFlash, setSettings)}>
+                        <div className="friend-card spaced-container" key={`accepted-${friend.id}`} onClick={(e) => openChannel(e.target, channels, friend.id, setActive, card, setFlash, setSettings)}>
                             <div className="center-container">
                                 <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 <div className="column-container">
@@ -207,7 +207,7 @@ export function Friends({ props }) {
                             </div>
                             <div className="center-container">
                                 <Tooltip text="Message" type="top">
-                                    <button className="message-friend-btn center-container" onClick={(e) => { e.stopPropagation(); openChannel(e.target, friend.id, setChannels, setActive, card, setFlash, setSettings) }}>
+                                    <button className="message-friend-btn center-container" onClick={(e) => { e.stopPropagation(); openChannel(e.target, channels, friend.id, setActive, card, setFlash, setSettings) }}>
                                         <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                                             <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                                         </svg>

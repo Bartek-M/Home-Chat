@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import { useActive, useChannels, useFlash, useUser } from "../../../../context";
+import { useActive, useFlash, useUser } from "../../../../context";
 
 import { apiSend } from "../../../../utils";
 import { MFA } from "../../../../components"
 
-function owner({ button, active, password, code, setChannels, close, setFlash }) {
+function owner({ button, active, password, code, close, setFlash }) {
     if ((password && !password.value) || (code && !code.value)) return
     if (!active || !active.channel || !active.user) return
 
@@ -24,11 +24,6 @@ function owner({ button, active, password, code, setChannels, close, setFlash })
         }
 
         if (res.message === "200 OK") {
-            setChannels(current_channels => {
-                current_channels[channel.id].owner = member.id
-                return current_channels
-            })
-
             close()
             return setFlash(`Transferred ownership`)
         }
@@ -42,7 +37,6 @@ export function TransferOwner({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-    const [, setChannels] = useChannels()
     const [active,] = useActive()
     const setFlash = useFlash()
 
@@ -65,7 +59,7 @@ export function TransferOwner({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn warning-btn" type="submit" value="Transfer Ownership" onClick={(e) => {
                     e.preventDefault()
-                    owner({ button: e.target, active: active, password: passw.current, setChannels: setChannels, close: () => close("channelMembers"), setFlash: setFlash })
+                    owner({ button: e.target, active: active, password: passw.current, close: () => close("channelMembers"), setFlash: setFlash })
                 }} />
             </div>
         </form>

@@ -1,12 +1,11 @@
 import { useState, useMemo } from "react"
 
-import { useFriends, useChannels, useFlash, useActive } from "../../../context"
+import { useFriends, useFlash, useActive, useChannels } from "../../../context"
 import { openChannel } from "../../../utils"
 
 export function Direct({ close }) {
+    const [channels,] = useChannels()
     const [friends,] = useFriends()
-    const [, setChannels] = useChannels()
-
     const [, setActive] = useActive()
     const setFlash = useFlash()
 
@@ -42,7 +41,7 @@ export function Direct({ close }) {
             {filteredItems && filteredItems.length
                 ? <div className="friends-wrapper column-container scroller-container">
                     {filteredItems.map(friend => (
-                        <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => openChannel(e.target, friend.id, setChannels, setActive, close, setFlash)}>
+                        <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => openChannel(e.target, channels, friend.id, setActive, close, setFlash)}>
                             <div className="center-container">
                                 <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 <div className="column-container">

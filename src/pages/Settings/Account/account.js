@@ -10,7 +10,7 @@ function change_avatar(file, setUser, setFlash) {
     const form_data = new FormData()
     form_data.append("image", user_file, "untitled.jpg")
 
-    apiFile("avatar", form_data).then(res => {
+    apiFile({}, "avatar", form_data).then(res => {
         if (res.errors && res.errors.image) return setFlash(res.errors.image, "error")
 
         if (res.message === "200 OK" && res.image) {

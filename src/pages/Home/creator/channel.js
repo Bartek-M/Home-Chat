@@ -12,21 +12,13 @@ function setImage(file, icon) {
     icon.src = URL.createObjectURL(user_file)
 }
 
-function set_channels(setChannels, setActive, channel) {
-    setChannels(current_channels => {
-        current_channels[channel.id] = channel
-        return current_channels
-    })
-
-    setActive({ channel: channel })
-}
-
-function createChannel(button, name, users, icon, img_file, setChannels, setActive, close, setFlash) {
+function createChannel(button, name, users, icon, img_file, channels, setActive, close, setFlash) {
     if (!name.value || !users || !icon) return
 
     apiSend(button, "channelCreate", {
         name: name.value,
-        users: users
+        users: users,
+        icon: (img_file && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp")) ? true : false
     }, "POST").then(res => {
         if (res.errors) {
             if (res.errors.users) setFlash(res.errors.users, "error")
@@ -35,29 +27,37 @@ function createChannel(button, name, users, icon, img_file, setChannels, setActi
         }
 
         if (res.message == "200 OK" && res.channel.id) {
+            if (!img_file || !img_file.files[0] || icon.src.includes("/api/images/channels/generic.webp")) {
+                setActive({ channel: channels[res.channel.id] })
+                return close()
+            }
+
             const user_file = img_file.files[0]
-            if (user_file && !icon.src.includes("/api/images/channels/generic.webp")) {
-                const form_data = new FormData()
-                form_data.append("image", user_file, "untitled.jpg")
+            const form_data = new FormData()
+            form_data.append("image", user_file, "untitled.jpg")
 
-                apiFile("icon", form_data, res.channel.id).then(img_res => {
-                    if (img_res.message === "429 Too Many Requests") return setFlash("Too many requests", "error")
+            apiFile(button, "icon", form_data, res.channel.id).then(img_res => {
+                if (img_res.errors) {
+                    if (img_res.errors.image) setFlash(res.errors.image, "error")
+                    if (img_res.errors.channel) setFlash(res.errors.channel, "error")
 
-                    if (img_res.errors) {
-                        if (img_res.errors.image) setFlash(res.errors.image, "error")
-                        if (img_res.errors.channel) setFlash(res.errors.channel, "error")
+                    setActive({ channel: channels[res.channel.id] })
+                    return close()
+                }
 
-                        return set_channels(setChannels, setActive, res.channel)
-                    }
+                if (img_res.message === "200 OK" && img_res.image) {
+                    setActive({ channel: channels[res.channel.id] })
+                    return close()
+                }
 
-                    if (img_res.message === "200 OK" && img_res.image) return set_channels(setChannels, setActive, { ...res.channel, icon: img_res.image })
+                if (res.message) setFlash(res.message, "error")
+                else setFlash("Something went wrong!", "error")
 
-                    setFlash("Something went wrong!", "error")
-                    set_channels(setChannels, setActive, res.channel)
-                })
-            } else set_channels(setChannels, setActive, res.channel)
+                setActive({ channel: channels[res.channel.id] })
+                close()                
+            })
 
-            return close()
+            return
         }
 
         if (res.message) return setFlash(res.message, "error")
@@ -67,8 +67,8 @@ function createChannel(button, name, users, icon, img_file, setChannels, setActi
 
 export function Channel({ close }) {
     const [user,] = useUser()
+    const [channels,] = useChannels()
     const [friends,] = useFriends()
-    const [, setChannels] = useChannels()
 
     const [, setActive] = useActive()
     const setFlash = useFlash()
@@ -183,7 +183,7 @@ export function Channel({ close }) {
                 <button className="card-cancel-btn" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => {
                     e.preventDefault()
-                    createChannel(e.target, channel_name.current, selected, channel_icon.current, file_input.current, setChannels, setActive, close, setFlash)
+                    createChannel(e.target, channel_name.current, selected, channel_icon.current, file_input.current, channels, setActive, close, setFlash)
                 }} value="Create" />
             </div>
         </div>

@@ -28,7 +28,7 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
             const aLastMessage = getLastMessage(a)
             const bLastMessage = getLastMessage(b)
 
-            return (bLastMessage ? bLastMessage : b.join_time) - (aLastMessage ? aLastMessage : a.join_time)
+            return (bLastMessage > b.join_time ? bLastMessage : b.join_time) - (aLastMessage > a.join_time ? aLastMessage : a.join_time)
         })
     }, [Object.values(channels)])
 
@@ -69,7 +69,10 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
                         ) ? <div className="notification-dot"></div> : null}
                         <Tooltip text={channel.name} note={channel.display_name ? channel.display_name : null} type="right">
                             <button className="center-container" onClick={() => openChannel(channel, active.channel, setActive)}>
-                                <img className="main-sidebar-icon skeleton" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
+                                {channel.icon !== "loading"
+                                    ? <img className="main-sidebar-icon skeleton" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
+                                    : <div className="main-sidebar-icon skeleton" />
+                                }
                             </button>
                         </Tooltip>
                     </li>

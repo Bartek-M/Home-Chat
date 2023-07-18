@@ -3,7 +3,7 @@ import time
 
 import pyotp
 from flask import Blueprint, request
-from flask_socketio import rooms, leave_room
+from flask_socketio import join_room, leave_room, close_room
 from __main__ import socketio
 
 from ..database import *
@@ -75,16 +75,42 @@ class Channels:
             friend_channel = UserChannel(friend_id, id, creation_time, None, 1, 1)
             db.insert_entry(USER_CHANNEL_TABLE, friend_channel)
 
-        return ({"channel": {
+        channel = {
             **channel.__dict__,
-            "name": friend.get("name", "Deleted Account"),
-            "display_name": friend_channel.nick if friend_channel.nick else friend.get("display_name", None),
-            "icon": friend.get("avatar", "generic"),
+            "name": friend.get("name"),
+            "display_name": friend_channel.nick if friend_channel.nick else friend.get("display_name"),
+            "icon": friend.get("avatar"),
             "notifications": user_channel.notifications,
             "join_time": user_channel.join_time,
-            "admin": True if user_channel.admin else False,
-            "users": db.get_channel_stuff(channel.id, "users")
-        }}, 200)
+            "admin": True,
+            "users": db.get_channel_stuff(channel.id, "users"),
+            "messages": None
+        }
+        user = db.get_entry(USER_TABLE, user_id)
+
+        if user_channel.join_time == creation_time and socketio.server.manager.rooms["/"].get(user_id):
+            socketio.emit("channel_invite", channel, to=user_id)
+
+            for sid in socketio.server.manager.rooms["/"].get(user_id, []):
+                join_room(channel.get("id"), sid=sid, namespace="/")
+
+        if friend_channel.join_time == creation_time and socketio.server.manager.rooms["/"].get(friend.get("id")):
+            channel_2 = {
+                **channel,
+                "name": user.name,
+                "display_name": user_channel.nick if user_channel.nick else user.display_name,
+                "icon": user.avatar,
+                "notifications": friend_channel.notifications,
+                "join_time": friend_channel.join_time,
+            }
+
+            socketio.emit("channel_invite", channel_2, to=friend.get("id"))
+
+            for sid in socketio.server.manager.rooms["/"].get(friend.get("id"), []):
+                join_room(channel.get("id"), sid=sid, namespace="/")
+
+        socketio.emit("member_list", {"channel_id": channel.get("id"), "member": user.__dict__, "action": "add"}, to=channel.get("id"))
+        return ({"channel": channel}, 200)
 
     @channels.route("/create", methods=["POST"])
     @Decorators.manage_database
@@ -101,24 +127,49 @@ class Channels:
         
         creation_time = str(time.time())
         channel = Channel(Functions.create_id(creation_time), name, "generic", user_id, creation_time)
+
+        user = db.get_entry(USER_TABLE, user_id).__dict__
         user_channel = UserChannel(user_id, channel.id, creation_time, None, 1)
+        channel_members = {user_id: {**user, "admin": True}}
         
         db.insert_entry(CHANNEL_TABLE, channel)
         db.insert_entry(USER_CHANNEL_TABLE, user_channel)
-        
+
+        if request.json.get("icon"):
+            channel.icon = "loading"
+
         for member_id in users:
-            if not (user := db.get_entry(USER_TABLE, member_id)):
+            if not (member := db.get_entry(USER_TABLE, member_id)):
                 continue
             
-            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(user.id, channel.id, creation_time))
+            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(member.id, channel.id, creation_time))
+            channel_members[member.id] = member.__dict__
+
+        for member in channel_members.values():
+            if not socketio.server.manager.rooms["/"].get(member.get(id)):
+                continue
+
+            socketio.emit("channel_invite", {
+                **channel.__dict__,
+                "notifications": "1",
+                "last_message": creation_time,
+                "join_time": creation_time,
+                "admin": True if member.get(id) else False,
+                "users": channel_members,
+                "messages": []
+            }, to=member.get(id))
+
+            for sid in socketio.server.manager.rooms["/"].get(member.get(id), []):
+                join_room(channel.id, sid=sid, namespace="/")
 
         return ({"channel": {
             **channel.__dict__,
-            "nick": user_channel.nick,
-            "notifications": user_channel.notifications,
-            "join_time": user_channel.join_time,
-            "admin": True if user_channel.admin else False,
-            "users": db.get_channel_stuff(channel.id, "users")
+            "notifications": "1",
+            "last_message": creation_time,
+            "join_time": creation_time,
+            "admin": True,
+            "users": channel_members,
+            "messages": []
         }}, 200)
     
     @channels.route("/<channel_id>/invite", methods=["POST"])
@@ -140,9 +191,34 @@ class Channels:
         if not (member := db.get_entry(USER_TABLE, request.json.get("member"))):
             return ({"errors": {"member": "User does not exist"}}, 400)
 
-        if not db.get_channel_stuff([member.id, channel_id], "user_channel"):
-            db.insert_entry(USER_CHANNEL_TABLE, UserChannel(member.id, channel.id, time.time()))
+        current_time = str(time.time())
 
+        if not (member_channel := db.get_channel_stuff([member.id, channel_id], "user_channel")):
+            member_channel = UserChannel(member.id, channel.id, current_time)
+            db.insert_entry(USER_CHANNEL_TABLE, member_channel)
+
+        if socketio.server.manager.rooms["/"].get(member.id):
+            socketio.emit("channel_invite", {
+                **channel.__dict__,
+                "nick": member_channel.nick,
+                "notifications": member_channel.notifications,
+                "last_message": current_time,
+                "join_time": member_channel.join_time,
+                "admin": True if member_channel.admin else False,
+                "users": db.get_channel_stuff(channel.id, "users"),
+                "messages": None
+            }, to=member.id)
+
+            for sid in socketio.server.manager.rooms["/"].get(member.id, []):
+                join_room(channel_id, sid=sid, namespace="/")
+
+        member = {
+            **member.__dict__,
+            "nick": member_channel.nick,
+            "admin": member_channel.admin,
+        }
+
+        socketio.emit("member_list", {"channel_id": channel_id, "member": member, "action": "add"}, to=channel_id)
         return ({"user": member}, 200)
     
     @channels.route("/<channel_id>/message", methods=["POST"])
@@ -197,7 +273,7 @@ class Channels:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "nick", nick, "user_channel")
             socketio.emit("member_change", {"channel_id": channel_id, "member_id": user_id, "setting": "nick", "content": nick}, to=channel_id)
 
-        notifications = 1 if request.json.get("notifications") else "0"
+        notifications = str(time.time()) if request.json.get("notifications") else "0"
         if notifications != user_channel.notifications:
             db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", notifications, "user_channel")
             socketio.emit("channel_change", {"channel_id": channel_id, "setting": "notifications", "content": notifications}, to=user_id)
@@ -310,6 +386,8 @@ class Channels:
             os.remove(f"{ICONS_FOLDER}{channel.icon}.webp")
 
         db.delete_entry(None, channel_id, option="channel")
+        socketio.emit("channel_delete", {"channel_id": channel_id}, to=channel_id)
+        close_room(channel_id, "/")
         return 200
     
     @channels.route("/<channel_id>/leave", methods=["DELETE"])
@@ -325,11 +403,21 @@ class Channels:
         if channel.owner == user_id:
             return ({"errors": {"channel": "You are the owner"}}, 400)
         
-        if len(db.get_channel_stuff(channel_id, "users")) <= 1:
-            db.delete_entry(None, channel_id, option="channel")
-            return 200
-        
         db.delete_entry(None, [user_id, channel_id], option="user_channel")
+
+        if len(db.get_channel_stuff(channel_id, "users")) == 0:
+            db.delete_entry(None, channel_id, option="channel")
+            socketio.emit("channel_delete", {"channel_id": channel_id}, to=channel_id)
+            close_room(channel_id, "/")
+            return 200
+
+        if socketio.server.manager.rooms["/"].get(user_id):
+            socketio.emit("member_list", {"channel_id": channel_id, "member": user_id, "action": "remove"}, to=user_id)
+
+            for sid in socketio.server.manager.rooms["/"].get(user_id, []):
+                leave_room(channel_id, sid=sid, namespace="/")
+
+        socketio.emit("member_list", {"channel_id": channel_id, "member": user_id, "action": "remove"}, to=channel_id)
         return 200
     
     @channels.route("/<channel_id>/users/<member_id>/kick", methods=["DELETE"])
@@ -354,9 +442,13 @@ class Channels:
         if member_id == channel.owner:
             return ({"errors": {"user": "Selected member is the owner"}}, 403)
 
-        # Disconnect user clients from room        
-        # for sid in socketio.server.manager.rooms["/"].get(user_id, []):
-        #     leave_room(channel_id, sid=sid, namespace="/")
-
         db.delete_entry(None, [member_id, channel_id], option="user_channel")
+
+        if socketio.server.manager.rooms["/"].get(member_id):
+            socketio.emit("member_list", {"channel_id": channel_id, "member": member_id, "action": "remove"}, to=member_id)
+
+            for sid in socketio.server.manager.rooms["/"].get(member_id, []):
+                leave_room(channel_id, sid=sid, namespace="/")
+
+        socketio.emit("member_list", {"channel_id": channel_id, "member": member_id, "action": "remove"}, to=channel_id)
         return 200

@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import { useActive, useChannels, useFlash } from "../../../../context";
+import { useActive, useFlash } from "../../../../context";
 
 import { apiSend } from "../../../../utils";
 
-function changeNick(button, member, channel_id, nick, setChannels, close, setFlash) {
+function changeNick(button, member, channel_id, nick, close, setFlash) {
     if (!nick || nick.value === member.nick) return
 
     apiSend(button, "memberNick", { nick: nick.value }, "PATCH", [channel_id, member.id]).then(res => {
@@ -27,7 +27,6 @@ function changeNick(button, member, channel_id, nick, setChannels, close, setFla
 export function MemberNick({ props }) {
     const { close } = props
 
-    const [, setChannels] = useChannels()
     const [active,] = useActive()
     const setFlash = useFlash()
 
@@ -48,7 +47,7 @@ export function MemberNick({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close("channelMembers")}>Cancel</button>
                 <input className="card-submit-btn submit-btn" type="submit" value="Change" onClick={(e) => {
                     e.preventDefault()
-                    changeNick(e.target, member, active.channel.id, nick.current, setChannels, () => close("channelMembers"), setFlash)
+                    changeNick(e.target, member, active.channel.id, nick.current, () => close("channelMembers"), setFlash)
                 }} />
             </div>
         </form>

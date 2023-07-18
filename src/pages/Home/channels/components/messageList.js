@@ -15,7 +15,7 @@ export function MessageList({ channel, close }) {
         setChannels(current_channels => {
             if (!current_channels[channel.id].notifications || current_channels[channel.id].notifications === "0") return current_channels
             if (current_channels[channel.id].notifications >= current_channels[channel.id].last_message) return current_channels
-            
+
             current_channels[channel.id].notifications = current_channels[channel.id].last_message
             return { ...current_channels }
         })
@@ -94,7 +94,7 @@ export function MessageList({ channel, close }) {
                                             <div className="message-text">{message.content}</div>
                                         </div>
                                         {(menu.id === message.id && menu.type === "userCard") &&
-                                            createPortal(<UserCard element={menu.element} member={author} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
+                                            createPortal(<UserCard element={menu.element} member={author.id ? author : { id: message.author }} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
                                         }
                                     </li>
                                 )
@@ -108,12 +108,12 @@ export function MessageList({ channel, close }) {
                                 return (
                                     <li className="compact-msg container" key={message.id}>
                                         <div className="compact-msg-time-info">{formatTime(message.create_time, "time")}</div>
-                                        <div className={author.name ? "compact-msg-user-info" : "compact-msg-dim-name"} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
+                                        <div className={author.name ? "compact-msg-user-info" : "compact-msg-user-info compact-msg-dim-name"} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
                                             {(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}
                                         </div>
                                         <div className="compact-msg-text">{message.content}</div>
                                         {(menu.id === message.id && menu.type === "userCard") &&
-                                            createPortal(<UserCard element={menu.element} member={author} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
+                                            createPortal(<UserCard element={menu.element} member={author.id ? author : { id: message.author }} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
                                         }
                                     </li>
                                 )

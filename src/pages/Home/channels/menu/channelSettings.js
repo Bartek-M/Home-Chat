@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react"
-import { useActive, useChannels, useFlash, useUser } from "../../../../context"
+import { useActive, useFlash, useUser } from "../../../../context"
 
 import { MFA } from "../../../../components"
 import { apiSend, apiFile } from "../../../../utils"
@@ -12,7 +12,7 @@ function setImage(file, icon) {
     icon.src = URL.createObjectURL(user_file)
 }
 
-function submit_settings(button, channel, user_id, name, nick, notifications, icon, img_file, setChannels, close, setFlash) {
+function submit_settings(button, channel, name, nick, notifications, icon, img_file, close, setFlash) {
     if ((name && name.value !== channel.name) || (nick && nick.value !== channel.nick) || (notifications && notifications.checked != channel.notifications)) {
         apiSend(button, "channelSettings", {
             name: (name && name.value !== channel.name) ? name.value : null,
@@ -34,12 +34,12 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
         })
     }
 
-    if (img_file && img_file.files && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp")) {
+    if (img_file && img_file.files[0] && !icon.src.includes("/api/images/channels/generic.webp")) {
         const user_file = img_file.files[0]
         const form_data = new FormData()
         form_data.append("image", user_file, "untitled.jpg")
 
-        apiFile("icon", form_data, channel.id).then(res => {
+        apiFile(button, "icon", form_data, channel.id).then(res => {
             if (res.errors) {
                 if (res.errors.image) setFlash(res.errors.image, "error")
                 if (res.errors.channel) setFlash(res.errors.channel, "error")
@@ -48,7 +48,7 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
 
             if (res.message === "200 OK" && res.image) {
                 close()
-                return setFlash("Settings saved")
+                return setFlash("Icon saved")
             }
 
             if (res.message) return setFlash(res.message, "error")
@@ -57,7 +57,7 @@ function submit_settings(button, channel, user_id, name, nick, notifications, ic
     }
 }
 
-function delete_channel({ button, active, password, code, setChannels, close, setFlash }) {
+function delete_channel({ button, active, password, code, close, setFlash }) {
     if ((password && !password.value) || (code && !code.value)) return
     if (!active.channel) return
 
@@ -77,7 +77,6 @@ function delete_channel({ button, active, password, code, setChannels, close, se
         }
 
         if (res.message === "200 OK") {
-            setChannels(current_channels => { delete current_channels[channel_id]; return current_channels })
             close()
             return setFlash(`Deleted '${channel_name}'`)
         }
@@ -92,7 +91,6 @@ export function ChannelSettings({ props }) {
     const { close } = props
 
     const [user,] = useUser()
-    const [, setChannels] = useChannels()
     const setFlash = useFlash()
 
     const [active,] = useActive()
@@ -126,7 +124,7 @@ export function ChannelSettings({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn warning-btn" type="submit" value="Delete" onClick={(e) => {
                     e.preventDefault()
-                    delete_channel({ button: e.target, active: active, password: passw.current, setChannels: setChannels, close: close, setFlash: setFlash })
+                    delete_channel({ button: e.target, active: active, password: passw.current, close: close, setFlash: setFlash })
                 }} />
             </div>
         </form>
@@ -201,7 +199,7 @@ export function ChannelSettings({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn submit-btn" type="submit" value="Save" onClick={e => {
                     e.preventDefault()
-                    submit_settings(e.target, channel, user.id, channel_name.current, nick.current, notifications.current, channel_icon.current, file_input.current, setChannels, close, setFlash)
+                    submit_settings(e.target, channel, channel_name.current, nick.current, notifications.current, channel_icon.current, file_input.current, close, setFlash)
                 }} />
             </div>
         </div>
