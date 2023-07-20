@@ -1,10 +1,13 @@
 import os
 import re
-import smtplib
+import time
 import random
+import smtplib
 
 from PIL import Image
 from dotenv import load_dotenv
+
+from ..database import *
 
 load_dotenv(dotenv_path="./api/.env")
 
@@ -91,3 +94,11 @@ class Functions:
             img = img.crop((0, top_bottom, width, height - top_bottom))
         
         return img.resize(IMAGE_SIZE)
+    
+    @staticmethod
+    def delete_non_verified():
+        while True:
+            with Database() as db:
+                db.delete_entry(None, None, option="non-verified")
+
+            time.sleep(21_600) # Wait 6 hours; time in seconds

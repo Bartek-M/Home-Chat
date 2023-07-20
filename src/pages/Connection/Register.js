@@ -20,7 +20,10 @@ function submit(button, navigator, email, username, password, setFlash) {
             return
         }
 
-        if (res.message === "200 OK") return navigator("/login")
+        if (res.message === "200 OK") {
+            localStorage.setItem("user_login", email.value)
+            return navigator("/login")
+        }
         
         if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")

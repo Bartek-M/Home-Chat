@@ -1,4 +1,5 @@
 import sqlite3
+import time
 
 from .assets.models import *
 
@@ -271,6 +272,19 @@ class Database:
 
         if option == "user_friend":
             self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [*req_id, *req_id])
+
+        if option == "non-verified":
+            self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE verified='0'")
+
+            for data in self.cursor.fetchall():
+                user = User(*data)
+                
+                if int(time.time() - float(user.create_time)) < 86_400: # Skip if user isn't verified for less than 1 day; time in seconds
+                    continue
+
+                self.cursor.execute(f"DELETE FROM {USER_TABLE} WHERE id=?", [user.id])
+                self.cursor.execute(f"DELETE FROM {USER_SETTING_TABLE} WHERE id=?", [user.id])
+                self.cursor.execute(f"DELETE FROM {USER_SECRET_TABLE} WHERE id=?", [user.id])
 
         self.conn.commit()
 

@@ -2,6 +2,7 @@ import os
 import time
 import hashlib
 import secrets
+import threading
 from base64 import b64encode, b64decode
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -28,18 +29,19 @@ class Security:
         return f"{salt}${hashlib.sha256((salt + passw + PEPPER).encode()).hexdigest()}"
     
     @staticmethod
-    def gen_token(id: str, secret: str, ending: str = None):
+    def gen_token(id: str, secret: str, option: str = None):
         """
         Generate token for specific user
         :param id: User ID
         :param secret: User secret
+        :param option: Temporary token option
         :return: Secure access token
         """
         now = b64encode(str(int(time.time())).encode("UTF-8")).decode("UTF-8")
 
-        if ending:
-            id = b64encode(f"{id},{ending}".encode("UTF-8")).decode("UTF-8")
-            hmac = hashlib.sha256(f"{id}|{now}|{secret[:int(len(secret)/2)]}|temp-{ending}-access".encode("UTF-8")).hexdigest()
+        if option:
+            id = b64encode(f"{id},{option}".encode("UTF-8")).decode("UTF-8")
+            hmac = hashlib.sha256(f"{id}|{now}|{secret[:int(len(secret)/2)]}|temp-{option}-access".encode("UTF-8")).hexdigest()
         else:
             id = b64encode(id.encode("UTF-8")).decode("UTF-8")
             hmac = hashlib.sha256(f"{id}|{now}|{secret}".encode("UTF-8")).hexdigest()
@@ -80,10 +82,14 @@ class Security:
             return ("signature", id, option)
         if not option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
             return ("signature", id, option)
-    
-        if option and int(time.time()) - int(generated) > 600: # Tickets are expired after 5 minutes; time in seconds
-            return ("expired", id, option)
-        if int(time.time()) - int(generated) > 31_536_000: # Tokens are expired after one year (365 days); time in seconds
+
+        if option:
+            if option == "email" and int(time.time() - int(generated)) > 604_800: # Email tickets expire after 1 week; time in seconds
+                return ("expired", id, option)
+            elif option != "email" and int(time.time() - int(generated)) > 600: # Other tickets expire after 5 minutes; time in seconds
+                return ("expired", id, option)
+
+        if int(time.time()) - int(generated) > 31_536_000: # Everything expire after one year (365 days); time in seconds
             return ("expired", id, option)
 
         return ("correct", id, option)
@@ -119,7 +125,7 @@ class Security:
 
         html = f"""
         <!DOCTYPE html>
-        <html style="font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+        <html style="font-family: arial, sans-serif">
             <head>
                 <meta name="color-scheme" content="light only">
                 <meta name="supported-color-schemes" content="light only">
@@ -130,7 +136,7 @@ class Security:
                     <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Welcome, {name}!</h2>
                     <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
                         Thank you for registering an account in Home Chat!<br />
-                        Grab this code and log in to activate your account. You have one hour to do that - if you don't activate it, your account will be deleted.
+                        Grab this code and log in to activate your account. You have 24 hours to do that - if you don't activate it, your account will be deleted. Of course, you can register your account again.
                     </p>
                     
                     <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center; font-weight: 700; background-color: #f2f3f4;">
@@ -148,11 +154,16 @@ class Security:
                         Sent by Home Chat
                     </p>
                 </div>
-        </body>
+            </body>
         </html>
         """
 
         message.attach(MIMEText(text, "plain"))
         message.attach(MIMEText(html, "html"))
 
-        Functions.send_email(email, message)
+        email_thread = threading.Thread(target=Functions.send_email, args=(email, message))
+        email_thread.start()
+        
+    @staticmethod
+    def send_email_recovery():
+        pass

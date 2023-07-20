@@ -1,3 +1,5 @@
+import threading
+
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_limiter import Limiter
@@ -33,6 +35,12 @@ limiter = Limiter(
     app=app,
     default_limits=["1000/minute"]
 )
+
+# SETUP NON-VERIFIED USERS CHECK
+verified_check_thread = threading.Thread(target=Functions.delete_non_verified)
+verified_check_thread.daemon = True
+verified_check_thread.start()
+
 
 if __name__ == "__main__":
     socketio.run(app, debug=True, host=ADDR, port=PORT)

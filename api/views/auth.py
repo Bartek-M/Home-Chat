@@ -1,6 +1,5 @@
 import time 
 import secrets
-from multiprocessing import Process
 
 import pyotp
 from flask import Blueprint, request
@@ -81,7 +80,7 @@ class Auth:
         id = Functions.create_id(current_time)
         verify_code = secrets.token_hex(3).upper()
 
-        Process(target=Security.send_verification, args=(email, username, verify_code)).start()
+        Security.send_verification(email, username, verify_code)
 
         db.insert_entry(USER_TABLE, User(id, username, "generic", current_time))
         db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
@@ -113,7 +112,7 @@ class Auth:
             }, 200)
         
         if option == "mfa":
-            if not pyotp.TOTP(user_secrets.mfa_code).verify((request.json.get("code"))):
+            if not pyotp.TOTP(user_secrets.mfa_code).verify(code):
                 return ({"errors": {"code": "Invalid two-factor code"}}, 400)
 
             return ({
