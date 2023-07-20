@@ -2,6 +2,7 @@ import time
 import secrets
 
 import pyotp
+from __main__ import socketio
 from flask import Blueprint, request
 
 from ..database import *
@@ -80,7 +81,7 @@ class Auth:
         id = Functions.create_id(current_time)
         verify_code = secrets.token_hex(3).upper()
 
-        Security.send_verification(email, username, verify_code)
+        Mailing.send_verification(email, username, verify_code)
 
         db.insert_entry(USER_TABLE, User(id, username, "generic", current_time))
         db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))
@@ -122,3 +123,25 @@ class Auth:
             }, 200)          
 
         return ({"errors": {"option": "Invalid option"}}, 400)
+
+
+    @auth.route("/confirm-email", methods=["GET"])
+    @Decorators.manage_database
+    def confirm_email(db):
+        if not (ticket := request.args.get("ticket")):
+            return 400
+        
+        code, user_id, email = Security.verify_token(db, ticket)
+
+        if code in ["expired", "signature"]:
+            return 403
+
+        if code != "correct" or not user_id or not email:
+            return 401
+        
+        if db.get_entry(USER_SETTING_TABLE, email, "email"):
+            return ({"errors": {"email": "Email is already registered!"}}, 406)
+        
+        db.update_entry(USER_SETTING_TABLE, user_id, "email", email)
+        socketio.emit("user_change", {"setting": "email", "content": email}, to=user_id)
+        return 200

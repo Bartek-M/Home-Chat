@@ -1,5 +1,6 @@
 from .decorators import Decorators
 from .functions import Functions
+from .mailing import Mailing
 from .security import Security
 
 

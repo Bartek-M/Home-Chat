@@ -1,13 +1,12 @@
 import { useRef } from "react"
-import { useNavigate } from "react-router-dom"
 
 import { apiSend } from "../../../../utils"
 import { useFlash, useUser } from "../../../../context"
 
-function update_email(button, navigator, user, email, password, setFlash) {
+function updateEmail(button, user, email, password, setFlash, close) {
     if (!password.value || user.email === email.value) return
 
-    apiSend(button, "user", {
+    apiSend(button, "me", {
         category: "email",
         data: email.value,
         password: password.value
@@ -19,8 +18,8 @@ function update_email(button, navigator, user, email, password, setFlash) {
         }
 
         if (res.message === "200 OK") {
-
-            return setFlash("Email updated!")
+            close()
+            return setFlash("Check your email to finish!")
         }
 
         if (res.message) return setFlash(res.message, "error")
@@ -31,10 +30,8 @@ function update_email(button, navigator, user, email, password, setFlash) {
 export function Email({ props }) {
     const { close } = props
 
-    const [user, _] = useUser()
+    const [user,] = useUser()
     const setFlash = useFlash()
-
-    const navigator = useNavigate()
 
     const email = useRef()
     const password = useRef()
@@ -43,7 +40,7 @@ export function Email({ props }) {
         <form className="settings-edit-card center-column-container">
             <div className="card-title-wrapper center-column-container">
                 <h2>Change your email</h2>
-                <div className="warning-wrapper">Are you sure that you want to delete your account? This will immediately log out of your account and you will not be able to log in again.</div>
+                <div className="warning-wrapper">This will only begin changing process. You will receive a verification on your new email to confirm the change.</div>
                 <p className="edit-card-info">Enter a new email and your existing password.</p>
                 <button className="card-close center-container" type="button" onClick={() => close()}>
                     <svg width="16" height="16" fill="var(--FONT_DIM_COLOR)" viewBox="0 0 16 16">
@@ -53,14 +50,14 @@ export function Email({ props }) {
             </div>
             <div className="column-container">
                 <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
-                <input className="input-field" autoFocus type="email" ref={email} defaultValue={user.email} maxLength={50} required />
+                <input className="input-field" autoFocus type="email" ref={email} maxLength={50} required />
 
                 <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error">*</span></p>
                 <input className="input-field" type="password" ref={password} maxLength={50} required />
             </div>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
-                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); update_email(e.target, navigator, user, email.current, password.current, setFlash) }} value="Done" />
+                <input className="card-submit-btn submit-btn" type="submit" onClick={(e) => { e.preventDefault(); updateEmail(e.target, user, email.current, password.current, setFlash, close) }} value="Done" />
             </div>
         </form>
     )

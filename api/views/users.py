@@ -98,6 +98,7 @@ class Users:
     @Decorators.manage_database
     @Decorators.auth
     def change_user(db, user_id):
+        user = db.get_entry(USER_TABLE, user_id)
         user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
         if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
@@ -106,19 +107,24 @@ class Users:
             return ({"errors": {"password": "Password doesn't match"}}, 403)
         
         if category == "name":
-            if db.get_entry(USER_TABLE, data.lower(), "name"):
+            name = data.lower()
+
+            if db.get_entry(USER_TABLE, name, "name"):
                 return ({"errors": {"name": "Username is already taken"}}, 409)
 
-            db.update_entry(USER_TABLE, user_id, "name", data.lower())
+            db.update_entry(USER_TABLE, user_id, "name", name)
+            socketio.emit("user_change", {"setting": "name", "content": name}, to=user_id)
             return 200
 
         if category == "email":
-            if not Functions.verify_email(data):
-                return ({"errors": {"email": "Invalid email form"}}, 400)
-            if db.get_entry(USER_SETTING_TABLE, data, "email"):
-                return ({"errors": {"email": "Email is already registered!"}}, 406)
+            email = data.lower()
 
-            db.update_entry(USER_SETTING_TABLE, user_id, "email", data.lower())
+            if not Functions.verify_email(email):
+                return ({"errors": {"email": "Invalid email form"}}, 400)
+            if db.get_entry(USER_SETTING_TABLE, email, "email"):
+                return ({"errors": {"email": "Email is already registered!"}}, 406)
+            
+            Mailing.send_email_verification(email, user.name, Security.gen_token(user_id, user_secrets.secret, email))
             return 200
 
         if category == "password":

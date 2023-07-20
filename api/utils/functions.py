@@ -1,19 +1,12 @@
-import os
 import re
 import time
 import random
-import smtplib
 
 from PIL import Image
-from dotenv import load_dotenv
 
 from ..database import *
 
-load_dotenv(dotenv_path="./api/.env")
-
 EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-EMAIL = os.getenv("EMAIL")
-PASSWORD = os.getenv("PASSWORD")
 
 
 class Functions:
@@ -37,19 +30,6 @@ class Functions:
             return True
 
         return False
-    
-    @staticmethod
-    def send_email(dest, message):
-        """
-        Send email to a specific address
-        :param dest: Destination email
-        :param message: Message to send
-        :return: None
-        """
-        with smtplib.SMTP("smtp.gmail.com", 587) as s:
-            s.starttls()
-            s.login(EMAIL, PASSWORD)
-            s.sendmail(EMAIL, dest, message.as_string())
 
     @staticmethod
     def match_code(code):

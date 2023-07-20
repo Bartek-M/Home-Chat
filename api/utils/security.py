@@ -2,18 +2,13 @@ import os
 import time
 import hashlib
 import secrets
-import threading
 from base64 import b64encode, b64decode
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
-from ..database import *
-from .functions import Functions
+from ..database import USER_SECRET_TABLE
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="./api/.env")
 
-EMAIL = os.getenv("EMAIL")
 PEPPER = os.getenv("PEPPER")
 
 
@@ -93,77 +88,3 @@ class Security:
             return ("expired", id, option)
 
         return ("correct", id, option)
-    
-    @staticmethod
-    def send_verification(email, name, verify_code):
-        """
-        Generate and send email with verification code
-        :param email: User email
-        :param name: User name
-        :param verify_code: User verification code
-        :return: None
-        """
-        message = MIMEMultipart("alternative")
-        message["Subject"] = f"Your Home Chat email verification code is {verify_code}"
-        message["From"] = EMAIL
-        message["To"] = email
-
-        text = f"""
-        Home Chat
-
-        Welcome, {name}!
-        Thank you for registering an account in Home Chat!<br />
-        Grab this code and log in to activate your account. You have one hour to do that - if you don't activate it, your account will be deleted.
-
-        Code: {verify_code}
-
-        Don't share this code with anyone.
-        If you didn't ask for this code please ignore this email.
-
-        Sent by Home Chat
-        """
-
-        html = f"""
-        <!DOCTYPE html>
-        <html style="font-family: arial, sans-serif">
-            <head>
-                <meta name="color-scheme" content="light only">
-                <meta name="supported-color-schemes" content="light only">
-            </head>
-            <body style="background-color: #f9f9f9;">
-                <h1 style="margin: 1rem auto; max-width: 640px; text-align: center;">Home Chat</h1>
-                <div style="margin: 0 auto; max-width: 640px; padding: 1rem 0; background-color: #FFFFFF;">
-                    <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Welcome, {name}!</h2>
-                    <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
-                        Thank you for registering an account in Home Chat!<br />
-                        Grab this code and log in to activate your account. You have 24 hours to do that - if you don't activate it, your account will be deleted. Of course, you can register your account again.
-                    </p>
-                    
-                    <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center; font-weight: 700; background-color: #f2f3f4;">
-                        <h2 style="margin: 0">{verify_code}</h2>
-                    </div>
-
-                    <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
-                        Don't share this code with anyone.<br />
-                        If you didn't ask for this code please ignore this email.
-                    </p>
-
-                    <hr style="width: calc(100% - 2rem); border-color: #f9f9f9" />
-
-                    <p style="width: calc(100% - 2rem); margin: 1rem; font-size: .75rem; ">
-                        Sent by Home Chat
-                    </p>
-                </div>
-            </body>
-        </html>
-        """
-
-        message.attach(MIMEText(text, "plain"))
-        message.attach(MIMEText(html, "html"))
-
-        email_thread = threading.Thread(target=Functions.send_email, args=(email, message))
-        email_thread.start()
-        
-    @staticmethod
-    def send_email_recovery():
-        pass

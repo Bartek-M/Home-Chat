@@ -45,7 +45,7 @@ class Decorators:
                 kwargs["user_id"] = verify_id
                 return func(*args, **kwargs)
             
-            if verify_code == "expired" or verify_code == "signature":
+            if verify_code in ["expired", "signature"]:
                 return 403
             
             if verify_code == "invalid":
@@ -75,7 +75,7 @@ class Decorators:
 
                 return func(*args, **kwargs)
             
-            if verify_code == "expired" or verify_code == "signature":
+            if verify_code in ["expired", "signature"]:
                 return 403
             
             if verify_code == "invalid":
