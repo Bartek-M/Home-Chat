@@ -21,11 +21,10 @@ class Users:
     @users.route("/@me")
     @Decorators.manage_database
     @Decorators.auth
-    def get_me(db, user_id):
-        user = db.get_entry(USER_TABLE, user_id)
-        settings = db.get_entry(USER_SETTING_TABLE, user_id)
+    def get_me(db, user):
+        settings = db.get_entry(USER_SETTING_TABLE, user.id)
 
-        if not user or not settings:
+        if not settings:
             return 404
 
         return ({"user": {
@@ -36,58 +35,58 @@ class Users:
     @users.route("/<user_id>/channels")
     @Decorators.manage_database
     @Decorators.auth
-    def get_channels(db, user_id):
-        return ({"user_channels": db.get_user_stuff(user_id, "channels")}, 200)
+    def get_channels(db, user):
+        return ({"user_channels": db.get_user_stuff(user.id, "channels")}, 200)
 
     @users.route("/<user_id>/friends")
     @Decorators.manage_database
     @Decorators.auth
-    def get_friends(db, user_id):
-        return ({"user_friends": db.get_user_stuff(user_id, "friends")}, 200)
+    def get_friends(db, user):
+        return ({"user_friends": db.get_user_stuff(user.id, "friends")}, 200)
     
 
     # POST
     @users.route("/search", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
-    def search_users(db, user_id):
+    def search_users(db, user):
         if not (username := request.json.get("username")):
             return ({"errors": {"username": "Username is invalid."}}, 400)
         
-        if not (user := db.get_entry(USER_TABLE, username.lower(), "name")) or user.visibility == 0:
+        if not (search_user := db.get_entry(USER_TABLE, username.lower(), "name")) or search_user.visibility == 0:
             return ({"errors": {"username": "User does not exist."}}, 400)
         
-        if user.id == user_id:
+        if search_user.id == user.id:
             return ({"errors": {"username": "User is a client user."}}, 406)
     
-        friend = db.get_user_stuff([user_id, user.id], "friend")
+        friend = db.get_user_stuff([user.id, search_user.id], "friend")
         friend_accepted = friend.get("accepted") if friend else None
         friend_invited = friend.get("inviting") if friend else None
 
-        return ({"user": {**user.__dict__, "accepted": friend_accepted, "inviting": friend_invited}}, 200)
+        return ({"user": {**search_user.__dict__, "accepted": friend_accepted, "inviting": friend_invited}}, 200)
     
     @users.route("/<user_id>/friends/add", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
-    def add_friend(db, user_id):
+    def add_friend(db, user):
         if not (friend_id := request.json.get("friend")):
             return ({"errors": {"friend": "No friend"}}, 400)
 
-        if friend_id == user_id: 
+        if friend_id == user.id: 
             return ({"errors": {"friend": "Invalid friend"}}, 406)
         
         if not (friend := db.get_entry(USER_TABLE, friend_id)):
             return ({"errors": {"friend": "User does not exist"}}, 400)
         
-        if db.get_user_stuff([user_id, friend_id], "friend"):
+        if db.get_user_stuff([user.id, friend_id], "friend"):
             return ({"errors": {"friend": "Already added"}}, 400)
         
-        db.insert_entry(USER_FRIENDS_TABLE, UserFriend(user_id, friend_id))
+        db.insert_entry(USER_FRIENDS_TABLE, UserFriend(user.id, friend_id))
 
-        invited_friend = {**friend.__dict__, "accepted": "waiting", "inviting": user_id}
-        inviting_friend = {**db.get_entry(USER_TABLE, user_id).__dict__, "accepted": "waiting", "inviting": user_id}
+        invited_friend = {**friend.__dict__, "accepted": "waiting", "inviting": user.id}
+        inviting_friend = {**user.id.__dict__, "accepted": "waiting", "inviting": user.id}
 
-        socketio.emit("friends_change", {"action": "add", "friend": invited_friend}, to=user_id)
+        socketio.emit("friends_change", {"action": "add", "friend": invited_friend}, to=user.id)
         socketio.emit("friends_change", {"action": "add", "friend": inviting_friend}, to=friend_id)
 
         return ({"friend": invited_friend}, 200)
@@ -97,9 +96,8 @@ class Users:
     @users.route("/<user_id>", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
-    def change_user(db, user_id):
-        user = db.get_entry(USER_TABLE, user_id)
-        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
+    def change_user(db, user):
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user.id)
 
         if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
             return ({"errors": {"data": "No data or category", "category": "No data or category"}}, 400)
@@ -112,8 +110,8 @@ class Users:
             if db.get_entry(USER_TABLE, name, "name"):
                 return ({"errors": {"name": "Username is already taken"}}, 409)
 
-            db.update_entry(USER_TABLE, user_id, "name", name)
-            socketio.emit("user_change", {"setting": "name", "content": name}, to=user_id)
+            db.update_entry(USER_TABLE, user.id, "name", name)
+            socketio.emit("user_change", {"setting": "name", "content": name}, to=user.id)
             return 200
 
         if category == "email":
@@ -124,7 +122,7 @@ class Users:
             if db.get_entry(USER_SETTING_TABLE, email, "email"):
                 return ({"errors": {"email": "Email is already registered!"}}, 406)
             
-            Mailing.send_email_verification(email, user.name, Security.gen_token(user_id, user_secrets.secret, email))
+            Mailing.send_email_verification(email, user.name, Security.gen_token(user.id, user_secrets.secret, email))
             return 200
 
         if category == "password":
@@ -133,12 +131,13 @@ class Users:
             if data == password:
                 return ({"errors": {"new_password": "Password must not be the same"}}, 400)
             
-            if db.get_entry(USER_SETTING_TABLE, user_id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
+            if db.get_entry(USER_SETTING_TABLE, user.id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
                 return ({"errors": {"code": "Invalid two-factor code"}}, 400)
             
-            db.update_entry(USER_SECRET_TABLE, user_id, "password", Security.hash_passwd(data))
-            db.update_entry(USER_SECRET_TABLE, user_id, "secret", secrets.token_hex(32))
+            db.update_entry(USER_SECRET_TABLE, user.id, "password", Security.hash_passwd(data))
+            db.update_entry(USER_SECRET_TABLE, user.id, "secret", secrets.token_hex(32))
 
+            socketio.emit("logout", {"reason": "password change"}, to=user.id)
             return ({"token": Security.gen_token(user_secrets.id, user_secrets.secret)}, 200)
  
         return ({"errors": {"category": "Invalid category"}}, 400)
@@ -146,38 +145,38 @@ class Users:
     @users.route("/<user_id>/settings", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
-    def change_settings(db, user_id):
+    def change_settings(db, user):
         if (data := request.json.get("data")) is None or (category := request.json.get("category")) is None:
             return ({"errors": {"data": "No data or category", "category": "No data or category"}}, 400)
         
         if category == "display_name":
-            db.update_entry(USER_TABLE, user_id, "display_name", data if data != "" else None)
+            db.update_entry(USER_TABLE, user.id, "display_name", data if data != "" else None)
         elif category == "theme":
             if data not in ["auto", "light", "dark"]:
                 return ({"errors": {"theme": "Invalid theme"}}, 400)
             
-            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+            db.update_entry(USER_SETTING_TABLE, user.id, category, data)
         elif category == "message_display":
             if data not in ["standard", "compact"]:
                 return ({"errors": {"message_display": "Invalid message_display"}}, 400)
             
-            db.update_entry(USER_SETTING_TABLE, user_id, category, data)
+            db.update_entry(USER_SETTING_TABLE, user.id, category, data)
         elif category == "visibility":
             if data not in [0, 1]:
                 return ({"errors": {"visibility": "Invalid visibility"}}, 400)
             
-            db.update_entry(USER_TABLE, user_id, category, data)
+            db.update_entry(USER_TABLE, user.id, category, data)
         else:
             return ({"errors": {"category": "Invalid category"}}, 400)
         
-        socketio.emit("user_change", {"setting": category, "content": data}, to=user_id)
+        socketio.emit("user_change", {"setting": category, "content": data}, to=user.id)
         return 200
     
     @users.route("/<user_id>/settings/mfa", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
-    def setup_mfa(db, user_id):
-        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
+    def setup_mfa(db, user):
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user.id)
 
         if request.json.get("option") == "enable":
             if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
@@ -193,17 +192,19 @@ class Users:
             if not pyotp.TOTP(secret).verify((request.json.get("code"))):
                 return ({"errors": {"code": "Invalid two-factor code"}}, 400)
             
-            db.update_entry(USER_SECRET_TABLE, user_id, "mfa_code", secret)
-            db.update_entry(USER_SETTING_TABLE, user_id, "mfa_enabled", 1)
+            db.update_entry(USER_SECRET_TABLE, user.id, "mfa_code", secret)
+            db.update_entry(USER_SETTING_TABLE, user.id, "mfa_enabled", 1)
 
+            socketio.emit("user_change", {"setting": "mfa_enabled", "content": 1}, to=user.id)
             return 200
         
         if request.json.get("option") == "disable":
             if not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
                 return ({"errors": {"code": "Invalid two-factor code"}}, 400)
             
-            db.update_entry(USER_SETTING_TABLE, user_id, "mfa_enabled", 0)
-            db.update_entry(USER_SECRET_TABLE, user_id, "mfa_code", None)
+            db.update_entry(USER_SETTING_TABLE, user.id, "mfa_enabled", 0)
+            db.update_entry(USER_SECRET_TABLE, user.id, "mfa_code", None)
+            socketio.emit("user_change", {"setting": "mfa_enabled", "content": 0}, to=user.id)
 
             return 200
 
@@ -212,29 +213,29 @@ class Users:
     @users.route("/<user_id>/friends/confirm", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
-    def confirm_friend(db, user_id):
+    def confirm_friend(db, user):
         if not (friend_id := request.json.get("friend")):
             return ({"errors": {"friend": "No friend"}}, 400)
 
-        if friend_id == user_id: 
+        if friend_id == user.id: 
             return ({"errors": {"friend": "Invalid friend"}}, 406)
 
-        if not (friend := db.get_user_stuff([user_id, friend_id], "friend")):
+        if not (friend := db.get_user_stuff([user.id, friend_id], "friend")):
             return ({"errors": {"friend": "No friend connection"}}, 400)
         
-        if friend.get("inviting") == user_id:
+        if friend.get("inviting") == user.id:
             return ({"errors": {"friend": "Inviting user can't confirm an invite"}}, 406)
         
         if friend.get("accepted") != "waiting":
             return ({"errors": {"friend": "Already confirmed"}}, 406)
         
         current_time = time.time()
-        db.update_entry(USER_FRIENDS_TABLE, [user_id, friend_id], "accepted", current_time, "friend")
+        db.update_entry(USER_FRIENDS_TABLE, [user.id, friend_id], "accepted", current_time, "friend")
 
-        user = {**db.get_entry(USER_TABLE, user_id).__dict__, "accepted": current_time, "inviting": friend.get("inviting") }
+        user = {**user.__dict__, "accepted": current_time, "inviting": friend.get("inviting") }
         friend = {**friend, "accepted": current_time}
 
-        socketio.emit("friends_change", {"action": "confirm", "friend": friend}, to=user_id)
+        socketio.emit("friends_change", {"action": "confirm", "friend": friend}, to=user.id)
         socketio.emit("friends_change", {"action": "confirm", "friend": user}, to=friend_id)
 
         return ({"friend": friend}, 200)
@@ -242,7 +243,7 @@ class Users:
     @users.route("/<user_id>/notifications/", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
-    def notifications(db, user_id):
+    def notifications(db, user):
         option = request.json.get("option")
         position = request.json.get("position")
 
@@ -250,18 +251,18 @@ class Users:
             return ({"errors": {"position": "Invalid position"}}, 400)
             
         if option == "notifications":
-            db.update_entry(USER_TABLE, user_id, "notifications", position)
+            db.update_entry(USER_TABLE, user.id, "notifications", position)
         elif option == "notifications_message":
-            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_message", position)
+            db.update_entry(USER_SETTING_TABLE, user.id, "notifications_message", position)
         elif option == "notifications_friend":
-            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_friend", position)
+            db.update_entry(USER_SETTING_TABLE, user.id, "notifications_friend", position)
         elif option == "notifications_changelog":
             position = "1" if position else None
-            db.update_entry(USER_SETTING_TABLE, user_id, "notifications_changelog", position)
+            db.update_entry(USER_SETTING_TABLE, user.id, "notifications_changelog", position)
         else:
             return ({"errors": {"option": "Invalid option"}}, 400)
 
-        socketio.emit("user_change", {"setting": option, "content": position}, to=user_id)
+        socketio.emit("user_change", {"setting": option, "content": position}, to=user.id)
         return ({"position": position}, 200)
         
     
@@ -269,45 +270,44 @@ class Users:
     @users.route("/<user_id>/delete", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
-    def delete_account(db, user_id):
-        if db.get_entry(CHANNEL_TABLE, user_id, "owner"):
+    def delete_account(db, user):
+        if db.get_entry(CHANNEL_TABLE, user.id, "owner"):
             return ({"errors": {"channels": "You own some channels!"}}, 400)
         
-        user = db.get_entry(USER_TABLE, user_id)
-        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user.id)
 
         if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
             return ({"errors": {"password": "Password doesn't match"}}, 403)
 
-        if db.get_entry(USER_SETTING_TABLE, user_id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
+        if db.get_entry(USER_SETTING_TABLE, user.id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
             return ({"errors": {"code": "Invalid two-factor code"}}, 400)
         
         if user.avatar != "generic" and os.path.isfile(f"{AVATARS_FOLDER}{user.avatar}.webp"): 
             os.remove(f"{AVATARS_FOLDER}{user.avatar}.webp")
         
-        db.delete_entry(None, user_id, option="account")
+        db.delete_entry(None, user.id, option="account")
         return 200
     
     @users.route("/<user_id>/friends/remove", methods=["DELETE"])
     @users.route("/<user_id>/friends/decline", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
-    def remove_friend(db, user_id):
+    def remove_friend(db, user):
         if not (friend_id := request.json.get("friend")):
             return ({"errors": {"friend": "No friend"}}, 400)
 
-        if friend_id == user_id: 
+        if friend_id == user.id: 
             return ({"errors": {"friend": "Invalid friend"}}, 406)
         
         if not db.get_entry(USER_TABLE, friend_id):
             return ({"errors": {"friend": "User does not exist"}}, 400)
 
-        if not db.get_user_stuff([user_id, friend_id], "friend"):
+        if not db.get_user_stuff([user.id, friend_id], "friend"):
             return ({"errors": {"friend": "No friend connection"}}, 400)
         
-        db.delete_entry(None, [user_id, friend_id], option="user_friend")
+        db.delete_entry(None, [user.id, friend_id], option="user_friend")
 
-        socketio.emit("friends_change", {"action": "remove", "friend": friend_id}, to=user_id)
-        socketio.emit("friends_change", {"action": "remove", "friend": user_id}, to=friend_id)
+        socketio.emit("friends_change", {"action": "remove", "friend": friend_id}, to=user.id)
+        socketio.emit("friends_change", {"action": "remove", "friend": user.id}, to=friend_id)
 
         return ({"friend": friend_id}, 200)

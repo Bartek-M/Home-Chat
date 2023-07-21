@@ -4,7 +4,7 @@ import hashlib
 import secrets
 from base64 import b64encode, b64decode
 
-from ..database import USER_SECRET_TABLE
+from ..database import USER_TABLE, USER_SECRET_TABLE
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="./api/.env")
@@ -70,21 +70,21 @@ class Security:
             id = sliced[0]
             option = sliced[1]
 
-        if not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
+        if not (user := db.get_entry(USER_TABLE, id)) or not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
             return ("invalid", None, option)
 
         if option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret[:int(len(user_secrets.secret)/2)]}|temp-{option}-access".encode("UTF-8")).hexdigest() != hmac:
-            return ("signature", id, option)
+            return ("signature", None, option)
         if not option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
-            return ("signature", id, option)
+            return ("signature", None, option)
 
         if option:
             if option == "email" and int(time.time() - int(generated)) > 604_800: # Email tickets expire after 1 week; time in seconds
-                return ("expired", id, option)
+                return ("expired", None, option)
             elif option != "email" and int(time.time() - int(generated)) > 600: # Other tickets expire after 5 minutes; time in seconds
-                return ("expired", id, option)
+                return ("expired", None, option)
 
         if int(time.time()) - int(generated) > 31_536_000: # Everything expire after one year (365 days); time in seconds
-            return ("expired", id, option)
+            return ("expired", None, option)
 
-        return ("correct", id, option)
+        return ("correct", user, option)

@@ -138,7 +138,7 @@ class Mailing:
         email_thread.start()
 
     @staticmethod
-    def send_email_recover():
+    def send_email_recovery(email, name, ticket):
         """
         Generate and send email with recovery after email was changed
         :return: None

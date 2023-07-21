@@ -92,19 +92,19 @@ class Auth:
     @auth.route("/verify", methods=["POST"])
     @Decorators.manage_database
     @Decorators.ticket_auth
-    def verify(db, user_id, option):
+    def verify(db, user, option):
         if not (code := request.json.get("code")):
             return ({"errors": {"code": "No code."}}, 400)
         
-        if not (user_secrets := db.get_entry(USER_SECRET_TABLE, user_id)):
+        if not (user_secrets := db.get_entry(USER_SECRET_TABLE, user.id)):
             return 401
         
         if option == "verify":
             if user_secrets.verify_code.upper() != code.upper():
                 return ({"errors": {"code": "Invalid code."}}, 400)
             
-            db.update_entry(USER_TABLE, user_id, "verified", 1)
-            db.update_entry(USER_SECRET_TABLE, user_id, "verify_code", "")
+            db.update_entry(USER_TABLE, user.id, "verified", 1)
+            db.update_entry(USER_SECRET_TABLE, user.id, "verify_code", "")
 
             return ({
                 "token": Security.gen_token(user_secrets.id, user_secrets.secret), 
@@ -142,6 +142,12 @@ class Auth:
         if db.get_entry(USER_SETTING_TABLE, email, "email"):
             return ({"errors": {"email": "Email is already registered!"}}, 406)
         
+        user = db.get_entry(USER_TABLE, user_id)
+        user_settings = db.get_entry(USER_SETTING_TABLE, user_id)
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
+
+        Mailing.send_email_recovery(user_settings.email, user.name, Security.gen_token(user_id, user_secrets.secret, email))
         db.update_entry(USER_SETTING_TABLE, user_id, "email", email)
+
         socketio.emit("user_change", {"setting": "email", "content": email}, to=user_id)
         return 200

@@ -36,13 +36,13 @@ class Decorators:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication"))
+            verify_code, verify_user, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication"))
 
             if verify_option and verify_code == "correct":
                 return 403
             
             if verify_code == "correct":
-                kwargs["user_id"] = verify_id
+                kwargs["user"] = verify_user
                 return func(*args, **kwargs)
             
             if verify_code in ["expired", "signature"]:
@@ -64,13 +64,13 @@ class Decorators:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            verify_code, verify_id, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket"))
+            verify_code, verify_user, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket"))
 
             if not verify_option and verify_code == "correct":
                 return 403
             
             if verify_code == "correct":
-                kwargs["user_id"] = verify_id
+                kwargs["user"] = verify_user
                 kwargs["option"] = verify_option
 
                 return func(*args, **kwargs)

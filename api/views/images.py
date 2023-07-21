@@ -38,41 +38,39 @@ class Images:
     @images.route("/avatar", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
-    def avatar(db, user_id):
+    def avatar(db, user):
         if not (file := request.files.get("image")):
             return ({"errors": {"image": "No image"}}, 400)
         
         if not (img := Functions.crop_image(file, IMAGE_SIZE)):
             return ({"errors": {"image": "Invalid image format"}}, 400)
 
-        user_avatar = db.get_entry(USER_TABLE, user_id).avatar
-
-        if user_avatar != "generic" and os.path.isfile(f"{AVATARS_FOLDER}{user_avatar}.webp"): 
-            os.remove(f"{AVATARS_FOLDER}{user_avatar}.webp")
+        if user.avatar != "generic" and os.path.isfile(f"{AVATARS_FOLDER}{user.avatar}.webp"): 
+            os.remove(f"{AVATARS_FOLDER}{user.avatar}.webp")
         
-        file_name = f"{user_id}{secrets.token_hex(2)}"
+        file_name = f"{user.id}{secrets.token_hex(2)}"
         img.save(f"{AVATARS_FOLDER}{file_name}.webp")
-        db.update_entry(USER_TABLE, user_id, "avatar", file_name)
+        db.update_entry(USER_TABLE, user.id, "avatar", file_name)
 
         return ({"image": file_name}, 200)
 
     @images.route("/icon/<channel_id>", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
-    def icon(db, user_id, channel_id):    
+    def icon(db, user, channel_id):    
         if not (file := request.files.get("image")):
             return ({"errors": {"image": "No image"}}, 400)
         
         if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
         
-        if not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel")):
+        if not (user_channel := db.get_channel_stuff([user.id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You are not a member"}}, 403)
         
         if channel.direct:
             return ({"errors": {"channel": "Direct channel"}}, 406)
         
-        if user_channel.admin != 1 and channel.owner != user_id:
+        if user_channel.admin != 1 and channel.owner != user.id:
             return ({"errors": {"channel": "You are not a stuff member"}}, 403)
         
         if not (img := Functions.crop_image(file, IMAGE_SIZE)):
