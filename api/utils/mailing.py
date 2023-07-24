@@ -104,7 +104,7 @@ class Mailing:
         """
         Generate and send email with email change verification
         :param email: User email
-        :param name: User Name
+        :param name: User name
         :param ticket: Ticket for later authorization
         :return: None
         """
@@ -129,7 +129,7 @@ class Mailing:
                 You wanted to change your email to this one. Click below to finish the transition process:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1, text-decoration: none;" href="http://{ADDR}:{PORT}/api/auth/confirm-email?ticket={ticket}">Confirm Email</a>
+                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/api/auth/confirm-email?ticket={ticket}">Confirm Email</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">If this email wasn't meant for you please ignore it.</p>
         """)
@@ -138,8 +138,40 @@ class Mailing:
         email_thread.start()
 
     @staticmethod
-    def send_email_recovery(email, name, ticket):
+    def send_email_recovery(email, new_email, name, ticket):
         """
         Generate and send email with recovery after email was changed
+        :param email: User email
+        :param new_email: New user email
+        :param name: User name
+        :param ticket: Ticket for later authorization
         :return: None
         """
+        subject = f"Email Change for Home Chat"
+
+        text = f"""
+        Home Chat
+
+        Hey, {name}!
+        Someone has changed your email address to '{new_email}'. Click below to restore your earlier email:
+
+        http://{ADDR}:{PORT}/api/recovery/email?ticket={ticket}
+
+        If you don't recognize this action, change your password immediately.
+        
+        Sent by Home Chat
+        """
+
+        html = HTML_BASE(f"""
+            <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Hey, {name}!</h2>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
+                Someone has changed your email address to '{new_email}'. Click below to restore your earlier email:
+            </p>
+            <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
+                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/api/recovery/email?ticket={ticket}">Restore Email</a>
+            </div>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">If you don't recognize this action, change your password immediately.</p>
+        """)
+
+        email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
+        email_thread.start()

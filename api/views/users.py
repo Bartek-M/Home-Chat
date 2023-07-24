@@ -32,13 +32,13 @@ class Users:
             **settings.__dict__
         }}, 200)
     
-    @users.route("/<user_id>/channels")
+    @users.route("/@me/channels")
     @Decorators.manage_database
     @Decorators.auth
     def get_channels(db, user):
         return ({"user_channels": db.get_user_stuff(user.id, "channels")}, 200)
 
-    @users.route("/<user_id>/friends")
+    @users.route("/@me/friends")
     @Decorators.manage_database
     @Decorators.auth
     def get_friends(db, user):
@@ -65,7 +65,7 @@ class Users:
 
         return ({"user": {**search_user.__dict__, "accepted": friend_accepted, "inviting": friend_invited}}, 200)
     
-    @users.route("/<user_id>/friends/add", methods=["POST"])
+    @users.route("/@me/friends/add", methods=["POST"])
     @Decorators.manage_database
     @Decorators.auth
     def add_friend(db, user):
@@ -93,7 +93,7 @@ class Users:
 
 
     # PATCH
-    @users.route("/<user_id>", methods=["PATCH"])
+    @users.route("/@me", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
     def change_user(db, user):
@@ -122,7 +122,7 @@ class Users:
             if db.get_entry(USER_SETTING_TABLE, email, "email"):
                 return ({"errors": {"email": "Email is already registered!"}}, 406)
             
-            Mailing.send_email_verification(email, user.name, Security.gen_token(user.id, user_secrets.secret, email))
+            Mailing.send_email_verification(email, user.name, Security.gen_token(user.id, user_secrets.secret, f"email-new|{email}"))
             return 200
 
         if category == "password":
@@ -142,7 +142,7 @@ class Users:
  
         return ({"errors": {"category": "Invalid category"}}, 400)
     
-    @users.route("/<user_id>/settings", methods=["PATCH"])
+    @users.route("/@me/settings", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
     def change_settings(db, user):
@@ -172,7 +172,7 @@ class Users:
         socketio.emit("user_change", {"setting": category, "content": data}, to=user.id)
         return 200
     
-    @users.route("/<user_id>/settings/mfa", methods=["PATCH"])
+    @users.route("/@me/settings/mfa", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
     def setup_mfa(db, user):
@@ -210,7 +210,7 @@ class Users:
 
         return ({"errors": {"option": "Invalid option"}}, 400)
     
-    @users.route("/<user_id>/friends/confirm", methods=["PATCH"])
+    @users.route("/@me/friends/confirm", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
     def confirm_friend(db, user):
@@ -240,7 +240,7 @@ class Users:
 
         return ({"friend": friend}, 200)
 
-    @users.route("/<user_id>/notifications/", methods=["PATCH"])
+    @users.route("/@me/notifications/", methods=["PATCH"])
     @Decorators.manage_database
     @Decorators.auth
     def notifications(db, user):
@@ -267,7 +267,7 @@ class Users:
         
     
     # DELETE
-    @users.route("/<user_id>/delete", methods=["DELETE"])
+    @users.route("/@me/delete", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
     def delete_account(db, user):
@@ -288,8 +288,8 @@ class Users:
         db.delete_entry(None, user.id, option="account")
         return 200
     
-    @users.route("/<user_id>/friends/remove", methods=["DELETE"])
-    @users.route("/<user_id>/friends/decline", methods=["DELETE"])
+    @users.route("/@me/friends/remove", methods=["DELETE"])
+    @users.route("/@me/friends/decline", methods=["DELETE"])
     @Decorators.manage_database
     @Decorators.auth
     def remove_friend(db, user):

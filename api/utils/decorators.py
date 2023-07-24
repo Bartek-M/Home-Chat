@@ -64,7 +64,7 @@ class Decorators:
         :return: Wrapper function
         """
         def wrapper(*args, **kwargs):
-            verify_code, verify_user, verify_option = Security.verify_token(kwargs["db"], request.json.get("ticket"))
+            verify_code, verify_user, verify_option = Security.verify_token(kwargs["db"], request.args.get("ticket") or request.json.get("ticket"))
 
             if not verify_option and verify_code == "correct":
                 return 403
@@ -80,7 +80,7 @@ class Decorators:
             
             if verify_code == "invalid":
                 return 401
- 
+
             return None
         
         wrapper.__name__ = func.__name__

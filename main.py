@@ -29,6 +29,7 @@ app.register_blueprint(auth, url_prefix="/api/auth")
 app.register_blueprint(channels, url_prefix="/api/channels")
 app.register_blueprint(users, url_prefix="/api/users")
 app.register_blueprint(images, url_prefix="/api/images")
+app.register_blueprint(recovery, url_prefix="/api/recovery")
 
 # SETUP RATE LIMITER
 limiter = Limiter(

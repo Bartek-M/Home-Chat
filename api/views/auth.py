@@ -124,30 +124,23 @@ class Auth:
 
         return ({"errors": {"option": "Invalid option"}}, 400)
 
-
     @auth.route("/confirm-email", methods=["GET"])
     @Decorators.manage_database
-    def confirm_email(db):
-        if not (ticket := request.args.get("ticket")):
-            return 400
-        
-        code, user_id, email = Security.verify_token(db, ticket)
-
-        if code in ["expired", "signature"]:
+    @Decorators.ticket_auth
+    def confirm_email(db, user, option):
+        if not option.startswith("email-new|"):
             return 403
 
-        if code != "correct" or not user_id or not email:
-            return 401
+        email = option[10:].lower()
         
         if db.get_entry(USER_SETTING_TABLE, email, "email"):
             return ({"errors": {"email": "Email is already registered!"}}, 406)
-        
-        user = db.get_entry(USER_TABLE, user_id)
-        user_settings = db.get_entry(USER_SETTING_TABLE, user_id)
-        user_secrets = db.get_entry(USER_SECRET_TABLE, user_id)
 
-        Mailing.send_email_recovery(user_settings.email, user.name, Security.gen_token(user_id, user_secrets.secret, email))
-        db.update_entry(USER_SETTING_TABLE, user_id, "email", email)
+        user_settings = db.get_entry(USER_SETTING_TABLE, user.id)
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user.id)
 
-        socketio.emit("user_change", {"setting": "email", "content": email}, to=user_id)
+        Mailing.send_email_recovery(user_settings.email, email, user.name, Security.gen_token(user.id, user_secrets.secret, f"email-old|{user_settings.email}"))
+        db.update_entry(USER_SETTING_TABLE, user.id, "email", email)
+
+        socketio.emit("user_change", {"setting": "email", "content": email}, to=user.id)
         return 200
