@@ -293,6 +293,12 @@ class Users:
             os.remove(f"{AVATARS_FOLDER}{user.avatar}.webp")
         
         db.delete_entry(None, user.id, option="account")
+
+        socketio.emit("logout", {"reason": "account deleted"}, to=user.id)
+
+        for sid in socketio.server.manager.rooms["/"].get(user.id, {}).copy():
+            disconnect(sid=sid, namespace="/")
+
         return 200
     
     @users.route("/@me/friends/remove", methods=["DELETE"])

@@ -193,19 +193,14 @@ input {
     padding: 0; 
     line-height: 1.375rem;
     transition: 0.17s ease; 
+    cursor: pointer;
 }
-
-button:hover { cursor: pointer; }
 button:active { transform: translateY(2px); }
 
 button:disabled, 
 input:disabled {
     color: var(--FONT_DIM_COLOR)!important;
     background-color: var(--BUTTON_HOVER)!important;
-}
-
-button:disabled,
-input:disabled {
     cursor: unset;
     transform: none;
 }
@@ -223,8 +218,10 @@ svg {
 }
 
 .icons { fill: var(--FONT_COLOR) }
+
 .link { color: var(--BLUE); }
 .link:hover { text-decoration: underline; }
+.link:disabled { background-color: transparent!important; text-decoration: none; }
 
 /* containers */
 [class*="container"] { 

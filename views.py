@@ -27,6 +27,11 @@ def log_out():
     return render_template("index.html")
 
 
+@view.route("/recovery/<option>")
+def recovery(**_):
+    return render_template("index.html")
+
+
 # ERRORS
 @view.app_errorhandler(401)
 def unauthorized(_):

@@ -81,7 +81,7 @@ class Security:
         if option:
             if option.startswith("email") and int(time.time() - int(generated)) > 604_800: # Email tickets expire after 1 week; time in seconds
                 return ("expired", None, option)
-            elif option.startswith("email|") and int(time.time() - int(generated)) > 600: # Other tickets expire after 5 minutes; time in seconds
+            elif not option.startswith("email") and int(time.time() - int(generated)) > 600: # Other tickets expire after 10 minutes; time in seconds
                 return ("expired", None, option)
 
         if int(time.time()) - int(generated) > 31_536_000: # Everything expire after one year (365 days); time in seconds

@@ -123,6 +123,29 @@ class Auth:
             }, 200)          
 
         return ({"errors": {"option": "Invalid option"}}, 400)
+    
+    @auth.route("/verification-resend", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.ticket_auth
+    def resend_verification(db, user, option):
+        if option != "verify":
+            return 403
+
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user.id)
+
+        if user.verified:
+            return ({"token": Security.gen_token(user.id, user_secrets.secret)}, 200)
+        
+        user_settings = db.get_entry(USER_SETTING_TABLE, user.id)
+        current_time = time.time()
+
+        if int(current_time - (float(user_secrets.sent_time) if user_secrets.sent_time else 0)) < 300: # Only allow for resend after 5 minutes from earlier email; time in seconds
+            return ({"errors": {"resend": "Wait 5 minutes from previous resend!"}}, 406)
+        
+        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
+
+        Mailing.send_verification(user_settings.email, user.name, user_secrets.verify_code)
+        return 200
 
     @auth.route("/confirm-email", methods=["GET"])
     @Decorators.manage_database

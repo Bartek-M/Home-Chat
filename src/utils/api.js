@@ -1,13 +1,16 @@
 // API
 const API_PAGES = {
     // Auth
-    authLogin: () => `auth/login`,
-    authRegister: () => `auth/register`,
-    authVerify: () => `auth/verify`,
+    authLogin: () => "auth/login",
+    authRegister: () => "auth/register",
+    authVerify: () => "auth/verify",
+
+    resendVerification: () => "auth/verification-resend",
+    confirmEmail: () => "auth/confirm-email",
 
     // User data
-    me: () => `users/@me`,
-    userSearch: () => `users/search`,
+    me: () => "users/@me",
+    userSearch: () => "users/search",
     userChannels: (value) => `users/${value}/channels`,
 
     userSettings: (value) => `users/${value}/settings`,
@@ -20,8 +23,8 @@ const API_PAGES = {
     channelMessage: (value) => `channels/${value}/message`,
 
     // Create channels
-    channelOpen: () => `channels/open`,
-    channelCreate: () => `channels/create`,
+    channelOpen: () => "channels/open",
+    channelCreate: () => "channels/create",
 
     // Channel profile
     channelSettings: (value) => `channels/${value}/settings`,
@@ -46,7 +49,7 @@ const API_PAGES = {
     notifications: (value) => `users/${value}/notifications`,
 
     // Avatars + Icons
-    avatar: () => `images/avatar`,
+    avatar: () => "images/avatar",
     icon: (value) => `images/icon/${value}`
 }
 

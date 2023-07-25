@@ -27,7 +27,7 @@ export function SocketProvider({ children }) {
 
         const onLogout = (data) => {
             setFlash(`Logout - ${data.reason}`)
-            setTimeout(() => window.location.reload(), 200)
+            setTimeout(() => window.location.reload(), 2000)
         }
 
         socket.on("connect", onConnect)

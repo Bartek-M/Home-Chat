@@ -73,6 +73,27 @@ function verify(button, navigator, auth_code, setFlash) {
     })
 }
 
+function resendEmail(button, navigator, setFlash) {
+    apiSend(button, "resendVerification", {
+        ticket: localStorage.getItem("ticket")
+    }, "POST").then(res => {
+        if (res.errors) return document.getElementById("code-error").innerText = res.errors.resend ? `- ${res.errors.resend}` : "*"
+
+        if (res.message === "200 OK" && res.token) {
+            localStorage.removeItem("ticket")
+            localStorage.setItem("token", res.token)
+            navigator("/")
+            return setFlash("Logged in!")
+        }
+
+        if (res.message === "200 OK") return setFlash("Resent verification")
+
+        navigator("/login")
+        setFlash("Login again!", "error")
+    })
+}
+
+
 export function Login() {
     const [codePage, setCodePage] = useState(null)
     const setFlash = useFlash()
@@ -97,7 +118,7 @@ export function Login() {
                             <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
                             <input className="input-field" autoFocus type="text" ref={auth_code} placeholder="6-digit authentication code" key="mfa-inpt" maxLength={10} required />
                         </div>
-                        <p className="login-redirect"><a className="link" href="recovery/mfa">Don't have any access to auth codes?</a></p>
+                        <p className="login-redirect"><a className="link" href="recovery/mfa">Don't have access to your auth codes?</a></p>
 
                         <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current, setFlash) }} value="LOG IN" />
                         <p className="login-redirect"><a className="link" href="login">Go Back to Login</a></p>
@@ -119,6 +140,7 @@ export function Login() {
                             <p className="category-text">CODE FROM YOUR EMAIL <span className="error-category-text" id="code-error" key="code-error">*</span></p>
                             <input className="input-field" autoFocus type="text" ref={auth_code} key="verify-inpt" maxLength={10} required />
                         </div>
+                        <p className="login-redirect"><button className="link" type="button" onClick={(e) => resendEmail(e.target, navigator, setFlash)}>Resend Email</button></p>
 
                         <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current, setFlash) }} value="LOG IN" />
                         <p className="login-redirect"><a className="link" href="login">Go Back to Login</a></p>

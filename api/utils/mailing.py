@@ -108,7 +108,7 @@ class Mailing:
         :param ticket: Ticket for later authorization
         :return: None
         """
-        subject = "Verify Email Address for Home Chat"
+        subject = "Verify email address for Home Chat"
 
         text = f"""
         Home Chat
@@ -147,7 +147,7 @@ class Mailing:
         :param ticket: Ticket for later authorization
         :return: None
         """
-        subject = "Email Recovery for Home Chat"
+        subject = "Email recovery for Home Chat"
 
         text = f"""
         Home Chat
@@ -185,14 +185,28 @@ class Mailing:
         :param ticket: Ticket for later authorization
         :return: None
         """
-        subject = "Password Recovery for Home Chat"
+        subject = "Password reset request for Home Chat"
 
         text = f"""
+        Hey, {name}!
+        Your Home Chat password can be reset by clicking the link below:
 
+        http://{ADDR}:{PORT}/api/recovery/password?ticket={ticket}
+
+        If you did not request a new password, please ignore this email.
+
+        Sent by Home Chat
         """
 
         html = HTML_BASE(f"""
-
+            <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Hey, {name}!</h2>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
+                Your Home Chat password can be reset by clicking the link below:
+            </p>
+            <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
+                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/api/recovery/password?ticket={ticket}">Reset Password</a>
+            </div>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">If you did not request a new password, please ignore this email.</p>
         """)
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
