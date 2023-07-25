@@ -25,12 +25,19 @@ export function SocketProvider({ children }) {
             })
         }
 
+        const onLogout = (data) => {
+            setFlash(`Logout - ${data.reason}`)
+            setTimeout(() => window.location.reload(), 200)
+        }
+
         socket.on("connect", onConnect)
         socket.on("user_change", onChange)
+        socket.on("logout", onLogout)
         
         return () => { 
             socket.off("connect", onConnect)
             socket.off("user_change", onChange)
+            socket.on("logout", onLogout)
         }
     }, [])
 

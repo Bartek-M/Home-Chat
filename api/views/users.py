@@ -4,6 +4,7 @@ import secrets
 
 import pyotp
 from flask import Blueprint, request
+from flask_socketio import disconnect
 from __main__ import socketio
 
 from ..database import *
@@ -134,11 +135,17 @@ class Users:
             if db.get_entry(USER_SETTING_TABLE, user.id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
                 return ({"errors": {"code": "Invalid two-factor code"}}, 400)
             
-            db.update_entry(USER_SECRET_TABLE, user.id, "password", Security.hash_passwd(data))
-            db.update_entry(USER_SECRET_TABLE, user.id, "secret", secrets.token_hex(32))
+            secret = secrets.token_hex(32)
 
-            socketio.emit("logout", {"reason": "password change"}, to=user.id)
-            return ({"token": Security.gen_token(user_secrets.id, user_secrets.secret)}, 200)
+            db.update_entry(USER_SECRET_TABLE, user.id, "password", Security.hash_passwd(data))
+            db.update_entry(USER_SECRET_TABLE, user.id, "secret", secret)
+
+            socketio.emit("logout", {"reason": "password changed"}, to=user.id)
+
+            for sid in socketio.server.manager.rooms["/"].get(user.id, {}).copy():
+                disconnect(sid=sid, namespace="/")
+
+            return ({"token": Security.gen_token(user_secrets.id, secret)}, 200)
  
         return ({"errors": {"category": "Invalid category"}}, 400)
     

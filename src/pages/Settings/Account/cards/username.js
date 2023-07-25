@@ -6,7 +6,7 @@ import { apiSend } from "../../../../utils"
 function update_username(button, user, setUser, name, password, close, setFlash) {
     if (!password.value || user.name == name.value) return
 
-    apiSend(button, "user", {
+    apiSend(button, "me", {
         category: "name",
         data: name.value,
         password: password.value

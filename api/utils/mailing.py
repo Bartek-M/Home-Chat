@@ -108,7 +108,7 @@ class Mailing:
         :param ticket: Ticket for later authorization
         :return: None
         """
-        subject = f"Verify Email Address for Home Chat"
+        subject = "Verify Email Address for Home Chat"
 
         text = f"""
         Home Chat
@@ -147,7 +147,7 @@ class Mailing:
         :param ticket: Ticket for later authorization
         :return: None
         """
-        subject = f"Email Change for Home Chat"
+        subject = "Email Recovery for Home Chat"
 
         text = f"""
         Home Chat
@@ -171,6 +171,28 @@ class Mailing:
                 <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/api/recovery/email?ticket={ticket}">Restore Email</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">If you don't recognize this action, change your password immediately.</p>
+        """)
+
+        email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
+        email_thread.start()
+
+    @staticmethod
+    def send_password_recovery(email, name, ticket):
+        """
+        Generate and send email with password recovery after user forgot it
+        :param email: User email
+        :param name: User name
+        :param ticket: Ticket for later authorization
+        :return: None
+        """
+        subject = "Password Recovery for Home Chat"
+
+        text = f"""
+
+        """
+
+        html = HTML_BASE(f"""
+
         """)
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
