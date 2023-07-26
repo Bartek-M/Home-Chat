@@ -3,7 +3,7 @@ import { useRef } from "react"
 import { useFlash, useUser } from "../../../../context"
 import { apiSend } from "../../../../utils"
 
-function update_displayname(button, user, setUser, display_name, close, setFlash) {
+function update_displayname(button, user, display_name, close, setFlash) {
     if (user.display_name === display_name.value) return
 
     apiSend(button, "userSettings", {
@@ -25,7 +25,7 @@ function update_displayname(button, user, setUser, display_name, close, setFlash
 export function DisplayName({ props }) {
     const { close } = props
 
-    const [user, setUser] = useUser()
+    const [user,] = useUser()
     const setFlash = useFlash()
 
     const display_name = useRef()
@@ -43,7 +43,7 @@ export function DisplayName({ props }) {
                 <button className="card-cancel-btn" type="button" onClick={() => close()}>Cancel</button>
                 <input className="card-submit-btn submit-btn" type="submit" value="Update" onClick={(e) => {
                     e.preventDefault()
-                    update_displayname(e.target, user, setUser, display_name.current, close, setFlash)
+                    update_displayname(e.target, user, display_name.current, close, setFlash)
                 }} />
             </div>
         </form>

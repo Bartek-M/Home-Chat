@@ -118,6 +118,7 @@ class Mailing:
 
         http://{ADDR}:{PORT}/api/auth/confirm-email?ticket={ticket}
 
+        This link is valid for only a week.
         If this email wasn't meant for you please ignore it.
 
         Sent by Home Chat
@@ -129,9 +130,9 @@ class Mailing:
                 You wanted to change your email to this one. Click below to finish the transition process:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/api/auth/confirm-email?ticket={ticket}">Confirm Email</a>
+                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/email-confirm?ticket={ticket}">Confirm Email</a>
             </div>
-            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">If this email wasn't meant for you please ignore it.</p>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only a week.<br/>If this email wasn't meant for you please ignore it.</p>
         """)
         
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
@@ -157,6 +158,7 @@ class Mailing:
 
         http://{ADDR}:{PORT}/api/recovery/email?ticket={ticket}
 
+        This link is valid for only a week.
         If you don't recognize this action, change your password immediately.
         
         Sent by Home Chat
@@ -168,9 +170,9 @@ class Mailing:
                 Someone has changed your email address to '{new_email}'. Click below to restore your earlier email:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/api/recovery/email?ticket={ticket}">Restore Email</a>
+                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/recovery/email?ticket={ticket}">Restore Email</a>
             </div>
-            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">If you don't recognize this action, change your password immediately.</p>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only a week.<br/>If you don't recognize this action, change your password immediately.</p>
         """)
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
@@ -193,6 +195,7 @@ class Mailing:
 
         http://{ADDR}:{PORT}/api/recovery/password?ticket={ticket}
 
+        This link is valid for only 10 minutes.
         If you did not request a new password, please ignore this email.
 
         Sent by Home Chat
@@ -204,9 +207,9 @@ class Mailing:
                 Your Home Chat password can be reset by clicking the link below:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/api/recovery/password?ticket={ticket}">Reset Password</a>
+                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/recovery/password?ticket={ticket}">Reset Password</a>
             </div>
-            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">If you did not request a new password, please ignore this email.</p>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only 10 minutes.<br/>If you did not request a new password, please ignore this email.</p>
         """)
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))

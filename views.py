@@ -27,6 +27,10 @@ def log_out():
     return render_template("index.html")
 
 
+@view.route("/email-confirm")
+def email_confirm():
+    return render_template("index.html")
+
 @view.route("/recovery/<option>")
 def recovery(**_):
     return render_template("index.html")

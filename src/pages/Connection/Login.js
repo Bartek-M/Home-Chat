@@ -93,6 +93,25 @@ function resendEmail(button, navigator, setFlash) {
     })
 }
 
+function forgotPassword(button, userLogin, setFlash) {
+    if (!userLogin.value) return document.getElementById("login-error").innerText = "- Enter email or username"
+
+    apiSend(button, "forgotPassw", {
+        login: userLogin.value
+    }, "POST").then(res => {
+        if (res.errors) {
+            if (res.errors.login) return document.getElementById("login-error").innerText = `- ${res.errors.login}`
+            if (res.errors.resend) return document.getElementById("login-error").innerText = `- ${res.errors.resend}`
+        }
+
+        document.getElementById("login-error").innerText = "*"
+        if (res.message === "200 OK") return setFlash("Sent password recovery to your email")
+
+        if (res.message) return setFlash(res.message, "error")
+        setFlash("Something went wrong!", "error")
+    })
+}
+
 
 export function Login() {
     const [codePage, setCodePage] = useState(null)
@@ -104,24 +123,24 @@ export function Login() {
     const password = useRef()
     const auth_code = useRef()
 
-    const user_login = localStorage.getItem("user_login")
+    const userLogin = localStorage.getItem("userLogin")
 
     // Render mfa verify page
     if (codePage === "mfa") {
         return (
             <div className="login-page center-container">
                 <div className="auth-window">
-                    <h1 className="login-title">Two-factor authentication</h1>
+                    <h1 className="login-title">Two-Factor authentication</h1>
 
                     <form>
                         <div className="column-container">
                             <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
                             <input className="input-field" autoFocus type="text" ref={auth_code} placeholder="6-digit authentication code" key="mfa-inpt" maxLength={10} required />
                         </div>
-                        <p className="login-redirect"><a className="link" href="recovery/mfa">Don't have access to your auth codes?</a></p>
+                        <p className="login-redirect"><button className="link" type="button" onClick={(e) => null}>Don't have access to your auth codes?</button></p>
 
                         <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current, setFlash) }} value="LOG IN" />
-                        <p className="login-redirect"><a className="link" href="login">Go Back to Login</a></p>
+                        <p className="login-redirect"><a className="link" href="/login">Go Back to Login</a></p>
                     </form>
                 </div>
             </div>
@@ -143,7 +162,7 @@ export function Login() {
                         <p className="login-redirect"><button className="link" type="button" onClick={(e) => resendEmail(e.target, navigator, setFlash)}>Resend Email</button></p>
 
                         <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current, setFlash) }} value="LOG IN" />
-                        <p className="login-redirect"><a className="link" href="login">Go Back to Login</a></p>
+                        <p className="login-redirect"><a className="link" href="/login">Go Back to Login</a></p>
                     </form>
                 </div>
             </div>
@@ -159,16 +178,16 @@ export function Login() {
                 <form>
                     <div className="column-container">
                         <p className="category-text">EMAIL OR USERNAME <span className="error-category-text" id="login-error">*</span></p>
-                        <input className="input-field" autoFocus type="text" defaultValue={user_login} ref={login} maxLength={100} required />
+                        <input className="input-field" autoFocus type="text" defaultValue={userLogin} ref={login} maxLength={100} required />
                     </div>
                     <div className="column-container">
                         <p className="category-text">PASSWORD <span className="error-category-text" id="password-error">*</span></p>
                         <input className="input-field" type="password" ref={password} maxLength={50} required />
                     </div>
-                    <p className="login-redirect"><a className="link" href="recovery/password">Forgot your password?</a></p>
+                    <p className="login-redirect"><button className="link" type="button" onClick={(e) => forgotPassword(e.target, login.current, setFlash)}>Forgot your password?</button></p>
 
                     <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); submit(e.target, navigator, setCodePage, login.current, password.current, setFlash) }} value="LOG IN" />
-                    <p className="login-redirect">Need an account? <a className="link" href="register">Register</a></p>
+                    <p className="login-redirect">Need an account? <a className="link" href="/register">Register</a></p>
                 </form>
             </div>
         </div>

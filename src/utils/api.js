@@ -50,7 +50,11 @@ const API_PAGES = {
 
     // Avatars + Icons
     avatar: () => "images/avatar",
-    icon: (value) => `images/icon/${value}`
+    icon: (value) => `images/icon/${value}`,
+
+    // Recovery
+    recoverPassw: () => "recovery/password",
+    forgotPassw: () => "recovery/forgot-password"
 }
 
 export async function apiGet(page, id) {

@@ -72,7 +72,7 @@ class Security:
 
         if not (user := db.get_entry(USER_TABLE, id)) or not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
             return ("invalid", None, option)
-
+        
         if option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret[:int(len(user_secrets.secret)/2)]}|temp-{option}-access".encode("UTF-8")).hexdigest() != hmac:
             return ("signature", None, option)
         if not option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:

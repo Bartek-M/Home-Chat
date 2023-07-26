@@ -193,8 +193,9 @@ input {
     padding: 0; 
     line-height: 1.375rem;
     transition: 0.17s ease; 
-    cursor: pointer;
 }
+
+button { cursor: pointer; }
 button:active { transform: translateY(2px); }
 
 button:disabled, 
@@ -219,7 +220,11 @@ svg {
 
 .icons { fill: var(--FONT_COLOR) }
 
-.link { color: var(--BLUE); }
+.link { 
+    color: var(--BLUE); 
+    line-height: 100%; 
+}
+
 .link:hover { text-decoration: underline; }
 .link:disabled { background-color: transparent!important; text-decoration: none; }
 
@@ -1076,7 +1081,14 @@ svg {
     margin: 0.5rem 0;
     border-radius: 4px; 
     max-width: calc(100% - 1rem);
+    text-align: justify;
     font-weight: 300;
+}
+
+.justified-wrapper {
+    color: var(--FONT_DIM_COLOR);
+    margin: 0.5rem 0;
+    text-align: justify;
 }
 
 .edit-card-info { color: var(--FONT_DIM_COLOR) }

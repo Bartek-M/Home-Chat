@@ -140,10 +140,11 @@ class Users:
             db.update_entry(USER_SECRET_TABLE, user.id, "password", Security.hash_passwd(data))
             db.update_entry(USER_SECRET_TABLE, user.id, "secret", secret)
 
-            socketio.emit("logout", {"reason": "password changed"}, to=user.id)
+            if (socketio.server.manager.rooms and socketio.server.manager.rooms["/"].get(user.id, {})):
+                socketio.emit("logout", {"reason": "password changed"}, to=user.id)
 
-            for sid in socketio.server.manager.rooms["/"].get(user.id, {}).copy():
-                disconnect(sid=sid, namespace="/")
+                for sid in socketio.server.manager.rooms["/"].get(user.id, {}).copy():
+                    disconnect(sid=sid, namespace="/")
 
             return ({"token": Security.gen_token(user_secrets.id, secret)}, 200)
  
@@ -294,10 +295,11 @@ class Users:
         
         db.delete_entry(None, user.id, option="account")
 
-        socketio.emit("logout", {"reason": "account deleted"}, to=user.id)
+        if (socketio.server.manager.rooms and socketio.server.manager.rooms["/"].get(user.id, {})):
+            socketio.emit("logout", {"reason": "account deleted"}, to=user.id)
 
-        for sid in socketio.server.manager.rooms["/"].get(user.id, {}).copy():
-            disconnect(sid=sid, namespace="/")
+            for sid in socketio.server.manager.rooms["/"].get(user.id, {}).copy():
+                disconnect(sid=sid, namespace="/")
 
         return 200
     

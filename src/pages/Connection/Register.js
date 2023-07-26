@@ -21,10 +21,10 @@ function submit(button, navigator, email, username, password, setFlash) {
         }
 
         if (res.message === "200 OK") {
-            localStorage.setItem("user_login", email.value)
+            localStorage.setItem("userLogin", email.value)
             return navigator("/login")
         }
-        
+
         if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")
     })
@@ -58,7 +58,7 @@ export function Register() {
                     </div>
 
                     <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(), submit(e.target, navigator, email.current, username.current, password.current, setFlash) }} value="CONTINUE" />
-                    <p className="login-redirect">Already have an account? <a className="link" href="login">Log In</a></p>
+                    <p className="login-redirect">Already have an account? <a className="link" href="/login">Log In</a></p>
                 </form>
             </div>
         </div>

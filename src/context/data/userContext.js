@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { ChannelsProvider, FriendsProvider, ActiveProvider, useFlash, SocketProvider } from "..";
 
-import { apiGet, appTheme, preferredThemeTheme } from "../../utils";
+import { apiGet, appTheme, preferredTheme } from "../../utils";
 import { Loading } from "../../components"
 
 const UserContext = React.createContext()
@@ -24,7 +24,7 @@ export function UserProvider({ children }) {
             if (!res.user || !res.user.id) return setFlash("Couldn't load user!", "error")
 
             setUser(res.user)
-            if (localStorage.getItem("user_login") !== res.user.email || localStorage.getItem("user_login") !== res.user.name) localStorage.setItem("user_login", res.user.email)
+            if (localStorage.getItem("userLogin") !== res.user.email || localStorage.getItem("userLogin") !== res.user.name) localStorage.setItem("userLogin", res.user.email)
         })
     }, [])
 
@@ -35,8 +35,8 @@ export function UserProvider({ children }) {
         if (user.theme === "auto") {
             let theme_match = window.matchMedia("(prefers-color-scheme: dark)")
 
-            theme_match.addEventListener("change", preferredThemeTheme)
-            return () => { theme_match.removeEventListener("change", preferredThemeTheme) }
+            theme_match.addEventListener("change", preferredTheme)
+            return () => { theme_match.removeEventListener("change", preferredTheme) }
         }
     }, [user])
 

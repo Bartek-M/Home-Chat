@@ -20,43 +20,51 @@ class Auth:
     @Decorators.manage_database
     def login(db):
         user = db.get_entry(USER_TABLE, request.json.get("login").lower(), "name")
+        settings = (db.get_entry(USER_SETTING_TABLE, user.id) if user else db.get_entry(USER_SETTING_TABLE, request.json.get("login").lower(), "email"))
 
-        if settings := (db.get_entry(USER_SETTING_TABLE, user.id) if user else db.get_entry(USER_SETTING_TABLE, request.json.get("login").lower(), "email")):
-            user = user if user else db.get_entry(USER_TABLE, settings.id)
-            user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
-            
-            if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) == user_secrets.password:
-                # User not verified, has to pass a verification code
-                if user.verified == 0:
-                    return ({
-                        "token": None,
-                        "mfa": False,
-                        "verified": False,
-                        "ticket": Security.gen_token(user_secrets.id, user_secrets.secret, VERIFY_ACCESS)
-                    }, 200)
+        if not settings:
+            return ({
+                "errors": {
+                    "login": "Login or password is invalid.",
+                    "password": "Login or password is invalid."
+                }
+            }, 400)
+        
+        user = user if user else db.get_entry(USER_TABLE, settings.id)
+        user_secrets = db.get_entry(USER_SECRET_TABLE, settings.id)
+        
+        if not (password := request.json.get("password")) or Security.hash_passwd(password, user_secrets.password.split("$")[0]) != user_secrets.password:
+            return ({
+                "errors": {
+                    "login": "Login or password is invalid.",
+                    "password": "Login or password is invalid."
+                }
+            }, 400)
 
-                # User has mfa enabled, has to pass mfa code
-                if settings.mfa_enabled == 1:
-                    return ({
-                        "token": None,
-                        "mfa": True,
-                        "verified": True,
-                        "ticket": Security.gen_token(user_secrets.id, user_secrets.secret, MFA_ACCESS),
-                    }, 200)
-                
-                # User is verified and doesn't have mfa enabled
-                return ({
-                    "token": Security.gen_token(user_secrets.id, user_secrets.secret), 
-                    "mfa": False,
-                    "verified": True
-                }, 200)
+        # User not verified, has to pass a verification code
+        if user.verified == 0:
+            return ({
+                "token": None,
+                "mfa": False,
+                "verified": False,
+                "ticket": Security.gen_token(user_secrets.id, user_secrets.secret, VERIFY_ACCESS)
+            }, 200)
 
+        # User has mfa enabled, has to pass mfa code
+        if settings.mfa_enabled == 1:
+            return ({
+                "token": None,
+                "mfa": True,
+                "verified": True,
+                "ticket": Security.gen_token(user_secrets.id, user_secrets.secret, MFA_ACCESS),
+            }, 200)
+        
+        # User is verified and doesn't have mfa enabled
         return ({
-            "errors": {
-                "login": "Login or password is invalid.",
-                "password": "Login or password is invalid."
-            }
-        }, 400)
+            "token": Security.gen_token(user_secrets.id, user_secrets.secret), 
+            "mfa": False,
+            "verified": True
+        }, 200)
     
     @auth.route('/register', methods=["POST"])
     @Decorators.manage_database
@@ -124,6 +132,7 @@ class Auth:
 
         return ({"errors": {"option": "Invalid option"}}, 400)
     
+
     @auth.route("/verification-resend", methods=["POST"])
     @Decorators.manage_database
     @Decorators.ticket_auth

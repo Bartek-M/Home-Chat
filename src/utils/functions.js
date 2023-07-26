@@ -57,3 +57,8 @@ export function addFriend(button, friend, setFlash) {
         setFlash("Something went wrong!", "error")
     })
 }
+
+// Reset MFA access
+export function resetMFA(button, setFlash) {
+    
+}
