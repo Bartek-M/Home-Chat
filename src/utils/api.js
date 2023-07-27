@@ -53,6 +53,7 @@ const API_PAGES = {
     icon: (value) => `images/icon/${value}`,
 
     // Recovery
+    restoreEmail: () => "recovery/email",
     recoverPassw: () => "recovery/password",
     forgotPassw: () => "recovery/forgot-password"
 }

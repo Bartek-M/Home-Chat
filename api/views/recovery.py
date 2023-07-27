@@ -15,7 +15,7 @@ class Recovery:
     """
     recovery = Blueprint("recovery", __name__)
 
-    @recovery.route("/email", methods=["GET"])
+    @recovery.route("/email", methods=["POST"])
     @Decorators.manage_database
     @Decorators.ticket_auth
     def restore_email(db, user, option):
@@ -29,7 +29,7 @@ class Recovery:
         
         db.update_entry(USER_SETTING_TABLE, user.id, "email", email)
         socketio.emit("user_change", {"setting": "email", "content": email}, to=user.id)
-        return 200
+        return ({"email": email}, 200)
 
     @recovery.route("/password", methods=["POST"])
     @Decorators.manage_database
@@ -48,6 +48,7 @@ class Recovery:
 
         db.update_entry(USER_SECRET_TABLE, user.id, "password", Security.hash_passwd(password))
         db.update_entry(USER_SECRET_TABLE, user.id, "secret", secret)
+        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", None)
 
         if (socketio.server.manager.rooms and socketio.server.manager.rooms["/"].get(user.id, {})):
             socketio.emit("logout", {"reason": "password changed"}, to=user.id)
@@ -55,7 +56,7 @@ class Recovery:
             for sid in socketio.server.manager.rooms["/"].get(user.id, {}).copy():
                 disconnect(sid=sid, namespace="/")
         
-        return 200
+        return ({"user_login": user.name}, 200)
     
     @recovery.route("/forgot-password", methods=["POST"])
     @Decorators.manage_database
@@ -74,9 +75,8 @@ class Recovery:
         if int(current_time - (float(user_secrets.sent_time) if user_secrets.sent_time else 0)) < 300: # Only allow for resend after 5 minutes from earlier email; time in seconds
             return ({"errors": {"resend": "Wait 5 minutes from previous email!"}}, 406)
         
-        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
-
         Mailing.send_password_recovery(user_settings.email, user.name, Security.gen_token(user.id, user_secrets.secret, "passw"))
+        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
         return 200
     
     @recovery.route("/mfa")

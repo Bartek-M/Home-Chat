@@ -2,7 +2,7 @@ import { useActive, useFlash } from "../../../../context"
 import { apiDelete } from "../../../../utils"
 
 function leave(button, channel_id, channel_name, close, setFlash) {
-    apiDelete(button, "channelLeave", channel_id).then((res) => {
+    apiDelete(button, "channelLeave", channel_id).then(res => {
         if (res.errors) {
             if (res.errors.channel) return setFlash(res.errors.channel, "error")
             return setFlash("Something went wrong!", "error")

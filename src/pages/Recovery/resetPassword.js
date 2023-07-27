@@ -12,13 +12,14 @@ function changePassword(button, navigator, password, ticket, setFlash) {
     apiSend(button, "recoverPassw", {
         password: password.value,
         ticket: ticket
-    }, "POST").then((res) => {
+    }, "POST").then(res => {
         if (res.errors) return document.getElementById("passw-error").innerText = res.errors.password ? `- ${res.errors.password}` : "*"
         if (["401 Unauthorized", "403 Forbidden"].includes(res.message)) return setFlash("Invalid ticket", "error")
 
-        if (res.message === "200 OK") {
+        if (res.message === "200 OK" && res.user_login) {
+            localStorage.setItem(res.user_login)
             setFlash("Password updated")
-            return setTimeout(() => navigator("/"), 200)
+            return setTimeout(() => navigator("/"), 2000)
         }
 
         if (res.message) return setFlash(res.message, "error")
@@ -45,7 +46,7 @@ export function ResetPassword() {
                         <input className="input-field" autoFocus type="password" ref={passw} key="passw-inpt" maxLength={50} required />
                     </div>
 
-                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); changePassword(e.target, navigator, passw.current, searchParams.get("ticket"), setFlash)}} value="Change Password" />
+                    <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); changePassword(e.target, navigator, passw.current, searchParams.get("ticket"), setFlash) }} value="Change Password" />
                     <p className="login-redirect"><a className="link" href="/login">Login</a></p>
                 </form>
             </div>

@@ -123,7 +123,13 @@ class Users:
             if db.get_entry(USER_SETTING_TABLE, email, "email"):
                 return ({"errors": {"email": "Email is already registered!"}}, 406)
             
+            current_time = time.time()
+
+            if int(current_time - (float(user_secrets.sent_time) if user_secrets.sent_time else 0)) < 300: # Only allow for resend after 5 minutes from earlier email; time in seconds
+                return ({"errors": {"email": "Wait 5 minutes from previous email!"}}, 406)
+            
             Mailing.send_email_verification(email, user.name, Security.gen_token(user.id, user_secrets.secret, f"email-new|{email}"))
+            db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
             return 200
 
         if category == "password":

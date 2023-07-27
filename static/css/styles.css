@@ -3,7 +3,7 @@
 
 Project: Home Chat
 Author: Bartosz Mroczkowski
-Version: dev-fbd5a87
+Version: dev-8b05364
 
 
 [Table of Contents]
@@ -1087,7 +1087,7 @@ svg {
 
 .justified-wrapper {
     color: var(--FONT_DIM_COLOR);
-    margin: 0.5rem 0;
+    margin: 0.25rem 0 0.5rem 0;
     text-align: justify;
 }
 

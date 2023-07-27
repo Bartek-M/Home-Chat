@@ -24,7 +24,7 @@ export function UserProvider({ children }) {
             if (!res.user || !res.user.id) return setFlash("Couldn't load user!", "error")
 
             setUser(res.user)
-            if (localStorage.getItem("userLogin") !== res.user.email || localStorage.getItem("userLogin") !== res.user.name) localStorage.setItem("userLogin", res.user.email)
+            if (![res.user.name, res.user.email].includes(localStorage.getItem("userLogin"))) localStorage.setItem("userLogin", res.user.name)
         })
     }, [])
 

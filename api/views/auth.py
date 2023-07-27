@@ -40,9 +40,9 @@ class Auth:
                     "password": "Login or password is invalid."
                 }
             }, 400)
-
+    
         # User not verified, has to pass a verification code
-        if user.verified == 0:
+        if not user.verified:
             return ({
                 "token": None,
                 "mfa": False,
@@ -51,7 +51,7 @@ class Auth:
             }, 200)
 
         # User has mfa enabled, has to pass mfa code
-        if settings.mfa_enabled == 1:
+        if settings.mfa_enabled:
             return ({
                 "token": None,
                 "mfa": True,
@@ -113,6 +113,7 @@ class Auth:
             
             db.update_entry(USER_TABLE, user.id, "verified", 1)
             db.update_entry(USER_SECRET_TABLE, user.id, "verify_code", "")
+            db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", None)
 
             return ({
                 "token": Security.gen_token(user_secrets.id, user_secrets.secret), 
@@ -151,12 +152,11 @@ class Auth:
         if int(current_time - (float(user_secrets.sent_time) if user_secrets.sent_time else 0)) < 300: # Only allow for resend after 5 minutes from earlier email; time in seconds
             return ({"errors": {"resend": "Wait 5 minutes from previous resend!"}}, 406)
         
-        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
-
         Mailing.send_verification(user_settings.email, user.name, user_secrets.verify_code)
+        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
         return 200
 
-    @auth.route("/confirm-email", methods=["GET"])
+    @auth.route("/confirm-email", methods=["POST"])
     @Decorators.manage_database
     @Decorators.ticket_auth
     def confirm_email(db, user, option):
@@ -173,6 +173,7 @@ class Auth:
 
         Mailing.send_email_recovery(user_settings.email, email, user.name, Security.gen_token(user.id, user_secrets.secret, f"email-old|{user_settings.email}"))
         db.update_entry(USER_SETTING_TABLE, user.id, "email", email)
+        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", None)
 
         socketio.emit("user_change", {"setting": "email", "content": email}, to=user.id)
-        return 200
+        return ({"email": email}, 200)

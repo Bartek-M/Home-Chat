@@ -49,7 +49,7 @@ export function Email({ props }) {
                 </button>
             </div>
             <div className="column-container">
-                <p className="category-text">EMAIL <span className="error-category-text" id="email-error">*</span></p>
+                <p className="category-text">NEW EMAIL <span className="error-category-text" id="email-error">*</span></p>
                 <input className="input-field" autoFocus type="email" ref={email} maxLength={50} required />
 
                 <p className="category-text">CURRENT PASSWORD <span className="error-category-text" id="password-error">*</span></p>
