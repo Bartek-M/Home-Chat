@@ -78,6 +78,7 @@ function resendEmail(button, navigator, setFlash) {
         ticket: localStorage.getItem("ticket")
     }, "POST").then(res => {
         if (res.errors) return document.getElementById("code-error").innerText = res.errors.resend ? `- ${res.errors.resend}` : "*"
+        if (["401 Unauthorized", "403 Forbidden"].includes(res.message)) return setFlash("Invalid ticket", "error")
 
         if (res.message === "200 OK" && res.token) {
             localStorage.removeItem("ticket")
@@ -112,6 +113,23 @@ function forgotPassword(button, userLogin, setFlash) {
     })
 }
 
+function noMFAAccess(button, setFlash) {
+    apiSend(button, "noMFAAccess", {
+        ticket: localStorage.getItem("ticket")
+    }, "POST").then(res => {
+        if (res.errors) { 
+            if (res.errors.mfa) return document.getElementById("code-error").innerText = `- ${res.errors.mfa}`
+            if (res.errors.resend) return document.getElementById("code-error").innerText = `- ${res.errors.resend}`
+        }
+        if (["401 Unauthorized", "403 Forbidden"].includes(res.message)) return setFlash("Invalid ticket", "error")
+
+        document.getElementById("code-error").innerText = "*"
+        if (res.message === "200 OK") return setFlash("Sent 2FA reset to your email")
+
+        if (res.message) return setFlash(res.message, "error")
+        setFlash("Something went wrong!", "error")
+    })
+}
 
 export function Login() {
     const [codePage, setCodePage] = useState(null)
@@ -137,7 +155,7 @@ export function Login() {
                             <p className="category-text">HOME CHAT AUTH CODE <span className="error-category-text" id="code-error" key="code-error">*</span></p>
                             <input className="input-field" autoFocus type="text" ref={auth_code} placeholder="6-digit authentication code" key="mfa-inpt" maxLength={10} required />
                         </div>
-                        <p className="login-redirect"><button className="link" type="button" onClick={(e) => null}>Don't have access to your auth codes?</button></p>
+                        <p className="login-redirect"><button className="link" type="button" onClick={(e) => noMFAAccess(e.target, setFlash)}>Don't have access to your auth codes?</button></p>
 
                         <input className="login-submit submit-btn" type="submit" onClick={(e) => { e.preventDefault(); verify(e.target, navigator, auth_code.current, setFlash) }} value="LOG IN" />
                         <p className="login-redirect"><a className="link" href="/login">Go Back to Login</a></p>

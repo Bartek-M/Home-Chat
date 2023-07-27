@@ -55,7 +55,9 @@ const API_PAGES = {
     // Recovery
     restoreEmail: () => "recovery/email",
     recoverPassw: () => "recovery/password",
-    forgotPassw: () => "recovery/forgot-password"
+    forgotPassw: () => "recovery/forgot-password",
+    resetMFA: () => "recovery/mfa",
+    noMFAAccess: () => "recovery/no-mfa-access"
 }
 
 export async function apiGet(page, id) {

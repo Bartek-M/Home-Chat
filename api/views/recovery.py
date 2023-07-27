@@ -79,6 +79,42 @@ class Recovery:
         db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
         return 200
     
-    @recovery.route("/mfa")
-    def restore_mfa():
+    @recovery.route("/mfa", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.ticket_auth
+    def restore_mfa(db, user, option):
+        if option != "mfa-reset":
+            return 403
+        
+        user_settings = db.get_entry(USER_SETTING_TABLE, user.id)
+
+        if not user_settings.mfa_enabled:
+            return 200
+
+        db.update_entry(USER_SETTING_TABLE, user.id, "mfa_enabled", 0)
+        db.update_entry(USER_SECRET_TABLE, user.id, "mfa_code", None)
+
+        socketio.emit("user_change", {"setting": "mfa_enabled", "content": 0}, to=user.id)
+        return 200
+    
+    @recovery.route("/no-mfa-access", methods=["POST"])
+    @Decorators.manage_database
+    @Decorators.ticket_auth
+    def no_mfa_access(db, user, option):
+        if option != "mfa":
+            return 403
+        
+        user_settings = db.get_entry(USER_SETTING_TABLE, user.id)
+
+        if not user_settings.mfa_enabled:
+            return ({"errors": {"mfa": "2FA is not enabled"}}, 406)
+
+        user_secrets = db.get_entry(USER_SECRET_TABLE, user.id)
+        current_time = time.time()
+
+        if int(current_time - (float(user_secrets.sent_time) if user_secrets.sent_time else 0)) < 300: # Only allow for resend after 5 minutes from earlier email; time in seconds
+            return ({"errors": {"resend": "Wait 5 minutes from previous email!"}}, 406)
+        
+        Mailing.send_mfa_reset(user_settings.email, user.name, Security.gen_token(user.id, user_secrets.secret, "mfa-reset"))
+        db.update_entry(USER_SECRET_TABLE, user.id, "sent_time", str(current_time))
         return 200

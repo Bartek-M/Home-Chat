@@ -116,7 +116,7 @@ class Mailing:
         Hey, {name}!
         You wanted to change your email to this one. Click below to finish the transition process:
 
-        http://{ADDR}:{PORT}/api/auth/confirm-email?ticket={ticket}
+        http://{ADDR}:{PORT}/confirm-email?ticket={ticket}
 
         This link is valid for only a week.
         If this email wasn't meant for you please ignore it.
@@ -156,7 +156,7 @@ class Mailing:
         Hey, {name}!
         Someone has changed your email address to '{new_email}'. Click below to restore your earlier email:
 
-        http://{ADDR}:{PORT}/api/recovery/email?ticket={ticket}
+        http://{ADDR}:{PORT}/recovery/email?ticket={ticket}
 
         This link is valid for only a week.
         If you don't recognize this action, change your password immediately.
@@ -193,7 +193,7 @@ class Mailing:
         Hey, {name}!
         Your Home Chat password can be reset by clicking the link below:
 
-        http://{ADDR}:{PORT}/api/recovery/password?ticket={ticket}
+        http://{ADDR}:{PORT}/recovery/password?ticket={ticket}
 
         This link is valid for only 10 minutes.
         If you did not request a new password, please ignore this email.
@@ -210,6 +210,43 @@ class Mailing:
                 <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/recovery/password?ticket={ticket}">Reset Password</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only 10 minutes.<br/>If you did not request a new password, please ignore this email.</p>
+        """)
+
+        email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
+        email_thread.start()
+
+    @staticmethod
+    def send_mfa_reset(email, name, ticket):
+        """
+        Generate and send email with MFA recovery
+        :param email: User email
+        :param name: User name
+        :param ticket: Ticket for later authorization
+        :return: None
+        """
+        subject = "2FA reset request for Home Chat"
+
+        text = f"""
+        Hey, {name}!
+        You can disable Two-Factor Authentication by clicking the link below:
+        
+        http://{ADDR}:{PORT}/recovery/mfa?ticket={ticket}
+
+        This link is valid for only 10 minutes.
+        If you did not request 2FA reset, password change might be necessary.
+
+        Sent by Home Chat
+        """
+
+        html = HTML_BASE(f"""
+            <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Hey, {name}!</h2>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
+                You can disable Two-Factor Authentication by clicking the link below:
+            </p>
+            <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
+                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/recovery/mfa?ticket={ticket}">Disable 2FA</a>
+            </div>
+            <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only 10 minutes.<br/>If you did not request 2FA reset, password change might be necessary.</p>
         """)
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
