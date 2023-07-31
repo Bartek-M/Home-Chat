@@ -22,7 +22,10 @@ export function appTheme(theme) {
 // Smooth scroll
 export function smoothScroll(element) {
     if (!element) return
-    element.scrollBy(0, element.scrollHeight - element.clientHeight)
+    element.scrollBy({
+        top: element.scrollHeight - element.clientHeight, 
+        behavior: "smooth"
+    })
 }
 
 // Open DM channel

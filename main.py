@@ -32,11 +32,7 @@ app.register_blueprint(images, url_prefix="/api/images")
 app.register_blueprint(recovery, url_prefix="/api/recovery")
 
 # SETUP RATE LIMITER
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["1000/minute"]
-)
+limiter = Limiter(get_remote_address, app=app, default_limits=["1000/minute"])
 
 # SETUP NON-VERIFIED USERS CHECK
 verified_check_thread = threading.Thread(target=Functions.delete_non_verified)

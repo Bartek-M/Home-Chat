@@ -20,7 +20,7 @@ class Decorators:
             
             data, code = resp if isinstance(resp, tuple) else ({}, resp)
 
-            if message := Functions.match_code(code):
+            if not data.get("errors") and (message := Functions.match_code(code)):
                 data["message"] = message
 
             return jsonify(data), code

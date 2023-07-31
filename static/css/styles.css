@@ -659,6 +659,22 @@ svg {
     user-select: text; 
 }
 
+.scroll-down-btn {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 4rem;
+    max-width: 40px;
+    max-height: 40px;
+    padding: 0.25rem;
+    background-color: var(--COLOR_3);
+    border-radius: 50%;
+    line-height: 100%;
+    transition: transform 0.17s ease;
+}
+
+.scroll-down-btn:hover { transform: scale(1.1); }
+.scroll-down-btn:active { transform: scale(0.9); }
+
 /* user card */
 .user-info-card {
     position: absolute;
