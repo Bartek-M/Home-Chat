@@ -8,9 +8,11 @@ import { UserCard } from "../../../../components"
 export function MessageList({ channel, close }) {
     const [user,] = useUser()
     const [, setChannels] = useChannels()
-    const [menu, setMenu] = useState({ id: null, element: null, type: null, x: 0, y: 0 })
 
-    const message_list = useRef()
+    const [menu, setMenu] = useState({ id: null, element: null, type: null, x: 0, y: 0 })
+    const [isWaiting, setIsWaiting] = useState(true)
+
+    const messageList = useRef()
     useEffect(() => {
         setChannels(current_channels => {
             if (!current_channels[channel.id].notifications || current_channels[channel.id].notifications === "0") return current_channels
@@ -20,11 +22,14 @@ export function MessageList({ channel, close }) {
             return { ...current_channels }
         })
 
-        smoothScroll(message_list.current)
+        smoothScroll(messageList.current)
     }, [channel.messages ? channel.messages.length : channel.messages, channel.id])
 
     useEffect(() => {
+        setIsWaiting(true)
+
         if (channel.messages) return
+        const delay = setTimeout(() => setIsWaiting(false), 400);
 
         apiGet("channelMessages", channel.id).then(res => {
             if (res.message !== "200 OK") return setFlash("Couldn't load channel messages!", "error")
@@ -35,8 +40,11 @@ export function MessageList({ channel, close }) {
                 return { ...current_channels }
             })
         })
+
+        return () => clearTimeout(delay)
     }, [channel.id])
 
+    if (isWaiting && !channel.messages) return null
     if (!channel.messages) {
         return (
             <div className="chat-window column-container" style={{ overflow: "hidden" }}>
@@ -65,7 +73,7 @@ export function MessageList({ channel, close }) {
     }
 
     return (
-        <div className="chat-window column-container scroller-container" ref={message_list}>
+        <div className="chat-window column-container scroller-container" ref={messageList}>
             {(channel.messages && channel.messages.length)
                 ? <>
                     {user.message_display === "standard"
@@ -121,8 +129,8 @@ export function MessageList({ channel, close }) {
                         )
                     }
                     <div className="scroller-spacer"></div>
-                    <button className="scroll-down-btn" onClick={() => smoothScroll(message_list.current)}>
-                        <svg width="32" height="32" fill="var(--FONT_COLOR)" viewBox="0 0 16 16">
+                    <button className="scroll-down-btn center-container" onClick={() => smoothScroll(messageList.current)}>
+                        <svg width="32" height="32" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
                         </svg>
                     </button>

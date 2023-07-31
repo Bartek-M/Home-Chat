@@ -24,7 +24,7 @@ export function Home() {
 
     return (
         <UserProvider>
-            <div className="home-page container">
+            <div className="home-page">
                 <Sidebar settings={settings} card={card} setSettings={setSettings} setCard={setCard} />
                 <ChannelView setCard={setCard} />
             </div>

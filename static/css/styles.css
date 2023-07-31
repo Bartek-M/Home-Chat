@@ -390,11 +390,14 @@ svg {
 .home-page { 
     width: 100%; 
     height: 100%; 
-    gap: 0
 }
 
 /* home sidebar */
 .main-sidebar {
+    position: absolute;
+    top: 0;
+    bottom: 0; 
+    z-index: 2;
     min-width: 64px;
     gap: 0.5rem;
     padding: 0.75rem 0;
@@ -457,7 +460,7 @@ svg {
 .sidebar-settings-icon:hover { background-color: var(--BLUE) }
 
 /* responsive home view */
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 400px) {
 
 }
 
@@ -563,8 +566,11 @@ svg {
 /* CHAT VIEW */
 /* channel info */
 .main-view {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 64px;
     min-width: 250px;
     min-height: 200px;
     gap: 0;
@@ -596,6 +602,7 @@ svg {
     height: 100%; 
     width: calc(100% - 1rem); 
     margin: 0 0.5rem; 
+    scroll-behavior: smooth;
 }
 
 .message-list-item { 
@@ -660,13 +667,14 @@ svg {
 }
 
 .scroll-down-btn {
-    position: fixed;
-    right: 1.25rem;
-    bottom: 4rem;
+    position: sticky;
+    left: calc(100% - 3rem);
+    bottom: 0.5rem;
     max-width: 40px;
     max-height: 40px;
     padding: 0.25rem;
     background-color: var(--COLOR_3);
+    border: 2px solid var(--FONT_DIM_COLOR);
     border-radius: 50%;
     line-height: 100%;
     transition: transform 0.17s ease;
@@ -1169,6 +1177,7 @@ svg {
 /* loading content */
 #loading-screen { position: relative; gap: 2rem; }
 #loading-screen h1 { text-align: center; font-weight: 700; margin-bottom: 1rem;}
+#loading-screen p { margin-top: 2rem }
 
 /* loading animation */
 .loading-dots {
