@@ -15,7 +15,7 @@ export function SocketProvider({ children }) {
     const [isConnected, setIsConnected] = useState(null)
 
     useEffect(() => {
-        const onConnect = () => { setIsConnected(true); setFlash(`Connected as ${user.name}`, "connect") }
+        const onConnect = () => { setIsConnected(true); console.clear(); setFlash(`Connected as ${user.name}`, "connect") }
         const onDisconnect = () => { setIsConnected(false); setFlash("Disconnected from WebSocket", "error") }
         const onConnectError = () => { if (isConnected) setIsConnected(false) }
 

@@ -87,15 +87,19 @@ class Database:
 
         return None
     
-    def count_entry(self, table, req_id, entry="id"):
+    def count_entry(self, table, req_id, entry="id", option=None):
         """
         Check how many times specific items occur
         :param table: Table to look at
         :param req_id: ID of entry to get
         :param entry: Entry to check
+        :param option: Option to use
         :return: Number of desired entries
         """
-        self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=?", [req_id])
+        if option == "user_channel":
+            self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=? AND direct=0", [req_id])
+        else:
+            self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=?", [req_id])
 
         if fetched := self.cursor.fetchone():
             return fetched[0]

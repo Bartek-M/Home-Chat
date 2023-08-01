@@ -121,8 +121,11 @@ class Channels:
         if not (users := request.json.get("users")):
             return ({"errors": {"users": "Users are invalid"}}, 400)
         
-        if len(users) > 100:
+        if len(users) >= MAX_CHANNEL_USERS:
             return ({"errors": {"users": "Too many users"}}, 406)
+        
+        if db.count_entry(USER_CHANNEL_TABLE, user.id, "user_id", "user_channel") >= MAX_CHANNELS:
+            return ({"errors": {"member": f"You already belongs to {MAX_CHANNELS} group channels"}}, 406)
         
         creation_time = str(time.time())
         channel = Channel(Functions.create_id(creation_time), name, "generic", user.id, creation_time)
@@ -138,6 +141,9 @@ class Channels:
 
         for member_id in users:
             if not (member := db.get_entry(USER_TABLE, member_id)):
+                continue
+
+            if db.count_entry(USER_CHANNEL_TABLE, member.id, "user_id", "user_channel") >= MAX_CHANNELS:
                 continue
             
             db.insert_entry(USER_CHANNEL_TABLE, UserChannel(member.id, channel.id, creation_time))
@@ -190,8 +196,15 @@ class Channels:
             return ({"errors": {"member": "User does not exist"}}, 400)
 
         current_time = str(time.time())
+        member_channel = db.get_channel_stuff([member.id, channel_id], "user_channel")
 
-        if not (member_channel := db.get_channel_stuff([member.id, channel_id], "user_channel")):
+        if not member_channel:
+            if db.count_entry(USER_CHANNEL_TABLE, channel.id, "channel_id") >= MAX_CHANNEL_USERS:
+                return ({"errors": {"channel": f"Reached {MAX_CHANNEL_USERS} channel members"}}, 409)
+
+            if db.count_entry(USER_CHANNEL_TABLE, member.id, "user_id", "user_channel") >= MAX_CHANNELS:
+                return ({"errors": {"member": f"User already belongs to {MAX_CHANNELS} group channels"}}, 406)
+
             member_channel = UserChannel(member.id, channel.id, current_time)
             db.insert_entry(USER_CHANNEL_TABLE, member_channel)
 
