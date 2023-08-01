@@ -82,6 +82,12 @@ class Users:
         if db.get_user_stuff([user.id, friend_id], "friend"):
             return ({"errors": {"friend": "Already added"}}, 400)
         
+        if db.count_entry(USER_FRIENDS_TABLE, user.id, option="user_friend") >= MAX_FRIENDS:
+            return ({"errors": {"friend": f"You've got {MAX_FRIENDS} friends"}}, 409)
+        
+        if db.count_entry(USER_FRIENDS_TABLE, friend_id, option="user_friend") >= MAX_FRIENDS:
+            return ({"errors": {"friend": f"Requested user's got {MAX_FRIENDS} friends"}}, 409)
+        
         db.insert_entry(USER_FRIENDS_TABLE, UserFriend(user.id, friend_id))
 
         invited_friend = {**friend.__dict__, "accepted": "waiting", "inviting": user.id}

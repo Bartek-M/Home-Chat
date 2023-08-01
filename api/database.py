@@ -98,6 +98,8 @@ class Database:
         """
         if option == "user_channel":
             self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=? AND direct=0", [req_id])
+        elif option == "user_friend":
+            self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE (user_id=? OR friend_id=?)", [req_id, req_id])
         else:
             self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=?", [req_id])
 
