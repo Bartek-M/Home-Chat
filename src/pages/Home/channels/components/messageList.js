@@ -108,7 +108,7 @@ export function MessageList({ channel, close }) {
 
                                 return (
                                     <li className="message-list-item container" key={message.id}>
-                                        <img className="avatar skeleton" src={`/api/images/${author.avatar}.webp`} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })} onLoad={(e) => e.target.classList.remove("skeleton")} />
+                                        <img className="avatar skeleton" draggable={false} src={`/api/images/${author.avatar}.webp`} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                         <div className="message-content">
                                             <div className="message-info container">
                                                 <p className={author.name ? "message-author" : "message-dim-text"}>{(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}</p>

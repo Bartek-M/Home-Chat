@@ -6,18 +6,16 @@ export function Tooltip({ text, note, type, children }) {
     const ref = useRef()
 
     useEffect(() => {
-        const onMouseEnter = () => setShowTooltip(true)
+        const onMouseEnter = () => { if (window.matchMedia("(pointer: coarse)").matches) return; setShowTooltip(true) }
         const onMouseLeave = () => setShowTooltip(false)
 
         ref.current.addEventListener("mouseenter", onMouseEnter)
-        ref.current.addEventListener("click", onMouseLeave)
         ref.current.addEventListener("mouseleave", onMouseLeave)
 
         return () => {
             if (!ref.current) return
 
             ref.current.removeEventListener("mouseenter", onMouseEnter)
-            ref.current.removeEventListener("click", onMouseLeave)
             ref.current.removeEventListener("mouseleave", onMouseLeave)
         }
     }, [])

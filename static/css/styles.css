@@ -31,6 +31,7 @@ Version: dev-8b05364
 5. CHAT VIEW - chat elements
     | channel info
     | chat
+    | message options
     | user card
     | sending messages
 
@@ -213,7 +214,7 @@ a {
     text-decoration: none; 
 }
 
-svg {
+svg, img {
     pointer-events: none;
 }
 
@@ -612,6 +613,8 @@ svg {
     user-select: text; 
     transition: 0.17s ease;
 }
+.message-list-item:hover, .compact-msg:hover { background-color: var(--COLOR_3); }
+
 .message-list-item:hover .message-options-wrapper, 
 .compact-msg:hover .message-options-wrapper { 
     display: flex; 
@@ -627,6 +630,7 @@ svg {
     object-fit: cover;
     border-radius: 50%;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 .message-hidden-time {
