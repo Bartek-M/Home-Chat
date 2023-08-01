@@ -4,12 +4,14 @@ import { useChannels, useUser } from "../../../../context"
 
 import { apiGet, formatTime, smoothScroll } from "../../../../utils"
 import { UserCard } from "../../../../components"
+import { MessageOptions } from "./messageOptions"
 
 export function MessageList({ channel, close }) {
     const [user,] = useUser()
     const [, setChannels] = useChannels()
 
     const [menu, setMenu] = useState({ id: null, element: null, type: null, x: 0, y: 0 })
+    const [showScrollDown, setShowScrollDown] = useState(false)
     const [isWaiting, setIsWaiting] = useState(true)
 
     const messageList = useRef()
@@ -43,6 +45,18 @@ export function MessageList({ channel, close }) {
 
         return () => clearTimeout(delay)
     }, [channel.id])
+
+    useEffect(() => {
+        if (!messageList.current) return
+
+        const handleScroll = () => {
+            const container = messageList.current
+            setShowScrollDown(!(container.scrollHeight - container.scrollTop - 100 <= container.clientHeight))
+        }
+        messageList.current.addEventListener("scroll", handleScroll)
+
+        return () => { if (!messageList.current) return; messageList.current.removeEventListener("scroll", handleScroll) }
+    }, [messageList.current])
 
     if (isWaiting && !channel.messages) return null
     if (!channel.messages) {
@@ -88,6 +102,7 @@ export function MessageList({ channel, close }) {
                                         <div className="message-content">
                                             <div className="message-text">{message.content}</div>
                                         </div>
+                                        <MessageOptions message={message} />
                                     </li>
                                 )
 
@@ -101,6 +116,7 @@ export function MessageList({ channel, close }) {
                                             </div>
                                             <div className="message-text">{message.content}</div>
                                         </div>
+                                        <MessageOptions message={message} />
                                         {(menu.id === message.id && menu.type === "userCard") &&
                                             createPortal(<UserCard element={menu.element} member={author.id ? author : { id: message.author }} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
                                         }
@@ -120,6 +136,7 @@ export function MessageList({ channel, close }) {
                                             {(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}
                                         </div>
                                         <div className="compact-msg-text">{message.content}</div>
+                                        <MessageOptions message={message} />
                                         {(menu.id === message.id && menu.type === "userCard") &&
                                             createPortal(<UserCard element={menu.element} member={author.id ? author : { id: message.author }} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])
                                         }
@@ -128,12 +145,14 @@ export function MessageList({ channel, close }) {
                             })
                         )
                     }
-                    <div className="scroller-spacer"></div>
-                    <button className="scroll-down-btn center-container" onClick={() => smoothScroll(messageList.current)}>
-                        <svg width="32" height="32" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
-                            <path d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
-                        </svg>
-                    </button>
+                    <div className="scroller-spacer" />
+                    {showScrollDown &&
+                        <button className="scroll-down-btn center-container" onClick={() => smoothScroll(messageList.current)}>
+                            <svg width="32" height="32" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
+                            </svg>
+                        </button>
+                    }
                 </>
                 : <div className="category-text center-container" style={{ marginTop: "1rem" }}>NO MESSAGE HISTORY</div>
             }

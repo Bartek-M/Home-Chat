@@ -41,7 +41,7 @@ export function UserProvider({ children }) {
     }, [user])
 
     return (
-        <div id="home-view">
+        <>
             <Loading />
             {user &&
                 <UserContext.Provider value={[user, setUser]}>
@@ -56,6 +56,6 @@ export function UserProvider({ children }) {
                     </SocketProvider>
                 </UserContext.Provider>
             }
-        </div>
+        </>
     )
 }
