@@ -106,7 +106,10 @@ class Users:
             return ({"errors": {"password": "Password doesn't match"}}, 403)
         
         if category == "name":
-            name = data.lower()
+            name = data.strip().lower()
+
+            if verify_error := Functions.verify_name(name):
+                return ({"errors": {"name": verify_error}}, 400)
 
             if db.get_entry(USER_TABLE, name, "name"):
                 return ({"errors": {"name": "Username is already taken"}}, 409)
@@ -134,9 +137,11 @@ class Users:
 
         if category == "password":
             if len(data) < 6:
-                return ({"errors": {"new_password": "Password must have at least 6 characters"}}, 400)
+                return ({"errors": {"new_password": "Password must have at least 8 characters"}}, 400)
             if data == password:
                 return ({"errors": {"new_password": "Password must not be the same"}}, 400)
+            if not Security.verify_password(data):
+                return ({"errors": {"new_password": "Password must contain at least: 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character"}}, 400)
             
             if db.get_entry(USER_SETTING_TABLE, user.id).mfa_enabled == 1 and not pyotp.TOTP(user_secrets.mfa_code).verify(request.json.get("code")):
                 return ({"errors": {"code": "Invalid two-factor code"}}, 400)
@@ -164,7 +169,12 @@ class Users:
             return ({"errors": {"data": "No data or category", "category": "No data or category"}}, 400)
         
         if category == "display_name":
-            db.update_entry(USER_TABLE, user.id, "display_name", data if data != "" else None)
+            display_name = data.strip()
+
+            if verify_error := Functions.verify_name(data, "display_name"):
+                return ({"errors": {"display_name": verify_error}}, 400)
+
+            db.update_entry(USER_TABLE, user.id, "display_name", data if display_name != "" else None)
         elif category == "theme":
             if data not in ["auto", "light", "dark"]:
                 return ({"errors": {"theme": "Invalid theme"}}, 400)
@@ -285,7 +295,7 @@ class Users:
     @Decorators.manage_database
     @Decorators.auth
     def delete_account(db, user):
-        if db.get_entry(CHANNEL_TABLE, user.id, "owner"):
+        if db.count_entry(CHANNEL_TABLE, user.id, "owner"):
             return ({"errors": {"channels": "You own some channels!"}}, 400)
         
         user_secrets = db.get_entry(USER_SECRET_TABLE, user.id)

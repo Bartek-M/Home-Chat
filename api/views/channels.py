@@ -268,6 +268,9 @@ class Channels:
             socketio.emit("channel_change", {"channel_id": channel_id, "setting": "name", "content": name}, to=channel_id)
 
         if (nick := request.json.get("nick")) != user_channel.nick:
+            if verify_error := Functions.verify_name(nick, "display_name"):
+                return ({"errors": {"nick": verify_error}}, 400)
+            
             db.update_entry(USER_CHANNEL_TABLE, [user.id, channel_id], "nick", nick, "user_channel")
             socketio.emit("member_change", {"channel_id": channel_id, "member_id": user.id, "setting": "nick", "content": nick}, to=channel_id)
 
@@ -296,6 +299,9 @@ class Channels:
         
         if (nick := request.json.get("nick")) == member_channel.nick:
             return ({"errors": {"nick": "Invalid nickname"}}, 400)
+        
+        if verify_error := Functions.verify_name(nick, "display_name"):
+            return ({"errors": {"nick": verify_error}}, 400)
 
         db.update_entry(USER_CHANNEL_TABLE, [member_id, channel_id], "nick", nick, "user_channel")
         socketio.emit("member_change", {"channel_id": channel_id, "member_id": member_id, "setting": "nick", "content": nick}, to=channel_id)

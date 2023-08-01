@@ -1,3 +1,4 @@
+import re
 import os
 import time
 import hashlib
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path="./api/.env")
 
 PEPPER = os.getenv("PEPPER")
+PASSWORD_REGEX = r"(?=(.*[0-9]))(?=.*[\!@#$%^&*()\\[\]{}\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}"
 
 
 class Security:
@@ -88,3 +90,17 @@ class Security:
             return ("expired", None, option)
 
         return ("correct", user, option)
+    
+    @staticmethod
+    def verify_password(password):
+        """
+        Ensure password is secure
+        :param password: Password to check
+        :return: True if correct, False if incorrect
+        """
+        print(password)
+
+        if re.fullmatch(PASSWORD_REGEX, password):
+            return True
+        
+        return False

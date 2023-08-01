@@ -5,6 +5,7 @@ import { apiSend } from "../../../../utils"
 
 function update_displayname(button, user, display_name, close, setFlash) {
     if (user.display_name === display_name.value) return
+    document.getElementById("display-name-error").innerText = display_name.value.length > 32 ? `- Must be between 1 and 32 characters long` : "*"
 
     apiSend(button, "userSettings", {
         category: "display_name",
@@ -36,7 +37,7 @@ export function DisplayName({ props }) {
                 <h3>Change your display name</h3>
             </div>
             <div className="column-container">
-                <p className="category-text">DISPLAY NAME <span className="error-category-text" id="displayname-error" key="display-name-error">*</span></p>
+                <p className="category-text">DISPLAY NAME <span className="error-category-text" id="display-name-error" key="display-name-error">*</span></p>
                 <input className="input-field small-card-field" type="text" autoFocus defaultValue={user.display_name ? user.display_name : ""} ref={display_name} key="name-inpt" maxLength={50} />
             </div>
             <div className="card-submit-wrapper">

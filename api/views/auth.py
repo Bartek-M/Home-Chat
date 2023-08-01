@@ -75,15 +75,18 @@ class Auth:
 
         if not Functions.verify_email(email):
             return ({"errors": {"email": "Invalid email syntax"}}, 400)
-        
         if db.get_entry(USER_SETTING_TABLE, email, "email"):
             return ({"errors": {"email": "Email is already registered"}}, 409)
         
+        if verify_error := Functions.verify_name(username):
+            return ({"errors": {"username": verify_error}}, 400)
         if db.get_entry(USER_TABLE, username, "name"):
             return ({"errors": {"username": "Username is already taken"}}, 409)
         
-        if len(password) < 6:
-            return ({"errors": {"password": "Password must have at least 6 characters"}}, 400)
+        if len(password) < 8:
+            return ({"errors": {"password": "Password must have at least 8 characters"}}, 400)
+        if not Security.verify_password(password):
+            return ({"errors": {"password": "Password must contain at least: 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character"}}, 400)
         
         current_time = time.time() 
         id = Functions.create_id(current_time)

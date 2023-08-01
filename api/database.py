@@ -76,7 +76,7 @@ class Database:
         Get specific entry
         :param table: Table to look at
         :param req_id: ID of entry to get
-        :param entry: Entry to get
+        :param entry: Entry to check
         :param order: Sorting order
         :return: Desired config object or None
         """
@@ -86,6 +86,21 @@ class Database:
             return CONFIG_OBJECTS[table](*fetched)
 
         return None
+    
+    def count_entry(self, table, req_id, entry="id"):
+        """
+        Check how many times specific items occur
+        :param table: Table to look at
+        :param req_id: ID of entry to get
+        :param entry: Entry to check
+        :return: Number of desired entries
+        """
+        self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=?", [req_id])
+
+        if fetched := self.cursor.fetchone():
+            return fetched[0]
+        
+        return 0
     
     def get_channel_stuff(self, req_id, option):
         """

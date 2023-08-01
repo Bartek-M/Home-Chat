@@ -6,8 +6,8 @@ from PIL import Image
 
 from ..database import *
 
-EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-
+NAME_REGEX = r"^.*?(?=[\^#%&$\*:\?/\{\}]).*$"
+EMAIL_REGEX = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
 
 class Functions:
     @staticmethod
@@ -30,6 +30,29 @@ class Functions:
             return True
 
         return False
+    
+    @staticmethod
+    def verify_name(name, type="username"):
+        """
+        Verify username, display_name or nickname
+        :param name: Name to verify
+        :param type: Name type (default - username or display_name)
+        :return None if correct, error_message if incorrect
+        """
+        if type == "username":
+            if not 2 <= len(name) <= 32:
+                return "Must be between 2 and 32 characters long"
+            
+            if " " in name:
+                return "Name must not contain any spaces"
+            
+        if len(name) > 32:
+            return "Must be between 1 and 32 characters long"
+        
+        if re.fullmatch(NAME_REGEX, name):
+            return "Name must not contain ^ # % & $ * : ? / \ { }"
+
+        return
 
     @staticmethod
     def match_code(code):

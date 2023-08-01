@@ -17,7 +17,7 @@ function update_password({ button, user, password, data, setPage, code, setFlash
         if (new_passw.value !== confirm_passw.value) return document.getElementById("conf-passw-error").innerText = "Passwords don't match!"
         document.getElementById("conf-passw-error").innerText = "*"
 
-        if (new_passw.value.length < 6) return document.getElementById("new-passw-error").innerText = "Must be 6 or more in length"
+        if (new_passw.value.length < 8) return document.getElementById("new-passw-error").innerText = "Password must have at least 8 characters"
         document.getElementById("new-passw-error").innerText = "*"
     }
 
@@ -39,9 +39,7 @@ function update_password({ button, user, password, data, setPage, code, setFlash
         }
 
         if (res.message === "200 OK" && res.token) {
-            console.log("HELLO")
             localStorage.setItem("token", res.token)
-            localStorage.setItem("test", "HELLO")
             return setFlash("Password updated!")
         }
 

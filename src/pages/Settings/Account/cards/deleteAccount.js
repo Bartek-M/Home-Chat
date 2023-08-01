@@ -17,6 +17,7 @@ function submit_delete({ button, navigator, user, password, setPage, code, setFl
             if (!code && user.mfa_enabled && !res.errors.password) { return setPage("mfa") }
             if (!code && res.errors.password) return document.getElementById("password-error").innerText = `- ${res.errors.password}`
             if (code && res.errors.code) return document.getElementById("code-error").innerText = `- ${res.errors.code}`
+            if (res.errors.channels) return setFlash(res.errors.channels, "error")
         }
 
         if (res.message == "200 OK") {

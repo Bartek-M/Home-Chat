@@ -21,6 +21,7 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
         }, "PATCH", channel.id).then(res => {
             if (res.errors) {
                 if (res.errors.channel) return setFlash(res.errors.channel, "error")
+                document.getElementById("nick-error").innerText = res.errors.nick ? `- ${res.errors.nick}` : "*"
                 return
             }
 
@@ -158,7 +159,7 @@ export function ChannelSettings({ props }) {
                             </div>
                         </div>
                         <div className="column-container">
-                            <p className="category-text">GROUP NAME <span className="error-category-name" id="name-error">*</span></p>
+                            <p className="category-text">GROUP NAME <span className="error-category-text" id="name-error">*</span></p>
                             <input className="input-field small-card-field" spellCheck={false} defaultValue={channel.name} ref={channel_name} maxLength={50} required />
                         </div>
                     </div>
@@ -166,8 +167,8 @@ export function ChannelSettings({ props }) {
                 </>
             }
             <div className="column-container">
-                <p className="category-text">NICKNAME <span className="error-category-name" id="name-error">*</span></p>
-                <input className="input-field small-card-field" spellCheck={false} ref={nick} defaultValue={channel.nick} maxLength={50} required />
+                <p className="category-text">NICKNAME <span className="error-category-text" id="nick-error">*</span></p>
+                <input className="input-field small-card-field" spellCheck={false} ref={nick} defaultValue={channel.nick} maxLength={32} required />
             </div>
             <div className="spaced-container">
                 <div className="column-container">
