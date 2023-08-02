@@ -53,7 +53,7 @@ export function ChannelMembers({ props }) {
                 {filteredItems && filteredItems.length
                     ? <div className="friends-wrapper column-container scroller-container">
                         {filteredItems.map(member => {
-                            if (member.id === user.id) member = {...member, ...user}
+                            if (member.id === user.id) member = { ...member, ...user }
 
                             return (
                                 <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${member.id}`}>

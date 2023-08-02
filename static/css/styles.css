@@ -529,6 +529,12 @@ svg, img {
 
 .channel-stngs-card { gap: 1rem!important; }
 
+.channel-info-wrapper {
+    width: calc(100% - 20px);
+    padding: 4px 10px;
+    gap: 0.2rem
+}
+
 /* invite friends */
 .invite-member-btn {
     font-size: 0.875rem;
