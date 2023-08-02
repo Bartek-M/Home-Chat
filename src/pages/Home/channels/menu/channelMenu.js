@@ -27,17 +27,17 @@ export function ChannelMenu({ element, x, y, close, setCard }) {
 
     return (
         <div className="channel-menu center-column-container" ref={menu} style={{ top: y + 20, left: x + 60, transform: "translateX(-95%)" }}>
-            {!channel.direct &&
-                <>
-                    <div className="channel-info-wrapper column-container">
-                        <p>{channel.name}</p>
-                        <p className="text-note">Owner: {channel.users[channel.owner].name}</p>
+            <div className="channel-info-wrapper column-container">
+                <p className="short-text">{channel.display_name ? channel.display_name : channel.name}</p>
+                {!channel.direct &&
+                    <>
+                        <p className="text-note short-text">Owner: {channel.users[channel.owner].name}</p>
                         <p className="text-note">Members: {Object.keys(channel.users).length}</p>
-                        <p className="text-note">Created at: {formatTime(channel.create_time)}</p>
-                    </div>
-                    <hr className="separator" />
-                </>
-            }
+                    </>
+                }
+                <p className="text-note">Created at: {formatTime(channel.create_time)}</p>
+            </div>
+            <hr className="separator" />
             <button className="channel-menu-btn spaced-container" onClick={() => { setCard("channelSettings"); close() }}>
                 Channel Settings
                 <svg width="16" height="16" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">

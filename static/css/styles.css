@@ -169,7 +169,7 @@ h4,
 h5,
 p {
     margin: 0; 
-    word-break: break-word
+    word-break: break-word;
 }
 
 span, 
@@ -180,7 +180,7 @@ label,
 select, 
 hr { 
     outline: 0; 
-    border: 0 
+    border: 0
 }
 
 li { list-style: none; }
@@ -309,6 +309,13 @@ svg, img {
     font-size: 0.75rem; 
     line-height: normal;
     color: var(--FONT_DIM_COLOR) 
+}
+
+.short-text {
+    min-width: 50px;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
 }
 
 /* inputs */
@@ -508,7 +515,7 @@ svg, img {
 .channel-menu {
     position: absolute;
     padding: 0.25rem;
-    width: max-content;
+    width: 200px;
     background-color: var(--COLOR_3);
     border-radius: 4px;
     box-shadow: 0 0 8px var(--BORDER_COLOR);
@@ -578,14 +585,14 @@ svg, img {
     right: 0;
     bottom: 0;
     left: 64px;
-    min-width: 250px;
+    min-width: 325px;
     min-height: 200px;
     gap: 0;
     border-left: 1px solid var(--BORDER_COLOR);
     background-color: inherit;
 }
 
-.channel-title {
+.channel-title-wrapper {
     min-height: 48px;
     width: calc(100% - 1rem);
     margin: 0.5rem 0.5rem 0 0.5rem;
@@ -595,6 +602,8 @@ svg, img {
     color: var(--FONT_RV_COLOR);
 }
 
+.channel-title { max-width: 60%;}
+.channel-name-wrapper {max-width: 100%; justify-content: center;}
 .channel-name { font-size: 1.25rem; }
 
 .channel-icon {
@@ -659,6 +668,7 @@ svg, img {
 .compact-msg-dim-name { color: var(--FONT_DIM_COLOR) }
 
 .compact-msg-user-info { 
+    max-width: 40%;
     line-height: 1.375rem; 
     font-weight: 600;
     margin: 0 0.5rem 0 0.25rem; 
@@ -667,7 +677,7 @@ svg, img {
 .compact-msg-user-info:hover { text-decoration: underline; }
 
 .message-info { align-items: end; line-height: 1.375rem; }
-.message-author { font-size: 0.875rem; font-weight: 600;}
+.message-author { max-width: 50%; font-size: 0.875rem; font-weight: 600;}
 .message-dim-text { font-size: .75rem; color: var(--FONT_DIM_COLOR) }
 
 .message-content {max-width: calc(100% - 3rem);}
@@ -731,11 +741,13 @@ svg, img {
     gap: 0.5rem;
     padding: 0.75rem;
     width: max-content;
+    max-width: 200px;
     background-color: var(--COLOR_3);
     border-radius: 4px;
     box-shadow: 0 0 8px var(--BORDER_COLOR);
     pointer-events: auto;
 }
+
 
 .user-card-avatar {
     width: 48px;
@@ -743,6 +755,11 @@ svg, img {
     object-fit: cover;
     border-radius: 50%;
     user-select: none;
+}
+
+.user-card-name {
+    width: calc(100% - 64px);
+    justify-content: center;
 }
 
 .user-card-btn {
@@ -1033,7 +1050,7 @@ svg, img {
     transform: scale(1)
 }
 
-.user-info { justify-content: left; gap: 1rem }
+.user-info { justify-content: left; gap: 1rem; }
 .username { color: var(--FONT_DIM_COLOR); font-size: 1rem }
 
 .account-settings {

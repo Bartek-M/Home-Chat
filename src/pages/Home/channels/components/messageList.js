@@ -119,7 +119,7 @@ export function MessageList({ channel, close }) {
                                         <img className="avatar skeleton" draggable={false} src={`/api/images/${author.avatar}.webp`} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                         <div className="message-content">
                                             <div className="message-info container">
-                                                <p className={author.name ? "message-author" : "message-dim-text"}>{(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}</p>
+                                                <p className={author.name ? "message-author short-text" : "message-dim-text short-text"}>{(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}</p>
                                                 <p className="message-dim-text">{formatTime(message.create_time)}</p>
                                             </div>
                                             <div className="message-text">{content}</div>
@@ -137,13 +137,19 @@ export function MessageList({ channel, close }) {
                                 var author = channel.users[message.author] ? channel.users[message.author] : {}
                                 if (message.author === user.id) author = { ...author, ...user }
 
+                                const content = !message.content.match(URL_REGEX)
+                                    ? message.content
+                                    : message.content.split(" ").map((part, index) => {
+                                        return (URL_REGEX.test(part) ? <span key={index}><a className="link" target="_blank" href={part.toLowerCase().startsWith('http') ? part : `//${[part]}`}>{part}</a> </span> : part + " ")
+                                    })
+
                                 return (
                                     <li className="compact-msg container" key={message.id}>
                                         <div className="compact-msg-time-info">{formatTime(message.create_time, "time")}</div>
-                                        <div className={author.name ? "compact-msg-user-info" : "compact-msg-user-info compact-msg-dim-name"} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
+                                        <div className={author.name ? "compact-msg-user-info short-text" : "compact-msg-user-info compact-msg-dim-name short-text"} onClick={(e) => setMenu({ id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
                                             {(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}
                                         </div>
-                                        <div className="compact-msg-text">{message.content}</div>
+                                        <div className="compact-msg-text">{content}</div>
                                         <MessageOptions message={message} />
                                         {(menu.id === message.id && menu.type === "userCard") &&
                                             createPortal(<UserCard element={menu.element} member={author.id ? author : { id: message.author }} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />, document.getElementsByClassName("layer")[0])

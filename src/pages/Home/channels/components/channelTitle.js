@@ -7,15 +7,15 @@ export function ChannelTitle({ channel, setCard }) {
     const [menu, setMenu] = useState({ show: false, x: 0, y: 0 })
 
     return (
-        <div className="channel-title spaced-container">
-            <div className="center-container">
+        <div className="channel-title-wrapper spaced-container">
+            <div className="channel-title container">
                 {channel.icon !== "loading"
                     ? <img className="channel-icon skeleton" src={channel.direct ? `/api/images/${channel.icon}.webp` : `/api/images/channels/${channel.icon}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                     : <div className="channel-icon skeleton" />
                 }
-                <div className="column-container">
-                    {channel.display_name && <p className="channel-name">{channel.display_name}</p>}
-                    <p className={`channel-name ${channel.display_name ? "username" : ""}`}>{channel.name}</p>
+                <div className="channel-name-wrapper column-container">
+                    {channel.display_name && <p className="channel-name short-text">{channel.display_name}</p>}
+                    <p className={`channel-name short-text ${channel.display_name ? "username" : ""}`}>{channel.name}</p>
                 </div>
             </div>
             <button className="channel-settings center-container" onClick={(e) => setMenu({ show: true, element: e.target, x: e.target.offsetLeft, y: e.target.offsetTop })}>
