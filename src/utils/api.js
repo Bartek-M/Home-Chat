@@ -20,7 +20,10 @@ const API_PAGES = {
     // Channel data
     channelUsers: (value) => `channels/${value}/users`,
     channelMessages: (value) => `channels/${value}/messages`,
+
     channelMessage: (value) => `channels/${value}/message`,
+    messageEdit: (value) => `channels/${value[0]}/message/${value[1]}/edit`,
+    messageDelete: (value) => `channels/${value[0]}/message/${value[1]}/delete`,
 
     // Create channels
     channelOpen: () => "channels/open",

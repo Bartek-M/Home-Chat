@@ -98,9 +98,11 @@ export function MessageList({ channel, close }) {
                                 var author = channel.users[message.author] ? channel.users[message.author] : {}
                                 if (message.author === user.id) author = { ...author, ...user }
 
-                                const content = message.content.split(" ").map((part, index) => {
-                                    return (URL_REGEX.test(part) ? <span key={index}><a className="link" target="_blank" href={part.toLowerCase().startsWith('http') ? part : `//${[part]}`}>{part}</a> </span> : part + " ")
-                                })
+                                const content = !message.content.match(URL_REGEX)
+                                    ? message.content
+                                    : message.content.split(" ").map((part, index) => {
+                                        return (URL_REGEX.test(part) ? <span key={index}><a className="link" target="_blank" href={part.toLowerCase().startsWith('http') ? part : `//${[part]}`}>{part}</a> </span> : part + " ")
+                                    })
 
                                 if (channel.messages[index - 1] && channel.messages[index - 1].author === message.author && (message.create_time - channel.messages[index - 1].create_time) < 360) return (
                                     <li className="message-list-item repeated-message-list-item container" key={message.id}>

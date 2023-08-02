@@ -469,3 +469,23 @@ class Channels:
 
         socketio.emit("member_list", {"channel_id": channel_id, "member": member_id, "action": "remove"}, to=channel_id)
         return 200
+    
+    @channels.route("<channel_id>/message/<message_id>/delete", methods=["DELETE"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def delete_message(db, user, channel_id, message_id):
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+
+        if not (user_channel := db.get_channel_stuff([user.id, channel_id], "user_channel")):
+            return ({"errors": {"channel": "You are not a member"}}, 401)
+
+        if not (message := db.get_entry(MESSAGE_TABLE, message_id)):
+            return ({"errors": {"message": "Message does not exist"}}, 400)
+
+        if user.id != message.author and (not channel.direct and user.id != channel.owner and not user_channel.admin):
+            return ({"errors": {"message": "You can't delete this message"}}, 403)
+
+        db.delete_entry(MESSAGE_TABLE, message_id)
+        socketio.emit("message_delete", {"channel_id": channel_id, "message_id": message_id}, to=channel_id)
+        return 200

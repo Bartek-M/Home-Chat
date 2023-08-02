@@ -27,6 +27,19 @@ export function ChannelsProvider({ children }) {
             })
         }
 
+        const onMessageDelete = (data) => {
+            if (!data || !data.channel_id || !data.message_id) return
+
+            setChannels(current_channels => {
+                if (!current_channels[data.channel_id]) return current_channels
+
+                if (!current_channels[data.channel_id].messages) return current_channels
+                current_channels[data.channel_id].messages = current_channels[data.channel_id].messages.filter(fltr_message => fltr_message.id !== data.message_id)
+
+                return { ...current_channels }
+            })
+        }
+
         const onChannelInvite = (data) => {
             if (!data || !data.id) return
 
@@ -43,7 +56,7 @@ export function ChannelsProvider({ children }) {
 
             setChannels(current_channels => {
                 if (!current_channels[data.channel_id]) return current_channels
-                
+
                 delete current_channels[data.channel_id]
                 return { ...current_channels }
             })
@@ -112,6 +125,8 @@ export function ChannelsProvider({ children }) {
         }
 
         socket.on("message", onMessage)
+        socket.on("message_delete", onMessageDelete)
+
         socket.on("channel_invite", onChannelInvite)
         socket.on("channel_delete", onChannelDelete)
         socket.on("channel_change", onChannelChange)
@@ -120,6 +135,8 @@ export function ChannelsProvider({ children }) {
 
         return () => {
             socket.off("message", onMessage)
+            socket.off("message_delete", onMessageDelete)
+
             socket.off("channel_invite", onChannelInvite)
             socket.off("channel_delete", onChannelDelete)
             socket.off("channel_change", onChannelChange)
