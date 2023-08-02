@@ -249,7 +249,7 @@ class Channels:
             return ({"errors": {"message": "Message too long"}}, 413)
 
         create_time = str(time.time())
-        message = Message(Functions.create_id(create_time), user.id, channel_id, content, create_time)
+        message = Message(Functions.create_id(create_time), user.id, channel_id, content.strip(), create_time)
         db.insert_entry(MESSAGE_TABLE, message)
 
         if user_channel.notifications != "0":

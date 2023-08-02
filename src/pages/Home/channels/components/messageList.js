@@ -6,6 +6,8 @@ import { apiGet, formatTime, smoothScroll } from "../../../../utils"
 import { UserCard } from "../../../../components"
 import { MessageOptions } from "./messageOptions"
 
+const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
+
 export function MessageList({ channel, close }) {
     const [user,] = useUser()
     const [, setChannels] = useChannels()
@@ -96,11 +98,15 @@ export function MessageList({ channel, close }) {
                                 var author = channel.users[message.author] ? channel.users[message.author] : {}
                                 if (message.author === user.id) author = { ...author, ...user }
 
+                                const content = message.content.split(" ").map((part, index) => {
+                                    return (URL_REGEX.test(part) ? <span key={index}><a className="link" target="_blank" href={part.toLowerCase().startsWith('http') ? part : `//${[part]}`}>{part}</a> </span> : part + " ")
+                                })
+
                                 if (channel.messages[index - 1] && channel.messages[index - 1].author === message.author && (message.create_time - channel.messages[index - 1].create_time) < 360) return (
                                     <li className="message-list-item repeated-message-list-item container" key={message.id}>
                                         <div className="message-hidden-time center-container">{formatTime(message.create_time, "time")}</div>
                                         <div className="message-content">
-                                            <div className="message-text">{message.content}</div>
+                                            <div className="message-text">{content}</div>
                                         </div>
                                         <MessageOptions message={message} />
                                     </li>
@@ -114,7 +120,7 @@ export function MessageList({ channel, close }) {
                                                 <p className={author.name ? "message-author" : "message-dim-text"}>{(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}</p>
                                                 <p className="message-dim-text">{formatTime(message.create_time)}</p>
                                             </div>
-                                            <div className="message-text">{message.content}</div>
+                                            <div className="message-text">{content}</div>
                                         </div>
                                         <MessageOptions message={message} />
                                         {(menu.id === message.id && menu.type === "userCard") &&

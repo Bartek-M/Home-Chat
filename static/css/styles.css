@@ -223,6 +223,7 @@ svg, img {
 .link { 
     color: var(--BLUE); 
     line-height: 100%; 
+    user-select: text;
 }
 
 .link:hover { text-decoration: underline; }
