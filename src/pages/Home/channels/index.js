@@ -15,4 +15,4 @@ export { MemberNick } from "./member_options/memberNick"
 export { MemberKick } from "./member_options/memberKick"
 export { TransferOwner } from "./member_options/transferOwner"
 
-export { DeleteMessage } from "./components/deleteMessage"
+export { DeleteMessage } from "./components/messages/"

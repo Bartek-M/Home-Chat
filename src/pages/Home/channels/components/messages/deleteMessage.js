@@ -1,5 +1,5 @@
-import { useActive, useFlash } from "../../../../context"
-import { apiDelete } from "../../../../utils"
+import { useActive, useFlash } from "../../../../../context"
+import { apiDelete } from "../../../../../utils"
 
 function deleteMessage(button, channel_id, message_id, setFlash, close) {
     apiDelete(button, "messageDelete", [channel_id, message_id]).then(res => {

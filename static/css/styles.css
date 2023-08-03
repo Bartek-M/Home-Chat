@@ -630,6 +630,7 @@ svg, img {
     transition: 0.17s ease;
 }
 .message-list-item:hover, .compact-msg:hover { background-color: var(--COLOR_3); }
+.message-list-item.active, .compact-msg.active { background-color: var(--COLOR_4); }
 
 .message-list-item:hover .message-options-wrapper, 
 .compact-msg:hover .message-options-wrapper { 

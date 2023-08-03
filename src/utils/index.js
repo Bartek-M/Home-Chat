@@ -10,7 +10,8 @@ export {
 
 export {
     genSecret,
-    formatTime
+    formatTime,
+    formatMessage
 } from "./formatting"
 
 export {
