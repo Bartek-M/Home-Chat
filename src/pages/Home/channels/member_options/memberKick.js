@@ -28,9 +28,9 @@ export function MemberKick({ props }) {
     const member = active.user
 
     return (
-        <div className="settings-edit-card center-column-container">
-            <div><h3>Kick '{member.name}' from '{channel.name}'</h3></div>
-            <div><p className="edit-card-info">Are you sure you want to kick '{member.name}' from '{channel.name}'?</p></div>
+        <div className="settings-edit-card column-container">
+            <h3>Kick '{member.name}' from '{channel.name}'</h3>
+            <p className="edit-card-info">Are you sure you want to kick '{member.name}' from '{channel.name}'?</p>
             <div className="card-submit-wrapper">
                 <button className="card-cancel-btn" type="button" onClick={() => close("channelMembers")}>Cancel</button>
                 <input className="card-submit-btn warning-btn" type="submit" onClick={(e) => { e.preventDefault(); kick(e.target, member, channel.id, setFlash, close) }} value="Kick" />

@@ -31,7 +31,7 @@ export function UserCard({ element, member, x, y, close, setCard }) {
     }, [])
 
     return (
-        <div className="user-info-card column-container" ref={menu} style={{ top: y + 20, left: x - 20}}>
+        <div className="user-info-card column-container" ref={menu} style={{ top: y + 20, left: x}}>
             <div className="user-info container">
                 <img className="user-card-avatar skeleton" src={`/api/images/${member.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                 <div className="user-card-name column-container">

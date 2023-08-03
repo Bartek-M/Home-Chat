@@ -6,7 +6,7 @@ import { Loading } from ".";
 import { DisplayName, Username, Email, DeleteAccount } from "../pages/Settings/Account";
 import { Password, MFASetup } from "../pages/Settings/Security";
 import { ChannelCreator } from "../pages/Home/creator"
-import { ChannelSettings, ChannelMembers, ChannelInvite, ChannelLeave, MemberNick, MemberKick, TransferOwner } from "../pages/Home/channels";
+import { ChannelSettings, ChannelMembers, ChannelInvite, ChannelLeave, MemberNick, MemberKick, TransferOwner, DeleteMessage } from "../pages/Home/channels";
 
 // Card content (edit card)
 export function Card(props) {
@@ -45,4 +45,7 @@ export function Card(props) {
     if (card === "memberNick") return (<MemberNick props={props} />)
     if (card === "memberKick") return (<MemberKick props={props} />)
     if (card === "transferOwner") return (<TransferOwner props={props} />)
+
+    // Message options
+    if (card === "deleteMessage") return (<DeleteMessage props={props} />)
 } 
