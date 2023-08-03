@@ -36,7 +36,7 @@ class Functions:
         """
         Verify username, display_name or nickname
         :param name: Name to verify
-        :param type: Name type (default - username or display_name)
+        :param type: Name type (default - username, display_name or channel_name)
         :return None if correct, error_message if incorrect
         """
         if type == "username":
@@ -45,9 +45,12 @@ class Functions:
             
             if " " in name:
                 return "Name must not contain any spaces"
-            
-        if len(name) > 32:
+
+        if len(name) > 32 and type != "channel_name":
             return "Must be between 1 and 32 characters long"
+            
+        if not 2 <= len(name) <= 64 and type == "channel_name":
+            return "Must be between 2 and 64 characters long"
         
         if re.fullmatch(NAME_REGEX, name):
             return "Name must not contain ^ # % & $ * : ? / \ { }"

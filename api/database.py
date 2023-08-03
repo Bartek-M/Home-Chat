@@ -47,7 +47,7 @@ class Database:
                 id TEXT UNIQUE, name TEXT UNIQUE, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER, notifications INTEGER, display_name TEXT
             )""",
             f"""{MESSAGE_TABLE} (
-                id TEXT UNIQUE, author TEXT, channel_id TEXT, content TEXT, create_time TEXT, system INTEGER
+                id TEXT UNIQUE, author TEXT, channel_id TEXT, content TEXT, create_time TEXT, edited INTEGER, system INTEGER
             )""",
             f"""{CHANNEL_TABLE} (
                 id TEXT UNIQUE, name TEXT, icon TEXT, owner TEXT, create_time TEXT, direct INTEGER
@@ -99,7 +99,7 @@ class Database:
         if option == "user_channel":
             self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=? AND direct=0", [req_id])
         elif option == "user_friend":
-            self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE (user_id=? OR friend_id=?)", [req_id, req_id])
+            self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE user_id=? OR friend_id=?", [req_id, req_id])
         else:
             self.cursor.execute(f"SELECT COUNT({entry}) FROM {table} WHERE {entry}=?", [req_id])
 

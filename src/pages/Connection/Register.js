@@ -22,7 +22,8 @@ function submit(button, navigator, email, username, password, setFlash) {
 
         if (res.message === "200 OK") {
             localStorage.setItem("userLogin", email.value)
-            return navigator("/login")
+            navigator("/login")
+            return setFlash("Created an account")
         }
 
         if (res.message) return setFlash(res.message, "error")

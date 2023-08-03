@@ -82,16 +82,16 @@ class Users:
         if db.get_user_stuff([user.id, friend_id], "friend"):
             return ({"errors": {"friend": "Already added"}}, 400)
         
-        if db.count_entry(USER_FRIENDS_TABLE, user.id, option="user_friend") >= MAX_FRIENDS:
+        if db.count_entry(USER_FRIENDS_TABLE, user.id, "user_id", "user_friend") >= MAX_FRIENDS:
             return ({"errors": {"friend": f"You've got {MAX_FRIENDS} friends"}}, 409)
         
-        if db.count_entry(USER_FRIENDS_TABLE, friend_id, option="user_friend") >= MAX_FRIENDS:
+        if db.count_entry(USER_FRIENDS_TABLE, friend_id, "user_id", "user_friend") >= MAX_FRIENDS:
             return ({"errors": {"friend": f"Requested user's got {MAX_FRIENDS} friends"}}, 409)
         
         db.insert_entry(USER_FRIENDS_TABLE, UserFriend(user.id, friend_id))
 
         invited_friend = {**friend.__dict__, "accepted": "waiting", "inviting": user.id}
-        inviting_friend = {**user.id.__dict__, "accepted": "waiting", "inviting": user.id}
+        inviting_friend = {**user.__dict__, "accepted": "waiting", "inviting": user.id}
 
         socketio.emit("friends_change", {"action": "add", "friend": invited_friend}, to=user.id)
         socketio.emit("friends_change", {"action": "add", "friend": inviting_friend}, to=friend_id)
@@ -260,13 +260,11 @@ class Users:
             return ({"errors": {"friend": "Already confirmed"}}, 406)
         
         current_time = time.time()
+        friend = {**friend, "accepted": current_time}
         db.update_entry(USER_FRIENDS_TABLE, [user.id, friend_id], "accepted", current_time, "friend")
 
-        user = {**user.__dict__, "accepted": current_time, "inviting": friend.get("inviting") }
-        friend = {**friend, "accepted": current_time}
-
         socketio.emit("friends_change", {"action": "confirm", "friend": friend}, to=user.id)
-        socketio.emit("friends_change", {"action": "confirm", "friend": user}, to=friend_id)
+        socketio.emit("friends_change", {"action": "confirm", "friend": {**user.__dict__, "accepted": current_time, "inviting": friend.get("inviting") }}, to=friend_id)
 
         return ({"friend": friend}, 200)
 

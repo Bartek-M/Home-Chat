@@ -54,7 +54,7 @@ function createChannel(button, name, users, icon, img_file, channels, setActive,
                 else setFlash("Something went wrong!", "error")
 
                 setActive({ channel: channels[res.channel.id] })
-                close()                
+                close()
             })
 
             return
@@ -123,7 +123,7 @@ export function Channel({ close }) {
                     </div>
                 </div>
                 <div className="column-container">
-                    <p className="category-text">GROUP NAME <span className="error-category-name" id="name-error">*</span></p>
+                    <p className="category-text">GROUP NAME <span className="error-category-text" id="name-error">*</span></p>
                     <input className="input-field small-card-field" autoFocus spellCheck={false} defaultValue="Untitled" ref={channel_name} maxLength={50} required />
                 </div>
             </div>
@@ -162,13 +162,10 @@ export function Channel({ close }) {
                             <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={() =>
                                 setSelected(current => { return (current.includes(friend.id) ? current.filter(frnd => frnd != friend.id) : [...current, friend.id]) })
                             }>
-                                <div className="center-container">
+                                <div className="member-info-wrapper container">
                                     <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                     <div className="column-container">
-                                        {friend.display_name
-                                            ? <p>{friend.display_name}</p>
-                                            : <p>{friend.name}</p>
-                                        }
+                                        <p className="short-text">{friend.display_name ? friend.display_name : friend.name}</p>
                                         <p className="text-note">{friend.display_name ? friend.name : ""}</p>
                                     </div>
                                 </div>

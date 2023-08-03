@@ -127,6 +127,9 @@ class Channels:
         if db.count_entry(USER_CHANNEL_TABLE, user.id, "user_id", "user_channel") >= MAX_CHANNELS:
             return ({"errors": {"member": f"You already belongs to {MAX_CHANNELS} group channels"}}, 406)
         
+        if verify_error := Functions.verify_name(name, "channel_name"):
+            return ({"errors": {"name": verify_error}}, 400)
+        
         creation_time = str(time.time())
         channel = Channel(Functions.create_id(creation_time), name, "generic", user.id, creation_time)
 
@@ -276,6 +279,9 @@ class Channels:
 
             if user.id != channel.owner and not user_channel.admin:
                 return ({"errors": {"channel": "You are not a stuff member"}}, 403)
+            
+            if verify_error := Functions.verify_name(name, "channel_name"):
+                return ({"errors": {"name": verify_error}}, 400)
 
             db.update_entry(CHANNEL_TABLE, channel_id, "name", name)
             socketio.emit("channel_change", {"channel_id": channel_id, "setting": "name", "content": name}, to=channel_id)
@@ -380,7 +386,7 @@ class Channels:
     @Decorators.manage_database
     @Decorators.auth
     def edit_message(db, user, channel_id, message_id):
-        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+        if not db.get_entry(CHANNEL_TABLE, channel_id):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
         if not db.get_channel_stuff([user.id, channel_id], "user_channel"):

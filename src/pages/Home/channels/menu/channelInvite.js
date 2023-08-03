@@ -70,14 +70,11 @@ export function ChannelInvite({ props }) {
                 {filteredItems && filteredItems.length
                     ? <div className="friends-wrapper column-container scroller-container">
                         {filteredItems.map(friend => (
-                            <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${friend.id}`}>
-                                <div className="center-container">
+                            <div className="small-card friend-card user-card spaced-container" key={`filtered-${friend.id}`}>
+                                <div className="invite-member-info-wrapper container">
                                     <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
-                                    <div className="column-container">
-                                        {friend.display_name
-                                            ? <p>{friend.display_name}</p>
-                                            : <p>{friend.name}</p>
-                                        }
+                                    <div className="invite-member-name-wrapper column-container">
+                                        <p className="short-text">{friend.display_name ? friend.display_name : friend.name}</p>
                                         <p className="text-note">{friend.display_name ? friend.name : ""}</p>
                                     </div>
                                 </div>

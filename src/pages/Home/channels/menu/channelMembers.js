@@ -56,19 +56,19 @@ export function ChannelMembers({ props }) {
                             if (member.id === user.id) member = { ...member, ...user }
 
                             return (
-                                <div className="small-card friend-card user-card center-container spaced-container" key={`filtered-${member.id}`}>
-                                    <div className="center-container">
+                                <div className="small-card friend-card user-card spaced-container" key={`filtered-${member.id}`}>
+                                    <div className="member-info-wrapper container">
                                         <button onClick={(e) => setMenu({ id: member.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().right, y: e.target.getBoundingClientRect().top })}>
                                             <img className="friend-icon skeleton" src={`/api/images/${member.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                         </button>
                                         <div className="column-container">
                                             {(member.display_name || member.nick)
                                                 ? <div className="member-name-wrapper">
-                                                    {member.nick ? member.nick : member.display_name}
+                                                    <p className="short-text">{member.nick ? member.nick : member.display_name}</p>
                                                     {(!channel.direct && (member.id === channel.owner || member.admin)) ? <p className="text-note">{member.id === channel.owner ? "OWNER" : "ADMIN"}</p> : null}
                                                 </div>
                                                 : <div className="member-name-wrapper">
-                                                    {member.name}
+                                                    <p className="short-text">{member.name}</p>
                                                     {(!channel.direct && (member.id === channel.owner || member.admin)) ? <p className="text-note">{member.id === channel.owner ? "OWNER" : "ADMIN"}</p> : null}
                                                 </div>
                                             }

@@ -42,13 +42,10 @@ export function Direct({ close }) {
                 ? <div className="friends-wrapper column-container scroller-container">
                     {filteredItems.map(friend => (
                         <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => openChannel(e.target, channels, friend.id, setActive, close, setFlash)}>
-                            <div className="center-container">
+                            <div className="member-info-wrapper container">
                                 <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                                 <div className="column-container">
-                                    {friend.display_name
-                                        ? <p>{friend.display_name}</p>
-                                        : <p>{friend.name}</p>
-                                    }
+                                    <p className="short-text">{friend.display_name ? friend.display_name : friend.name}</p>
                                     <p className="text-note">{friend.display_name ? friend.name : ""}</p>
                                 </div>
                             </div>

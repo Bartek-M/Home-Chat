@@ -29,10 +29,11 @@ class Message:
     channel_id: str
     content: str
     create_time: str
+    edited: int = 0 # 0 | 1
     system: int = 0 # 0 | 1
 
     def marks(self):
-        return "?, ?, ?, ?, ?, ?"
+        return "?, ?, ?, ?, ?, ?, ?"
 
 
 @dataclass

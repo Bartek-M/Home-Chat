@@ -13,7 +13,7 @@ function setImage(file, icon) {
 }
 
 function submit_settings(button, channel, name, nick, notifications, icon, img_file, close, setFlash) {
-    if ((name && name.value !== channel.name) || (nick && nick.value !== channel.nick) || (notifications && notifications.checked != channel.notifications)) {
+    if ((name && name.value !== "" && name.value !== channel.name) || (nick && nick.value !== channel.nick) || (notifications && notifications.checked != (channel.notifications >= 1 ? 1 : 0))) {
         apiSend(button, "channelSettings", {
             name: (name && name.value !== channel.name) ? name.value : null,
             nick: nick.value,
@@ -21,6 +21,7 @@ function submit_settings(button, channel, name, nick, notifications, icon, img_f
         }, "PATCH", channel.id).then(res => {
             if (res.errors) {
                 if (res.errors.channel) return setFlash(res.errors.channel, "error")
+                document.getElementById("name-error").innerText = res.errors.name ? `- ${res.errors.name}` : "*"
                 document.getElementById("nick-error").innerText = res.errors.nick ? `- ${res.errors.nick}` : "*"
                 return
             }
@@ -160,7 +161,7 @@ export function ChannelSettings({ props }) {
                         </div>
                         <div className="column-container">
                             <p className="category-text">GROUP NAME <span className="error-category-text" id="name-error">*</span></p>
-                            <input className="input-field small-card-field" spellCheck={false} defaultValue={channel.name} ref={channel_name} maxLength={50} required />
+                            <input className="input-field small-card-field" spellCheck={false} defaultValue={channel.name} ref={channel_name} maxLength={80} required />
                         </div>
                     </div>
                     <hr className="separator" />
