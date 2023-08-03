@@ -1,4 +1,4 @@
-import { apiSend } from "./"
+import { apiSend, apiDelete } from "./"
 export const { os_list, version } = require("../data/config.json")
 
 // Set userOS
@@ -52,6 +52,24 @@ export function addFriend(button, friend, setFlash) {
     apiSend(button, "addFriend", { friend: friend.id }, "POST", "@me").then(res => {
         if (res.errors) return setFlash(res.errors.friend ? res.errors.friend : "Something went wrong!", "error")
         if (res.message === "200 OK") return setFlash("Friend request sent")
+
+        if (res.message) return setFlash(res.message, "error")
+        setFlash("Something went wrong!", "error")
+    })
+}
+
+// Delete message
+export function deleteMessage(button, channel_id, message_id, setFlash, close) {
+    apiDelete(button, "messageDelete", [channel_id, message_id]).then(res => {
+        if (res.errors) {
+            if (res.errors.channel) return setFlash(res.errors.channel, "error")
+            if (res.errors.message) return setFlash(res.errors.message, "error")
+        }
+        
+        if (res.message === "200 OK") {
+            if (close) close()
+            return setFlash("Message Deleted")
+        }
 
         if (res.message) return setFlash(res.message, "error")
         setFlash("Something went wrong!", "error")

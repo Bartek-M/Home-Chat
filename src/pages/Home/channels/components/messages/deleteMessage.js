@@ -1,22 +1,5 @@
 import { useActive, useFlash } from "../../../../../context"
-import { apiDelete } from "../../../../../utils"
-
-function deleteMessage(button, channel_id, message_id, setFlash, close) {
-    apiDelete(button, "messageDelete", [channel_id, message_id]).then(res => {
-        if (res.errors) {
-            if (res.errors.channel) return setFlash(res.errors.channel, "error")
-            if (res.errors.message) return setFlash(res.errors.message, "error")
-        }
-        
-        if (res.message === "200 OK") {
-            close()
-            return setFlash("Message Deleted")
-        }
-
-        if (res.message) return setFlash(res.message, "error")
-        setFlash("Something went wrong!", "error")
-    })
-}
+import { deleteMessage } from "../../../../../utils"
 
 export function DeleteMessage({ props }) {
     const { close } = props

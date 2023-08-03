@@ -34,6 +34,7 @@ Version: dev-8b05364
     | message options
     | user card
     | sending messages
+    | editing messages
 
 6. SETTINGS PAGE - settings page elements
     | settings sidebar
@@ -272,7 +273,8 @@ svg, img {
 
 .scroller-container { 
     position: relative; 
-    overflow: hidden scroll;
+    overflow: hidden auto;
+    scroll-behavior: smooth;
 } 
 
 /* separators */
@@ -283,7 +285,7 @@ svg, img {
     background-color: var(--BUTTON_HOVER);
 }
 
-.scroller-spacer { min-height: 20px;}
+.scroller-spacer { min-height: 50px;}
 
 /* category text */
 .category-text { 
@@ -618,8 +620,6 @@ svg, img {
     height: 100%; 
     width: calc(100% - 1rem); 
     margin: 0 0.5rem; 
-    scroll-behavior: smooth;
-    scroll-padding-bottom: 20px;
 }
 
 .message-list-item { 
@@ -632,16 +632,14 @@ svg, img {
 .message-list-item:hover, .compact-msg:hover { background-color: var(--COLOR_3); }
 .message-list-item.active, .compact-msg.active { background-color: var(--COLOR_4); }
 
-.message-list-item:hover .message-options-wrapper, 
-.compact-msg:hover .message-options-wrapper { 
-    display: flex; 
-}
+.message-list-item:hover .message-options-wrapper, .compact-msg:hover .message-options-wrapper,
+.message-list-item.active .message-options-wrapper, .compact-msg:active .message-options-wrapper { display: flex; }
 
 .repeated-message-list-item { align-items: center; margin-top: 0; padding: 0.125rem 0 }
-.repeated-message-list-item:hover .message-hidden-time { color: var(--FONT_DIM_COLOR) }
+.repeated-message-list-item.active .message-hidden-time, .repeated-message-list-item:hover .message-hidden-time { color: var(--FONT_DIM_COLOR) }
 
 .avatar {
-    margin-top: 4px;
+    margin-top: 2px;
     width: 40px;
     height: 40px;
     object-fit: cover;
@@ -684,7 +682,6 @@ svg, img {
 .message-info { align-items: end; line-height: 1.375rem; }
 .message-author { max-width: 50%; font-size: 0.875rem; font-weight: 600;}
 .message-dim-text { font-size: .75rem; color: var(--FONT_DIM_COLOR) }
-
 
 .message-text { 
     line-height: 1.375rem; 
@@ -752,7 +749,6 @@ svg, img {
     pointer-events: auto;
 }
 
-
 .user-card-avatar {
     width: 48px;
     height: 48px;
@@ -811,15 +807,35 @@ svg, img {
 .chat-send-btn {
     width: 46px;
     height: 46px;
+    transition: 0.17s ease;
 }
 
 .chat-send-btn:hover svg { fill: var(--BLUE) }
+.chat-send-btn:disabled { background-color: unset!important }
 
 .chat-separator {
     min-width: 2px; 
     height: 28px; 
     margin: 0.5rem 1rem; 
     background-color: var(--BUTTON_HOVER);
+}
+
+/* editing messages */
+.message-editing-wrapper {
+    position: absolute;
+    top: -2.5rem;
+    left: 0.5rem;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: var(--MAIN_COLOR);
+    border-radius: 4px;
+}
+
+.cancel-edit-btn {
+    width: 22px;
+    height: 22px;
+    background-color: var(--BUTTON);
+    border-radius: 50%;
 }
 
 
@@ -857,7 +873,7 @@ svg, img {
 .settings-sidebar button, 
 .settings-sidebar h2, 
 .settings-sidebar p {
-     padding: 4px 10px; 
+    padding: 4px 10px; 
 } 
 
 .settings-sidebar button, 
@@ -928,7 +944,7 @@ svg, img {
         overflow: hidden; 
     }
 
-    .settings-sidebar-wrapper.active { max-height: 368px; overflow-y: scroll; }
+    .settings-sidebar-wrapper.active { max-height: 368px; overflow-y: auto; }
     .settings-sidebar-wrapper.active #settings-dropdown-btn svg { transform: rotate(180deg); }
 
     .settings-sidebar { width: calc(100% - 2rem); padding: 0 1rem; }

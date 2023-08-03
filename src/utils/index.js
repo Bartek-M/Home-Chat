@@ -5,7 +5,8 @@ export {
     appTheme, 
     smoothScroll, 
     openChannel, 
-    addFriend 
+    addFriend,
+    deleteMessage
 } from "./functions"
 
 export {

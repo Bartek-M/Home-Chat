@@ -375,6 +375,39 @@ class Channels:
         db.update_entry(CHANNEL_TABLE, channel_id, "owner", member_id)
         socketio.emit("channel_change", {"channel_id": channel_id, "setting": "owner", "content": member_id}, to=channel_id)
         return 200
+        
+    @channels.route("<channel_id>/message/<message_id>/edit", methods=["PATCH"])
+    @Decorators.manage_database
+    @Decorators.auth
+    def edit_message(db, user, channel_id, message_id):
+        if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
+            return ({"errors": {"channel": "Channel does not exist"}}, 400)
+
+        if not db.get_channel_stuff([user.id, channel_id], "user_channel"):
+            return ({"errors": {"channel": "You are not a member"}}, 401)
+
+        if not (message := db.get_entry(MESSAGE_TABLE, message_id)):
+            return ({"errors": {"message": "Message does not exist"}}, 400)
+
+        if user.id != message.author:
+            return ({"errors": {"message": "You can't edit this message"}}, 403)
+        
+        if not (content := request.json.get("content")):
+            return ({"errors": {"message": "Invalid message content"}}, 400)
+        
+        content = content.strip()
+
+        if len(content) > 2000:
+            return ({"errors": {"message": "Message too long"}}, 413)
+
+        if message.content == content:
+            return ({"errors": {"message": "Edited message is the same"}}, 406)
+        
+        db.update_entry(MESSAGE_TABLE, message_id, "content", content)
+        message.content = content
+
+        socketio.emit("message_edit", message.__dict__, to=channel_id)
+        return 200
     
 
     # DELETE

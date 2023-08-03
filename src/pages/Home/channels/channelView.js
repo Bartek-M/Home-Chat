@@ -15,7 +15,7 @@ export function ChannelView({ setCard }) {
                 </div>
                 : <div className="main-view spaced-column-container">
                     <ChannelTitle channel={channel} setCard={setCard} />
-                    <MessageList channel={channel} close={setCard} />
+                    <MessageList channel={channel} close={setCard} key={channel.id} />
                     <ChatInput channel={channel} />
                 </div>
             }

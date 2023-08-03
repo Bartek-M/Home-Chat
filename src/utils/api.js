@@ -72,6 +72,7 @@ export async function apiGet(page, id) {
 }
 
 export async function apiSend(button, page, data, method, id = null) {
+    if (button.disabled) return
     button.disabled = true
 
     return await fetch(`/api/${API_PAGES[page](id)}/`, {
@@ -84,7 +85,7 @@ export async function apiSend(button, page, data, method, id = null) {
     })
         .then(async (response) => { return await response.json() })
         .then((data) => { return data })
-        .finally(() => button.disabled = false)
+        .finally(() => setTimeout(() => button.disabled = false, 200))
 }
 
 export async function apiDelete(button, page, id) {

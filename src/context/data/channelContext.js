@@ -27,6 +27,22 @@ export function ChannelsProvider({ children }) {
             })
         }
 
+        const onMessageEdit = (data) => {
+            if (!data || !data.id) return
+
+            setChannels(current_channels => {
+                if (!current_channels[data.channel_id]) return current_channels
+
+                if (!current_channels[data.channel_id].messages) return current_channels
+                current_channels[data.channel_id].messages = current_channels[data.channel_id].messages.filter(fltr_message => {
+                    if (fltr_message.id === data.id) fltr_message.content = data.content
+                    return fltr_message
+                })
+
+                return { ...current_channels }
+            })
+        }
+
         const onMessageDelete = (data) => {
             if (!data || !data.channel_id || !data.message_id) return
 
@@ -125,6 +141,7 @@ export function ChannelsProvider({ children }) {
         }
 
         socket.on("message", onMessage)
+        socket.on("message_edit", onMessageEdit)
         socket.on("message_delete", onMessageDelete)
 
         socket.on("channel_invite", onChannelInvite)
@@ -135,6 +152,7 @@ export function ChannelsProvider({ children }) {
 
         return () => {
             socket.off("message", onMessage)
+            socket.off("message_edit", onMessageEdit)
             socket.off("message_delete", onMessageDelete)
 
             socket.off("channel_invite", onChannelInvite)

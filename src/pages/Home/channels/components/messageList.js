@@ -4,7 +4,6 @@ import { useChannels, useUser } from "../../../../context"
 import { apiGet, smoothScroll } from "../../../../utils"
 import { Message, CompactMessage, SkeletonList } from "./messages"
 
-
 export function MessageList({ channel, close }) {
     const [user,] = useUser()
     const [, setChannels] = useChannels()
@@ -14,7 +13,10 @@ export function MessageList({ channel, close }) {
     const [isWaiting, setIsWaiting] = useState(true)
 
     const messageList = useRef()
+
     useEffect(() => {
+        if (!channel.messages) return
+
         setChannels(current_channels => {
             if (!current_channels[channel.id].notifications || current_channels[channel.id].notifications === "0") return current_channels
             if (current_channels[channel.id].notifications >= current_channels[channel.id].last_message) return current_channels
@@ -24,11 +26,9 @@ export function MessageList({ channel, close }) {
         })
 
         smoothScroll(messageList.current)
-    }, [channel.messages ? channel.messages.length : channel.messages, channel.id])
+    }, [channel.messages ? channel.messages[channel.messages.length - 1] : channel.messages])
 
     useEffect(() => {
-        setIsWaiting(true)
-
         if (channel.messages) return
         const delay = setTimeout(() => setIsWaiting(false), 400);
 
@@ -47,15 +47,13 @@ export function MessageList({ channel, close }) {
 
     useEffect(() => {
         if (!messageList.current) return
+        const handleScroll = () => setShowScrollDown(!(messageList.current.scrollHeight - messageList.current.scrollTop - 100 <= messageList.current.clientHeight))
 
-        const handleScroll = () => {
-            const container = messageList.current
-            setShowScrollDown(!(container.scrollHeight - container.scrollTop - 100 <= container.clientHeight))
-        }
+        handleScroll()
         messageList.current.addEventListener("scroll", handleScroll)
 
         return () => { if (!messageList.current) return; messageList.current.removeEventListener("scroll", handleScroll) }
-    }, [messageList.current])
+    }, [messageList.current, channel.messages ? channel.messages.length : channel.messages])
 
 
     if (isWaiting && !channel.messages) return null
@@ -66,7 +64,7 @@ export function MessageList({ channel, close }) {
             {(channel.messages && channel.messages.length)
                 ? <>
                     {user.message_display === "standard"
-                        ? (channel.messages.map((message, index) => {                            
+                        ? (channel.messages.map((message, index) => {
                             return (<Message message={message} menu={menu} setMenu={setMenu} close={close} index={index} key={message.id} />)
                         }))
                         : (channel.messages.map(message => {
