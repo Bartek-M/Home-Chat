@@ -31,11 +31,11 @@ export function formatTime(time, format = "full") {
 
 // Format message with links
 export function formatMessage(content) {
-    return !content.match(URL_REGEX)
-        ? content
-        : content.split(" ").map((part, index) => {
-            return URL_REGEX.test(part)
-                ? <span key={index}><a className="link" target="_blank" href={part.toLowerCase().startsWith('http') ? part : `//${[part]}`}>{part}</a> </span>
-                : part + " "
-        })
+    if (!content.match(URL_REGEX)) return content 
+
+    return content.replaceAll("\n", " \n").split(" ").map((part, index) => {
+        return URL_REGEX.test(part)
+            ? <span key={index}><a className="link" target="_blank" href={part.toLowerCase().startsWith('http') ? part : `//${[part]}`}>{part}</a> </span>
+            : part + " "
+    })
 }

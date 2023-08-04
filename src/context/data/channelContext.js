@@ -35,7 +35,11 @@ export function ChannelsProvider({ children }) {
 
                 if (!current_channels[data.channel_id].messages) return current_channels
                 current_channels[data.channel_id].messages = current_channels[data.channel_id].messages.filter(fltr_message => {
-                    if (fltr_message.id === data.id) fltr_message.content = data.content
+                    if (fltr_message.id === data.id) {
+                        fltr_message.content = data.content
+                        fltr_message.edited = 1
+                    }
+
                     return fltr_message
                 })
 
@@ -52,7 +56,7 @@ export function ChannelsProvider({ children }) {
                 if (!current_channels[data.channel_id].messages) return current_channels
                 current_channels[data.channel_id].messages = current_channels[data.channel_id].messages.filter(fltr_message => fltr_message.id !== data.message_id)
 
-                return { ...current_channels }
+                return current_channels
             })
         }
 

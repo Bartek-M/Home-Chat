@@ -1,14 +1,18 @@
+import { useEffect } from "react"
 import { useActive, useFlash } from "../../../../../context"
+
 import { deleteMessage } from "../../../../../utils"
 
 export function DeleteMessage({ props }) {
     const { close } = props
-    
-    const [active,] = useActive()
+
+    const [active, setActive] = useActive()
     const setFlash = useFlash()
 
     const channel = active.channel
     const message = active.message
+
+    useEffect(() => { return () => setActive({ message: null }) }, [])
 
     return (
         <div className="settings-edit-card column-container">

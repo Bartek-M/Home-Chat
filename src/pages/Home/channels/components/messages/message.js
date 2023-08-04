@@ -19,6 +19,7 @@ export function Message({ message, menu, setMenu, close, index }) {
                 <div className="message-hidden-time center-container">{formatTime(message.create_time, "time")}</div>
                 <div className="message-content">
                     <div className="message-text">{formatMessage(message.content)}</div>
+                    {(message.edited) ? <span className="text-note">(edited)</span> : null}
                 </div>
                 <MessageOptions message={message} setCard={close} />
             </li>
@@ -44,6 +45,7 @@ export function Message({ message, menu, setMenu, close, index }) {
                     <p className="message-dim-text">{formatTime(message.create_time)}</p>
                 </div>
                 <div className="message-text">{formatMessage(message.content)}</div>
+                {(message.edited) ? <span className="text-note">(edited)</span> : null}
             </div>
             <MessageOptions message={message} setCard={close} />
             {(menu.id === message.id && menu.type === "userCard") &&

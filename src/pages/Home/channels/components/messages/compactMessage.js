@@ -16,16 +16,19 @@ export function CompactMessage({ message, menu, setMenu, close }) {
     return (
         <li className="compact-msg container">
             <div className="compact-msg-time-info">{formatTime(message.create_time, "time")}</div>
-            <div
-                className={author.name ? "compact-msg-user-info short-text" : "compact-msg-user-info compact-msg-dim-name short-text"}
-                onClick={(e) => setMenu({
-                    id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().left, y: e.target.getBoundingClientRect().top
-                })}
-            >
-                {(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}
+            <div className="compact-msg-user-info-wrapper column-container">
+                <div
+                    className={author.name ? "compact-msg-user-info short-text" : "compact-msg-user-info compact-msg-dim-name short-text"}
+                    onClick={(e) => setMenu({
+                        id: message.id, element: e.target, type: "userCard", x: e.target.getBoundingClientRect().left, y: e.target.getBoundingClientRect().top
+                    })}
+                >
+                    {(author.display_name || author.nick) ? (author.nick || author.display_name) : (author.name || "Unknown")}
+                </div>
+                {(message.edited) ? <span className="text-note">(edited)</span> : null}
             </div>
             <div className="compact-msg-text">{formatMessage(message.content)}</div>
-             <MessageOptions message={message} setCard={close} />
+            <MessageOptions message={message} setCard={close} />
             {(menu.id === message.id && menu.type === "userCard") &&
                 createPortal(
                     <UserCard element={menu.element} member={author.id ? author : { id: message.author }} x={menu.x} y={menu.y} close={() => setMenu({ id: null, element: null, type: null, x: 0, y: 0 })} setCard={close} />,

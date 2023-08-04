@@ -308,6 +308,7 @@ svg, img {
 }
 
 .text-note { 
+    width: fit-content;
     font-size: 0.75rem; 
     line-height: normal;
     color: var(--FONT_DIM_COLOR) 
@@ -670,8 +671,11 @@ svg, img {
 .compact-msg-time-info { line-height: 1.375rem; font-size: 0.75rem; color: var(--FONT_DIM_COLOR) }
 .compact-msg-dim-name { color: var(--FONT_DIM_COLOR) }
 
-.compact-msg-user-info { 
+.compact-msg-user-info-wrapper {
     max-width: 40%;
+}
+
+.compact-msg-user-info { 
     line-height: 1.375rem; 
     font-weight: 600;
     margin: 0 0.5rem 0 0.25rem; 

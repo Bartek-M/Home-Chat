@@ -410,7 +410,10 @@ class Channels:
             return ({"errors": {"message": "Edited message is the same"}}, 406)
         
         db.update_entry(MESSAGE_TABLE, message_id, "content", content)
+        db.update_entry(MESSAGE_TABLE, message_id, "edited", 1)
+
         message.content = content
+        message.edited = 1
 
         socketio.emit("message_edit", message.__dict__, to=channel_id)
         return 200
