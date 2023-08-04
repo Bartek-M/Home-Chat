@@ -157,7 +157,7 @@ export function Channel({ close }) {
                     </svg>
                 </div>
                 {filteredItems && filteredItems.length
-                    ? <div className="friends-wrapper column-container scroller-container">
+                    ? <div className="friends-wrapper column-container scroller">
                         {filteredItems.map(friend => (
                             <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={() =>
                                 setSelected(current => { return (current.includes(friend.id) ? current.filter(frnd => frnd != friend.id) : [...current, friend.id]) })

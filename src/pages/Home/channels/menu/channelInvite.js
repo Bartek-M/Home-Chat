@@ -68,7 +68,7 @@ export function ChannelInvite({ props }) {
                     </svg>
                 </div>
                 {filteredItems && filteredItems.length
-                    ? <div className="friends-wrapper column-container scroller-container">
+                    ? <div className="friends-wrapper column-container scroller">
                         {filteredItems.map(friend => (
                             <div className="small-card friend-card user-card spaced-container" key={`filtered-${friend.id}`}>
                                 <div className="invite-member-info-wrapper container">

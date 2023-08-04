@@ -47,12 +47,11 @@ function editMessage(button, input_content, message, channel_id, setFlash, setAc
     })
 }
 
-export function ChatInput({ channel }) {
+export function ChatInput({ channel, sendBtn }) {
     const [active, setActive] = useActive()
     const setFlash = useFlash()
 
     const messageContent = useRef()
-    const sendBtn = useRef()
 
     const isEditing = useMemo(() => { return (active.message && active.message.channel_id === active.channel.id && active.message.editing) }, [active.message, channel.id])
     useEffect(() => { return () => setActive({ message: null }) }, [])
@@ -69,7 +68,7 @@ export function ChatInput({ channel }) {
                     <p>Editing Message</p>
                 </div>
             }
-            <div className="chat-inpt-scroller scroller-container">
+            <div className="chat-inpt-scroller container scroller">
                 <div className="chat-inpt" ref={messageContent} autoFocus contentEditable suppressContentEditableWarning
                     onKeyDown={e => {
                         if (window.matchMedia("(pointer: coarse)").matches) return

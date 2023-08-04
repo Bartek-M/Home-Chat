@@ -33,7 +33,7 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
     }, [Object.values(channels)])
 
     return (
-        <nav className="main-sidebar column-container scroller-container">
+        <nav className="main-sidebar column-container scroller">
             <li className={`main-sidebar-item center-container ${settings ? "active" : ""}`}>
                 <div className="main-sidebar-pill"></div>
                 {(user.notifications && user.notifications_friend && friends && friends.pending && Object.keys(friends.pending).length) ? <div className="notification-dot"></div> : null}

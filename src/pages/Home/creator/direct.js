@@ -39,7 +39,7 @@ export function Direct({ close }) {
                 </svg>
             </div>
             {filteredItems && filteredItems.length
-                ? <div className="friends-wrapper column-container scroller-container">
+                ? <div className="friends-wrapper column-container scroller">
                     {filteredItems.map(friend => (
                         <div className="small-card friend-card container" key={`filtered-${friend.id}`} onClick={(e) => openChannel(e.target, channels, friend.id, setActive, close, setFlash)}>
                             <div className="member-info-wrapper container">

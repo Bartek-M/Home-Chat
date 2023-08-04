@@ -14,7 +14,7 @@ export function Settings({ setSettings, setCard }) {
     return (
         <>
             <div className="settings absolute-container">
-                <div className="settings-sidebar-wrapper scroller-container" ref={settingsDropdown}>
+                <div className="settings-sidebar-wrapper container scroller" ref={settingsDropdown}>
                     <nav className="settings-sidebar column-container">
                         <div className="spaced-container">
                             <h2 className="sidebar-title"><a href="/home">Home Chat</a></h2>
@@ -55,7 +55,7 @@ export function Settings({ setSettings, setCard }) {
                     </nav>
                 </div>
 
-                <div className="settings-page scroller-container">
+                <div className="settings-page container scroller">
                     <div className="settings-content column-container">
                         <Page page={page} card={setCard} setSettings={setSettings} />
                     </div>

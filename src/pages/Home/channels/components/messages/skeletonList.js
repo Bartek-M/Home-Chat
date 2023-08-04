@@ -1,8 +1,10 @@
-export function SkeletonList({ messageDisplay }) {
+export function SkeletonList({ messageDisplay, size, messageLoader }) {
+    const messageAmount = size ? size : 50
+
     return (
-        <div className="chat-window column-container" style={{ overflow: "hidden" }}>
+        <div className="chat-window-wrapper column-container" ref={messageLoader} style={{ overflow: "hidden" }}>
             {messageDisplay === "standard"
-                ? [...Array(50)].map((_, i) => (
+                ? [...Array(messageAmount)].map((_, i) => (
                     <li className="message-list-item container" key={i}>
                         <div className="avatar skeleton" />
                         <div className="message-content" style={{ minWidth: "100px", width: "400px" }}>
@@ -13,7 +15,7 @@ export function SkeletonList({ messageDisplay }) {
                         </div>
                     </li>
                 ))
-                : [...Array(100)].map((_, i) => (
+                : [...Array(messageAmount * 2)].map((_, i) => (
                     <li className="compact-msg container" key={i}>
                         <div className="skeleton skeleton-text" style={{ width: "30px" }} />
                         <div className="skeleton skeleton-text" style={{ width: "60px", margin: "3px 0.5rem 3px 0.25rem" }} />

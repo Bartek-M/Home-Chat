@@ -51,7 +51,7 @@ export function ChannelMembers({ props }) {
                     </svg>
                 </div>
                 {filteredItems && filteredItems.length
-                    ? <div className="friends-wrapper column-container scroller-container">
+                    ? <div className="friends-wrapper column-container scroller">
                         {filteredItems.map(member => {
                             if (member.id === user.id) member = { ...member, ...user }
 

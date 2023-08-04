@@ -21,7 +21,7 @@ function loadMessages(button, channel, setChannels, setFlash) {
     }).finally(() => button.disabled = false)
 }
 
-export function MessageList({ channel, close }) {
+export function MessageList({ channel, close, sendBtn }) {
     const [user,] = useUser()
     const [, setChannels] = useChannels()
     const setFlash = useFlash()
@@ -31,6 +31,7 @@ export function MessageList({ channel, close }) {
     const [isWaiting, setIsWaiting] = useState(true)
 
     const messageList = useRef()
+    const messageLoader = useRef()
 
     useEffect(() => {
         if (!channel.messages) return
@@ -48,35 +49,39 @@ export function MessageList({ channel, close }) {
 
     useEffect(() => {
         if (channel.messages) return
-        loadMessages({}, channel, setChannels, setFlash)
+        loadMessages(sendBtn.current, channel, setChannels, setFlash)
 
         const delay = setTimeout(() => setIsWaiting(false), 400);
         return () => clearTimeout(delay)
     }, [channel.id])
 
     useEffect(() => {
-        if (!messageList.current) return
-        const handleScroll = () => setShowScrollDown(!(messageList.current.scrollHeight - messageList.current.scrollTop - 100 <= messageList.current.clientHeight))
+        if (!messageList.current || !channel.messages || !channel.messages.length || isWaiting === null) return
 
-        handleScroll()
+        const handleScroll = () => {
+            setShowScrollDown(!(messageList.current.scrollHeight - messageList.current.scrollTop - 100 <= messageList.current.clientHeight))
+
+            if (!messageLoader.current) return
+            const rect = messageLoader.current.getBoundingClientRect()
+
+            if (rect.top > messageList.current.clientHeight || rect.bottom < 0 || channel.messages.length % 50) return
+            loadMessages(sendBtn.current, channel, setChannels, setFlash)
+        }
+
         messageList.current.addEventListener("scroll", handleScroll)
-
         return () => { if (!messageList.current) return; messageList.current.removeEventListener("scroll", handleScroll) }
     }, [messageList.current, channel.messages ? channel.messages.length : channel.messages])
-
 
     if (isWaiting && !channel.messages) return null
     if (!channel.messages) return <SkeletonList messageDisplay={user.message_display} />
 
     return (
-        <div className="chat-window column-container scroller-container" ref={messageList}>
+        <div className="chat-window-wrapper scroller" ref={messageList}>
             {(channel.messages && channel.messages.length)
-                ? <>
-                    {channel.messages.length % 50
-                        ? <p className="category-text center-container" style={{ marginTop: "1rem" }}>NO MORE MESSAGES</p>
-                        : <div className="center-container">
-                            <button className="edit-settings-btn" onClick={e => loadMessages(e.target, channel, setChannels, setFlash)}>LOAD MESSAGES</button>
-                        </div>
+                ? <div className="chat-window-content column-container">
+                    {!(channel.messages.length % 50)
+                        ? <SkeletonList messageDisplay={user.message_display} messageLoader={messageLoader} size={4} />
+                        : null
                     }
                     {user.message_display === "standard"
                         ? (channel.messages.map((message, index) => {
@@ -94,7 +99,7 @@ export function MessageList({ channel, close }) {
                             </svg>
                         </button>
                     }
-                </>
+                </div>
                 : <div className="category-text center-container" style={{ marginTop: "1rem" }}>NO MESSAGE HISTORY</div>
             }
         </div>
