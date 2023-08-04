@@ -7,7 +7,7 @@ function sendMessage(button, message, channel_id, setFlash) {
     if (!message.innerText || !message.innerText.trim()) return
     if (button.disabled) return
 
-    apiSend(button, "channelMessage", {
+    apiSend(button, "messageSend", {
         content: message.innerText.trim()
     }, "POST", channel_id).then(res => {
         if (res.errors) {

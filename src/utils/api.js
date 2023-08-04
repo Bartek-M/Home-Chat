@@ -20,8 +20,9 @@ const API_PAGES = {
     // Channel data
     channelUsers: (value) => `channels/${value}/users`,
     channelMessages: (value) => `channels/${value}/messages`,
+    channelMessagesBefore: (value) => `channels/${value[0]}/messages?before=${value[1]}`,
 
-    channelMessage: (value) => `channels/${value}/message`,
+    messageSend: (value) => `channels/${value}/message`,
     messageEdit: (value) => `channels/${value[0]}/message/${value[1]}/edit`,
     messageDelete: (value) => `channels/${value[0]}/message/${value[1]}/delete`,
 
@@ -64,7 +65,7 @@ const API_PAGES = {
 }
 
 export async function apiGet(page, id) {
-    return await fetch(`/api/${API_PAGES[page](id)}/`, {
+    return await fetch(`/api/${API_PAGES[page](id)}`, {
         headers: { "Authentication": localStorage.getItem("token") }
     })
         .then((response) => { return response.json() })
@@ -75,7 +76,7 @@ export async function apiSend(button, page, data, method, id = null) {
     if (button.disabled) return
     button.disabled = true
 
-    return await fetch(`/api/${API_PAGES[page](id)}/`, {
+    return await fetch(`/api/${API_PAGES[page](id)}`, {
         method: method,
         headers: {
             "Content-type": "application/json",
@@ -91,7 +92,7 @@ export async function apiSend(button, page, data, method, id = null) {
 export async function apiDelete(button, page, id) {
     button.disabled = true
 
-    return await fetch(`/api/${API_PAGES[page](id)}/`, {
+    return await fetch(`/api/${API_PAGES[page](id)}`, {
         method: "DELETE",
         headers: { "Authentication": localStorage.getItem("token") }
     })
@@ -103,7 +104,7 @@ export async function apiDelete(button, page, id) {
 export async function apiFile(button, page, data, id = null) {
     button.disabled = true
 
-    return await fetch(`/api/${API_PAGES[page](id)}/`, {
+    return await fetch(`/api/${API_PAGES[page](id)}`, {
         method: "POST",
         headers: { "Authentication": localStorage.getItem("token") },
         body: data

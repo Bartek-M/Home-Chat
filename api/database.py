@@ -108,7 +108,7 @@ class Database:
         
         return 0
     
-    def get_channel_stuff(self, req_id, option):
+    def get_channel_stuff(self, req_id, option, before=None):
         """
         Get specific information about the channel 
         :param req_id: ID to check for
@@ -134,10 +134,13 @@ class Database:
                 return users
             
         if option == "messages":
-            self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=?", [req_id])
+            if before:
+                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? AND id < ? ORDER BY create_time DESC LIMIT 50 ", [req_id, before])
+            else:
+                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? ORDER BY create_time DESC LIMIT 50 ", [req_id])
 
             if fetched := self.cursor.fetchall():
-                return sorted([Message(*data).__dict__ for data in fetched], key=lambda x: x.get("create_time"))
+                return [Message(*data).__dict__ for data in fetched][::-1]
             
         if option == "user_channel":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
