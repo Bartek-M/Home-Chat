@@ -32,6 +32,7 @@ export function MessageList({ channel, close, sendBtn }) {
 
     const messageList = useRef()
     const messageLoader = useRef()
+    const scrollerSpacer = useRef()
 
     useEffect(() => {
         if (!channel.messages) return
@@ -64,7 +65,7 @@ export function MessageList({ channel, close, sendBtn }) {
             if (!messageLoader.current) return
             const rect = messageLoader.current.getBoundingClientRect()
 
-            if (rect.top > messageList.current.clientHeight || rect.bottom < 0 || channel.messages.length % 50) return
+            if (rect.top > messageList.current.clientHeight || rect.bottom < 0 || channel.messages[0].first) return
             loadMessages(sendBtn.current, channel, setChannels, setFlash)
         }
 
@@ -73,13 +74,15 @@ export function MessageList({ channel, close, sendBtn }) {
     }, [messageList.current, channel.messages ? channel.messages.length : channel.messages])
 
     if (isWaiting && !channel.messages) return null
-    if (!channel.messages) return <SkeletonList messageDisplay={user.message_display} />
+    if (!channel.messages) return (
+        <SkeletonList messageDisplay={user.message_display} />
+    )
 
     return (
         <div className="chat-window-wrapper scroller" ref={messageList}>
             {(channel.messages && channel.messages.length)
                 ? <div className="chat-window-content column-container">
-                    {!(channel.messages.length % 50)
+                    {!channel.messages[0].first
                         ? <SkeletonList messageDisplay={user.message_display} messageLoader={messageLoader} size={4} />
                         : null
                     }
@@ -91,7 +94,7 @@ export function MessageList({ channel, close, sendBtn }) {
                             return (<CompactMessage message={message} menu={menu} setMenu={setMenu} close={close} key={message.id} />)
                         }))
                     }
-                    <div className="scroller-spacer" />
+                    <div className="scroller-spacer" ref={scrollerSpacer} />
                     {showScrollDown &&
                         <button className="scroll-down-btn center-container" onClick={() => smoothScroll(messageList.current)}>
                             <svg width="32" height="32" fill="var(--FONT_RV_COLOR)" viewBox="0 0 16 16">

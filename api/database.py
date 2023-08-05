@@ -135,9 +135,9 @@ class Database:
             
         if option == "messages":
             if before:
-                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? AND id < ? ORDER BY create_time DESC LIMIT 50 ", [req_id, before])
+                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? AND id < ? ORDER BY create_time DESC LIMIT 51", [req_id, before])
             else:
-                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? ORDER BY create_time DESC LIMIT 50 ", [req_id])
+                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? ORDER BY create_time DESC LIMIT 51", [req_id])
 
             if fetched := self.cursor.fetchall():
                 return [Message(*data).__dict__ for data in fetched][::-1]

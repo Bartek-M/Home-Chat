@@ -43,7 +43,15 @@ class Channels:
         if user_channel.notifications != "0":
             db.update_entry(USER_CHANNEL_TABLE, [user.id, channel_id], "notifications", str(time.time()), "user_channel")
 
-        return ({"channel_messages": db.get_channel_stuff(channel_id, "messages", request.args.get("before"))}, 200)
+        messages = db.get_channel_stuff(channel_id, "messages", request.args.get("before"))
+
+        if 0 < len(messages) <= 50:
+            messages[0]["first"] = True
+
+        if len(messages) == 51:
+            messages.pop(0)
+
+        return ({"channel_messages": messages}, 200)
     
     
     # POST

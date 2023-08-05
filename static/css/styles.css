@@ -631,6 +631,7 @@ svg, img {
     min-height: 100%;
     width: 100%;
     justify-content: flex-end;
+    overflow-anchor: none;
 }
 
 .message-list-item { 
