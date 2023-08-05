@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react"
-import { useActive, useFlash } from "../../../../context"
+import { useActive, useFlash, useFriends, useUser } from "../../../../context"
 
 import { apiSend } from "../../../../utils"
 
@@ -47,12 +47,16 @@ function editMessage(button, input_content, message, channel_id, setFlash, setAc
     })
 }
 
-export function ChatInput({ channel, sendBtn }) {
+export function ChatInput({ channel }) {
+    const [user,] = useUser()
+    const [friends,] = useFriends()
     const [active, setActive] = useActive()
     const setFlash = useFlash()
 
     const messageContent = useRef()
+    const sendBtn = useRef()
 
+    const isDisabled = useMemo(() => { return (channel.direct && (!friends.accepted || !friends.accepted[channel.id.replace(user.id, "").replace("-", "")])) }, [friends, channel.id])
     const isEditing = useMemo(() => { return (active.message && active.message.channel_id === active.channel.id && active.message.editing) }, [active.message, channel.id])
     useEffect(() => { return () => setActive({ message: null }) }, [])
 
@@ -69,23 +73,27 @@ export function ChatInput({ channel, sendBtn }) {
                 </div>
             }
             <div className="chat-inpt-scroller container scroller">
-                <div className="chat-inpt" ref={messageContent} autoFocus contentEditable suppressContentEditableWarning
-                    onKeyDown={e => {
-                        if (window.matchMedia("(pointer: coarse)").matches) return
-                        if (!e.shiftKey && e.code === "Enter") e.preventDefault()
-                    }}
-                    onKeyUp={e => {
-                        if (e.shiftKey || e.code !== "Enter") return
-                        if (window.matchMedia("(pointer: coarse)").matches) return
+                {!isDisabled
+                    ? <div className="chat-inpt" ref={messageContent} autoFocus contentEditable suppressContentEditableWarning
+                        onKeyDown={e => {
+                            if (window.matchMedia("(pointer: coarse)").matches) return
+                            if (!e.shiftKey && e.code === "Enter") e.preventDefault()
+                        }}
+                        onKeyUp={e => {
+                            if (e.shiftKey || e.code !== "Enter") return
+                            if (window.matchMedia("(pointer: coarse)").matches) return
 
-                        if (isEditing) return editMessage(sendBtn.current, messageContent.current, active.message, channel.id, setFlash, setActive)
-                        sendMessage(sendBtn.current, messageContent.current, channel.id, setFlash)
-                    }}
-                >{isEditing ? active.message.content : null}</div>
+                            if (isEditing) return editMessage(sendBtn.current, messageContent.current, active.message, channel.id, setFlash, setActive)
+                            sendMessage(sendBtn.current, messageContent.current, channel.id, setFlash)
+                        }}
+                    >{isEditing ? active.message.content : null}</div>
+                    : <div className="chat-inpt text-note">You don't have permission to write in this channel!</div>
+                }
             </div>
             <div className="chat-send-wrapper center-container">
                 <hr className="chat-separator" />
-                <button className="chat-send-btn center-container" ref={sendBtn} onClick={() => {
+                <button className="chat-send-btn center-container" ref={sendBtn} disabled={isDisabled} onClick={() => {
+                    if (isDisabled) return
                     if (isEditing) return editMessage(sendBtn.current, messageContent.current, active.message, channel.id, setFlash, setActive)
                     sendMessage(sendBtn.current, messageContent.current, channel.id, setFlash)
                 }}>

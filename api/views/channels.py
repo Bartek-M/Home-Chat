@@ -253,6 +253,9 @@ class Channels:
         if not (user_channel := db.get_channel_stuff([user.id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You are not a member"}}, 401)
         
+        if user_channel.direct and (not (friend := db.get_user_stuff([user.id, channel_id.replace(user.id, "").replace("-", "")], "friend")) or friend.get("accepted", "waiting") == "waiting"):
+            return ({"errors": {"channel": "No friend connection"}}, 403)
+
         if not (content := request.json.get("content")):
             return ({"errors": {"message": "Invalid message content"}}, 400)
         
@@ -397,8 +400,11 @@ class Channels:
         if not db.get_entry(CHANNEL_TABLE, channel_id):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
-        if not db.get_channel_stuff([user.id, channel_id], "user_channel"):
+        if not (user_channel := db.get_channel_stuff([user.id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You are not a member"}}, 401)
+        
+        if user_channel.direct and (not (friend := db.get_user_stuff([user.id, channel_id.replace(user.id, "").replace("-", "")], "friend")) or friend.get("accepted", "waiting") == "waiting"):
+            return ({"errors": {"channel": "No friend connection"}}, 403)
 
         if not (message := db.get_entry(MESSAGE_TABLE, message_id)):
             return ({"errors": {"message": "Message does not exist"}}, 400)

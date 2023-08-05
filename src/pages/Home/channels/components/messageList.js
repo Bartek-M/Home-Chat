@@ -21,7 +21,7 @@ function loadMessages(button, channel, setChannels, setFlash) {
     }).finally(() => button.disabled = false)
 }
 
-export function MessageList({ channel, close, sendBtn }) {
+export function MessageList({ channel, close }) {
     const [user,] = useUser()
     const [, setChannels] = useChannels()
     const setFlash = useFlash()
@@ -50,7 +50,7 @@ export function MessageList({ channel, close, sendBtn }) {
 
     useEffect(() => {
         if (channel.messages) return
-        loadMessages(sendBtn.current, channel, setChannels, setFlash)
+        loadMessages(messageList.current ? messageList.current : {}, channel, setChannels, setFlash)
 
         const delay = setTimeout(() => setIsWaiting(false), 400);
         return () => clearTimeout(delay)
@@ -66,7 +66,7 @@ export function MessageList({ channel, close, sendBtn }) {
             const rect = messageLoader.current.getBoundingClientRect()
 
             if (rect.top > messageList.current.clientHeight || rect.bottom < 0 || channel.messages[0].first) return
-            loadMessages(sendBtn.current, channel, setChannels, setFlash)
+            loadMessages(messageList.current, channel, setChannels, setFlash)
         }
 
         messageList.current.addEventListener("scroll", handleScroll)

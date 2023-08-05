@@ -1,13 +1,9 @@
-import { useRef } from "react"
 import { useActive } from "../../../context"
-
 import { ChannelTitle, MessageList, ChatInput } from "."
 
 export function ChannelView({ setCard }) {
     const [active,] = useActive()
     const channel = active.channel
-
-    const sendBtn = useRef()
 
     if (!channel) return (
         <div className="main-view center-container">
@@ -20,8 +16,8 @@ export function ChannelView({ setCard }) {
     return (
         <div className="main-view spaced-column-container" key={channel.id}>
             <ChannelTitle channel={channel} setCard={setCard} />
-            <MessageList channel={channel} sendBtn={sendBtn} close={setCard} />
-            <ChatInput channel={channel} sendBtn={sendBtn} />
+            <MessageList channel={channel} close={setCard} />
+            <ChatInput channel={channel} />
         </div>
     )
 }

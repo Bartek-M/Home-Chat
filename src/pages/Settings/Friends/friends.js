@@ -51,7 +51,11 @@ export function Friends({ props }) {
     return (
         <>
             <h2 className="settings-title">Friends</h2>
-            <div>
+            <form onSubmit={e => {
+                e.preventDefault()
+                if (e.target.disabled) return
+                search_user(e.target, userSearch.current, searchUser, setSearchUser, setFlash)
+            }}>
                 <p className="category-text">SEARCH <span className="error-category-text" id="search-error"></span></p>
                 <div className="friend-search-wrapper spaced-container">
                     <input className="friend-search-input" type="text" ref={userSearch} onChange={(e) => {
@@ -59,11 +63,7 @@ export function Friends({ props }) {
                         if (!searchUser || e.target.value === searchUser.name) return
                         setSearchUser(null)
                     }} />
-                    <button className="search-submit" type="submit" onClick={e => {
-                        e.preventDefault()
-                        if (e.target.disabled) return
-                        search_user(e.target, userSearch.current, searchUser, setSearchUser, setFlash)
-                    }}>
+                    <button className="search-submit" type="submit">
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                         </svg>
@@ -76,7 +76,7 @@ export function Friends({ props }) {
                         <hr className="separator" />
                     </div>
                 )}
-            </div >
+            </form>
             {sortedPending.length ?
                 <div className="column-container">
                     <p className="extended-category-text">PENDING REQUESTS</p>
