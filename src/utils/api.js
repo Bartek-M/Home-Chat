@@ -11,13 +11,14 @@ const API_PAGES = {
     // User data
     me: () => "users/@me",
     userSearch: () => "users/search",
-    userChannels: (value) => `users/${value}/channels`,
 
     userSettings: (value) => `users/${value}/settings`,
     userMFA: (value) => `users/${value}/settings/mfa`,
     userDelete: (value) => `users/${value}/delete`,
 
     // Channel data
+    userChannels: (value) => `users/${value}/channels`,
+
     channelUsers: (value) => `channels/${value}/users`,
     channelMessages: (value) => `channels/${value}/messages`,
     channelMessagesBefore: (value) => `channels/${value[0]}/messages?before=${value[1]}`,

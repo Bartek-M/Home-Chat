@@ -21,7 +21,7 @@ export function FriendCard({ friend, card, setSettings }) {
     }, [friend.id, friend.accepted])
 
     return (
-        <div className="small-card friend-card spaced-container">
+        <div className="small-card friend-card user-card spaced-container">
             <div className="member-info-wrapper container">
                 <img className="friend-icon skeleton" src={`/api/images/${friend.avatar}.webp`} onLoad={(e) => e.target.classList.remove("skeleton")} />
                 <div className="invite-member-name-wrapper column-container">

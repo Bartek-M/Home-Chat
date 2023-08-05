@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom"
-import { useActive, useUser } from "../../../../../context"
+import { useActive, useFriends, useUser } from "../../../../../context"
 
 import { formatMessage, formatTime } from "../../../../../utils"
 import { UserCard } from "../../../../../components"
@@ -7,11 +7,19 @@ import { MessageOptions } from "./"
 
 export function CompactMessage({ message, menu, setMenu, close }) {
     const [user,] = useUser()
+    const [friends,] = useFriends()
+
     const [active,] = useActive()
     const channel = active.channel
 
-    var author = channel.users[message.author] ? channel.users[message.author] : {}
-    if (message.author === user.id) author = { ...author, ...user }
+    const author = useMemo(() => {
+        var author = channel.users[message.author] ? channel.users[message.author] : {}
+
+        if (message.author === user.id) author = { ...author, ...user }
+        if (!Object.keys(author).length) author = (friends.accepted && friends.accepted[message.author]) ? friends.accepted[message.author] : {}
+
+        return author
+    })
 
     return (
         <li className="compact-msg container">

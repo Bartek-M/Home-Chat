@@ -1,4 +1,5 @@
-import { useActive, useUser } from "../../../../../context"
+import { useMemo } from "react"
+import { useActive, useFriends, useUser } from "../../../../../context"
 import { createPortal } from "react-dom"
 
 import { formatMessage, formatTime } from "../../../../../utils"
@@ -7,11 +8,19 @@ import { MessageOptions } from "./"
 
 export function Message({ message, menu, setMenu, close, index }) {
     const [user,] = useUser()
+    const [friends,] = useFriends()
+
     const [active,] = useActive()
     const channel = active.channel
 
-    var author = channel.users[message.author] ? channel.users[message.author] : {}
-    if (message.author === user.id) author = { ...author, ...user }
+    const author = useMemo(() => {
+        var author = channel.users[message.author] ? channel.users[message.author] : {}
+
+        if (message.author === user.id) author = { ...author, ...user }
+        if (!Object.keys(author).length) author = (friends.accepted && friends.accepted[message.author]) ? friends.accepted[message.author] : {}
+
+        return author
+    })
 
     if (channel.messages[index - 1] && channel.messages[index - 1].author === message.author && (message.create_time - channel.messages[index - 1].create_time) < 360) {
         return (

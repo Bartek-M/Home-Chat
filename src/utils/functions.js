@@ -25,6 +25,12 @@ export function smoothScroll(element) {
     element.scrollBy({ top: element.scrollHeight - element.clientHeight })
 }
 
+
+// Find user who is not a member
+export function findNonMember(user_id, friends, setChannels) {
+    
+}
+
 // Open DM channel
 export function openChannel(button, channels, friend_id, setActive, close, setFlash, setSettings) {
     if (!friend_id) return
