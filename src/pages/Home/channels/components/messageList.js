@@ -36,15 +36,6 @@ export function MessageList({ channel, close }) {
 
     useEffect(() => {
         if (!channel.messages) return
-
-        setChannels(current_channels => {
-            if (!current_channels[channel.id].notifications || current_channels[channel.id].notifications === "0") return current_channels
-            if (current_channels[channel.id].notifications >= current_channels[channel.id].last_message) return current_channels
-
-            current_channels[channel.id].notifications = current_channels[channel.id].last_message
-            return { ...current_channels }
-        })
-
         smoothScroll(messageList.current)
     }, [channel.messages ? channel.messages[channel.messages.length - 1] : channel.messages])
 
@@ -73,6 +64,7 @@ export function MessageList({ channel, close }) {
         return () => { if (!messageList.current) return; messageList.current.removeEventListener("scroll", handleScroll) }
     }, [messageList.current, channel.messages ? channel.messages.length : channel.messages])
 
+    
     if (isWaiting && !channel.messages) return null
     if (!channel.messages) return (
         <SkeletonList messageDisplay={user.message_display} />

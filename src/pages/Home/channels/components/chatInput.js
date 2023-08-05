@@ -56,7 +56,7 @@ export function ChatInput({ channel }) {
     const messageContent = useRef()
     const sendBtn = useRef()
 
-    const isDisabled = useMemo(() => { return (channel.direct && (!friends.accepted || !friends.accepted[channel.id.replace(user.id, "").replace("-", "")])) }, [friends, channel.id])
+    const isDisabled = useMemo(() => { return (channel.direct && (!friends || !friends.accepted || !friends.accepted[channel.id.replace(user.id, "").replace("-", "")])) }, [friends, channel.id])
     const isEditing = useMemo(() => { return (active.message && active.message.channel_id === active.channel.id && active.message.editing) }, [active.message, channel.id])
     useEffect(() => { return () => setActive({ message: null }) }, [])
 

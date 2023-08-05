@@ -37,11 +37,8 @@ class Channels:
         if not db.get_entry(CHANNEL_TABLE, channel_id):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
 
-        if not (user_channel := db.get_channel_stuff([user.id, channel_id], "user_channel")):
+        if not db.get_channel_stuff([user.id, channel_id], "user_channel"):
             return ({"errors": {"channel": "You are not a member"}}, 401)
-
-        if user_channel.notifications != "0":
-            db.update_entry(USER_CHANNEL_TABLE, [user.id, channel_id], "notifications", str(time.time()), "user_channel")
 
         messages = db.get_channel_stuff(channel_id, "messages", request.args.get("before"))
 
@@ -265,9 +262,6 @@ class Channels:
         create_time = str(time.time())
         message = Message(Functions.create_id(create_time), user.id, channel_id, content.strip(), create_time)
         db.insert_entry(MESSAGE_TABLE, message)
-
-        if user_channel.notifications != "0":
-            db.update_entry(USER_CHANNEL_TABLE, [user.id, channel_id], "notifications", create_time, "user_channel")
 
         socketio.send(message.__dict__, to=channel_id)
         return ({"content": message.__dict__}, 200)

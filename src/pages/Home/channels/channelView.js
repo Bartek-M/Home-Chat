@@ -1,9 +1,21 @@
-import { useActive } from "../../../context"
+import { useEffect } from "react"
+import { useActive, useSocket, useUser } from "../../../context"
+
 import { ChannelTitle, MessageList, ChatInput } from "."
 
 export function ChannelView({ setCard }) {
+    const [user,] = useUser()
+    const socket = useSocket()
+
     const [active,] = useActive()
     const channel = active.channel
+
+    useEffect(() => {
+        if (!channel) return
+        if (!channel.last_message || channel.notifications >= channel.last_message) return
+        
+        socket.emit("read", {"user": user.id, "channel": channel.id, "last": channel.last_message})
+    }, [channel ? channel.id : channel])
 
     if (!channel) return (
         <div className="main-view center-container">

@@ -113,6 +113,7 @@ class Database:
         Get specific information about the channel 
         :param req_id: ID to check for
         :param option: Option to use ("users", "messages")
+        :param before: Get entries before specific one (only for messages)
         :return: List of User, Message objects or []
         """
         if option == "users":
