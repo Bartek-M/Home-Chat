@@ -3,6 +3,7 @@ import time
 import random
 
 from PIL import Image
+from flask_socketio import rooms
 
 from ..database import *
 
@@ -108,6 +109,27 @@ class Functions:
 
         db.insert_entry(MESSAGE_TABLE, message)
         socketio.send(message.__dict__, to=channel_id)
+
+    @staticmethod
+    def update_notifications(db, sid, user_id, channel_id, last_message=None):
+        if (
+            not user_id or not channel_id
+            or user_id not in rooms(sid) or channel_id not in rooms(sid) 
+            or not (user := db.get_entry(USER_TABLE, user_id)) or not db.get_entry(CHANNEL_TABLE, channel_id)
+            or not (user_channel := db.get_channel_stuff([user_id, channel_id], "user_channel"))
+        ):
+            return
+
+        if not user.notifications or not db.get_entry(USER_SETTING_TABLE, user_id).notifications_message or not user_channel.notifications:
+            return
+
+        if last_message and last_message < user_channel.notifications:
+            return
+
+        current_time = str(time.time())
+
+        db.update_entry(USER_CHANNEL_TABLE, [user_id, channel_id], "notifications", current_time, "user_channel")
+        return current_time
     
     @staticmethod
     def delete_non_verified():

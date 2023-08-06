@@ -13,6 +13,7 @@ export function ChannelView({ setCard }) {
 
     useEffect(() => {
         if (!channel) return
+        socket.emit("set_opened_channel", { "channel": channel.id })
 
         return () => {
             setChannels(current_channels => {
@@ -22,8 +23,8 @@ export function ChannelView({ setCard }) {
                 if (!current_channels[channel.id].last_message || current_channels[channel.id].notifications >= current_channels[channel.id].last_message) return current_channels
 
                 current_channels[channel.id].notifications = current_channels[channel.id].last_message
-                socket.emit("read", { "user": user.id, "channel": channel.id, "last": current_channels[channel.id].last_message })
-                
+                socket.emit("read", { "channel": channel.id, "last": current_channels[channel.id].last_message })
+
                 return current_channels
             })
         }
