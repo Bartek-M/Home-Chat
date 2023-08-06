@@ -13,7 +13,7 @@ function setImage(file, icon) {
 }
 
 function submit_settings(button, channel, name, nick, notifications, icon, img_file, close, setFlash) {
-    if ((name && name.value !== "" && name.value !== channel.name) || (nick && nick.value !== channel.nick) || (notifications && notifications.checked != (channel.notifications >= 1 ? 1 : 0))) {
+    if ((name && name.value !== "" && name.value !== channel.name) || (nick && nick.value !== channel.nick) || (notifications && notifications.checked !== (channel.notifications >= 1 ? true : false))) {
         apiSend(button, "channelSettings", {
             name: (name && name.value !== channel.name) ? name.value : null,
             nick: nick.value,
@@ -99,7 +99,7 @@ export function ChannelSettings({ props }) {
     const channel = active.channel
 
     const [checked, setChecked] = useState(false)
-    useEffect(() => { setChecked(channel.notifications !== "0" ? true : false) }, [channel.notifications])
+    useEffect(() => { setChecked(channel.notifications ? true : false) }, [channel.notifications])
 
     const channel_name = useRef()
     const nick = useRef()
@@ -181,7 +181,7 @@ export function ChannelSettings({ props }) {
                     type="checkbox"
                     ref={notifications}
                     checked={checked}
-                    disabled={!user.notifications_message || !user.notifications ? true : false}
+                    disabled={!user.notifications_message || !user.notifications}
                     onChange={() => setChecked(checked => !checked)}
                 />
             </div>

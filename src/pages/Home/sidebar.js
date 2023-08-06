@@ -64,7 +64,6 @@ export function Sidebar({ settings, card, setSettings, setCard }) {
                         {(
                             (user.notifications && user.notifications_message) &&
                             (active.channel && channel.id !== active.channel.id) &&
-                            (channel.notifications && channel.notifications !== "0") &&
                             (channel.last_message > channel.notifications)
                         ) ? <div className="notification-dot"></div> : null}
                         <Tooltip text={channel.name} note={channel.display_name ? channel.display_name : null} type="right">

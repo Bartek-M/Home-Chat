@@ -1,10 +1,11 @@
 import { useEffect } from "react"
-import { useActive, useSocket, useUser } from "../../../context"
+import { useActive, useChannels, useSocket, useUser } from "../../../context"
 
 import { ChannelTitle, MessageList, ChatInput } from "."
 
 export function ChannelView({ setCard }) {
     const [user,] = useUser()
+    const [, setChannels] = useChannels()
     const socket = useSocket()
 
     const [active,] = useActive()
@@ -12,10 +13,21 @@ export function ChannelView({ setCard }) {
 
     useEffect(() => {
         if (!channel) return
-        if (!channel.last_message || channel.notifications >= channel.last_message) return
-        
-        socket.emit("read", {"user": user.id, "channel": channel.id, "last": channel.last_message})
-    }, [channel ? channel.id : channel])
+
+        return () => {
+            setChannels(current_channels => {
+                if (!current_channels[channel.id]) return current_channels
+
+                if (!user.notifications || !user.notifications_message || !current_channels[channel.id].notifications) return current_channels
+                if (!current_channels[channel.id].last_message || current_channels[channel.id].notifications >= current_channels[channel.id].last_message) return current_channels
+
+                current_channels[channel.id].notifications = current_channels[channel.id].last_message
+                socket.emit("read", { "user": user.id, "channel": channel.id, "last": current_channels[channel.id].last_message })
+                
+                return current_channels
+            })
+        }
+    }, [channel ? channel.id : channel, user.notifications, user.message_notifications])
 
     if (!channel) return (
         <div className="main-view center-container">

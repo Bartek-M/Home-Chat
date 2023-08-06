@@ -60,7 +60,7 @@ class UserChannel:
     user_id: str
     channel_id: str
     join_time: str
-    nick: str = None
+    nick: str = ""
     admin: int = 0 # 0 | 1
     direct: int = 0 # 0 | 1
     notifications: str = "1" # None | last_message_time

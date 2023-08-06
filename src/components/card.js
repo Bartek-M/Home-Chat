@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useUser } from "../context"
+import { useActive, useUser } from "../context"
 import { Loading } from ".";
 
 import { DisplayName, Username, Email, DeleteAccount } from "../pages/Settings/Account";
@@ -12,6 +12,7 @@ import { ChannelSettings, ChannelMembers, ChannelInvite, ChannelLeave, MemberNic
 export function Card(props) {
     const { card, close } = props
     const [user, _] = useUser()
+    const [active,] = useActive()
 
     // Add event listeners
     useEffect(() => {
@@ -36,6 +37,10 @@ export function Card(props) {
 
     // Channels managing
     if (card === "channelCreator") return (<ChannelCreator props={props} />)
+    
+    useEffect(() => { if (!active.channel) return close() }, [active.channel])
+    if (!active.channel) return null
+
     if (card === "channelSettings") return (<ChannelSettings props={props} />)
     if (card === "channelMembers") return (<ChannelMembers props={props} />)
     if (card === "channelInvite") return (<ChannelInvite props={props} />)

@@ -138,7 +138,7 @@ class Channels:
         creation_time = str(time.time())
         channel = Channel(Functions.create_id(creation_time), name, "generic", user.id, creation_time)
 
-        user_channel = UserChannel(user.id, channel.id, creation_time, None, 1)
+        user_channel = UserChannel(user.id, channel.id, creation_time, admin=1)
         channel_members = {user.id: {**user.__dict__, "admin": True}}
         
         db.insert_entry(CHANNEL_TABLE, channel)
@@ -288,6 +288,9 @@ class Channels:
                 for sid in socketio.server.manager.rooms["/"].get(friend.get("id"), []):
                     join_room(channel.get("id"), sid=sid, namespace="/")
 
+        if user.notifications and db.get_entry(USER_SETTING_TABLE, user.id).notifications_message and user_channel.notifications:
+            db.update_entry(USER_CHANNEL_TABLE, [user.id, channel_id], "notifications", create_time, "user_channel")
+
         socketio.send(message.__dict__, to=channel_id)
         return ({"content": message.__dict__}, 200)
 
@@ -317,7 +320,7 @@ class Channels:
             Functions.send_system_message(db, socketio, channel_id, f"{user.name} changed channel name to '{name}'")
             socketio.emit("channel_change", {"channel_id": channel_id, "setting": "name", "content": name}, to=channel_id)
 
-        if (nick := request.json.get("nick", None)) != user_channel.nick:
+        if (nick := request.json.get("nick", "")) != user_channel.nick:
             if verify_error := Functions.verify_name(nick, "display_name"):
                 return ({"errors": {"nick": verify_error}}, 400)
             
@@ -325,7 +328,7 @@ class Channels:
             Functions.send_system_message(db, socketio, channel_id, f"{user.name} changed their nickname to '{nick}'")
             socketio.emit("member_change", {"channel_id": channel_id, "member_id": user.id, "setting": "nick", "content": nick}, to=channel_id)
 
-        notifications = str(time.time()) if request.json.get("notifications") else "0"
+        notifications = str(time.time()) if request.json.get("notifications") else None
         if notifications != user_channel.notifications:
             db.update_entry(USER_CHANNEL_TABLE, [user.id, channel_id], "notifications", notifications, "user_channel")
             socketio.emit("channel_change", {"channel_id": channel_id, "setting": "notifications", "content": notifications}, to=user.id)

@@ -24,6 +24,8 @@ export function ChannelsProvider({ children }) {
                     if (!current_channels[data.channel_id].messages.length) data.first = true
                     current_channels[data.channel_id].messages.push(data)
                 }
+
+                if (data.author === user.id) current_channels[data.channel_id].notifications = data.create_time
                 current_channels[data.channel_id].last_message = data.create_time
 
                 return { ...current_channels }
