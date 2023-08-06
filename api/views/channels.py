@@ -216,9 +216,7 @@ class Channels:
             member_channel = UserChannel(member.id, channel.id, current_time)
             db.insert_entry(USER_CHANNEL_TABLE, member_channel)
 
-            message = Message(Functions.create_id(current_time), None, channel_id, f"{user.name} added {member.name}", current_time, system=1)
-            db.insert_entry(MESSAGE_TABLE, message)
-            socketio.send(message.__dict__, to=channel_id)
+            Functions.send_system_message(db, socketio, channel_id, f"{user.name} added {member.name}")
 
         if socketio.server.manager.rooms["/"].get(member.id):
             socketio.emit("channel_invite", {
@@ -316,13 +314,15 @@ class Channels:
                 return ({"errors": {"name": verify_error}}, 400)
 
             db.update_entry(CHANNEL_TABLE, channel_id, "name", name)
+            Functions.send_system_message(db, socketio, channel_id, f"{user.name} changed channel name to '{name}'")
             socketio.emit("channel_change", {"channel_id": channel_id, "setting": "name", "content": name}, to=channel_id)
 
-        if (nick := request.json.get("nick")) != user_channel.nick:
+        if (nick := request.json.get("nick", None)) != user_channel.nick:
             if verify_error := Functions.verify_name(nick, "display_name"):
                 return ({"errors": {"nick": verify_error}}, 400)
             
             db.update_entry(USER_CHANNEL_TABLE, [user.id, channel_id], "nick", nick, "user_channel")
+            Functions.send_system_message(db, socketio, channel_id, f"{user.name} changed their nickname to '{nick}'")
             socketio.emit("member_change", {"channel_id": channel_id, "member_id": user.id, "setting": "nick", "content": nick}, to=channel_id)
 
         notifications = str(time.time()) if request.json.get("notifications") else "0"
@@ -338,6 +338,9 @@ class Channels:
     def member_nick(db, user, channel_id, member_id):
         if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
+        
+        if not (member := db.get_entry(USER_TABLE, member_id)):
+            return ({"errors": {"user": "Selected user does not exist"}}, 400)
 
         if not (user_channel := db.get_channel_stuff([user.id, channel_id], "user_channel")) or not (member_channel := db.get_channel_stuff([member_id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
@@ -353,8 +356,9 @@ class Channels:
         
         if verify_error := Functions.verify_name(nick, "display_name"):
             return ({"errors": {"nick": verify_error}}, 400)
-
+        
         db.update_entry(USER_CHANNEL_TABLE, [member_id, channel_id], "nick", nick, "user_channel")
+        Functions.send_system_message(db, socketio, channel_id, f"{user.name} changed {member.name}'s nickname to '{nick}'")
         socketio.emit("member_change", {"channel_id": channel_id, "member_id": member_id, "setting": "nick", "content": nick}, to=channel_id)
         return 200
 
@@ -364,6 +368,9 @@ class Channels:
     def member_admin(db, user, channel_id, member_id):
         if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
+        
+        if not (member := db.get_entry(USER_TABLE, member_id)):
+            return ({"errors": {"user": "Selected user does not exist"}}, 400)
 
         if not (user_channel := db.get_channel_stuff([user.id, channel_id], "user_channel")) or not (member_channel := db.get_channel_stuff([member_id, channel_id], "user_channel")):
             return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
@@ -383,6 +390,7 @@ class Channels:
         admin_status = 0 if member_channel.admin else 1
         db.update_entry(USER_CHANNEL_TABLE, [member_id, channel_id], "admin", admin_status, "user_channel")
 
+        Functions.send_system_message(db, socketio, channel_id, f"{user.name} {'added' if admin_status else 'removed'} {member.name} as admin")
         socketio.emit("member_change", {"channel_id": channel_id, "member_id": member_id, "setting": "admin", "content": admin_status}, to=channel_id)
         return ({"admin_status": admin_status}, 200)
 
@@ -392,6 +400,9 @@ class Channels:
     def member_owner(db, user, channel_id, member_id):
         if not (channel := db.get_entry(CHANNEL_TABLE, channel_id)):
             return ({"errors": {"channel": "Channel does not exist"}}, 400)
+        
+        if not (member := db.get_entry(USER_TABLE, member_id)):
+            return ({"errors": {"user": "Selected user does not exist"}}, 400)
         
         if not db.get_channel_stuff([user.id, channel_id], "user_channel") or not db.get_channel_stuff([member_id, channel_id], "user_channel"):
             return ({"errors": {"channel": "You or selected user is not a member"}}, 401)
@@ -411,6 +422,7 @@ class Channels:
             return ({"errors": {"code": "Invalid two-factor code"}}, 400)
 
         db.update_entry(CHANNEL_TABLE, channel_id, "owner", member_id)
+        Functions.send_system_message(db, socketio, channel_id, f"{user.name} transferred ownership to {member.name}")
         socketio.emit("channel_change", {"channel_id": channel_id, "setting": "owner", "content": member_id}, to=channel_id)
         return 200
         
@@ -512,11 +524,7 @@ class Channels:
                 leave_room(channel_id, sid=sid, namespace="/")
 
         if not channel.direct:
-            current_time = time.time()
-            message = Message(Functions.create_id(current_time), None, channel_id, f"{user.name} left", current_time, system=1)
-
-            db.insert_entry(MESSAGE_TABLE, message)
-            socketio.send(message.__dict__, to=channel_id)
+            Functions.send_system_message(db, socketio, channel_id, f"{user.name} left")
 
         socketio.emit("member_list", {"channel_id": channel_id, "member": user.id, "action": "remove"}, to=channel_id)
         return 200
@@ -554,12 +562,7 @@ class Channels:
             for sid in socketio.server.manager.rooms["/"].get(member_id, []):
                 leave_room(channel_id, sid=sid, namespace="/")
 
-        current_time = time.time()
-        message = Message(Functions.create_id(current_time), None, channel_id, f"{user.name} kicked {member.name}", current_time, system=1)
-        
-        db.insert_entry(MESSAGE_TABLE, message)
-        socketio.send(message.__dict__, to=channel_id)
-
+        Functions.send_system_message(db, socketio, channel_id, f"{user.name} kicked {member.name}")
         socketio.emit("member_list", {"channel_id": channel_id, "member": member_id, "action": "remove"}, to=channel_id)
         return 200
     

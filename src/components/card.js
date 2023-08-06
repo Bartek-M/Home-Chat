@@ -15,11 +15,11 @@ export function Card(props) {
 
     // Add event listeners
     useEffect(() => {
-        let card_overlay = document.getElementById("edit-card-overlay")
+        const card_overlay = document.getElementById("edit-card-overlay")
         const close_card = () => close()
 
         card_overlay.addEventListener("click", close_card)
-        return () => { card_overlay.removeEventListener("click", close_card) }
+        return () => { card_overlay.removeEventListener("click", close_card); close() }
     }, [])
 
     if (!user) return (<Loading />)

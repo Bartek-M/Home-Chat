@@ -102,6 +102,14 @@ class Functions:
         return img.resize(IMAGE_SIZE)
     
     @staticmethod
+    def send_system_message(db, socketio, channel_id, message):
+        current_time = time.time()
+        message = Message(Functions.create_id(current_time), None, channel_id, message, current_time, system=1)
+
+        db.insert_entry(MESSAGE_TABLE, message)
+        socketio.send(message.__dict__, to=channel_id)
+    
+    @staticmethod
     def delete_non_verified():
         while True:
             with Database() as db:

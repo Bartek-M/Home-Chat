@@ -20,7 +20,10 @@ export function ChannelsProvider({ children }) {
             setChannels(current_channels => {
                 if (!current_channels[data.channel_id]) return current_channels
 
-                if (current_channels[data.channel_id].messages) current_channels[data.channel_id].messages.push(data)
+                if (current_channels[data.channel_id].messages) {
+                    if (!current_channels[data.channel_id].messages.length) data.first = true
+                    current_channels[data.channel_id].messages.push(data)
+                }
                 current_channels[data.channel_id].last_message = data.create_time
 
                 return { ...current_channels }
@@ -54,9 +57,11 @@ export function ChannelsProvider({ children }) {
                 if (!current_channels[data.channel_id]) return current_channels
 
                 if (!current_channels[data.channel_id].messages) return current_channels
+
+                if (current_channels[data.channel_id].messages[0] && current_channels[data.channel_id].messages[0].id === data.message_id && current_channels[data.channel_id].messages[1]) current_channels[data.channel_id].messages[1].first = current_channels[data.channel_id].messages[0].first
                 current_channels[data.channel_id].messages = current_channels[data.channel_id].messages.filter(fltr_message => fltr_message.id !== data.message_id)
 
-                return current_channels
+                return { ...current_channels }
             })
         }
 

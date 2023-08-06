@@ -60,6 +60,7 @@ export function MessageList({ channel, close }) {
             loadMessages(messageList.current, channel, setChannels, setFlash)
         }
 
+        handleScroll()
         messageList.current.addEventListener("scroll", handleScroll)
         return () => { if (!messageList.current) return; messageList.current.removeEventListener("scroll", handleScroll) }
     }, [messageList.current, channel.messages ? channel.messages.length : channel.messages])

@@ -7,7 +7,7 @@ const FriendsContext = React.createContext()
 export function useFriends() { return useContext(FriendsContext) }
 
 export function FriendsProvider({ children }) {
-    const [friends, setFriends] = useState(null)
+    const [friends, setFriends] = useState({})
     const setFlash = useFlash()
 
     const socket = useSocket()
@@ -46,11 +46,11 @@ export function FriendsProvider({ children }) {
     }, [])
 
     useEffect(() => {
-        if (friends) return
+        if (Object.keys(friends).length) return
 
         apiGet("userFriends", "@me").then(res => {
             if (res.message !== "200 OK") return setFlash("Couldn't load friends!", "error")
-            setFriends(res.user_friends ? res.user_friends : [])
+            setFriends(res.user_friends ? res.user_friends : {})
         })
     }, [])
 
