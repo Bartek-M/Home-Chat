@@ -80,10 +80,16 @@ export function MessageList({ channel, close }) {
                     }
                     {user.message_display === "standard"
                         ? (channel.messages.map((message, index) => {
-                            return (<Message message={message} menu={menu} setMenu={setMenu} close={close} index={index} key={message.id} />)
+                            return (!message.system
+                                ? <Message message={message} menu={menu} setMenu={setMenu} close={close} index={index} key={message.id} />
+                                : <p className="system-message" key={message.id}>{message.content}</p>
+                            )
                         }))
                         : (channel.messages.map(message => {
-                            return (<CompactMessage message={message} menu={menu} setMenu={setMenu} close={close} key={message.id} />)
+                            return (!message.system
+                                ? <CompactMessage message={message} menu={menu} setMenu={setMenu} close={close} key={message.id} />
+                                : <p className="system-message" key={message.id}>{message.content}</p>
+                            )
                         }))
                     }
                     <div className="scroller-spacer" ref={scrollerSpacer} />

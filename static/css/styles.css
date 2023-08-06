@@ -314,7 +314,6 @@ svg, img {
 }
 
 .short-text {
-    min-width: 50px;
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis;
@@ -710,6 +709,13 @@ svg, img {
     word-break: break-word; 
     white-space: break-spaces; 
     user-select: text; 
+}
+
+.system-message {
+    color: var(--FONT_DIM_COLOR);
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
 }
 
 .scroll-down-btn {
