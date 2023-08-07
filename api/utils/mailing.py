@@ -4,7 +4,7 @@ import threading
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from __main__ import ADDR, PORT
+from .. import ADDR, PORT
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="./api/.env")

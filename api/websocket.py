@@ -1,9 +1,10 @@
 from flask import request
-from __main__ import socketio
 from flask_socketio import join_room, disconnect, rooms
 
+from . import socketio
 from .database import *
 from .utils import *
+
 
 # Dictionary of login users with their currently opened channels
 user_rooms = {}

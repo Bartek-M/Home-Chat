@@ -4,8 +4,8 @@ import time
 import pyotp
 from flask import Blueprint, request
 from flask_socketio import join_room, leave_room, close_room
-from __main__ import socketio
 
+from .. import socketio
 from ..database import *
 from ..utils import *
 

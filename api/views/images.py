@@ -2,8 +2,8 @@ import os
 import secrets
 
 from flask import Blueprint, request, send_file
-from __main__ import socketio
 
+from .. import socketio
 from ..database import *
 from ..utils import *
 
