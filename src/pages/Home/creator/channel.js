@@ -110,7 +110,7 @@ export function Channel({ close }) {
         <div className="column-container">
             <div className="spaced-container">
                 <div className="avatar-wrapper center-container" onClick={() => file_input.current.click()}>
-                    <img className="settings-avatar skeleton" ref={channel_icon} src={"/api/images/channels/generic.webp"} onLoad={(e) => e.target.classList.remove("skeleton")} onError={(e) => e.target.src = "/api/images/channels/generic.webp"} />
+                    <img className="settings-avatar skeleton" ref={channel_icon} src={"/api/images/channels/generic.webp"} onLoad={(e) => e.target.classList.remove("skeleton")} onError={(e) => { if (e.target.src !== "/api/images/channels/generic.webp") e.target.src = "/api/images/channels/generic.webp" }} />
                     <div className="change-icon center-container absolute-container">
                         CHANGE<br />ICON
                         <input ref={file_input} type="file" accept="image/*" onChange={() => setImage(file_input.current, channel_icon.current)} />
