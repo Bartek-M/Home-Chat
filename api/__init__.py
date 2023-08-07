@@ -5,7 +5,7 @@ from flask_socketio import SocketIO
 ADDR = "127.0.0.1" # 192.168.0.194 | 127.0.0.1
 PORT = 5000
 
-app = Flask("__main__")
+app = Flask("main")
 socketio = SocketIO(app, ping_interval=45, ping_timeout=10)
 
 
