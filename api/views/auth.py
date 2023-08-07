@@ -2,9 +2,9 @@ import time
 import secrets
 
 import pyotp
-from __main__ import socketio
 from flask import Blueprint, request
 
+from .. import socketio
 from ..database import *
 from ..utils import *
 

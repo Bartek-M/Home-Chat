@@ -2,8 +2,8 @@ import secrets
 
 from flask import Blueprint, request
 from flask_socketio import disconnect
-from __main__ import socketio
 
+from .. import socketio
 from ..utils import *
 from ..database import *
 

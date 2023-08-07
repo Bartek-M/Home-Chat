@@ -1,16 +1,7 @@
 import threading
 
-from flask import Flask
-from flask_socketio import SocketIO
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-
-# GLOBAL VARIABLES
-ADDR = "127.0.0.1" # 192.168.0.194 | 127.0.0.1
-PORT = 5000
-
-app = Flask(__name__)
-socketio = SocketIO(app, ping_interval=45, ping_timeout=10)
 
 from api import *
 from views import view
