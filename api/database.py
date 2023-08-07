@@ -319,21 +319,3 @@ class Database:
         :return: None
         """
         self.conn.close()
-
-
-    # TEMP FUNCTION
-    def get_all(self, table):
-        """
-        TEMP FUNC
-
-        Get all entries in specific table
-        :param table: Table to check
-        :return: List data or None
-        """
-        self.cursor.execute(f"SELECT * FROM {table}")
-
-        if fetched := self.cursor.fetchall():
-            return fetched
-
-        return None
-    # TEMP FUNCTION

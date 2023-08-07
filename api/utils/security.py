@@ -98,8 +98,6 @@ class Security:
         :param password: Password to check
         :return: True if correct, False if incorrect
         """
-        print(password)
-
         if re.fullmatch(PASSWORD_REGEX, password):
             return True
         
