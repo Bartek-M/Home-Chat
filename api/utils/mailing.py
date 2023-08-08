@@ -4,8 +4,6 @@ import threading
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from .. import ADDR, PORT
-
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="./api/.env")
 
@@ -116,7 +114,7 @@ class Mailing:
         Hey, {name}!
         You wanted to change your email to this one. Click below to finish the transition process:
 
-        http://{ADDR}:{PORT}/confirm-email?ticket={ticket}
+        https://192.168.0.124/confirm-email?ticket={ticket}
 
         This link is valid for only a week.
         If this email wasn't meant for you please ignore it.
@@ -130,7 +128,7 @@ class Mailing:
                 You wanted to change your email to this one. Click below to finish the transition process:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/email-confirm?ticket={ticket}">Confirm Email</a>
+                <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/email-confirm?ticket={ticket}">Confirm Email</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only a week.<br/>If this email wasn't meant for you please ignore it.</p>
         """)
@@ -156,7 +154,7 @@ class Mailing:
         Hey, {name}!
         Someone has changed your email address to '{new_email}'. Click below to restore your earlier email:
 
-        http://{ADDR}:{PORT}/recovery/email?ticket={ticket}
+        https://192.168.0.124/recovery/email?ticket={ticket}
 
         This link is valid for only a week.
         If you don't recognize this action, change your password immediately.
@@ -170,7 +168,7 @@ class Mailing:
                 Someone has changed your email address to '{new_email}'. Click below to restore your earlier email:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/recovery/email?ticket={ticket}">Restore Email</a>
+                <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/recovery/email?ticket={ticket}">Restore Email</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only a week.<br/>If you don't recognize this action, change your password immediately.</p>
         """)
@@ -193,7 +191,7 @@ class Mailing:
         Hey, {name}!
         Your Home Chat password can be reset by clicking the link below:
 
-        http://{ADDR}:{PORT}/recovery/password?ticket={ticket}
+        https://192.168.0.124/recovery/password?ticket={ticket}
 
         This link is valid for only 10 minutes.
         If you did not request a new password, please ignore this email.
@@ -207,7 +205,7 @@ class Mailing:
                 Your Home Chat password can be reset by clicking the link below:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/recovery/password?ticket={ticket}">Reset Password</a>
+                <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/recovery/password?ticket={ticket}">Reset Password</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only 10 minutes.<br/>If you did not request a new password, please ignore this email.</p>
         """)
@@ -230,7 +228,7 @@ class Mailing:
         Hey, {name}!
         You can disable Two-Factor Authentication by clicking the link below:
         
-        http://{ADDR}:{PORT}/recovery/mfa?ticket={ticket}
+        https://192.168.0.124/recovery/mfa?ticket={ticket}
 
         This link is valid for only 10 minutes.
         If you did not request 2FA reset, password change might be necessary.
@@ -244,7 +242,7 @@ class Mailing:
                 You can disable Two-Factor Authentication by clicking the link below:
             </p>
             <div style="width: calc(100% - 4rem); margin: 2rem 1rem; padding: 1rem; text-align: center">
-                <a style="color: 1167b1; text-decoration: none;" href="http://{ADDR}:{PORT}/recovery/mfa?ticket={ticket}">Disable 2FA</a>
+                <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/recovery/mfa?ticket={ticket}">Disable 2FA</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only 10 minutes.<br/>If you did not request 2FA reset, password change might be necessary.</p>
         """)
