@@ -11,7 +11,11 @@ export function SocketProvider({ children }) {
     const [user, setUser] = useUser()
     const setFlash = useFlash()
 
-    const socket = useMemo(() => io({ auth: { token: localStorage.getItem("token") } }), [])
+    const socket = useMemo(() => io({ 
+        pingInterval: 45000,
+        pingTimeout: 10000,
+        auth: { token: localStorage.getItem("token") } 
+    }), [])
     const [isConnected, setIsConnected] = useState(null)
 
     useEffect(() => {

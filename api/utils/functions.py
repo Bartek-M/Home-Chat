@@ -123,7 +123,7 @@ class Functions:
         if not user.notifications or not db.get_entry(USER_SETTING_TABLE, user_id).notifications_message or not user_channel.notifications:
             return
 
-        if last_message and last_message < user_channel.notifications:
+        if last_message and last_message < float(user_channel.notifications):
             return
 
         current_time = str(time.time())

@@ -141,7 +141,8 @@ Version: dev-c231c4f
 
 html, 
 body, 
-#appMount {
+#appMount,
+#main-view {
     background-color: var(--BACKGROUND_COLOR);
     color: var(--FONT_RV_COLOR);
     font-family: arial, sans-serif;
