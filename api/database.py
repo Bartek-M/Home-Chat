@@ -4,7 +4,7 @@ import time
 from .assets.models import *
 
 # GLOBAL VARIABLES
-FILE = "./api/db.sqlite" # ./api/db.sqlite | :memory:
+FILE = "./api/db.sqlite"  # ./api/db.sqlite | :memory:
 
 USER_TABLE = "users"
 MESSAGE_TABLE = "messages"
@@ -15,20 +15,21 @@ USER_SETTING_TABLE = "user_settings"
 USER_SECRET_TABLE = "user_secrets"
 
 CONFIG_OBJECTS = {
-    USER_TABLE: User, 
-    MESSAGE_TABLE: Message, 
-    CHANNEL_TABLE: Channel, 
+    USER_TABLE: User,
+    MESSAGE_TABLE: Message,
+    CHANNEL_TABLE: Channel,
     USER_CHANNEL_TABLE: UserChannel,
     USER_FRIENDS_TABLE: UserFriend,
-    USER_SETTING_TABLE: UserSettings, 
-    USER_SECRET_TABLE: UserSecrets
-} 
+    USER_SETTING_TABLE: UserSettings,
+    USER_SECRET_TABLE: UserSecrets,
+}
 
 
 class Database:
     """
     Connect to database, write and read data
     """
+
     def __init__(self):
         self.conn = sqlite3.connect(FILE)
         self.cursor = self.conn.cursor()
@@ -42,7 +43,7 @@ class Database:
         Create tables if they don't exit
         :return: None
         """
-        queries = [ 
+        queries = [
             f"""{USER_TABLE} (
                 id TEXT UNIQUE, name TEXT UNIQUE, avatar TEXT, create_time TEXT, verified INTEGER, visibility INTEGER, notifications INTEGER, display_name TEXT
             )""",
@@ -63,12 +64,12 @@ class Database:
             )""",
             f"""{USER_SECRET_TABLE} (
                 id TEXT UNIQUE, password TEXT, secret TEXT, verify_code TEXT, sent_time TEXT, mfa_code TEXT
-            )"""
+            )""",
         ]
 
-        for query in queries:  
+        for query in queries:
             self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {query}")
-        
+
         self.conn.commit()
 
     def get_entry(self, table, req_id, entry="id", order=None):
@@ -86,7 +87,7 @@ class Database:
             return CONFIG_OBJECTS[table](*fetched)
 
         return None
-    
+
     def count_entry(self, table, req_id, entry="id", option=None):
         """
         Check how many times specific items occur
@@ -105,12 +106,12 @@ class Database:
 
         if fetched := self.cursor.fetchone():
             return fetched[0]
-        
+
         return 0
-    
+
     def get_channel_stuff(self, req_id, option, before=None):
         """
-        Get specific information about the channel 
+        Get specific information about the channel
         :param req_id: ID to check for
         :param option: Option to use ("users", "messages")
         :param before: Get entries before specific one (only for messages)
@@ -126,23 +127,24 @@ class Database:
                     user_channel = UserChannel(*data)
                     user = self.get_entry(USER_TABLE, user_channel.user_id)
 
-                    users[user.id] = {
-                        **user.__dict__,
-                        "nick": user_channel.nick,
-                        "admin": user_channel.admin
-                    }
+                    users[user.id] = {**user.__dict__, "nick": user_channel.nick, "admin": user_channel.admin}
 
                 return users
-            
+
         if option == "messages":
             if before:
-                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? AND id < ? ORDER BY create_time DESC LIMIT 51", [req_id, before])
+                self.cursor.execute(
+                    f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? AND id < ? ORDER BY create_time DESC LIMIT 51",
+                    [req_id, before],
+                )
             else:
-                self.cursor.execute(f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? ORDER BY create_time DESC LIMIT 51", [req_id])
+                self.cursor.execute(
+                    f"SELECT * FROM {MESSAGE_TABLE} WHERE channel_id=? ORDER BY create_time DESC LIMIT 51", [req_id]
+                )
 
             if fetched := self.cursor.fetchall():
                 return [Message(*data).__dict__ for data in fetched][::-1]
-            
+
         if option == "user_channel":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
 
@@ -150,14 +152,14 @@ class Database:
                 return UserChannel(*fetched)
 
         return []
-    
+
     def get_user_stuff(self, req_id, option):
         """
         Get specific information about the user
         :param req_id: ID to check for
         :param option: Option to use ("channels", "friends", "friend")
         :return: Dictionary
-        """                
+        """
         if option == "channels":
             self.cursor.execute(f"SELECT * FROM {USER_CHANNEL_TABLE} WHERE user_id=?", [req_id])
 
@@ -167,19 +169,23 @@ class Database:
                 for data in fetched:
                     user_channel = UserChannel(*data)
 
-                    if not (channel :=  self.get_entry(CHANNEL_TABLE, user_channel.channel_id)):
+                    if not (channel := self.get_entry(CHANNEL_TABLE, user_channel.channel_id)):
                         continue
 
                     channel = channel.__dict__
-                    
+
                     if channel["direct"]:
-                        if (friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
-                            channel["display_name"] = friend_channel.nick if friend_channel.nick else friend.display_name
-                            channel["name"] = friend.name 
+                        if (
+                            friend := self.get_entry(USER_TABLE, channel["id"].replace(req_id, "").replace("-", ""))
+                        ) and (friend_channel := self.get_channel_stuff([friend.id, channel["id"]], "user_channel")):
+                            channel["display_name"] = (
+                                friend_channel.nick if friend_channel.nick else friend.display_name
+                            )
+                            channel["name"] = friend.name
                             channel["icon"] = friend.avatar
                         elif friend:
                             channel["display_name"] = friend.display_name
-                            channel["name"] = friend.name 
+                            channel["name"] = friend.name
                             channel["icon"] = friend.avatar
                         else:
                             channel["name"] = "Deleted Account"
@@ -190,18 +196,23 @@ class Database:
                         "nick": user_channel.nick,
                         "notifications": user_channel.notifications,
                         "join_time": user_channel.join_time,
-                        "last_message": message.create_time if (message := self.get_entry(MESSAGE_TABLE, channel["id"], "channel_id", "id DESC")) else None,
+                        "last_message": message.create_time
+                        if (message := self.get_entry(MESSAGE_TABLE, channel["id"], "channel_id", "id DESC"))
+                        else None,
                         "admin": True if user_channel.admin else False,
                         "users": self.get_channel_stuff(channel["id"], "users"),
-                        "messages": None
+                        "messages": None,
                     }
 
                 return channels
-                                                
+
         if option == "friends":
             friends = {}
 
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted='waiting'", [req_id, req_id])
+            self.cursor.execute(
+                f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted='waiting'",
+                [req_id, req_id],
+            )
             if fetched := self.cursor.fetchall():
                 pending_friends = {}
 
@@ -209,39 +220,53 @@ class Database:
                     friend = UserFriend(*data)
                     user = self.get_entry(USER_TABLE, friend.user_id if friend.user_id != req_id else friend.friend_id)
 
-                    pending_friends[user.id] = {**user.__dict__, "accepted": friend.accepted, "inviting": friend.user_id}
+                    pending_friends[user.id] = {
+                        **user.__dict__,
+                        "accepted": friend.accepted,
+                        "inviting": friend.user_id,
+                    }
 
                 friends["pending"] = pending_friends
 
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted!='waiting'", [req_id, req_id])
+            self.cursor.execute(
+                f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? OR friend_id=?) AND accepted!='waiting'",
+                [req_id, req_id],
+            )
             if fetched := self.cursor.fetchall():
                 accepted_friends = {}
 
                 for data in fetched:
                     friend = UserFriend(*data)
                     user = self.get_entry(USER_TABLE, friend.user_id if friend.user_id != req_id else friend.friend_id)
-                    
-                    accepted_friends[user.id] = {**user.__dict__, "accepted": friend.accepted, "inviting": friend.user_id} 
+
+                    accepted_friends[user.id] = {
+                        **user.__dict__,
+                        "accepted": friend.accepted,
+                        "inviting": friend.user_id,
+                    }
 
                 friends["accepted"] = accepted_friends
-            
+
             return friends
-        
+
         if option == "friend":
-            self.cursor.execute(f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [*req_id, *req_id])
+            self.cursor.execute(
+                f"SELECT * FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)",
+                [*req_id, *req_id],
+            )
 
             if fetched := self.cursor.fetchone():
                 friend = UserFriend(*fetched)
                 user = self.get_entry(USER_TABLE, friend.user_id if friend.user_id != req_id[0] else friend.friend_id)
 
                 return {**user.__dict__, "accepted": friend.accepted, "inviting": friend.user_id}
-                         
+
         return {}
 
     def insert_entry(self, table, entry):
         """
         Insert entry into specific table
-        :param table: Table to insert into 
+        :param table: Table to insert into
         :param entry: Entry to insert
         :return: None
         """
@@ -253,19 +278,22 @@ class Database:
         Update specific entry
         :param table: Table to update
         :param req_id: ID of entry to update
-        :param entry: Entry to update 
+        :param entry: Entry to update
         :param data: Updated data to insert
         :return: None
         """
         if option is None:
             self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE id=?", [data, req_id])
-        
+
         if option == "friend":
-            self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [data, *req_id, *req_id])
+            self.cursor.execute(
+                f"UPDATE {table} SET {entry}=? WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)",
+                [data, *req_id, *req_id],
+            )
 
         if option == "user_channel":
             self.cursor.execute(f"UPDATE {table} SET {entry}=? WHERE user_id=? AND channel_id=?", [data, *req_id])
-        
+
         self.conn.commit()
 
     def delete_entry(self, table, req_id, entry="id", option=None):
@@ -296,15 +324,19 @@ class Database:
             self.cursor.execute(f"DELETE FROM {USER_CHANNEL_TABLE} WHERE user_id=? AND channel_id=?", [*req_id])
 
         if option == "user_friend":
-            self.cursor.execute(f"DELETE FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)", [*req_id, *req_id])
+            self.cursor.execute(
+                f"DELETE FROM {USER_FRIENDS_TABLE} WHERE (user_id=? AND friend_id=?) OR (friend_id=? AND user_id=?)",
+                [*req_id, *req_id],
+            )
 
         if option == "non-verified":
             self.cursor.execute(f"SELECT * FROM {USER_TABLE} WHERE verified='0'")
 
             for data in self.cursor.fetchall():
                 user = User(*data)
-                
-                if int(time.time() - float(user.create_time)) < 86_400: # Skip if user isn't verified for less than 1 day; time in seconds
+
+                # Skip if user isn't verified for less than 1 day; time in seconds
+                if int(time.time() - float(user.create_time)) < 86_400:
                     continue
 
                 self.cursor.execute(f"DELETE FROM {USER_TABLE} WHERE id=?", [user.id])

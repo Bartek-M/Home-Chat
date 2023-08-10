@@ -8,6 +8,7 @@ from base64 import b64encode, b64decode
 from ..database import USER_TABLE, USER_SECRET_TABLE
 
 from dotenv import load_dotenv
+
 load_dotenv(dotenv_path="./api/.env")
 
 PEPPER = os.getenv("PEPPER")
@@ -24,7 +25,7 @@ class Security:
         :return: Secured password (str)
         """
         return f"{salt}${hashlib.sha256((salt + passw + PEPPER).encode()).hexdigest()}"
-    
+
     @staticmethod
     def gen_token(id: str, secret: str, option: str = None):
         """
@@ -38,13 +39,15 @@ class Security:
 
         if option:
             id = b64encode(f"{id},{option}".encode("UTF-8")).decode("UTF-8")
-            hmac = hashlib.sha256(f"{id}|{now}|{secret[:int(len(secret)/2)]}|temp-{option}-access".encode("UTF-8")).hexdigest()
+            hmac = hashlib.sha256(
+                f"{id}|{now}|{secret[:int(len(secret)/2)]}|temp-{option}-access".encode("UTF-8")
+            ).hexdigest()
         else:
             id = b64encode(id.encode("UTF-8")).decode("UTF-8")
             hmac = hashlib.sha256(f"{id}|{now}|{secret}".encode("UTF-8")).hexdigest()
 
         return f"{id}.{now}.{hmac}"
-    
+
     @staticmethod
     def verify_token(db, token: str):
         """
@@ -58,7 +61,7 @@ class Security:
             return ("invalid", None, option)
         if len(token := token.split(".")) != 3:
             return ("invalid", None, option)
-        
+
         # Try base encoding
         try:
             id = b64decode(token[0].encode("UTF-8")).decode("UTF-8")
@@ -66,7 +69,7 @@ class Security:
             hmac = token[2]
         except:
             return ("invalid", None, option)
-        
+
         if "," in id:
             sliced = id.split(",")
             id = sliced[0]
@@ -74,23 +77,40 @@ class Security:
 
         if not (user := db.get_entry(USER_TABLE, id)) or not (user_secrets := db.get_entry(USER_SECRET_TABLE, id)):
             return ("invalid", None, option)
-        
-        if option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret[:int(len(user_secrets.secret)/2)]}|temp-{option}-access".encode("UTF-8")).hexdigest() != hmac:
+
+        if (
+            option
+            and hashlib.sha256(
+                f"{token[0]}|{token[1]}|{user_secrets.secret[:int(len(user_secrets.secret)/2)]}|temp-{option}-access".encode(
+                    "UTF-8"
+                )
+            ).hexdigest()
+            != hmac
+        ):
             return ("signature", None, option)
-        if not option and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac:
+        if (
+            not option
+            and hashlib.sha256(f"{token[0]}|{token[1]}|{user_secrets.secret}".encode("UTF-8")).hexdigest() != hmac
+        ):
             return ("signature", None, option)
 
         if option:
-            if option.startswith("email") and int(time.time() - int(generated)) > 604_800: # Email tickets expire after 1 week; time in seconds
+            if (
+                option.startswith("email") and int(time.time() - int(generated)) > 604_800
+            ):  # Email tickets expire after 1 week; time in seconds
                 return ("expired", None, option)
-            elif not option.startswith("email") and int(time.time() - int(generated)) > 600: # Other tickets expire after 10 minutes; time in seconds
+            elif (
+                not option.startswith("email") and int(time.time() - int(generated)) > 600
+            ):  # Other tickets expire after 10 minutes; time in seconds
                 return ("expired", None, option)
 
-        if int(time.time()) - int(generated) > 31_536_000: # Everything expire after one year (365 days); time in seconds
+        if (
+            int(time.time()) - int(generated) > 31_536_000
+        ):  # Everything expire after one year (365 days); time in seconds
             return ("expired", None, option)
 
         return ("correct", user, option)
-    
+
     @staticmethod
     def verify_password(password):
         """
@@ -100,5 +120,5 @@ class Security:
         """
         if re.fullmatch(PASSWORD_REGEX, password):
             return True
-        
+
         return False

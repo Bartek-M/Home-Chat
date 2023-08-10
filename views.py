@@ -9,6 +9,7 @@ view = Blueprint(__name__, "view")
 def home():
     return render_template("index.html")
 
+
 @view.route("/channels/<channel_id>")
 def channel(**_):
     return render_template("index.html")
@@ -17,10 +18,12 @@ def channel(**_):
 @view.route("/login")
 def log_in():
     return render_template("index.html")
-    
+
+
 @view.route("/register")
 def register():
     return render_template("index.html")
+
 
 @view.route("/logout")
 def log_out():
@@ -30,6 +33,7 @@ def log_out():
 @view.route("/email-confirm")
 def email_confirm():
     return render_template("index.html")
+
 
 @view.route("/recovery/<option>")
 def recovery(**_):
@@ -41,9 +45,11 @@ def recovery(**_):
 def unauthorized(_):
     return {"message": "401 Unauthorized"}, 401
 
+
 @view.app_errorhandler(403)
 def unauthorized(_):
     return {"message": "403 Forbidden"}, 403
+
 
 @view.app_errorhandler(404)
 def page_not_found(_):
@@ -52,9 +58,11 @@ def page_not_found(_):
 
     return render_template("index.html"), 404
 
+
 @view.app_errorhandler(405)
 def method_not_allowed(_):
     return jsonify({"message": "405 Method Not Allowed"}), 405
+
 
 @view.app_errorhandler(429)
 def too_many_requests(_):

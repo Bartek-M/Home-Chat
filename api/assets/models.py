@@ -6,13 +6,14 @@ class User:
     """
     Representation of a user
     """
+
     id: str
     name: str
     avatar: str
     create_time: str
-    verified: int = 0 # 0 | 1
-    visibility: int = 1 # 0 | 1
-    notifications: int = 1 # 0 | 1
+    verified: int = 0  # 0 | 1
+    visibility: int = 1  # 0 | 1
+    notifications: int = 1  # 0 | 1
     display_name: str = None
 
     def marks(self):
@@ -24,13 +25,14 @@ class Message:
     """
     Representation of a message
     """
+
     id: str
     author: str
     channel_id: str
     content: str
     create_time: str
-    edited: int = 0 # 0 | 1
-    system: int = 0 # 0 | 1
+    edited: int = 0  # 0 | 1
+    system: int = 0  # 0 | 1
 
     def marks(self):
         return "?, ?, ?, ?, ?, ?, ?"
@@ -41,12 +43,13 @@ class Channel:
     """
     Representation of a channel
     """
+
     id: str
     name: str
     icon: str
     owner: str
     create_time: str
-    direct: int = 0 # 0 | 1
+    direct: int = 0  # 0 | 1
 
     def marks(self):
         return "?, ?, ?, ?, ?, ?"
@@ -57,13 +60,14 @@ class UserChannel:
     """
     Representation of user channels
     """
+
     user_id: str
     channel_id: str
     join_time: str
     nick: str = ""
-    admin: int = 0 # 0 | 1
-    direct: int = 0 # 0 | 1
-    notifications: str = "1" # None | last_message_time
+    admin: int = 0  # 0 | 1
+    direct: int = 0  # 0 | 1
+    notifications: str = "1"  # None | last_message_time
 
     def marks(self):
         return "?, ?, ?, ?, ?, ?, ?"
@@ -74,27 +78,29 @@ class UserFriend:
     """
     Representation of user friends
     """
+
     user_id: str
     friend_id: str
-    accepted: str = "waiting" # waiting | accepted_time
+    accepted: str = "waiting"  # waiting | accepted_time
 
     def marks(self):
         return "?, ?, ?"
-    
+
 
 @dataclass
 class UserSettings:
     """
     Representation of user settings
     """
+
     id: str
     email: str
-    theme: str = "auto" # auto | light | dark
-    message_display: str = "standard" # standard | compact
-    mfa_enabled: int = 0 # 0 | 1
-    notifications_message: int = 1 # 0 | 1
-    notifications_friend: int = 1 # 0 | 1
-    notifications_changelog: str = "1" # None | last_changelog_time
+    theme: str = "auto"  # auto | light | dark
+    message_display: str = "standard"  # standard | compact
+    mfa_enabled: int = 0  # 0 | 1
+    notifications_message: int = 1  # 0 | 1
+    notifications_friend: int = 1  # 0 | 1
+    notifications_changelog: str = "1"  # None | last_changelog_time
 
     def marks(self):
         return "?, ?, ?, ?, ?, ?, ?, ?"
@@ -105,6 +111,7 @@ class UserSecrets:
     """
     Representation of user secrets
     """
+
     id: str
     password: str
     secret: str

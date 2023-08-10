@@ -13,21 +13,22 @@ class Decorators:
         :param func: Function to run
         :return: Wrapper function
         """
+
         def wrapper(*args, **kwargs):
             with Database() as db:
                 kwargs["db"] = db
                 resp = func(*args, **kwargs)
-            
+
             data, code = resp if isinstance(resp, tuple) else ({}, resp)
 
             if not data.get("errors") and (message := Functions.match_code(code)):
                 data["message"] = message
 
             return jsonify(data), code
-        
+
         wrapper.__name__ = func.__name__
         return wrapper
-    
+
     @staticmethod
     def auth(func):
         """
@@ -35,27 +36,30 @@ class Decorators:
         :param func: Function to run
         :return: Wrapper function
         """
+
         def wrapper(*args, **kwargs):
-            verify_code, verify_user, verify_option = Security.verify_token(kwargs["db"], request.headers.get("Authentication"))
+            verify_code, verify_user, verify_option = Security.verify_token(
+                kwargs["db"], request.headers.get("Authentication")
+            )
 
             if verify_option and verify_code == "correct":
                 return 403
-            
+
             if verify_code == "correct":
                 kwargs["user"] = verify_user
                 return func(*args, **kwargs)
-            
+
             if verify_code in ["expired", "signature"]:
                 return 403
-            
+
             if verify_code == "invalid":
                 return 401
-            
+
             return 401
-        
+
         wrapper.__name__ = func.__name__
         return wrapper
-    
+
     @staticmethod
     def ticket_auth(func):
         """
@@ -63,25 +67,28 @@ class Decorators:
         :param func: Function tu run
         :return: Wrapper function
         """
+
         def wrapper(*args, **kwargs):
-            verify_code, verify_user, verify_option = Security.verify_token(kwargs["db"], request.args.get("ticket") or request.json.get("ticket"))
+            verify_code, verify_user, verify_option = Security.verify_token(
+                kwargs["db"], request.args.get("ticket") or request.json.get("ticket")
+            )
 
             if not verify_option and verify_code == "correct":
                 return 403
-            
+
             if verify_code == "correct":
                 kwargs["user"] = verify_user
                 kwargs["option"] = verify_option
 
                 return func(*args, **kwargs)
-            
+
             if verify_code in ["expired", "signature"]:
                 return 403
-            
+
             if verify_code == "invalid":
                 return 401
 
             return None
-        
+
         wrapper.__name__ = func.__name__
         return wrapper

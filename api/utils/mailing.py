@@ -5,12 +5,14 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from dotenv import load_dotenv
+
 load_dotenv(dotenv_path="./api/.env")
 
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
-HTML_BASE = lambda content: f"""
+HTML_BASE = (
+    lambda content: f"""
     <!DOCTYPE html>
     <html style="font-family: arial, sans-serif">
         <head>
@@ -29,6 +31,7 @@ HTML_BASE = lambda content: f"""
         </body>
     </html>
 """
+)
 
 
 class Mailing:
@@ -79,7 +82,8 @@ class Mailing:
             Sent by Home Chat
         """
 
-        html = HTML_BASE(f"""
+        html = HTML_BASE(
+            f"""
             <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Welcome, {name}!</h2>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
                 Thank you for registering an account in Home Chat!<br />
@@ -92,11 +96,12 @@ class Mailing:
                 Don't share this code with anyone.<br />
                 If you didn't ask for this code please ignore this email.
             </p>
-        """)
+        """
+        )
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
         email_thread.start()
-        
+
     @staticmethod
     def send_email_verification(email, name, ticket):
         """
@@ -122,7 +127,8 @@ class Mailing:
         Sent by Home Chat
         """
 
-        html = HTML_BASE(f"""
+        html = HTML_BASE(
+            f"""
             <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Hey, {name}!</h2>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
                 You wanted to change your email to this one. Click below to finish the transition process:
@@ -131,8 +137,9 @@ class Mailing:
                 <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/email-confirm?ticket={ticket}">Confirm Email</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only a week.<br/>If this email wasn't meant for you please ignore it.</p>
-        """)
-        
+        """
+        )
+
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
         email_thread.start()
 
@@ -162,7 +169,8 @@ class Mailing:
         Sent by Home Chat
         """
 
-        html = HTML_BASE(f"""
+        html = HTML_BASE(
+            f"""
             <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Hey, {name}!</h2>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
                 Someone has changed your email address to '{new_email}'. Click below to restore your earlier email:
@@ -171,7 +179,8 @@ class Mailing:
                 <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/recovery/email?ticket={ticket}">Restore Email</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only a week.<br/>If you don't recognize this action, change your password immediately.</p>
-        """)
+        """
+        )
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
         email_thread.start()
@@ -199,7 +208,8 @@ class Mailing:
         Sent by Home Chat
         """
 
-        html = HTML_BASE(f"""
+        html = HTML_BASE(
+            f"""
             <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Hey, {name}!</h2>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
                 Your Home Chat password can be reset by clicking the link below:
@@ -208,7 +218,8 @@ class Mailing:
                 <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/recovery/password?ticket={ticket}">Reset Password</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only 10 minutes.<br/>If you did not request a new password, please ignore this email.</p>
-        """)
+        """
+        )
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
         email_thread.start()
@@ -236,7 +247,8 @@ class Mailing:
         Sent by Home Chat
         """
 
-        html = HTML_BASE(f"""
+        html = HTML_BASE(
+            f"""
             <h2 style="width: calc(100% - 2rem); margin: 0 1rem;">Hey, {name}!</h2>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">
                 You can disable Two-Factor Authentication by clicking the link below:
@@ -245,7 +257,8 @@ class Mailing:
                 <a style="color: 1167b1; text-decoration: none;" href="https://192.168.0.124/recovery/mfa?ticket={ticket}">Disable 2FA</a>
             </div>
             <p style="width: calc(100% - 2rem); margin: 1rem; line-height: 1.5rem;">This link is valid for only 10 minutes.<br/>If you did not request 2FA reset, password change might be necessary.</p>
-        """)
+        """
+        )
 
         email_thread = threading.Thread(target=Mailing.send_email, args=(email, subject, {"text": text, "html": html}))
         email_thread.start()
