@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="preload" href="{{ url_for('static', filename='js/main.js') }}" as="script" />
-    <link rel="preload" href="{{ url_for('static', filename='css/styles.css') }}" as="style" />
+        <link rel="preload" href="{{ url_for('static', filename='js/main.js') }}" as="script" />
+        <link rel="preload" href="{{ url_for('static', filename='css/styles.css') }}" as="style" />
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
-    <link rel="icon" href="{{ url_for('static', filename='icons/icon.ico') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+        <link rel="icon" href="{{ url_for('static', filename='icons/icon.ico') }}" />
 
-    <title>Home Chat</title>
-</head>
-<body>
-    <div id="appMount"></div>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
+        <title>Home Chat</title>
+    </head>
+    <body>
+        <div id="appMount"></div>
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    </body>
 </html>
