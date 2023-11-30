@@ -1,3 +1,4 @@
+import os
 import time
 import secrets
 
@@ -8,7 +9,8 @@ from .. import socketio
 from ..database import *
 from ..utils import *
 
-
+EMAIL = os.getenv("EMAIL")
+PASSWORD = os.getenv("PASSWORD")
 class Auth:
     """
     Auth api class
@@ -106,9 +108,12 @@ class Auth:
 
         current_time = time.time()
         id = Functions.create_id(current_time)
-        verify_code = secrets.token_hex(3).upper()
 
-        Mailing.send_verification(email, username, verify_code)
+        if EMAIL and PASSWORD:
+            verify_code = secrets.token_hex(3).upper()
+            Mailing.send_verification(email, username, verify_code)
+        else:
+            verify_code = "1234"
 
         db.insert_entry(USER_TABLE, User(id, username, "generic", current_time))
         db.insert_entry(USER_SETTING_TABLE, UserSettings(id, email))

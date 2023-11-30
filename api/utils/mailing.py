@@ -4,10 +4,6 @@ import threading
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from dotenv import load_dotenv
-
-load_dotenv(dotenv_path="./api/.env")
-
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
@@ -51,10 +47,15 @@ class Mailing:
         message.attach(MIMEText(messages["text"], "plain"))
         message.attach(MIMEText(messages["html"], "html"))
 
-        with smtplib.SMTP("smtp.gmail.com", 587) as s:
-            s.starttls()
-            s.login(EMAIL, PASSWORD)
-            s.sendmail(EMAIL, dest, message.as_string())
+        try:
+            with smtplib.SMTP("smtp.gmail.com", 587) as s:
+                s.starttls()
+                s.login(EMAIL, PASSWORD)
+                s.sendmail(EMAIL, dest, message.as_string())
+        except Exception as e:
+            print("Couldn't send EMAIL")
+            print(e)
+            exit(1)
 
     @staticmethod
     def send_verification(email, name, verify_code):

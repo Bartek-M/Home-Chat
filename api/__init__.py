@@ -1,9 +1,17 @@
+import os
+
 from flask import Flask
 from flask_socketio import SocketIO
 
 # GLOBAL VARIABLES
-ADDR = "127.0.0.1"
-PORT = 5000
+ADDR = os.getenv("ADDRESS")
+PORT = os.getenv("PORT")
+
+if not (ADDR or PORT):
+    print("Couldn't load configuration file!")
+    print("It could be incorrectly formatted or it doesn't exits")
+    print("\nCheckout api/CONFIG.md for further help with configuration")
+    exit(1)
 
 app = Flask("main")
 socketio = SocketIO(app, ping_interval=45, ping_timeout=10)

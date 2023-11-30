@@ -7,11 +7,7 @@ from base64 import b64encode, b64decode
 
 from ..database import USER_TABLE, USER_SECRET_TABLE
 
-from dotenv import load_dotenv
-
-load_dotenv(dotenv_path="./api/.env")
-
-PEPPER = os.getenv("PEPPER")
+PEPPER = ppr if (ppr := os.getenv("PEPPER")) else ""
 PASSWORD_REGEX = r"(?=(.*[0-9]))(?=.*[\!@#$%^&*()\\[\]{}\-_+=~`|:;\"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}"
 
 

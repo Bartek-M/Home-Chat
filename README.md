@@ -14,7 +14,7 @@ pip install -r requirements.txt
 npm install
 ```
 
-> NOTE: This app needs `.env` configuration file. Checkout `api/.env.example` and using that file, create `api/.env` file with your own settings. Without this, you won't be able to run the server. 
+> NOTE: This app needs `.env` configuration file. Checkout `api/CONFIG.md` and using that file, create `api/.env` file with your own settings. Without this, you won't be able to run the server. 
 
 ## Running server
 ```bash
