@@ -1,17 +1,9 @@
-# FOLDERS
 .vscode/
 __pycache__/
 node_modules/
-
-avatars/
-channel_icons/
-
-static/js/
-
-# FILES
-db.sqlite
-
-package.json
 package-lock.json
-
+static/js/
+*.webp
+!generic.webp
+db.sqlite
 .env

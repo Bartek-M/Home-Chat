@@ -1,8 +1,0 @@
-npm i webpack webpack-cli --save-dev
-npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
-npm i react react-dom --save-dev
-npm i @babel/plugin-proposal-class-properties
-npm i react-router-dom
-npm i socket.io-client
-npm i process
-npm i qrcode
