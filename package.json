@@ -1,5 +1,5 @@
 {
-  "name": "homechat",
+  "name": "home-chat",
   "version": "1.0.0",
   "description": "Home Chat - communication system",
   "main": "index.js",
