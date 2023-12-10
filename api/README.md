@@ -33,7 +33,7 @@ ADDRESS = 127.0.0.1
 PORT = 5000
 
 EMAIL = "hello@example.com"
-PASSWORD = null
+PASSWORD = 
 
 PEPPER = ""
 ```

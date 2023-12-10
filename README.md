@@ -14,7 +14,14 @@ pip install -r requirements.txt
 npm install
 ```
 
+Then you will need to build JS package
+```bash
+npm run build
+```
+
 > NOTE: This app needs `.env` configuration file. Checkout `api/CONFIG.md` and using that file, create `api/.env` file with your own settings. Without this, you won't be able to run the server. 
+>
+> If you want to run a development version run `npm run dev` instead.
 
 ## Running server
 ```bash
