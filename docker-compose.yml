@@ -5,6 +5,6 @@ services:
     build: .
     command: "gunicorn main:app"
     ports: 
-      - "5000:8000"
+      - "443:8000"
     volumes:
       - .:/usr/src/app
