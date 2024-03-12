@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path="./api/.env")  # Load env variables
 
 from api import *
-from views import view
+from views import *
 
 
 # CONFIGURE FLASK
@@ -16,7 +16,7 @@ app.url_map.strict_slashes = False
 app.json.sort_keys = False
 app.json.compact = False
 
-app.register_blueprint(view, url_prefix="/")
+app.register_blueprint(views.view, url_prefix="/")
 app.register_blueprint(api, url_prefix="/api")
 
 app.register_blueprint(auth, url_prefix="/api/auth")
@@ -35,4 +35,5 @@ verified_check_thread.start()
 
 
 if __name__ == "__main__":
+    print("HELLO????")
     socketio.run(app, debug=True, host=ADDR, port=int(PORT))
