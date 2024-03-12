@@ -1,7 +1,6 @@
 .vscode/
 __pycache__/
 node_modules/
-package-lock.json
 static/js/
 *.webp
 !generic.webp

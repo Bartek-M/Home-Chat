@@ -4,19 +4,15 @@ Communication system with many features. It is based on **Discord** in terms of 
 > If you find any bugs or you have and propositions, feel free to create a new **issue** on this repository. 
 
 ## Requirements
+- Docker
 - Python 3.8 or above
 - Node.js 16 or above
 
-## Setup
-First you will need to install dependencies
-```bash
-pip install -r requirements.txt
-npm install
-```
+> NOTE: When using Docker, none of above are required except Docker itself
 
-Then you will need to build JS package
+## Setup
 ```bash
-npm run build
+python setup.py
 ```
 
 > NOTE: This app needs `.env` configuration file. Checkout `api/README.md` and using that file, create `api/.env` file with your own settings. Without this, you won't be able to run the server. 
