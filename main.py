@@ -4,7 +4,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path="./api/.env") # Load env variables
+load_dotenv(dotenv_path="./api/.env")  # Load env variables
 
 from api import *
 from views import view
@@ -35,4 +35,4 @@ verified_check_thread.start()
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host=ADDR, port=PORT, allow_unsafe_werkzeug=True)
+    socketio.run(app, debug=True, host=ADDR, port=int(PORT))

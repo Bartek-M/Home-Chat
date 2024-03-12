@@ -1,7 +1,10 @@
-flask
-flask_limiter
-flask-socketio
-Pillow
-pyotp 
-python-dotenv
-websockets
+Flask==2.2.2
+Flask-Limiter==3.3.1
+Flask-SocketIO==5.3.2
+gevent==24.2.1
+gevent-websocket==0.10.1
+gunicorn==20.1.0
+pillow==10.2.0
+pyotp==2.8.0
+python-dotenv==1.0.1
+Werkzeug==2.2.2

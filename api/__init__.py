@@ -14,7 +14,7 @@ if not (ADDR or PORT):
     exit(1)
 
 app = Flask("main")
-socketio = SocketIO(app, ping_interval=45, ping_timeout=10)
+socketio = SocketIO(app, ping_interval=45, ping_timeout=10, async_mode="gevent")
 
 
 """API MODULE"""
