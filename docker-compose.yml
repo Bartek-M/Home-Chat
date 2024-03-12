@@ -1,0 +1,10 @@
+version: "4.27.2"
+
+services:
+  web:
+    build: .
+    command: "python main.py"
+    ports: 
+      - "5000:5000"
+    volumes:
+      - .:/usr/src/app

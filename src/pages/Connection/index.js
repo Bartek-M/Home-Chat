@@ -1,4 +1,4 @@
-export { Login } from "./Login"
-export { Logout } from "./Logout"
-export { Register } from "./Register"
+export { Login } from "./login"
+export { Logout } from "./logout"
+export { Register } from "./register"
 export { EmailConfirm } from "./emailConfirm"

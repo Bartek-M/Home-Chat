@@ -1,5 +1,5 @@
 # Home Chat
-Communication system with many features. It is based on **Discord** in terms of UI and server model. Backend is supplied by **Python** with **Flask**. Frontend was made using **React.js** and default CSS styles. Dynamic communication with server is done using **SocketIO**. This was a hobby project, which I had a lot of fun working on. You can check it out using instruction below.
+Communication system with many features. It is based on **Discord** in terms of UI and server model. Backend is supplied by **Python** with **Flask**. Frontend was made using **React.js** and CSS styles. Dynamic communication with server is done using **SocketIO**. This was a hobby project, which I had a lot of fun working on. You can check it out using instruction below.
 
 > If you find any bugs or you have and propositions, feel free to create a new **issue** on this repository. 
 
@@ -8,7 +8,13 @@ Communication system with many features. It is based on **Discord** in terms of 
 - Python 3.8 or above
 - Node.js 16 or above
 
-> NOTE: When using Docker, none of above are required except Docker itself
+> NOTE: When using **Docker**, none of above are required except Docker itself
+
+## Docker setup
+```bash
+docker-compose build
+docker-compose up
+```
 
 ## Setup
 ```bash

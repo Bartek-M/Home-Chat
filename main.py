@@ -35,4 +35,4 @@ verified_check_thread.start()
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host=ADDR, port=PORT)
+    socketio.run(app, debug=True, host=ADDR, port=PORT, allow_unsafe_werkzeug=True)
