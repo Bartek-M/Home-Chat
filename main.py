@@ -35,5 +35,4 @@ verified_check_thread.start()
 
 
 if __name__ == "__main__":
-    print("HELLO????")
     socketio.run(app, debug=True, host=ADDR, port=int(PORT))
