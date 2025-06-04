@@ -34,3 +34,5 @@ python main.py
 NOT FOR COMMERCIAL USE 
 
 > If you intend to use any of my code for commercial use please contact me and get my permission. If you intend to make money using any of my code please ask my permission.
+
+<!-- GitAds-Verify: 3RWQXVCE7J5YYDW7GARVW6VU25BQPTZP -->
