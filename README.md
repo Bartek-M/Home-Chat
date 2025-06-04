@@ -3,6 +3,9 @@ Communication system with many features. It is based on **Discord** in terms of 
 
 > If you find any bugs or you have and propositions, feel free to create a new **issue** on this repository. 
 
+## GitAds Sponsored
+[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=bartek-m/home-chat@github)](https://gitads.dev/v1/ad-track?source=bartek-m/home-chat@github)
+
 ## Requirements
 - Docker
 - Python 3.8 or above
